@@ -1,0 +1,11 @@
+Netatmo
+
+Netatmo uses the Netatmo php sdk and some Google development tools for the graphics.
+The server needs to have a php version greater than 5, with curl and json enabled.
+This program can display the data of at most four stations.
+
+Install :
+
+    Unzip the archive
+    Put your personal information in Config.php
+    open index.php in your web browser
