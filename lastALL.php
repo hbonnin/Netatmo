@@ -58,19 +58,31 @@ echo("<table>");
 	if($i % 2 == 0)
 		{$lng=$devicelist["devices"][$i]["place"]["location"][0];
 		$lat=$devicelist["devices"][$i]["place"]["location"][1];	
-		$places = geolocalize($lat,$lng);	
-    	$city = $places[1];
-    	$street = $places[0];
+		$places = geolocalize($lat,$lng);
+		if($places == "BAD")
+			{$city = $mesures[$i]['station_name'];
+			$street = ' ';
+			}
+		else		
+    		{$city = $places[1];
+    		$street = $places[0];
+    		}
     	$alt = $devicelist["devices"][$i]["place"]["altitude"];
 		echo("</TR><TR><TD HEIGHT=40 align=center><b><font size=4>$city &nbsp</font></b>($alt m)<br><font size=2>$street</font></TD>\n");				
 		if($i < $numStations -1)
 			{$lng=$devicelist["devices"][$i+1]["place"]["location"][0];
 			$lat=$devicelist["devices"][$i+1]["place"]["location"][1];
-			$places = geolocalize($lat,$lng);	
-    		$city = $places[1];
-    		$street = $places[0];
-    		$alt = $devicelist["devices"][$i+1]["place"]["altitude"];
-			echo("<TD HEIGHT=40 align=center><b><font size=4>$city &nbsp</font></b>($alt m)<br><font size=2>$street</font></TD>\n");
+			$places = geolocalize($lat,$lng);
+			if($places == "BAD")
+				{$city = $mesures[$i+1]['station_name'];
+				$street = ' ';
+				}
+			else		
+    			{$city = $places[1];
+    			$street = $places[0];
+    			}
+    	$alt = $devicelist["devices"][$i+1]["place"]["altitude"];
+		echo("<TD HEIGHT=40 align=center><b><font size=4>$city &nbsp</font></b>($alt m)<br><font size=2>$street</font></TD>\n");
 			}
 		echo("</TR><TR>\n");
 		}
