@@ -58,12 +58,16 @@ $date = date('d/m/Y',$date_beg);
     
     
     $params = array("scale" => "1day"
-    , "type" => "min_temp,max_temp"
+    , "type" => "min_temp,max_temp,date_min_temp,date_max_temp"
     , "date_begin" => $date_beg
     , "date_end" => $date_end
     , "limit"    => $nday
     , "device_id" => $device_id);
     $meas1 = $client->api("getmeasure", "POST", $params);
+    
+function tip($temp,$tempDate)
+	{return sprintf('%04.1f ...  %s',$temp,date("H:i",$tempDate)); 
+	}    
 
 // Temperatures extérieures
 echo("
@@ -93,10 +97,8 @@ echo("
                 $tmax = $meas[$index]["value"][$i][1];  
                 $tminDate = $meas[$index]["value"][$i][2];  
                 $tmaxDate = $meas[$index]["value"][$i][3];
-                $tminTime = date("H:i",$tminDate);  
-                $tmaxTime = date("H:i",$tmaxDate);  
-                $minTip = sprintf('%04.1f ...  %s',$tmin,$tminTime);           	               
-                $maxTip = sprintf('%04.1f ...  %s',$tmax,$tmaxTime);           	               
+                $minTip = tip($tmin,$tminDate);         	               
+                $maxTip = tip($tmax,$tmaxDate);         	               
                 echo("data.addRow([\"$idate\",$tmax,'$maxTip',$tmin,'$minTip']);\n");                
                 }
 // températures Intérieures                
@@ -118,7 +120,11 @@ echo("
             	$idate = date("d/m/y",$itime);   
             	$tmin = $meas1[$index]["value"][$i][0];
                 $tmax = $meas1[$index]["value"][$i][1];
-                echo("data1.addRow([\"$idate\",$tmax,'$tmax',$tmin,'$tmin']);\n");               
+                $tminDate = $meas1[$index]["value"][$i][2];  
+                $tmaxDate = $meas1[$index]["value"][$i][3];
+                $minTip = tip($tmin,$tminDate);         	               
+                $maxTip = tip($tmax,$tmaxDate);         	               
+                echo("data1.addRow([\"$idate\",$tmax,'$maxTip',$tmin,'$minTip']);\n");                
                 }                                  
 echo("                   
              var chartExterieur = new google.visualization.LineChart(document.getElementById('chartExterieur_div'));
