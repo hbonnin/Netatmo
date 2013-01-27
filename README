@@ -2,7 +2,8 @@ Netatmo
 
 Netatmo uses the Netatmo php sdk and some Google development tools for the graphics.
 The server needs to have a php version greater than 5, with curl and json enabled.
-This program can display the data of at most four stations.
+This program can display the data for any number of stations, except the one "Temperatures extérieures"
+which only displays the first 4 stations.
 
 Install :
 
