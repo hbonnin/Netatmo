@@ -34,6 +34,7 @@ $devicelist = $client->api("devicelist", "POST");
 $devicelist = $helper->SimplifyDeviceList($devicelist);
 $mesures = $helper->GetLastMeasures($client,$devicelist);
 $numStations = count($devicelist["devices"]);
+$numStations = min($numStations,4);
 /*
 $nameStations = array($numStations);
 for($i = 0;$i < $numStations;$i++)
