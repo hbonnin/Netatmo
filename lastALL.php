@@ -15,8 +15,7 @@ try {
     echo "An error happend while trying to retrieve your tokens\n";
     exit(-1);
 }
-
-
+ 
 $devicelist = $client->api("devicelist", "POST");
 $devicelist = $helper->SimplifyDeviceList($devicelist);
 $numStations = count($devicelist["devices"]);
@@ -56,7 +55,7 @@ echo("<table>");
 	{$res = $mesures[$i]["modules"];
 	if(($i > 1) && ($i %2  == 0))echo("</TR><TD HEIGHT=20></TD><TR>\n");
 
-	if(($i % 2) == 0)
+	if($i % 2 == 0)
 		{$lng=$devicelist["devices"][$i]["place"]["location"][0];
 		$lat=$devicelist["devices"][$i]["place"]["location"][1];	
 		$places = geolocalize($lat,$lng);	
