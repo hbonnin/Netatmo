@@ -48,7 +48,7 @@ $date = date('d/m/Y',$date_beg);
 
 
     $params = array("scale" => "1day"
-    , "type" => "min_temp,max_temp"
+    , "type" => "min_temp,max_temp,date_min_temp,date_max_temp"
     , "date_begin" => $date_beg
     , "date_end" => $date_end
     , "limit"    => $nday
@@ -65,7 +65,7 @@ $date = date('d/m/Y',$date_beg);
     , "device_id" => $device_id);
     $meas1 = $client->api("getmeasure", "POST", $params);
 
-
+// Temperatures extérieures
 echo("
 <html>
   <head>
@@ -90,10 +90,16 @@ echo("
             	{$itime = $date_beg + ($i * 24 * 60 * 60);
             	$idate = date("d/m/y",$itime);   
             	$tmin = $meas[$index]["value"][$i][0];
-                $tmax = $meas[$index]["value"][$i][1];                
-                $tip = sprintf('%s: \nTmin:%d\nTmax:%d',$idate,$tmin,$tmax);            	               
-                echo("data.addRow([\"$idate\",$tmax,'$tmax',$tmin,'$tmin']);\n");                
+                $tmax = $meas[$index]["value"][$i][1];  
+                $tminDate = $meas[$index]["value"][$i][2];  
+                $tmaxDate = $meas[$index]["value"][$i][3];
+                $tminTime = date("H:i",$tminDate);  
+                $tmaxTime = date("H:i",$tmaxDate);  
+                $minTip = sprintf('%04.1f ...  %s',$tmin,$tminTime);           	               
+                $maxTip = sprintf('%04.1f ...  %s',$tmax,$tmaxTime);           	               
+                echo("data.addRow([\"$idate\",$tmax,'$maxTip',$tmin,'$minTip']);\n");                
                 }
+// températures Intérieures                
 echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');

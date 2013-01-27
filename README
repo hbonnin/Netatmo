@@ -9,3 +9,10 @@ Install :
     Unzip the archive
     Put your personal information in Config.php
     open index.php in your web browser
+    
+Note :
+	
+	If you do not have access to a server, you can create an HTML file in a window command.
+	For example to display the graphs for the last month of minimal and maximale temperatures of the first station:
+	php minmaxStation.php a >minmax.html    
+	The parameter 'a' is there so that minmaxStation.php knows that it is called from a command line. 
