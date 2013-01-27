@@ -54,9 +54,9 @@ echo("<table>");
 	echo("<TR>\n");
 	for($i = 0; $i < $numStations; $i++) 
 	{$res = $mesures[$i]["modules"];
-	if($i == 2)echo("</TR><TD HEIGHT=20></TD><TR>\n");
+	if(($i > 1) && ($i %2  == 0))echo("</TR><TD HEIGHT=20></TD><TR>\n");
 
-	if($i == 0 OR $i == 2)
+	if(($i % 2) == 0)
 		{$lng=$devicelist["devices"][$i]["place"]["location"][0];
 		$lat=$devicelist["devices"][$i]["place"]["location"][1];	
 		$places = geolocalize($lat,$lng);	
