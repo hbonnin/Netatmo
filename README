@@ -5,11 +5,12 @@ The server needs to have a php version >= 5, with curl and json enabled.
 
 Main windows :
 	
-	Display on a Google map all the stations with the exterior temperatur
+	Display on a Google map all the stations with the exterior temperature
 	Display the last measures of all stations (up to 4 stations)
 	Display the graphic of all the temperatures (inside and outside)
 	Display all the measures for one selected station, from a given date
-	Display the graphic of extremal temperatures for one selected station from a given date   
+	Display the graphic of extremal temperatures for one selected station,
+	from a given date   
 
 Install :
 
@@ -19,7 +20,10 @@ Install :
     
 Note :
 	
-	If you do not have access to a server, you can create an HTML file from a command line.
-	For example to display the graphs for the last month of minimal and maximal temperatures of the first station:
+	If you do not have access to a server, you can create an HTML file
+	from a command line.
+	For example to display the graphs for the last month of minimal and
+	maximal temperatures of the first station:
 	php minmaxStation.php a >minmax.html    
-	The parameter 'a' is there so that minmaxStation.php knows that it is called from a command line. 
+	The parameter 'a' is there so that minmaxStation.php knows that it is 
+	called from a command line. 
