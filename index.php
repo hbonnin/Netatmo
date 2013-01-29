@@ -5,7 +5,24 @@ require_once 'Config.php';
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 $helper = new NAApiHelper();
+
+try {
+    $tokens = $client->getAccessToken();        
+	} catch(NAClientException $ex) {
+    	echo "An error happend while trying to retrieve your tokens\n";
+    	exit(-1);
+	}
+
+
+try {
 $devicelist = $client->api("devicelist", "POST");
+	}
+	catch(NAClientException $ex) {
+		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
+		echo("$ex");
+		exit(-1);
+	}
+
 $devicelist = $helper->SimplifyDeviceList($devicelist);
 $mesures = $helper->GetLastMeasures($client,$devicelist);
 $num = count($devicelist["devices"]);
@@ -49,7 +66,7 @@ function valider(frm)
 <center>
 <H1> Stations Netatmo</H1>
 
-
+<h4><a href='google.php'>Carte des Stations</a></h4>
 
 <table style='border-spacing:5px 30px;'>
 <tr><td>
