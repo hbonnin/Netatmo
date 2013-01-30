@@ -35,7 +35,7 @@ for($i = 0;$i < $numStations;$i++)
 	{$latitude[$i] = $devicelist["devices"][$i]["place"]["location"][1];
     $longitude[$i] = $devicelist["devices"][$i]["place"]["location"][0];
     $res = $mesures[$i]["modules"];
-    $txt = sprintf("%3.1f°",$res[1]['Temperature']);
+    $txt = sprintf("%3.1f° %d%% %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
     $label[$i] = $txt;
 	}	
 
@@ -55,8 +55,12 @@ echo("
       #map_canvas { height: 100% }
     </style>
     <script type='text/javascript'
-//      src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBeYVcsA9E6Vlq9F_85VIxSOAf5nEeWdYY&sensor=false'>
-      src='https://maps.googleapis.com/maps/api/js?&sensor=false'>
+");    
+	if($use_google_key ==1)
+		echo("src='https://maps.googleapis.com/maps/api/js?key=$google_key&sensor=false'>");
+	else
+		echo("src='https://maps.googleapis.com/maps/api/js?&sensor=false'>");
+echo("
     </script>
     <script type='text/javascript' src='StyledMarker.js'></script>
     <script type='text/javascript'>
@@ -83,8 +87,7 @@ echo("
   			echo("label[$i] = \"$label[$i]\";\n");
   			}
 			
-echo("  		
-  		
+echo("  				
   		for(i=0;i < num;i++)
   			LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
   					
