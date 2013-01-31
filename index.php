@@ -66,12 +66,13 @@ function valider(frm)
 <center>
 <H1> Stations Netatmo</H1>
 
-<h4><a href='google.php'>Carte des Stations</a></h4>
+<!--<h4><a href='google.php'>Carte des Stations</a></h4>-->
 
 <table style='border-spacing:5px 30px;'>
 <tr><td>
 	<!-- ################################ -->
-	<form method='get' action='lastALL.php'>
+	<!--<form method='get' action='lastALL.php'>-->
+	<form method='get' action='google.php'>
 	<TABLE style='width:300px; border:2px solid grey;'>
 	<caption><b>Dernières mesures</b></caption>
 	<TR><TD HEIGHT=25 >
