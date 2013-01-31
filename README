@@ -6,11 +6,11 @@ The server needs to have a php version >= 5, with curl and json enabled.
 Main windows :
 	
 	Display on a Google map all the stations with their last measures
-	Display the graphics of the temperatures of up to 4 stations, 
+	Graphics of the temperatures of up to 4 stations, 
 	from a given date
-	Display the graphics of all measures for one station, 
+	Graphics of all measures of one station, 
 	from a given date
-	Display the graphics of extremal temperatures for one station,
+	Graphics of extremal temperatures of one station,
 	from a given date   
 
 Install :
