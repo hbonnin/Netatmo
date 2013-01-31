@@ -5,12 +5,10 @@ The server needs to have a php version >= 5, with curl and json enabled.
 
 Main windows :
 	
-	Display on a Google map all the stations with the exterior temperature,
-	humidity and air pressure
-	Display the last measures of all stations (up to 4 stations)
-	Display the graphic of all the temperatures (inside and outside)
+	Display on a Google map all the stations with their last measures
+	Display the graphic of the temperatures of up to stations, from a given date
 	Display all the measures for one selected station, from a given date
-	Display the graphic of extremal temperatures for one selected station,
+	Display the graphic of extremal temperatures for one station,
 	from a given date   
 
 Install :
