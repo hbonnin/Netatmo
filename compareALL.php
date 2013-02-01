@@ -34,12 +34,7 @@ $devicelist = $client->api("devicelist", "POST");
 $devicelist = $helper->SimplifyDeviceList($devicelist);
 $mesures = $helper->GetLastMeasures($client,$devicelist);
 $numStations = count($devicelist["devices"]);
-$numStations = min($numStations,4);
-/*
-$nameStations = array($numStations);
-for($i = 0;$i < $numStations;$i++)
-	$nameStations[$i] = $mesures[$i]['station_name'];
-*/
+
 date_default_timezone_set("Europe/Paris");
 $date_end = time();
 $date_beg = time() - ($nday * 24 * 60 * 60);
@@ -50,6 +45,7 @@ $index = array($numStations);
 $nums = array($numStations);
 $dateBeg = array($numStations);
 $nameStations = array($numStations);
+$ii = array($numStations);
 
 
 for($i = 0;$i < $numStations;$i++)
@@ -66,18 +62,17 @@ for($i = 0;$i < $numStations;$i++)
     $index[$i] = count($mesure[$i])-1;
     $nums[$i] = count($mesure[$i][$index[$i]]["value"]); 
     $dateBeg[$i] = $mesure[$i][$index[$i]]["beg_time"];
-    //$stat = $mesures[$i]['station_name'];
-	//$arr = str_split($stat,12);
-    //$nameStations[$i] = $arr[0];
     $nameStations[$i] = $mesures[$i]['station_name'];
     }
+    
 $num = 0;
 for($i = 0;$i < $numStations;$i++)
 	$num = max($num,$nums[$i]);
+
 $date_beg = $dateBeg[0];
 for($i = 1;$i < $numStations;$i++)
 	$date_beg = min($date_beg,$dateBeg[$i]);
-$date = date('d/m/Y',$date_beg);
+//$date = date('d/m/Y',$date_beg);
  
 
 echo("
@@ -88,72 +83,62 @@ echo("
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);
+      
       function drawChart() {
               var data = new google.visualization.DataTable();              
 	          data.addColumn('string', 'Date');
 ");
 	        for($i = 0;$i < $numStations;$i++)
-	          	{$name = explode(" ",$nameStations[$i]);
+	          	{$ii[$i] = 0;
+	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data.addColumn('number', \"$name[0]\");\n");
 				echo("data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
 	          	}
-
-			for($i = $numStations;$i < 4;$i++) 	        	
-	        	{echo("data.addColumn('number', '');\n"); 
-				echo("data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
-	          	}
-	        echo("data.addColumn('number', '');\n"); 	 
-  	
-			$i0 = $i1 = $i2 = $i3 = 0;
+	        echo("data.addColumn('number', '');\n"); 	   	
             for($i=0; $i <$num;++$i)
             	{$itime = $date_beg + ($i * 24*60*60);
             	$idate = date("d/m/y",$itime);
-            	$tmin0 = $tmin1 = $tmin2 = $tmin3 = '';
-            	if($itime >= $dateBeg[0]) {$tmin0 = $mesure[0][$index[0]]["value"][$i0++][0];} 
-            	if($numStations > 1 && $itime >= $dateBeg[1]) {$tmin1 = $mesure[1][$index[1]]["value"][$i1++][0];} 
-            	if($numStations > 2 && $itime >= $dateBeg[2]) {$tmin2 = $mesure[2][$index[2]]["value"][$i2++][0];} 
-            	if($numStations > 3 && $itime >= $dateBeg[3]) {$tmin3 = $mesure[3][$index[3]]["value"][$i3++][0];} 
-                echo("data.addRow([\"$idate\",$tmin0,'$tmin0',$tmin1,'$tmin1',$tmin2,'$tmin2',$tmin3,'$tmin3',0]);\n");                            
+				echo("data.addRow([\"$idate\"");
+            	for($j = 0; $j < $numStations;$j++)
+            		{$tmin0 = '';
+            		if($itime >= $dateBeg[$j]) {$tmin0 = $mesure[$j][$index[$j]]["value"][$ii[$j]++][0];}
+            		echo(",$tmin0,'$tmin0'"); 
+            		}
+            	echo(",0]);\n"); 	
                 }
-            for($i = 9; $i > 2*$numStations;$i--)	
-				echo("data.removeColumn($i);\n");				 
+				echo("data.removeColumn(1+2*$numStations);\n");				 
 
 echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');
 ");
-
+			
 	        for($i = 0;$i < $numStations;$i++)
-	          	{$name = explode(" ",$nameStations[$i]);
+	          	{$ii[$i] = 0;
+	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data1.addColumn('number', \"$name[0]\");\n");
 				echo("data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
 	          	}
-			for($i = $numStations;$i < 4;$i++) 	        	
-	        	{echo("data1.addColumn('number', '');\n");  
- 				echo("data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
-	          	}
 	        echo("data1.addColumn('number', '');\n"); 	 
- 
-
- 			$i0 = $i1 = $i2 = $i3 = 0;		
             for($i=0; $i <$num;++$i)
-            	{$itime = $date_beg + ($i * 24 * 60 * 60);
+            	{$itime = $date_beg + ($i * 24*60*60);
             	$idate = date("d/m/y",$itime);
-            	$tmin0 = $tmin1 = $tmin2 = $tmin3 = '';
-            	if($itime >= $dateBeg[0]) {$tmin0 = $mesure[0][$index[0]]["value"][$i0++][1];} 
-            	if($numStations > 1 && $itime >= $dateBeg[1]) {$tmin1 = $mesure[1][$index[1]]["value"][$i1++][1];} 
-            	if($numStations > 2 && $itime >= $dateBeg[2]) {$tmin2 = $mesure[2][$index[2]]["value"][$i2++][1];} 
-            	if($numStations > 3 && $itime >= $dateBeg[3]) {$tmin3 = $mesure[3][$index[3]]["value"][$i3++][1];} 
-                echo("data1.addRow([\"$idate\",$tmin0,'$tmin0',$tmin1,'$tmin1',$tmin2,'$tmin2',$tmin3,'$tmin3',0]);\n");                
-                }                
-            for($i = 9; $i > 2*$numStations;$i--)
-				echo("data1.removeColumn($i);\n");				 
+				echo("data1.addRow([\"$idate\"");
+            	for($j = 0; $j < $numStations;$j++)
+            		{$tmin0 = '';
+            		if($itime >= $dateBeg[$j]) {$tmin0 = $mesure[$j][$index[$j]]["value"][$ii[$j]++][1];}
+            		echo(",$tmin0,'$tmin0'"); 
+            		}
+            	echo(",0]);\n"); 	
+                }
+				echo("data1.removeColumn(1+2*$numStations);\n");				 
+ 	
                                   
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
-             chart.draw(data, {title: 'Températures minimales extérieures' ,colors: ['blue','red', 'green', 'orange', '#eeeeee', '#f6c7b6'],focusTarget: 'category'} );
+             chart.draw(data, {title: 'Températures minimales extérieures' ,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
              var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
-             chart1.draw(data1, {title: 'Températures maximales extérieures' ,colors: ['blue','red', 'green', 'orange', '#eeeeee', '#f6c7b6'],focusTarget: 'category'} );
+             chart1.draw(data1, {title: 'Températures maximales extérieures' ,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
             
              }  
           </script>
