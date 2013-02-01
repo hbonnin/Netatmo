@@ -101,6 +101,8 @@ echo("
                 $maxTip = tip($tmax,$tmaxDate);         	               
                 echo("data.addRow([\"$idate\",$tmax,'$maxTip',$tmin,'$minTip']);\n");                
                 }
+                $titleEXT = '"Extérieur: ' . $stat0 .'"';
+
 // températures Intérieures                
 echo("
               var data1 = new google.visualization.DataTable();
@@ -125,23 +127,29 @@ echo("
                 $minTip = tip($tmin,$tminDate);         	               
                 $maxTip = tip($tmax,$tmaxDate);         	               
                 echo("data1.addRow([\"$idate\",$tmax,'$maxTip',$tmin,'$minTip']);\n");                
-                }                                  
+                }                     
+			$titleINT = '"Intérieur: ' . $stat0 .'"';
+             
 echo("                   
-             var chartExterieur = new google.visualization.LineChart(document.getElementById('chartExterieur_div'));
-             chartExterieur.draw(data, { title: 'Extérieur',focusTarget: 'category',colors: ['red', 'blue']});
-              var chartInterieur = new google.visualization.LineChart(document.getElementById('chartInterieur_div'));
-             chartInterieur.draw(data1, { title: 'Intérieur' ,focusTarget: 'category',colors: ['red', 'blue']});
+             var chartExterieur = new google.visualization.LineChart(document.getElementById('chartExterieur'));
+             chartExterieur.draw(data, { title: $titleEXT,focusTarget: 'category',colors: ['red', 'blue']});
+             var chartInterieur = new google.visualization.LineChart(document.getElementById('chartInterieur'));
+             chartInterieur.draw(data1, { title: $titleINT ,focusTarget: 'category',colors: ['red', 'blue']});
             
              }  
           </script>
   </head>
   <body>
   	<center>
-  	<h2>Températures extrêmes de $stat0</h2>
+  	<!--<h2>Températures extrêmes de $stat0</h2>
     <table>
     <tr><td id='chartInterieur_div' style='width: 600px; height: 600px; border:2px solid white;'>
     </td><td id='chartExterieur_div' style='width: 600px; height: 600px; border:2px solid white;'>
-    </td></tr></table>
+    </td></tr></table>-->
+    
+    <div id='chartInterieur' style='width:100%; height:50%;'></div>
+    <div id='chartExterieur' style='width:100%; height:50%; '></div>
+
     </center>
   </body>
 </html>

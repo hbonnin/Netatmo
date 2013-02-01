@@ -92,8 +92,9 @@ echo("
                 $hum = $meas[$index]["value"][$i][2]/4;
                 $tooltip = sprintf('%s: \nHumidité %%:%d',$idate , ($hum)*4);            
                 echo("data.addRow([\"$idate\",$tmin,$tmax,$hum,'$tooltip']);\n");                
-                }
-			$title = "'Extérieur'";  
+                } 
+			$title = '"Extérieur: ' . $stat0 .'"';
+
 echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');
@@ -123,7 +124,7 @@ echo("
                 $noise = $meas1[$index]["value"][$i][4];
                 echo("data1.addRow([\"$idate\",$temp,$hum,$co,'$tipCO2',$pres,'$tipPRES',$noise]);\n");                
                 }
-			$title1 = "'Intérieur'";
+			$title1 = '"Intérieur: ' . $stat0 .'"';
 			
        	                    
                                    
@@ -138,12 +139,18 @@ echo("
   </head>
   <body>
     <center>
-  	<h2>Graphiques de $stat0</h2>
-
-    <table>
+  	<!--<h3>Graphiques de $stat0</h3>
+	<table>
     <tr><td id='chart1_div' style='width: 600px; height: 600px; border:2px solid white;'>
     </td><td id='chart_div' style='width: 600px; height: 600px; border:2px solid white;'>
-    </td></tr></table>
+    </td></tr></table>-->
+
+    <div id='chart1_div' style='width:100%; height:50%;'></div>
+    <div id='chart_div' style='width:100%; height:50%; '></div>
+
+    
+    
+    
     </center>
   </body>
 </html>

@@ -150,23 +150,28 @@ echo("
 				echo("data1.removeColumn($i);\n");				 
                                   
 echo("                   
-             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, {title: 'Minimales' ,colors: ['blue','red', 'green', 'orange', '#eeeeee', '#f6c7b6'],focusTarget: 'category'} );
-             var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: 'Maximales' ,colors: ['blue','red', 'green', 'orange', '#eeeeee', '#f6c7b6'],focusTarget: 'category'} );
+             var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
+             chart.draw(data, {title: 'Températures minimales extérieures' ,colors: ['blue','red', 'green', 'orange', '#eeeeee', '#f6c7b6'],focusTarget: 'category'} );
+             var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
+             chart1.draw(data1, {title: 'Températures maximales extérieures' ,colors: ['blue','red', 'green', 'orange', '#eeeeee', '#f6c7b6'],focusTarget: 'category'} );
             
              }  
           </script>
   </head>
   <body>
   	<center>
+  	<!--
   	<h2>Températures extérieures depuis le $date</h2>
     <table>
     <tr><td id='chart_div' style='width: 600px; height: 600px; border:1px solid white;'>
     </td>
     <td id='chart1_div' style='width: 600px; height: 600px; border:1px solid white;'>
     </td>
-    </tr></table>
+    </tr></table>-->
+    
+    <div id='chartMin' style='width:100%; height:50%;'></div>
+    <div id='chartMax' style='width:100%; height:50%; '></div>
+
     </center>
   </body>
 </html>
