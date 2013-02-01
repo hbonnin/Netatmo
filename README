@@ -6,7 +6,7 @@ The server needs to have a php version >= 5, with curl and json enabled.
 Main windows :
 	
 	- Display on a Google map all the stations with their last measures
-	- Graphics of the temperatures of up to 4 stations, 
+	- Graphics of the temperatures of all stations, 
 	  from a given date
 	- Graphics of all measures of one station, 
 	  from a given date
