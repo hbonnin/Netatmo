@@ -1,23 +1,15 @@
 <?php
-/*
-Authentication to Netatmo Server with the user credentials grant
-*/
 
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 
-if(isset($argc) && $argc >1)
-	{$stationId=0; $nday=30;}
-else {	 
-$stationId = $_GET["station"];
-$date0 = $_GET["date0"];
+$date0 = $_POST['date0'];
 $txt = explode("/",$date0);
 $date1 = $txt[1] . "/" . $txt[0] . "/" . $txt[2];
 $timestamp = strtotime($date1);
 $nday=(time() - strtotime($date1))/(24*60*60); 
 $nday = intval($nday + .5);
 if($nday <= 0)$nday = 2;
-}
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 $helper = new NAApiHelper();
@@ -35,9 +27,22 @@ $devicelist = $helper->SimplifyDeviceList($devicelist);
 $mesures = $helper->GetLastMeasures($client,$devicelist);
 $numStations = count($devicelist["devices"]);
 
+$view = array($numStations);
+for($i = 0 ;$i < $numStations; $i++)
+	$view[$i] = 0;
+
+foreach($_POST['stats'] as $chkbx)
+		{$view[$chkbx] = 1;
+		}
+$numview = 0;
+for($i = 0 ;$i < $numStations; $i++)
+	if($view[$i])++$numview;
+	
+if($numview == 0){echo("Il faut au moins une station...");return;} 	
+
 date_default_timezone_set("Europe/Paris");
 $date_end = time();
-$date_beg = time() - ($nday * 24 * 60 * 60);
+$date_beg = time() - ($nday * 24 * 60 * 60); 
 $date = date('d/m/Y',$date_beg);
 
 $mesure = array($numStations);
@@ -72,8 +77,6 @@ for($i = 0;$i < $numStations;$i++)
 $date_beg = $dateBeg[0];
 for($i = 1;$i < $numStations;$i++)
 	$date_beg = min($date_beg,$dateBeg[$i]);
-//$date = date('d/m/Y',$date_beg);
- 
 
 echo("
 <html>
@@ -89,7 +92,8 @@ echo("
 	          data.addColumn('string', 'Date');
 ");
 	        for($i = 0;$i < $numStations;$i++)
-	          	{$ii[$i] = 0;
+	          	{if($view[$i] == 0)continue;
+	          	$ii[$i] = 0;
 	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data.addColumn('number', \"$name[0]\");\n");
 				echo("data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
@@ -100,13 +104,14 @@ echo("
             	$idate = date("d/m/y",$itime);
 				echo("data.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
-            		{$tmin0 = '';
+            		{if($view[$j] == 0)continue;
+            		$tmin0 = '';
             		if($itime >= $dateBeg[$j]) {$tmin0 = $mesure[$j][$index[$j]]["value"][$ii[$j]++][0];}
             		echo(",$tmin0,'$tmin0'"); 
             		}
             	echo(",0]);\n"); 	
                 }
-				echo("data.removeColumn(1+2*$numStations);\n");				 
+				echo("data.removeColumn(1+2*$numview);\n");				 
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -114,7 +119,8 @@ echo("
 ");
 			
 	        for($i = 0;$i < $numStations;$i++)
-	          	{$ii[$i] = 0;
+	          	{if($view[$i] == 0)continue;
+	          	$ii[$i] = 0;
 	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data1.addColumn('number', \"$name[0]\");\n");
 				echo("data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
@@ -125,13 +131,14 @@ echo("
             	$idate = date("d/m/y",$itime);
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
-            		{$tmin0 = '';
+            		{if($view[$j] == 0)continue;
+            		$tmin0 = '';
             		if($itime >= $dateBeg[$j]) {$tmin0 = $mesure[$j][$index[$j]]["value"][$ii[$j]++][1];}
             		echo(",$tmin0,'$tmin0'"); 
             		}
             	echo(",0]);\n"); 	
                 }
-				echo("data1.removeColumn(1+2*$numStations);\n");				 
+				echo("data1.removeColumn(1+2*$numview);\n");				 
  	
                                   
 echo("                   
