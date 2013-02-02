@@ -69,21 +69,25 @@ function valider(frm)
 <!--<h4><a href='google.php'>Carte des Stations</a></h4>-->
 
 <table style='border-spacing:5px 30px;'>
-<tr><td>
+<tr><td></td><td>
 	<!-- ################################ -->
 	<!--<form method='get' action='lastALL.php'>-->
-	<form method='get' action='google.php'>
 	<TABLE style='width:300px; border:2px solid grey;'>
 	<caption><b>Dernières mesures</b></caption>
 	<TR><TD HEIGHT=25 >
-	Toutes les stations
+	<form method='get' action='google.php'>
+	<input type='submit' value='Sur une carte'>	
+	</form>
+	</td><td>
+	<form method='get' action='lastALL.php'>
+	<input type='submit' value='Mode texte' style='float:right;'>	
+	</form>
+	
 	</TR></TD>
 	</TABLE>	
-	<input type='submit'>	
-	</form>
 	<td>
 	<!-- ################################ -->	
-	
+<!--	
 	<form method='get' action='compareALL.php' onsubmit='return valider(this)''>
 	<TABLE style='width:300px; border:2px solid grey;'>
 	
@@ -96,7 +100,7 @@ function valider(frm)
 	</table>
 	<input type='submit'>	
 	</form>	
-
+-->
 </td></tr>
 <tr><td>
 	<!-- ################################ -->
@@ -126,6 +130,7 @@ for($i = 0;$i < $num;$i++)
 echo("
 	</table>
 	</TD></TR>	
+	
 	</TABLE>
 	<input type='submit'>
 	</form>	
@@ -160,7 +165,38 @@ echo("
 		<input type='submit'>
 	</form>
 
-</td></tr></table>
+
+
+</td><td>
+	<!-- ################################ -->
+	<form method='post' action='compareALL.php' onsubmit='return valider(this)'>
+	<TABLE  style='width:300px; border:2px solid grey;'>
+	<caption><b>Température extérieures </b></caption>
+	<TR>
+	<TD style='height:25px; width:130px;'>Début des mesures
+	</TD>
+	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value='15/12/2012' onclick='ds_sh(this);' />
+	</TD>
+	</TR><TR>
+	<TD>Choisir une station
+	</TD>
+	<TD>
+	<table>
+");
+for($i = 0;$i < $num;$i++)
+	{$stat = $mesures[$i]['station_name'];
+	$arr = str_split($stat,17);
+    $stat = $arr[0];
+	echo("<tr><td><input type='checkbox' name='stats[]' value='$i' checked='checked' > $stat </td></tr>");
+	}
+echo("
+	</table>
+		</TD></TR></TABLE>
+		<input type='submit'>
+	</form>
+
+</td></tr>
+</table>
 
 
 <!-- Invisible table --> 
