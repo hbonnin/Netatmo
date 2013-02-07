@@ -2,6 +2,7 @@
 
 require_once 'NAApiClient.php';
 require_once 'Config.php';
+require_once 'Geolocalize.php';
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 $helper = new NAApiHelper();
@@ -29,6 +30,7 @@ $numStations = count($devicelist["devices"]);
 $latitude = array($numStations);
 $longitude  = array($numStations);
 $label = array($numStations);
+$slabel = array($numStations);
 
 
 for($i = 0;$i < $numStations;$i++)
@@ -37,11 +39,15 @@ for($i = 0;$i < $numStations;$i++)
     $res = $mesures[$i]["modules"];
     $alt = $devicelist["devices"][$i]["place"]["altitude"];
     $name = $mesures[$i]['station_name'] . ' (' . $alt . 'm)';
-    $txtEXT = sprintf("Ext: %3.1f° %d%% %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
-	$txtINT = sprintf("Int: %3.1f° %d%% %dppm %ddb",$res[0]['Temperature'],$res[0]['Humidity']
+    $places = geolocalize($latitude[$i],$longitude[$i]);
+    $txtEXT = sprintf("<font size=2>Ext:</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
+	$txtINT = sprintf("<font size=2>Int:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
 			,$res[0]['CO2'],$res[0]['Noise']);
-    $label[$i] = '<b>' . $name . '</b><br>' . $txtEXT . '<br>' . $txtINT;
-    //$label[$i] =  $txtEXT . '<br>' . $textINT;
+	if($places == "BAD")		
+    	$label[$i] = '<b>' . $name . '</b><br>' . $txtINT . '<br>' . $txtEXT ;
+	else
+    	$label[$i] = '<b>' . $places[1] . '</b><br><font size=2>' . $places[0] . '</font><br><br>' . $txtINT . '<br>' . $txtEXT;
+    $slabel[$i] = $res[1]['Temperature'] . '°';	      	  
 	}	
 
 echo("
@@ -64,22 +70,19 @@ echo("
 		echo("src='https://maps.googleapis.com/maps/api/js?&sensor=false'>");
 echo("
     </script>
-    <!--<script type='text/javascript' src='StyledMarker.js'></script>-->
+    <script type='text/javascript' src='StyledMarker.js'></script>
     <script type='text/javascript'>
     
-	function createMarker(pos,label,map) 
-	    {//var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:label}),position:pos,map:map});
-		var marker = new google.maps.Marker({'position':pos ,'map':map });
+	function createMarker(pos,label,slabel,map) 
+	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
+		//var marker = new google.maps.Marker({'position':pos ,'map':map });
 		marker.setZIndex(103);
 		var infowindow = new google.maps.InfoWindow({'content'  : label});
 	   	google.maps.event.addListener(marker, 'click', function() 
        		{marker.setZIndex(marker.getZIndex()-1);
-       		//alert('index:'+ marker.getZIndex());
-       		//infowindow.open(map, marker);
        		});  
        google.maps.event.addListener(marker, 'mouseover', function(){infowindow.open(map, marker);});
-       google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);});
-         	 
+       google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);});         	 
     	return marker;  
 		}
 
@@ -89,12 +92,14 @@ echo("
   		var lng = [];
   		var LatLng = [];
   		var label = [];
+  		var slabel = [];
 ");
   		echo("var num = $numStations;\n");
   		for($i = 0;$i < $numStations;$i++)
   			{echo("lat[$i] = $latitude[$i];\n");
   			echo("lng[$i] = $longitude[$i];\n");
   			echo("label[$i] = \"$label[$i]\";\n");
+  			echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   			}
 			
 echo("  				
@@ -115,7 +120,7 @@ echo("
   		map.fitBounds(center)		  		
     	 	
 		for(i=0 ; i < num;i++)
-			markers[i] = createMarker(LatLng[i],label[i],map)
+			markers[i] = createMarker(LatLng[i],label[i],slabel[i],map)
 
 	}
 
