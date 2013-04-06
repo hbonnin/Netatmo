@@ -64,6 +64,7 @@ function valider(frm)
 
 <body>
 
+<a href='http://www.000webhost.com/' target='_blank'><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15' border='0' /></a>
 
 <center>
 <H1> Stations Netatmo</H1>
@@ -253,6 +254,9 @@ echo("
 	<tr><td id='ds_calclass'></td></tr>
 </table>
 
+<!-- START OF HIT COUNTER CODE -->
+<br><script language='JavaScript' src='http://www.counter160.com/js.js?img=11'></script><br><a href='http://www.000webhost.com'><img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' border='0' align='texttop'></a><a href='http://www.hosting24.com'><img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' border='0' align='texttop'></a>
+<!-- END OF HIT COUNTER CODE -->
 
 </center>
 </body>

@@ -7,16 +7,12 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 
 if(isset($argc) && $argc >1)
-	{$stationId=0; $nday=30;}
+	{$stationId=0; $nday=3;}
 else {	 
 $stationId = $_GET["station"];
-$date0 = $_GET["date0"];
-$txt = explode("/",$date0);
-$date1 = $txt[1] . "/" . $txt[0] . "/" . $txt[2];
-$timestamp = strtotime($date1);
-$nday=(time() - strtotime($date1))/(24*60*60); 
-$nday = intval($nday + .5);
-if($nday <= 0)$nday = 1;
+
+$nday = 7;
+//if($nday <= 0)$nday = 1;
 }
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
@@ -44,21 +40,21 @@ $date_beg = time() - ($nday * 24 * 60 * 60);
 $date = date('d/m/Y',$date_beg);
 
 
-    $params = array("scale" => "1day"
-    , "type" => "min_temp,max_temp,Humidity"
+    $params = array("scale" => "3hours"
+    , "type" => "Temperature,Humidity"
     , "date_begin" => $date_beg
     , "date_end" => $date_end
-    , "limit"    => $nday
+    , "limit"    => $nday*8
     , "device_id" => $device_id
     , "module_id" => $module_id);
     $meas = $client->api("getmeasure", "POST", $params);
     
     
-    $params = array("scale" => "1day"
-    , "type" => "min_temp,Humidity,CO2,Pressure,max_noise"
+    $params = array("scale" => "3hours"
+    , "type" => "Temperature,Humidity,CO2,Pressure,Noise"
     , "date_begin" => $date_beg
     , "date_end" => $date_end
-    , "limit"    => $nday
+    , "limit"    => $nday*8
     , "device_id" => $device_id);
     $meas1 = $client->api("getmeasure", "POST", $params);
 
@@ -74,33 +70,29 @@ echo("
       function drawChart() {
               var data = new google.visualization.DataTable();
 	          data.addColumn('string', 'Date');
-        	  data.addColumn('number', 'Tmin °');
-        	  data.addColumn('number', 'Tmax °');        	  
+        	  data.addColumn('number', 'Temperature °');     	  
         	  data.addColumn('number', 'Humidity %');  
               data.addColumn({type: 'string', role: 'tooltip'});
       	  
 ");
-			$index0 = 	count($meas)-1;
- 			for($index = 0; $index <= $index0;++$index)
-				{$num = count($meas[$index]["value"]);
-				$date_beg = $meas[$index]["beg_time"];
-				$date = date('d/m/Y',$date_beg);	
-            	for($i=0; $i <$num;++$i)
-            		{$itime = $date_beg + ($i * 24 * 60 * 60);
-            		$idate = date("d/m/y",$itime);   
-            		$tmin = $meas[$index]["value"][$i][0];
-                	$tmax = $meas[$index]["value"][$i][1];
-                	$hum = $meas[$index]["value"][$i][2]/4;
-                	$tooltip = sprintf('%s: \nHumidité %%:%d',$idate , ($hum)*4);            
-                	echo("data.addRow([\"$idate\",$tmin,$tmax,$hum,'$tooltip']);\n");                
-                	}
+			$index = 	count($meas)-1;
+			$num = count($meas[$index]["value"]);
+			$date_beg = $meas[$index]["beg_time"];
+			$date = date('d/m/Y',$date_beg);	
+            for($i=0; $i <$num;++$i)
+            	{$itime = $date_beg + ($i * 3 * 60 * 60);
+            	$idate = date("D H:i",$itime);   
+            	$temp = $meas[$index]["value"][$i][0];
+                $hum = $meas[$index]["value"][$i][1]/4;
+                $tooltip = sprintf('%s: \nHumidité %%:%d',$idate , ($hum)*4);            
+                echo("data.addRow([\"$idate\",$temp,$hum,'$tooltip']);\n");                
                 } 
 			$title = '"Extérieur: ' . $stat0 .'"';
 
 echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');
-        	  data1.addColumn('number', 'Tmin °');
+        	  data1.addColumn('number', 'Temperature °');
         	  data1.addColumn('number', 'Humidity %');
         	  data1.addColumn('number', 'CO2 ppm');
         	  data1.addColumn({type: 'string', role: 'tooltip'});
@@ -109,24 +101,22 @@ echo("
         	  data1.addColumn('number', 'Noise db');  
         	    
 ");
-  			$index0 = 	count($meas1)-1;
- 			for($index = 0; $index <= $index0;++$index)
-				{$num = count($meas1[$index]["value"]);
-				$date_beg = $meas1[$index]["beg_time"];
-				$date = date('d/m/Y',$date_beg);	
-            	for($i=0; $i <$num;++$i)
-            		{$itime = $date_beg + ($i * 24 * 60 * 60);
-            		$idate = date("d/m/y",$itime);   
-            		$temp = $meas1[$index]["value"][$i][0];
-                	$hum = $meas1[$index]["value"][$i][1];
-                	$co = $meas1[$index]["value"][$i][2];
-                	$co = min($co,1000);$co /= 10;
-                	$tipCO2 = sprintf('%s: \nCO2 ppm:%d',$idate,$co *10);                
-                	$pres = $meas1[$index]["value"][$i][3]-950;
-                	$tipPRES = sprintf('%s: \nPression mb:%d',$idate,$pres +950);
-                	$noise = $meas1[$index]["value"][$i][4];
-                	echo("data1.addRow([\"$idate\",$temp,$hum,$co,'$tipCO2',$pres,'$tipPRES',$noise]);\n");                
-                	}
+  			$index = 	count($meas1)-1;
+			$num = count($meas1[$index]["value"]);
+			$date_beg = $meas1[$index]["beg_time"];
+			$date = date('d/m/Y',$date_beg);	
+            for($i=0; $i <$num;++$i)
+            	{$itime = $date_beg + ($i * 3 * 60 * 60);
+            	$idate = date("D H:i",$itime);   
+            	$temp = $meas1[$index]["value"][$i][0];
+                $hum = $meas1[$index]["value"][$i][1];
+                $co = $meas1[$index]["value"][$i][2];
+                $co = min($co,1000);$co /= 10;
+                $tipCO2 = sprintf('%s: \nCO2 ppm:%d',$idate,$co *10);                
+                $pres = $meas1[$index]["value"][$i][3]-950;
+                $tipPRES = sprintf('%s: \nPression mb:%d',$idate,$pres +950);
+                $noise = $meas1[$index]["value"][$i][4];
+                echo("data1.addRow([\"$idate\",$temp,$hum,$co,'$tipCO2',$pres,'$tipPRES',$noise]);\n");                
                 }
 			$title1 = '"Intérieur: ' . $stat0 .'"';
 			
@@ -134,7 +124,7 @@ echo("
                                    
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, { title: $title,colors: ['blue', 'red', 'green', '#f3b49f', '#f6c7b6'] });
+             chart.draw(data, { title: $title,colors: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] });
               var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
              chart1.draw(data1, { title: $title1 ,colors: ['red', 'green', 'orange', '#aaaaaa', '#aaaaff'] });
             
@@ -150,7 +140,8 @@ echo("
     </td></tr></table>-->
 
     <div id='chart1_div' style='width:100%; height:50%;'></div>
-    <div id='chart_div' style='width:100%; height:50%; '></div>    
+    <div id='chart_div' style='width:100%; height:50%; '></div>
+
     </center>
   </body>
 </html>
