@@ -61,6 +61,7 @@ $ii = array($numStations);
 $keys = array($numStations);
 $nmesures = array($numStations);
 
+
 $minDateBeg = $date_end;
 $num = 0;
 for($i = 0;$i < $numStations;$i++)
