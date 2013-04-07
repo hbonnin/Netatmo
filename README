@@ -5,14 +5,15 @@ The server needs to have a php version >= 5, with curl and json enabled.
 
 Main windows :
 	
-	- Display on a Google map all the stations with their last measures
-	- Display the last measures of all stations on a text page
-	- Graphics of the temperatures of all stations, 
-	  from a given date (five or six seems a limit for visibility)
+	- Display on a Google map all the stations with their last measures,
+	- Display the last measures of all stations on a text page,
+        - Graphics of the measures of the last week of one station (3 hours interval),
+	- BUG in the current version: Graphics of the temperatures of all stations, 
+	  from a given date (five or six seems a limit for visibility),
 	- Graphics of all measures of one station, 
-	  from a given date
+	  from a given date,
 	- Graphics of extremal temperatures of one station,
-	  from a given date   
+	  from a given date.   
 
 Install :
 
