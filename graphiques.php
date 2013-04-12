@@ -5,26 +5,28 @@ require_once 'Config.php';
 date_default_timezone_set("Europe/Paris");
 
 if(isset($argc) && $argc >1)
-	{$stationId=3; 
+	{$stationId=0; 
 	$date_end = time();
 	$date_beg = time() - (7 * 24 * 60 * 60);
 	$interval = "3hours";
 	$inter = 3;
+	$man = 1;
 	}
 else {	 
 	$stationId = $_POST["station"];
+	
 	$date0 = $_POST["date0"];
 	$txt = explode("/",$date0);
 	$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
 	$date1 = $_POST["date1"];
 	$txt = explode("/",$date1);
-	$date_end = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
+	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 	$interval = $_POST["interval"];
-
 	if($interval=="1day")
 		$inter = 24;
 	else
 		$inter = 3;
+	$man = 0;	
 	}
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
@@ -61,6 +63,23 @@ $stat0 = $mesures[$stationId]['station_name'];
     , "optimize" => false
     , "device_id" => $device_id);
     $meas1 = $client->api("getmeasure", "POST", $params);
+
+if($man)
+{
+$keys= array_keys($meas);
+$num = count($keys);
+//print_r($meas);
+for($i=0; $i < $num;++$i)
+	{$key = $keys[$i];  
+	$idate = date("d/m/y H:i",$key);
+	$tmin = $meas[$key][0];
+	$tmax = $meas[$key][1];
+	echo("$i date:$idate tmin:$tmin,tmax:$tmax<br>\n");
+	} 
+}
+
+
+
 
 echo("
 <html>
@@ -106,6 +125,7 @@ echo("
                 echo("data.addRow([\"$idate\",$tmin,'$mintip',$tmax,'$maxtip',$hum,'$humtip',1]);\n"); 
                 $itime += $inter*60*60;
                 }while($break != 1);
+            
            	echo("data.removeColumn(7);\n");				      
 			$title = '"Extérieur: ' . $stat0 .'"';
 			
