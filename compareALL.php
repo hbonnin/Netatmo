@@ -1,21 +1,26 @@
 <?php
 
+$man = 0;
+if(isset($argc) && $argc > 1)
+	$man = 1;
+
+compareALL($man);
+
+function compareALL($man)
+{
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 
-if(isset($argc) && $argc >1)
-	{$stationId=0; $nday=140;
-	$man = 1;
-	}
+
+if($man)
+	$nday = 20;
 else
 	{$date0 = $_POST['date0'];
 	$txt = explode("/",$date0);
 	$date1 = $txt[1] . "/" . $txt[0] . "/" . $txt[2];
 	$nday=(time() - strtotime($date1))/(24*60*60); 
 	$nday = intval($nday + .5);
-	$man = 0;	
 	}
-if($nday <= 0)$nday = 2;
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 $helper = new NAApiHelper();
@@ -36,6 +41,7 @@ $numStations = count($devicelist["devices"]);
 $view = array($numStations);
 for($i = 0 ;$i < $numStations; $i++)
 	$view[$i] = 0;
+
 if($man == 1)
 	$view[0] = $view[3] = 1;
 else	
@@ -61,7 +67,6 @@ $ii = array($numStations);
 $keys = array($numStations);
 $nmesures = array($numStations);
 
-
 $minDateBeg = $date_end;
 $num = 0;
 for($i = 0;$i < $numStations;$i++)
@@ -72,7 +77,7 @@ for($i = 0;$i < $numStations;$i++)
     , "type" => "min_temp,max_temp"
     , "date_begin" => $date_beg
     , "date_end" => $date_end
-    , "limit"    => $nday
+    //, "limit"    => $nday
     , "optimize" => false
     , "device_id" => $device_id
     , "module_id" => $module_id);  
@@ -82,12 +87,13 @@ for($i = 0;$i < $numStations;$i++)
     $dateBeg[$i] = $keys[$i][0];
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
     $nmesures[$i] = count($keys[$i]);
-    $num = max($num,$nmesures[$i]);
     }
     
-//print_r($keys[0]);
+/*
 if($man)
 {
+//print_r($keys[0]);
+
 for($i=0; $i < count($keys[0]);++$i)
 	{$key = $keys[0][$i];  
 	$idate = date("d/m/y H:i",$key);
@@ -103,6 +109,7 @@ for($i=0; $i < count($keys[3]);++$i)
 $idate = date("d/m/y H:i",$minDateBeg);
 echo("debut:$idate");
 }
+*/
 
 echo("
 <html>
@@ -126,10 +133,10 @@ echo("
 	          	}
 	          	
 	        echo("data.addColumn('number', '');\n"); 
-	        $itime = $minDateBeg;
-	        //$itime = $timestamp;	   	
-            for($i = 0; $i < $num;++$i)
-            	{$idate = date("d/m/y",$itime);
+	        $itime = $minDateBeg;   
+	        $i = 0;	
+            	do {
+            	$idate = date("d/m/y",$itime);
 				echo("data.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
@@ -143,7 +150,8 @@ echo("
             		}          		
             	echo(",0]);\n"); 	
             	$itime += 24*60*60;
-                }
+            	++$i;
+                }while($itime < $date_end);
 				echo("data.removeColumn(1+2*$numview);\n");				 
 
 echo("
@@ -160,9 +168,9 @@ echo("
 	          	}
 	          	
 	        echo("data1.addColumn('number', '');\n"); 
-	        $itime = $minDateBeg;	   	
-            for($i=0; $i <$num;++$i)
-            	{$idate = date("d/m/y",$itime);
+	        $itime = $minDateBeg;
+	        $i = 0;   	
+            do	{$idate = date("d/m/y",$itime);
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
@@ -177,7 +185,8 @@ echo("
             		}          		
             	echo(",0]);\n"); 	
             	$itime += 24*60*60;
-                }
+            	++$i;
+                }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
 
                                   
@@ -209,4 +218,5 @@ echo("
   </body>
 </html>
 ");
+}
 ?>
