@@ -2,32 +2,32 @@
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 
-date_default_timezone_set("Europe/Paris");
+date_default_timezone_set("UTC");
 
 if(isset($argc) && $argc >1)
 	{$stationId=0; 
 	$date_end = time();
 	$date_beg = time() - (7 * 24 * 60 * 60);
-	$interval = "3hours";
-	$inter = 3;
+	$interval = "1day";
 	$man = 1;
 	}
 else {	 
-	$stationId = $_POST["station"];
-	
+	$stationId = $_POST["station"];	
 	$date0 = $_POST["date0"];
 	$txt = explode("/",$date0);
-	$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
+	$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 	$date1 = $_POST["date1"];
 	$txt = explode("/",$date1);
 	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 	$interval = $_POST["interval"];
-	if($interval=="1day")
-		$inter = 24;
-	else
-		$inter = 3;
 	$man = 0;	
 	}
+	
+if($interval=="1day")
+	$inter = 24;
+else
+	$inter = 3;
+	
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 $helper = new NAApiHelper();
@@ -46,9 +46,12 @@ $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
 $mesures = $helper->GetLastMeasures($client,$devicelist);
 $stat0 = $mesures[$stationId]['station_name'];
+	$extra = '';
+	if($inter == 24)
+		$extra = ",date_min_temp,date_max_temp";
 
     $params = array("scale" => $interval
-    , "type" => "min_temp,max_temp,Humidity"
+    , "type" => "min_temp,max_temp,Humidity" . $extra
     , "date_begin" => $date_beg
     , "date_end" => $date_end
     , "optimize" => false
@@ -68,17 +71,23 @@ if($man)
 {
 $keys= array_keys($meas);
 $num = count($keys);
-//print_r($meas);
 for($i=0; $i < $num;++$i)
 	{$key = $keys[$i];  
 	$idate = date("d/m/y H:i",$key);
 	$tmin = $meas[$key][0];
 	$tmax = $meas[$key][1];
 	echo("$i date:$idate tmin:$tmin,tmax:$tmax<br>\n");
-	} 
+	} 	
+$idate = date("d/m/y H:i",$date_beg);	
+echo("date_beg:$idate\n");
+$idate = date("d/m/y H:i",$date_end);	
+echo("date_end:$idate\n");
 }
 
-
+date_default_timezone_set("Europe/Paris");
+function tip($temp,$tempDate)
+	{return sprintf('%04.1f :: %s',$temp,date("H:i",$tempDate)); 
+	}    
 
 
 echo("
@@ -116,16 +125,21 @@ echo("
             		{if($ii < $num -1)++$ii;
             		else $break = 1;           			
             		$tmin = $meas[$key][0];
-            		$mintip = sprintf('%04.1f',$tmin);
             		$tmax = $meas[$key][1];
-            		$maxtip = sprintf('%04.1f',$tmax);
+            		if($inter == 24)
+            			{$mintip = tip($tmin,$meas[$key][3]);        		
+            			$maxtip = tip($tmax,$meas[$key][4]); 
+            			}           		
+            		else
+            			{$mintip = sprintf('%04.1f',$tmin);          		
+            			$maxtip = sprintf('%04.1f',$tmax);
+            			}
             		$hum = $meas[$key][2]/4;  
             		$humtip = sprintf('%d', ($hum)*4);           		
             		}
                 echo("data.addRow([\"$idate\",$tmin,'$mintip',$tmax,'$maxtip',$hum,'$humtip',1]);\n"); 
                 $itime += $inter*60*60;
                 }while($break != 1);
-            
            	echo("data.removeColumn(7);\n");				      
 			$title = '"Extérieur: ' . $stat0 .'"';
 			

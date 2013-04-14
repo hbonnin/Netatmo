@@ -4,22 +4,29 @@ $man = 0;
 if(isset($argc) && $argc > 1)
 	$man = 1;
 
+		
 compareALL($man);
 
 function compareALL($man)
 {
 require_once 'NAApiClient.php';
 require_once 'Config.php';
-
+date_default_timezone_set("UTC");
 
 if($man)
-	$nday = 20;
-else
-	{$date0 = $_POST['date0'];
+	{$stationId=0; 
+	$date_end = time();
+	$date_beg = time() - (7 * 24 * 60 * 60);
+	}
+else {	 
+	$stationId = $_POST["station"];	
+	$date0 = $_POST["date0"];
 	$txt = explode("/",$date0);
-	$date1 = $txt[1] . "/" . $txt[0] . "/" . $txt[2];
-	$nday=(time() - strtotime($date1))/(24*60*60); 
-	$nday = intval($nday + .5);
+	//$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+	$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
+	$date1 = $_POST["date1"];
+	$txt = explode("/",$date1);
+	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 	}
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
@@ -55,11 +62,6 @@ for($i = 0 ;$i < $numStations; $i++)
 	
 if($numview == 0){echo("Il faut au moins une station...");return;} 	
 
-date_default_timezone_set("Europe/Paris");
-$date_end = time();
-$date_beg = $date_end - ($nday * 24 * 60 * 60); 
-$date = date('d/m/Y',$date_beg);
-
 $mesure = array($numStations);
 $dateBeg = array($numStations);
 $nameStations = array($numStations);
@@ -74,10 +76,9 @@ for($i = 0;$i < $numStations;$i++)
 	$device_id = $devicelist["devices"][$i]["_id"];
 	$module_id = $devicelist["devices"][$i]["modules"][0]["_id"];
     $params = array("scale" => "1day"
-    , "type" => "min_temp,max_temp"
+    , "type" => "min_temp,max_temp,date_min_temp,date_max_temp"
     , "date_begin" => $date_beg
     , "date_end" => $date_end
-    //, "limit"    => $nday
     , "optimize" => false
     , "device_id" => $device_id
     , "module_id" => $module_id);  
@@ -89,7 +90,7 @@ for($i = 0;$i < $numStations;$i++)
     $nmesures[$i] = count($keys[$i]);
     }
     
-/*
+
 if($man)
 {
 //print_r($keys[0]);
@@ -98,18 +99,19 @@ for($i=0; $i < count($keys[0]);++$i)
 	{$key = $keys[0][$i];  
 	$idate = date("d/m/y H:i",$key);
 	$tmin = $mesure[0][$key][0];
-	echo("$i:$key date:$idate tmin:$tmin<br>\n");
-	} 
-for($i=0; $i < count($keys[3]);++$i)
-	{$key = $keys[3][$i];  
-	$idate = date("d/m/y H:i",$key);
-	$tmin = $mesure[3][$key][0];
-	echo("$i:$key date:$idate tmin:$tmin<br>\n");
+	$tmax = $mesure[0][$key][1];
+	echo("$i:$key date:$idate tmin:$tmin tmax:$tmax <br>\n");
 	} 
 $idate = date("d/m/y H:i",$minDateBeg);
 echo("debut:$idate");
 }
-*/
+
+
+date_default_timezone_set("Europe/Paris");
+function tip($temp,$tempDate)
+	{return sprintf('%04.1f :: %s',$temp,date("H:i",$tempDate)); 
+	}    
+
 
 echo("
 <html>
@@ -140,13 +142,14 @@ echo("
 				echo("data.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
-            		$tmin0 = '';   
+            		$tmin0 = $tip = '';   
             		$key = $keys[$j][$ii[$j]];         		
             		if(abs($key - $itime) < 2*60*60) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
             			$tmin0 = $mesure[$j][$key][0];
-            			}
-            		echo(",$tmin0,'$tmin0'"); 
+            			$tip = tip($tmin0,$mesure[$j][$key][2]);
+            			}        		
+            		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 	
             	$itime += 24*60*60;
@@ -174,14 +177,14 @@ echo("
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
-            		$tmin0 = '';        		
+            		$tmin0 = $tip = '';        		
             		$key = $keys[$j][$ii[$j]]; 
             		if(abs($key - $itime) < 2*60*60)
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];            			
             			$tmin0 = $mesure[$j][$key][1];
-            			}
-
-            		echo(",$tmin0,'$tmin0'"); 
+              			$tip = tip($tmin0,$mesure[$j][$key][3]);
+          			}
+            		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 	
             	$itime += 24*60*60;
@@ -201,16 +204,7 @@ echo("
           </script>
   </head>
   <body>
-  	<center>
-  	<!--
-  	<h2>Températures extérieures depuis le $date</h2>
-    <table>
-    <tr><td id='chart_div' style='width: 600px; height: 600px; border:1px solid white;'>
-    </td>
-    <td id='chart1_div' style='width: 600px; height: 600px; border:1px solid white;'>
-    </td>
-    </tr></table>-->
-    
+  	<center>    
     <div id='chartMin' style='width:100%; height:50%;'></div>
     <div id='chartMax' style='width:100%; height:50%; '></div>
 

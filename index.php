@@ -51,11 +51,14 @@ function valider(frm)
 	var date0 = frm.elements['date0'].value;
 	var saisie = (date0).split('/');
 	var date = new Date(eval(saisie[2]),eval(saisie[1])-1,eval(saisie[0]));
-	var today = new Date();
-	if(today - date <= 24*60*60*1000)	
+	var date1 = frm.elements['date1'].value;
+	var saisie1 = (date1).split('/');
+	var endday = new Date(eval(saisie1[2]),eval(saisie1[1])-1,eval(saisie1[0]));	
+	//var today = new Date();
+	if(endday - date <= 24*60*60*1000)	
 		{frm.date0.focus();		
 		alert('Date ' + date.getDate() +'/'+ (date.getMonth()+1) +'/'+ date.getFullYear()
-		 +' non inférieure à '+ today.getDate() +'/'+ (today.getMonth()+1) +'/'+ today.getFullYear() );
+		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
     	return false;
     	}
     else
@@ -125,18 +128,16 @@ function valider2(frm)
 <td>
 	<!-- ################################ -->
 	<form method='post' action='graphiques.php' onsubmit='return valider2(this)'>	
-	<TABLE  style='width:340px; height:215px; border:2px solid grey;'>
+	<!--<TABLE  style='width:420px; height:215px; border:2px solid grey;'>-->
+	<TABLE  style='width:420px; height:215px; border:2px solid grey;'>
 	<caption><b>Graphiques d'une station</b></caption>
 	<TR>
-	<TD style='height:25px; width:150px;'>Début des mesures
+	<TD style='height:25px; width:200px;'>Début des mesures
 	</TD>
-	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);' />
-	</TD>
+	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);'></TD>
 	</TR><TR>
-	<TD style='height:25px; width:150px;'>Fin des mesures
-	</TD>
-	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);' />
-	</TD>
+	<TD style='height:25px;'>Fin des mesures</TD>
+	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
 	</TR><TR>
 	<TD>Intervalle des mesures
 	</TD>
@@ -171,18 +172,19 @@ echo("
 <td>
 	<!-- ################################ -->
 	<form method='post' action='compareALL.php' onsubmit='return valider(this)'>
-	<TABLE  style='width:340px; height:215px; border:2px solid grey;'>
+	<TABLE  style='border:2px solid grey;'>
 	<caption><b>Comparaison des température extérieures </b></caption>
 	<TR>
-	<TD style='height:25px; width:130px;'>Début des mesures
+	<TD style='height:25px; width:200px;'>Début des mesures
 	</TD>
-	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value='15/12/2012' onclick='ds_sh(this);' />
-	</TD>
-	</TR>
-	<TR><td>&nbsp; </td></TR>
+	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);' />
+	</TD></TR>
+	<tr>
+	<TD style='height:25px;'>Fin des mesures</TD>
+	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
+    </tr>
 	<TR><td>&nbsp; </td></TR>
 	<TR>
-	
 	<TD>Choisir une station
 	</TD>
 	<TD>
