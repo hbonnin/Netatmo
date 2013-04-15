@@ -86,7 +86,7 @@ echo("date_end:$idate\n");
 
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
-	{return sprintf('%04.1f :: %s',$temp,date("H:i",$tempDate)); 
+	{return sprintf('%4.1f :: %s',$temp,date("H:i",$tempDate)); 
 	}    
 
 
@@ -101,9 +101,9 @@ echo("
       function drawChart() {
               var data = new google.visualization.DataTable();
 	          data.addColumn('string', 'Date');
-        	  data.addColumn('number', 'Tmin °'); 
+        	  data.addColumn('number', 'Tmax °'); 
         	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  
-        	  data.addColumn('number', 'Tmax °');     	  
+        	  data.addColumn('number', 'Tmin °');     	  
         	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data.addColumn('number', 'Humidity %');  
               data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });
@@ -137,7 +137,7 @@ echo("
             		$hum = $meas[$key][2]/4;  
             		$humtip = sprintf('%d', ($hum)*4);           		
             		}
-                echo("data.addRow([\"$idate\",$tmin,'$mintip',$tmax,'$maxtip',$hum,'$humtip',1]);\n"); 
+                echo("data.addRow([\"$idate\",$tmax,'$maxtip',$tmin,'$mintip',$hum,'$humtip',1]);\n"); 
                 $itime += $inter*60*60;
                 }while($break != 1);
            	echo("data.removeColumn(7);\n");				      
@@ -146,14 +146,14 @@ echo("
 echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');
-        	  data1.addColumn('number', 'Tmin °');
         	  data1.addColumn('number', 'Tmax °');
+        	  data1.addColumn('number', 'Tmin °');
         	  data1.addColumn('number', 'Humidity %');
         	  data1.addColumn('number', 'CO2 ppm');
         	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data1.addColumn('number', 'Pres mb');
         	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
-        	  data1.addColumn('number', 'Noise db');  
+        	  data1.addColumn('number', 'Noise Max db');  
           	  data1.addColumn('number', '');   	         	    
 ");
  			$keys= array_keys($meas1);
@@ -180,7 +180,7 @@ echo("
                 	$tipPRES = sprintf('%d',$pres +970);
                 	$noise = $meas1[$key][5];
                 	}
-                echo("data1.addRow([\"$idate\",$tmin,$tmax,$hum,$co,'$tipCO2',$pres,'$tipPRES',$noise,1]);\n");                
+                echo("data1.addRow([\"$idate\",$tmax,$tmin,$hum,$co,'$tipCO2',$pres,'$tipPRES',$noise,1]);\n");                
                 $itime += $inter*60*60;
                 }while($break != 1);
             echo("data1.removeColumn(9);\n");				      
@@ -188,9 +188,9 @@ echo("
                                   
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, { title: $title,focusTarget: 'category',colors: ['blue','red', 'green', 'blue', '#f3b49f', '#f6c7b6'] });
+             chart.draw(data, {title: $title,pointSize:3,focusTarget: 'category',colors: ['red','blue','green'] });
               var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, { title: $title1 ,focusTarget: 'category',colors: ['blue','red', 'green', 'orange', '#aaaaaa', '#aaaaff'] });
+             chart1.draw(data1, {title: $title1,pointSize:3,focusTarget: 'category',colors: ['red','blue','green','orange','brown','pink'] });
             
              }  
           </script>
