@@ -92,8 +92,6 @@ function valider2(frm)
     	{alert('plus de 1024 mesures');
     	return false;
     	}	
-    //frm.date1.focus();	
-    //alert(i +'  '+ inter + ' '+ (endday - date)/(24*60*60*1000));
     return true;
   }
 
@@ -183,7 +181,14 @@ echo("
 	<TD style='height:25px;'>Fin des mesures</TD>
 	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
     </tr>
-	<TR><td>&nbsp; </td></TR>
+	<TR><td>Intervalle des mesures</td>
+	<td>
+	<select name='switch'>
+		<option value='1week'> 1 semaine</option>
+		<option value='1day'> 1 journée </option>
+	<select>
+	
+	</td></TR>
 	<TR>
 	<TD>Choisir une station
 	</TD>

@@ -14,19 +14,19 @@ require_once 'Config.php';
 date_default_timezone_set("UTC");
 
 if($man)
-	{$stationId=0; 
+	{
 	$date_end = time();
-	$date_beg = time() - (7 * 24 * 60 * 60);
+	$date_beg = time() - (70 * 24 * 60 * 60);
+	$interval = '1week';
 	}
-else {	 
-	$stationId = $_POST["station"];	
+else {	 	
 	$date0 = $_POST["date0"];
 	$txt = explode("/",$date0);
-	//$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 	$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
 	$date1 = $_POST["date1"];
 	$txt = explode("/",$date1);
 	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+	$interval = $_POST["switch"];
 	}
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
@@ -70,12 +70,12 @@ $keys = array($numStations);
 $nmesures = array($numStations);
 
 $minDateBeg = $date_end;
-$num = 0;
+
 for($i = 0;$i < $numStations;$i++)
 	{if($view[$i] == 0)continue;
 	$device_id = $devicelist["devices"][$i]["_id"];
 	$module_id = $devicelist["devices"][$i]["modules"][0]["_id"];
-    $params = array("scale" => "1day"
+    $params = array("scale" => $interval
     , "type" => "min_temp,max_temp,date_min_temp,date_max_temp"
     , "date_begin" => $date_beg
     , "date_end" => $date_end
@@ -105,11 +105,18 @@ for($i=0; $i < count($keys[0]);++$i)
 $idate = date("d/m/y H:i",$minDateBeg);
 echo("debut:$idate");
 }
+//$idate = date("d/m/y H:i",$minDateBeg);
+//$iidate = date("d/m/y H:i",$date_beg);
+//echo("debut:$iidate  $idate");
 
+if($interval == "1week")
+	$inter = 7;
+else
+	$inter = 1;	
 
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
-	{return sprintf('%04.1f :: %s',$temp,date("H:i",$tempDate)); 
+	{return sprintf('%4.1f :: %s',$temp,date("H:i",$tempDate)); 
 	}    
 
 
@@ -152,7 +159,7 @@ echo("
             		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 	
-            	$itime += 24*60*60;
+            	$itime += $inter*24*60*60;
             	++$i;
                 }while($itime < $date_end);
 				echo("data.removeColumn(1+2*$numview);\n");				 
@@ -187,7 +194,7 @@ echo("
             		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 	
-            	$itime += 24*60*60;
+            	$itime += $inter*24*60*60;
             	++$i;
                 }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
@@ -195,9 +202,9 @@ echo("
                                   
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
-             chart.draw(data, {title: 'Températures minimales extérieures' ,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
+             chart.draw(data, {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
              var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
-             chart1.draw(data1, {title: 'Températures maximales extérieures' ,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
+             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
             
              } // draw chart 
             
@@ -212,5 +219,6 @@ echo("
   </body>
 </html>
 ");
+
 }
 ?>
