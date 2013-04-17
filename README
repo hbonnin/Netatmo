@@ -8,8 +8,8 @@ Main windows :
 	- Display on a Google map all the stations with their last measures,
 	- Display the last measures of all stations on a text page,
         - Graphics of the measures of one station (3 hours or 1 day interval for a given period),
-	- Graphics of the temperatures of selected stations, 
-	  from a given date (five or six seems a limit for visibility).
+	- Graphics of the temperatures of selected stations (1 day or 1 week), 
+	  five or six stations seems a limit for visibility.
    
 
 Install :
