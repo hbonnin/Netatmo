@@ -49,34 +49,13 @@ echo("
 function valider(frm)
 	{
 	var date0 = frm.elements['date0'].value;
-	var saisie = (date0).split('/');
-	var date = new Date(eval(saisie[2]),eval(saisie[1])-1,eval(saisie[0]));
-	var date1 = frm.elements['date1'].value;
-	var saisie1 = (date1).split('/');
-	var endday = new Date(eval(saisie1[2]),eval(saisie1[1])-1,eval(saisie1[0]));	
-	//var today = new Date();
-	if(endday - date <= 24*60*60*1000)	
-		{frm.date0.focus();		
-		alert('Date ' + date.getDate() +'/'+ (date.getMonth()+1) +'/'+ date.getFullYear()
-		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
-    	return false;
-    	}
-    else
-    	return true;
-  }
-function valider2(frm)
-	{
-	var date0 = frm.elements['date0'].value;
-	var tab = frm.elements['interval'];
+	var tab = frm.elements['select'];
 	for (var i = 0;i < tab.length;i++)
-		{if(tab[i].checked)
+		{if(tab[i].selected)
 			{var inter = tab[i].value;
 			break;
 			}
 		}
-	// i=0 1day  i=1 3hours	
-	var limit = 1024;
-	if(i == 1)limit = limit/8;		
 	var saisie = (date0).split('/');
 	var date = new Date(eval(saisie[2]),eval(saisie[1])-1,eval(saisie[0]));
 	var date1 = frm.elements['date1'].value;
@@ -88,10 +67,16 @@ function valider2(frm)
 		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
     	return false;
     	}
-    if(endday - date > limit*24*60*60*1000) 
-    	{alert('plus de 1024 mesures');
+ 	// i=0 1week i=0 1day  i=1 3hours	
+	var nmesure = (endday-date)/(24*60*60*1000);
+	if(i == 3)nmesure *= 8;
+	else if(i == 0)nmesure /= 7;
+	nmesure = Math.floor(nmesure+.5);		  	
+    if(nmesure > 1024) 
+    	{alert(nmesure + ' > 1024 mesures');
     	return false;
     	}	
+    //alert('mesures: ' + nmesure);
     return true;
   }
 
@@ -125,9 +110,10 @@ function valider2(frm)
 <tr>
 <td>
 	<!-- ################################ -->
-	<form method='post' action='graphiques.php' onsubmit='return valider2(this)'>	
-	<!--<TABLE  style='width:420px; height:215px; border:2px solid grey;'>-->
-	<TABLE  style='width:420px; height:215px; border:2px solid grey;'>
+	<form method='post' action='graphiques.php' onsubmit='return valider(this)'>	
+	<!--<TABLE  style='width:420px; height:215px; border:2px solid grey;'>
+	<TABLE  style='width:420px; height:215px; border:2px solid grey;'>-->
+	<TABLE  style='border:2px solid grey;'>
 	<caption><b>Graphiques d'une station</b></caption>
 	<TR>
 	<TD style='height:25px; width:200px;'>Début des mesures
@@ -140,8 +126,13 @@ function valider2(frm)
 	<TD>Intervalle des mesures
 	</TD>
 	<td><table>
-	<tr><td><input type='radio' name='interval' value='1day' checked='checked'> 1 journée</td>
-	<td><input type='radio' name='interval' value='3hours'> 3 heures	</td></tr>
+	<select name='select'>
+		<option value='1week'> 1 semaine </option>
+		<option value='1day' selected='selected'> 1 journée </option>
+		<option value='3hours' > 3 heures </option>
+	</select>
+	</td></tr>
+
 	</table>
 	</TR><TR>
 	<TD>Choisir une station
@@ -183,7 +174,7 @@ echo("
     </tr>
 	<TR><td>Intervalle des mesures</td>
 	<td>
-	<select name='switch'>
+	<select name='select'>
 		<option value='1week'> 1 semaine</option>
 		<option value='1day'> 1 journée </option>
 	<select>

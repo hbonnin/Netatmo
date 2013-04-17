@@ -19,11 +19,13 @@ else {
 	$date1 = $_POST["date1"];
 	$txt = explode("/",$date1);
 	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-	$interval = $_POST["interval"];
+	$interval = $_POST["select"];
 	$man = 0;	
 	}
 	
-if($interval=="1day")
+if($interval=="1week")
+	$inter = 7*24;
+else if($interval=="1day")
 	$inter = 24;
 else
 	$inter = 3;
@@ -47,9 +49,9 @@ $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
 $mesures = $helper->GetLastMeasures($client,$devicelist);
 $stat0 = $mesures[$stationId]['station_name'];
 	$extra = '';
-	if($inter == 24)
+	if($inter > 3)
 		$extra = ",date_min_temp,date_max_temp";
-
+	// exterieur
     $params = array("scale" => $interval
     , "type" => "min_temp,max_temp,Humidity" . $extra
     , "date_begin" => $date_beg
@@ -58,7 +60,8 @@ $stat0 = $mesures[$stationId]['station_name'];
     , "device_id" => $device_id
     , "module_id" => $module_id);
     $meas = $client->api("getmeasure", "POST", $params);
- 	    
+ 
+ 	// interieur    
     $params = array("scale" => $interval
     , "type" => "min_temp,max_temp,Humidity,CO2,Pressure,max_noise"
     , "date_begin" => $date_beg
@@ -86,9 +89,10 @@ echo("date_end:$idate\n");
 
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
-	{return sprintf('%4.1f :: %s',$temp,date("H:i",$tempDate)); 
+	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
 
+$visupt = '';
 
 echo("
 <html>
@@ -110,7 +114,8 @@ echo("
          	  data.addColumn('number', '');   	  
 ");
  			$keys= array_keys($meas);
-			$num = count($keys);	
+			$num = count($keys);
+			if($num <= 61)$visupt = ",pointSize:3";	
 			$itime = $keys[0];  
 	        $ii = $break = 0;	
             do
@@ -141,7 +146,7 @@ echo("
                 $itime += $inter*60*60;
                 }while($break != 1);
            	echo("data.removeColumn(7);\n");				      
-			$title = '"Extérieur: ' . $stat0 .'"';
+			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    
 			
 echo("
               var data1 = new google.visualization.DataTable();
@@ -184,13 +189,13 @@ echo("
                 $itime += $inter*60*60;
                 }while($break != 1);
             echo("data1.removeColumn(9);\n");				      
-			$title1 = '"Intérieur: ' . $stat0 .'"';       	                    
+			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    
                                   
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, {title: $title,pointSize:3,focusTarget: 'category',colors: ['red','blue','green'] });
+             chart.draw(data, {title: $title $visupt,focusTarget: 'category',colors: ['red','blue','green'] });
               var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: $title1,pointSize:3,focusTarget: 'category',colors: ['red','blue','green','orange','brown','pink'] });
+             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',colors: ['red','blue','green','orange','brown','pink'] });
             
              }  
           </script>

@@ -26,7 +26,7 @@ else {
 	$date1 = $_POST["date1"];
 	$txt = explode("/",$date1);
 	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-	$interval = $_POST["switch"];
+	$interval = $_POST["select"];
 	}
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
@@ -116,7 +116,7 @@ else
 
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
-	{return sprintf('%4.1f :: %s',$temp,date("H:i",$tempDate)); 
+	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
 
 
