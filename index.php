@@ -67,18 +67,32 @@ function valider(frm)
 		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
     	return false;
     	}
- 	// i=0 1week i=0 1day  i=1 3hours	
+ 	// i=0 1week i=1 1day  i=2 3hours i=3 30minute	
 	var nmesure = (endday-date)/(24*60*60*1000);
-	if(i == 3)nmesure *= 8;
+	if(i == 2)nmesure *= 8;
+	else if(i == 3){nmesure *= 48;return true;}
 	else if(i == 0)nmesure /= 7;
 	nmesure = Math.floor(nmesure+.5);		  	
     if(nmesure > 1024) 
     	{alert(nmesure + ' > 1024 mesures');
     	return false;
     	}	
-    //alert('mesures: ' + nmesure);
+    alert(i + ' mesures: ' + nmesure);
     return true;
   }
+  function Enable(x)
+  	{	
+    var el = document.getElementById('id_date1');
+    if(x == true)
+		{el.style.color = 'black';
+		el.disabled=false;
+		}
+	else
+		{el.style.color = 'red';
+		el.disabled=true;
+		}	
+    return true;
+  	}
 
 //]]>
 </script>
@@ -118,7 +132,7 @@ function valider(frm)
 	<TR>
 	<TD style='height:25px; width:200px;'>Début des mesures
 	</TD>
-	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);'></TD>
+	<TD><input id='id_date1' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);'></TD>
 	</TR><TR>
 	<TD style='height:25px;'>Fin des mesures</TD>
 	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
@@ -127,9 +141,10 @@ function valider(frm)
 	</TD>
 	<td><table>
 	<select name='select'>
-		<option value='1week'> 1 semaine </option>
-		<option value='1day' selected='selected'> 1 journée </option>
-		<option value='3hours' > 3 heures </option>
+		<option value='1week' onclick='Enable(true);'> 1 semaine </option>
+		<option value='1day' onclick='Enable(true);' selected='selected'> 1 journée </option>
+		<option value='3hours' onclick='Enable(true);' > 3 heures </option>
+		<option value='30min' onclick='Enable(false);' > 30 minutes </option>
 	</select>
 	</td></tr>
 
