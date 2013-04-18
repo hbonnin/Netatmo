@@ -3,7 +3,7 @@ Netatmo
 Netatmo uses the Netatmo php sdk and some Google development tools for the graphics.
 The server needs to have a php version >= 5, with curl and json enabled.
 
-Main windows :
+Main windows:
 	
 	- Display on a Google map all the stations with their last measures,
 	- Display the last measures of all stations on a text page,
@@ -11,11 +11,15 @@ Main windows :
           (30 minutes, 3 hours, 1 day or 1 week interval for a given period),
 	- Graphics of the temperatures of selected stations (1 day or 1 week), 
 	  five or six stations seems a limit for visibility.
-   
 
-Install :
+Remarque:
+	- If the measure interval is 30 minutes, the period of measures is 14 days 
+	  before the end of measures.
+	- The weekly measures always end on Thursdays.
 
-    Unzip the archive
-    Put your personal information in Config.php
-    open index.php in your web browser
+Install:
+
+	Unzip the archive
+	Put your personal information in Config.php
+ 	open index.php in your web browser
     
