@@ -14,6 +14,9 @@ if(isset($argc) && $argc >1)
 else {	 
 	$interval = $_POST["select"];
 	$stationId = $_POST["station"];	
+	$date1 = $_POST["date1"];
+	$txt = explode("/",$date1);
+	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 	if($interval!="30min")
 		{$date0 = $_POST["date0"];
 		$txt = explode("/",$date0);
@@ -21,9 +24,6 @@ else {
 		}
 	else
 		$date_beg = $date_end - (14 * 24 * 60 * 60);
-	$date1 = $_POST["date1"];
-	$txt = explode("/",$date1);
-	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 	$interval = $_POST["select"];
 	$man = 0;	
 	}
