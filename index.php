@@ -80,9 +80,14 @@ function valider(frm)
     alert(i + ' mesures: ' + nmesure);
     return true;
   }
-  function Enable(x)
-  	{	
-    var el = document.getElementById('id_date1');
+function Allow(tab) // ok firefox, safari, !ok chrome 
+  	{for (var i = 0;i < tab.length;i++)
+		{if(tab[i].selected)
+			break;
+		}
+	var x = true;
+	if(i == 3) x = false;
+	var el = document.getElementById('id_date1');
     if(x == true)
 		{el.style.color = 'black';
 		el.disabled=false;
@@ -91,8 +96,8 @@ function valider(frm)
 		{el.style.color = 'red';
 		el.disabled=true;
 		}	
-    return true;
-  	}
+    return true;		
+	}
 
 //]]>
 </script>
@@ -140,11 +145,11 @@ function valider(frm)
 	<TD>Intervalle des mesures
 	</TD>
 	<td><table>
-	<select name='select'>
-		<option value='1week' onclick='Enable(true);'> 1 semaine </option>
-		<option value='1day' onclick='Enable(true);' selected='selected'> 1 journée </option>
-		<option value='3hours' onclick='Enable(true);' > 3 heures </option>
-		<option value='30min' onclick='Enable(false);' > 30 minutes </option>
+	<select name='select' onclick='Allow(this);'>
+		<option value='1week' > 1 semaine </option>
+		<option value='1day' selected='selected'> 1 journée </option>
+		<option value='3hours' > 3 heures </option>
+		<option value='30min' > 30 minutes </option>
 	</select>
 	</td></tr>
 
