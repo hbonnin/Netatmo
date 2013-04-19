@@ -12,7 +12,7 @@ Main windows:
 	- Graphics of the temperatures of selected stations (1 day or 1 week), 
 	  five or six stations seems a limit for visibility.
 
-Remarque:
+Remark:
 	- If the measure interval is 30 minutes, the period of measures is 14 days 
 	  before the end of measures.
 	- The weekly measures always end on Thursdays.
