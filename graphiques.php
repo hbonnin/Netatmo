@@ -107,7 +107,7 @@ date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
-
+$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = '';
 
 echo("
@@ -186,8 +186,8 @@ else
 			$itime = $keys[0];  
 	        $ii = $break = 0;	
             do
-            	//{$idate = date("d/m H:i",$itime);             		 
-            	{$idate = date("D H:i",$itime);             		 
+            	{$day = idate('w',$itime);
+            	$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$tmin =  $hum = $humtip = $mintip =  '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < 60) //changement d'horaire
@@ -266,8 +266,9 @@ else
 			$itime = $keys[0];  
 	        $ii = $break = 0;	
             do
-            	//{$idate = date("d/m H:i",$itime); 
-            	{$idate = date("D H:i",$itime); 
+            	//{$idate = date("D H:i",$itime); 
+            	{$day = idate('w',$itime);
+            	$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$temp = $hum = $co = $pres = $noise = $tooltip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < 60) //changement d'horaire
@@ -293,14 +294,14 @@ echo("
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
              chart.draw(data, {title: $title $visupt,focusTarget: 'category',colors: ['red','blue','green'] });
               var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',colors: ['red','blue','green','orange','brown','pink'] });
+             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',colors: ['red','blue','green','orange','brown','#bb00cc'] });
 ");
 else
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
              chart.draw(data, {title: $title $visupt,focusTarget: 'category',colors: ['red','green'] });
               var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',colors: ['red','green','orange','brown','pink'] });
+             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',colors: ['red','green','orange','brown','#bb00cc'] });
 ");
 
 
