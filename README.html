@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Netatmo php program</title>
+<meta http-equiv='Content-Type' content='text/html; charset=utf8' />
+</head>
+<body>
+<P>
+This program uses the Netatmo php sdk and some Google development tools for the graphics.<br>
+The server needs to have a php version >= 5, with curl and json enabled.<br>
+You can  see a demo at  <A href="http://fraysseix.webatu.com/MyNetatmo/">MyNetatmo</A>
+</p>
+<h3>Main windows:</h3>
+<ul>
+<li>	Display on a Google map all the stations with their last measures,
+<li>	Display the last measures of all stations on a text page,
+<li>    Graphics of the measures of one station 
+          (30 minutes, 3 hours, 1 day or 1 week interval for a given period),
+<li>Graphics of the temperatures of selected stations (1 day or 1 week), 
+	  five or six stations seems a limit for visibility.
+</ul>
+<h3>Remarks:</h3>
+<ul>
+<li>	If the measure interval is 30 minutes, the period of measures is 14 days 
+	  before the end of measures.
+<li>   The weekly measures always end on Thursdays.
+</ul>
+<h3>Install:</h3>
+<ul>
+<li>	Unzip the archive
+<li>	Put your personal information in Config.php
+<li>	open index.php in your web browser
+</ul>  
+<h3>Screenshots:</h3>
+
+
+<table>
+
+<tr><td>Graphics of one station</td><td>Temperatures of 4 stations<td></tr>
+<tr>
+<td><IMG SRC="graphiques.jpg" ALT="Graphique" TITLE="Graphics of one station"></td>
+<td><IMG SRC="compare.jpg" ALT="Compare" TITLE="Temperatures of 4 stations"></td>
+</tr>
+</table>
+
+</body>
+</html>
