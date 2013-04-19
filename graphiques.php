@@ -12,10 +12,15 @@ if(isset($argc) && $argc >1)
 	$man = 1;
 	}
 else {	 
+	$interval = $_POST["select"];
 	$stationId = $_POST["station"];	
-	$date0 = $_POST["date0"];
-	$txt = explode("/",$date0);
-	$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+	if($interval!="30min")
+		{$date0 = $_POST["date0"];
+		$txt = explode("/",$date0);
+		$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+		}
+	else
+		$date_beg = $date_end - (14 * 24 * 60 * 60);
 	$date1 = $_POST["date1"];
 	$txt = explode("/",$date1);
 	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
@@ -37,7 +42,6 @@ else if($interval=="30min")
 	{$inter = 1;
 	$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
-	$date_beg = $date_end - (14 * 24 * 60 * 60);
 	}
 else // 3hours
 	{$inter = 3;
