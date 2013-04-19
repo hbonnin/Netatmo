@@ -144,7 +144,7 @@ function Allow(tab) // ok firefox, safari, !ok chrome
 	<TD>Intervalle des mesures
 	</TD>
 	<td><table>
-	<select name='select' onclick='Allow(this);'>
+	<select name='select' onChange='Allow(this);'>
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' selected='selected'> 1 journée </option>
 		<option value='3hours' > 3 heures </option>
