@@ -77,7 +77,6 @@ function valider(frm)
     	{alert(nmesure + ' > 1024 mesures');
     	return false;
     	}	
-    alert(i + ' mesures: ' + nmesure);
     return true;
   }
 function Allow(tab) // ok firefox, safari, !ok chrome 
