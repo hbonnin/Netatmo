@@ -2,9 +2,9 @@ Netatmo
 
 Netatmo uses the Netatmo php sdk and some Google development tools for the graphics.
 The server needs to have a php version >= 5, with curl and json enabled.
+You can  see a demo at  http://fraysseix.webatu.com/MyNetatmo/
 
 Main windows:
-	
 	- Display on a Google map all the stations with their last measures,
 	- Display the last measures of all stations on a text page,
         - Graphics of the measures of one station 
@@ -18,7 +18,6 @@ Remarque:
 	- The weekly measures always end on Thursdays.
 
 Install:
-
 	Unzip the archive
 	Put your personal information in Config.php
  	open index.php in your web browser
