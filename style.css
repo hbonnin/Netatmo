@@ -1,0 +1,74 @@
+
+table.t {
+	background-color: #aaddFF;
+	width: 230px;
+	height:15px;
+	border: 1px solid grey;
+	}
+td.c1   {color: red;
+	font-family: Helvetica, serif;
+	font-size: 17px;
+	text-align:right;
+	width:80px;
+	}
+td.e  {
+	width:10px;
+	}
+	
+td.hl   {color: green;
+	font-family: Helvetica, serif;
+	font-size: 11px;
+	text-align:left;
+	height:15px;
+	}
+td.h   {color: green;
+	font-family: Helvetica, serif;
+	font-size: 12px;
+	text-align:right;
+	}	
+td.pl   {color: #444444;
+	font-family: Helvetica, serif;
+	font-size: 11px;
+	text-align:left;
+	height:15px;
+	}
+td.p   {color: #444444;
+	font-family: Helvetica, serif;
+	font-size: 12px;
+	text-align:right;
+	}	
+	
+td.nl   {color: #cc00cc;
+	font-family: Helvetica, serif;
+	font-size: 11px;
+	text-align:left;
+	height:15px;
+	}
+td.n   {color: #cc00cc;
+	font-family: Helvetica, serif;
+	font-size: 12px;
+	text-align:right;
+	}	
+	
+td.cl   {color: #ffaa00;
+	font-family: Helvetica, serif;
+	font-size: 11px;
+	text-align:left;
+	height:15px;
+	}
+td.c   {color: #ffaa00;
+	font-family: Helvetica, serif;
+	font-size: 12px;
+	text-align:right;
+	}
+th	{color: black;
+	font-family: Helvetica, serif;
+	font-size: 13px;
+	text-align:center;
+	}	
+td.s	{color: black;
+	font-family: Helvetica, serif;
+	font-size: 8px;
+	text-align:center;
+	font-style:italic;
+	}	

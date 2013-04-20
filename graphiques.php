@@ -102,6 +102,8 @@ $idate = date("d/m/y H:i",$date_end);
 echo("date_end:$idate\n");
 }
 */
+//$idate = date("d/m/y H:i",$date_end);	
+//echo("date_end:$idate\n");
 
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)

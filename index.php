@@ -1,4 +1,21 @@
 <?php
+/*
+Name: Netatmo PHP Graphics
+Author: Hubert de Fraysseix
+URI: https://github.com/hbonnin/Netatmo
+
+Netatmo PHP Graphics is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License.
+
+Netatmo PHP Widget is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 require_once 'NAApiClient.php';
 require_once 'Config.php';
@@ -109,18 +126,15 @@ function Allow(tab) // ok firefox, safari, !ok chrome
 
 <center>
 <H1> Stations Netatmo</H1>
-	<TABLE style='width:180px; height:30px; '>
+	<table style='width:180px; height:30px;'>
 	<caption><b>Dernières mesures</b></caption>
-	<TR><TD HEIGHT=25 >
-	<form method='get' action='google.php'>
-	<input type='submit' value='Sur une carte'>	
-	</form>
-	</td><td>
-	<form method='get' action='lastALL.php'>
-	<input type='submit' value='Mode texte' style='float:right;'>	
+	<tr>
+	<td style='text-align:center;'>
+	<form method='get' action='icones.php'>
+	<input type='submit'>
 	</form>	
-	</TD>
-	</TABLE>
+	</td></tr>
+	</table>
 	
 
 
@@ -195,7 +209,7 @@ echo("
 	<td>
 	<select name='select'>
 		<option value='1week'> 1 semaine</option>
-		<option value='1day'> 1 journée </option>
+		<option value='1day' selected='selected'> 1 journée </option>
 	<select>
 	
 	</td></TR>

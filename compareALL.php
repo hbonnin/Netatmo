@@ -105,6 +105,7 @@ for($i=0; $i < count($keys[0]);++$i)
 $idate = date("d/m/y H:i",$minDateBeg);
 echo("debut:$idate");
 }
+
 //$idate = date("d/m/y H:i",$minDateBeg);
 //$iidate = date("d/m/y H:i",$date_beg);
 //echo("debut:$iidate  $idate");

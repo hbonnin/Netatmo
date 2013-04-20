@@ -1,38 +1,30 @@
 <?php
-
+require_once 'fill.php';
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'Geolocalize.php';
+
+date_default_timezone_set("Europe/Paris");
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 $helper = new NAApiHelper();
 
 try {
     $tokens = $client->getAccessToken();        
-	} catch(NAClientException $ex) {
-    	echo "An error happend while trying to retrieve your tokens\n";
-    	exit(-1);
-	}
-
-
-try {
+    
+} catch(NAClientException $ex) {
+    echo "An error happend while trying to retrieve your tokens\n";
+    exit(-1);
+}
+ 
 $devicelist = $client->api("devicelist", "POST");
-	}
-	catch(NAClientException $ex) {
-		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-		echo("$ex");
-		exit(-1);
-	}
-
 $devicelist = $helper->SimplifyDeviceList($devicelist);
-$mesures = $helper->GetLastMeasures($client,$devicelist);
 $numStations = count($devicelist["devices"]);
+$mesures = $helper->GetLastMeasures($client,$devicelist);
 $latitude = array($numStations);
 $longitude  = array($numStations);
 $label = array($numStations);
 $slabel = array($numStations);
-
-
 for($i = 0;$i < $numStations;$i++)
 	{$latitude[$i] = $devicelist["devices"][$i]["place"]["location"][1];
     $longitude[$i] = $devicelist["devices"][$i]["place"]["location"][0];
@@ -51,17 +43,13 @@ for($i = 0;$i < $numStations;$i++)
 	}	
 
 echo("
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name='viewport' content='initial-scale=1.0, user-scalable=no' />
-    <meta charset='utf-8'>
-
-    <style type='text/css'>
-      html { height: 100% }
-      body { height: 100%; margin: 0; padding: 0 }
-      <!--#map_canvas { height: 100%;  }-->
-    </style>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 
+'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Staions Netatmo</title>
+<meta http-equiv='Content-Type' content='text/html; charset=utf8' />
+<link type='text/css' rel='stylesheet'  href='style.css'>
     <script type='text/javascript'
 ");    
 	if($use_google_key ==1)
@@ -101,7 +89,6 @@ echo("
   			echo("label[$i] = \"$label[$i]\";\n");
   			echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   			}
-			
 echo("  				
   		for(i=0;i < num;i++)
   			LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
@@ -125,15 +112,36 @@ echo("
 	}
 
     </script>
-  </head>
+    </head>
+  
   <body onload='initialize()'>
-  <div style='width: 640px; height: 3%; position: relative; left: 20%;'> 
+  <!--<body>-->
+  <!--<div  style='width: 100%; height: 20%;' >--> 
+  	
+<center>
+<table>
+<tr>
+");
+
+for($i = 0;$i < $numStations;$i++)
+	{$res = $mesures[$i]["modules"];
+	$station = $mesures[$i]['station_name'];
+	echo("<td>");
+	fill($station,$res);
+	echo("</td>");
+	}
+echo("</tr></table></center>
+
+  <div style='width: 640px; height: 30px; position: relative; left: 25%;'> </div>
+  <div style='width: 640px; height: 20px; position: relative; left: 25%;'> 
   <i>Déplacer la souris sur un marqueur pour voir les informations</i>
   </div>	
   
-  <div id='map_canvas' style='width: 60%; height: 94%; left: 20%; border:solid 3px black;'> 
-  	</div>
-  </body>
-</html>
-");
+  <div id='map_canvas' style='width: 50%; height:400px; left: 25%; border:solid 3px black;'> 
+  	</div></body></html>"
+  );
+
+	
+
+
 ?>
