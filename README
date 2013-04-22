@@ -15,7 +15,7 @@ Main windows:
 Remark:
 	- If the measure interval is 30 minutes, the period of measures is 14 days 
 	  before the end of measures.
-	- If the measure interval is max, the priod of measures is 2 days.
+	- If the measure interval is max, the period of measures is 2 days.
 	- The weekly measures always end on Thursdays.
 
 Install:
