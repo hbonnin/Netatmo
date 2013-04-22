@@ -1,6 +1,6 @@
 
 table.t {
-	background-color: #aaddFF;
+	background-color: #cceeff;
 	width: 230px;
 	height:15px;
 	border: 1px solid grey;
@@ -50,13 +50,13 @@ td.n   {color: #cc00cc;
 	text-align:right;
 	}	
 	
-td.cl   {color: #ffaa00;
+td.cl   {color: #b09000;
 	font-family: Helvetica, serif;
 	font-size: 11px;
 	text-align:left;
 	height:15px;
 	}
-td.c   {color: #ffaa00;
+td.c   {color: #908000;
 	font-family: Helvetica, serif;
 	font-size: 12px;
 	text-align:right;
@@ -68,7 +68,7 @@ th	{color: black;
 	}	
 td.s	{color: black;
 	font-family: Helvetica, serif;
-	font-size: 8px;
+	font-size: 9px;
 	text-align:center;
 	font-style:italic;
 	}	

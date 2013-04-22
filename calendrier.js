@@ -160,8 +160,11 @@ function ds_draw_calendar(m, y) {
 function ds_sh(t) {
 	// Set the element to set...
 	ds_element = t;
+	var saisie = (t.value).split('/');
+	var date = new Date(eval(saisie[2]),eval(saisie[1])-1,eval(saisie[0]));	
 	// Make a new date, and set the current month and year.
-	var ds_sh_date = new Date();
+	//var ds_sh_date = new Date();
+	var ds_sh_date = date;	
 	ds_c_month = ds_sh_date.getMonth() + 1;
 	ds_c_year = ds_sh_date.getFullYear();
 	// Draw the calendar

@@ -130,18 +130,21 @@ for($i = 0;$i < $numStations;$i++)
 	fill($station,$res);
 	echo("</td>");
 	}
-echo("</tr></table></center>
-
-  <div style='width: 640px; height: 30px; position: relative; left: 25%;'> </div>
-  <div style='width: 640px; height: 20px; position: relative; left: 25%;'> 
+echo("</tr></table>
+	
+  <div style='width: 640px; height: 30px; position: relative;'> </div>
+  <div style='width: 640px; height: 20px; position: relative;'> 
   <i>Déplacer la souris sur un marqueur pour voir les informations</i>
   </div>	
   
-  <div id='map_canvas' style='width: 50%; height:400px; left: 25%; border:solid 3px black;'> 
-  	</div></body></html>"
-  );
-
-	
-
+  <div id='map_canvas' style='width: 50%; height:400px; border:solid 3px black;'> 
+  	</div>
+<!-- START OF HIT COUNTER CODE -->
+<br><script language='JavaScript' src='http://www.counter160.com/js.js?img=11'></script><br><a href='http://www.000webhost.com'><img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' border='0' align='texttop'></a><a href='http://www.hosting24.com'><img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' border='0' align='texttop'></a>
+<!-- END OF HIT COUNTER CODE -->
+</center>
+</body>
+</html>
+");
 
 ?>

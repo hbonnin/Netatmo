@@ -84,10 +84,11 @@ function valider(frm)
 		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
     	return false;
     	}
- 	// i=0 1week i=1 1day  i=2 3hours i=3 30minute	
+ 	// i=0 1week i=1 1day  i=2 3hours i=3 30minute	i=4 max
 	var nmesure = (endday-date)/(24*60*60*1000);
 	if(i == 2)nmesure *= 8;
 	else if(i == 3){nmesure *= 48;return true;}
+	else if(i == 4){nmesure *= 288;return true;}
 	else if(i == 0)nmesure /= 7;
 	nmesure = Math.floor(nmesure+.5);		  	
     if(nmesure > 1024) 
@@ -98,20 +99,27 @@ function valider(frm)
   }
 function Allow(tab) // ok firefox, safari, !ok chrome 
   	{for (var i = 0;i < tab.length;i++)
-		{if(tab[i].selected)
-			break;
+		if(tab[i].selected)break;		
+	var el1 = document.getElementById('id_date1');
+	var el0 = document.getElementById('id_date0');	
+    if(i < 3)
+		{el0.style.color = 'black';
+		el0.disabled = false;
+		el1.style.color = 'black';
+		el1.disabled=false;
 		}
-	var x = true;
-	if(i == 3) x = false;
-	var el = document.getElementById('id_date1');
-    if(x == true)
-		{el.style.color = 'black';
-		el.disabled=false;
-		}
+	else if(i == 3)
+		{el0.style.color = 'red';
+		el0.disabled = true;
+		el1.style.color = 'black';
+		el1.disabled = false;
+		}				
 	else
-		{el.style.color = 'red';
-		el.disabled=true;
-		}	
+		{el0.style.color = 'red';
+		el0.disabled=true;
+		el1.style.color = 'red';
+		el1.disabled=true;
+		}					
     return true;		
 	}
 
@@ -150,10 +158,10 @@ function Allow(tab) // ok firefox, safari, !ok chrome
 	<TR>
 	<TD style='height:25px; width:200px;'>Début des mesures
 	</TD>
-	<TD><input id='id_date1' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);'></TD>
+	<TD><input id='id_date0' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);'></TD>
 	</TR><TR>
 	<TD style='height:25px;'>Fin des mesures</TD>
-	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
+	<TD><input id='id_date1' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
 	</TR><TR>
 	<TD>Intervalle des mesures
 	</TD>
@@ -163,6 +171,7 @@ function Allow(tab) // ok firefox, safari, !ok chrome
 		<option value='1day' selected='selected'> 1 journée </option>
 		<option value='3hours' > 3 heures </option>
 		<option value='30min' > 30 minutes </option>
+		<option value='max' > max </option>
 	</select>
 	</td></tr>
 
@@ -242,12 +251,14 @@ echo("
 
 <!-- Invisible table --> 
 <table class='ds_box' cellpadding='0' cellspacing='0' id='ds_conclass' style='display: none;'>
-	<caption>Date de début des mesures</caption>
+	<!--<caption>Date de début des mesures</caption>-->
 	<tr><td id='ds_calclass'></td></tr>
 </table>
 
 <!-- START OF HIT COUNTER CODE -->
-<br><script language='JavaScript' src='http://www.counter160.com/js.js?img=11'></script><br><a href='http://www.000webhost.com'><img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' border='0' align='texttop'></a><a href='http://www.hosting24.com'><img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' border='0' align='texttop'></a>
+<br><script language='JavaScript' src='http://www.counter160.com/js.js?img=11'></script><br>
+<a href='http://www.000webhost.com'><img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' border='0' align='texttop'></a>
+<a href='http://www.hosting24.com'><img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' border='0' align='texttop'></a>
 <!-- END OF HIT COUNTER CODE -->
 
 </center>
