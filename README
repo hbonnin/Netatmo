@@ -7,7 +7,7 @@ and a readme  with pictures at http://fraysseix.webatu.com/MyNetatmo/README.html
 
 Main windows:
 	- Display on a Google map all the stations with their last measures,
-    - Graphics of the measures of one station 
+ 	- Graphics of the measures of one station 
           (30 minutes, 3 hours, 1 day or 1 week interval for a given period),
 	- Graphics of the temperatures of selected stations (1 day or 1 week), 
 	  five stations seems a limit for visibility.
@@ -18,7 +18,7 @@ Remark:
 	- The weekly measures always end on Thursdays.
 
 Install:
-	Unzip the archive
-	Put your personal information in Config.php
- 	open index.php in your web browser
+	- Unzip the archive,
+	- Put your personal information in Config.php,
+ 	- open index.php in your web browser.
     
