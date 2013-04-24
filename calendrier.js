@@ -157,11 +157,17 @@ function ds_draw_calendar(m, y) {
 
 // A function to show the calendar.
 // When user click on the date, it will set the content of t.
-function ds_sh(t) {
+function ds_sh(t,i) {
 	// Set the element to set...
 	ds_element = t;
 	var saisie = (t.value).split('/');
 	var date = new Date(eval(saisie[2]),eval(saisie[1])-1,eval(saisie[0]));	
+	//caption
+	if(i == 0)
+		document.getElementById('ds_conclass').caption.innerHTML ='D&eacutebut des mesures';
+	else
+		document.getElementById('ds_conclass').caption.innerHTML ='Fin des mesures';
+
 	// Make a new date, and set the current month and year.
 	//var ds_sh_date = new Date();
 	var ds_sh_date = date;	

@@ -158,10 +158,10 @@ function Allow(tab) // ok firefox, safari, !ok chrome
 	<TR>
 	<TD style='height:25px; width:200px;'>Début des mesures
 	</TD>
-	<TD><input id='id_date0' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);'></TD>
+	<TD><input id='id_date0' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);'></TD>
 	</TR><TR>
 	<TD style='height:25px;'>Fin des mesures</TD>
-	<TD><input id='id_date1' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
+	<TD><input id='id_date1' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></TD>
 	</TR><TR>
 	<TD>Intervalle des mesures
 	</TD>
@@ -208,11 +208,11 @@ echo("
 	<TR>
 	<TD style='height:25px; width:200px;'>Début des mesures
 	</TD>
-	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this);' />
+	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);' />
 	</TD></TR>
 	<tr>
 	<TD style='height:25px;'>Fin des mesures</TD>
-	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this);'></TD>
+	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></TD>
     </tr>
 	<TR><td>Intervalle des mesures</td>
 	<td>
@@ -251,9 +251,10 @@ echo("
 
 <!-- Invisible table --> 
 <table class='ds_box' cellpadding='0' cellspacing='0' id='ds_conclass' style='display: none;'>
-	<!--<caption>Date de début des mesures</caption>-->
+	<caption id='id_caption'style='background-color: #ccc; color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 11px;'>xxxx</caption>
 	<tr><td id='ds_calclass'></td></tr>
 </table>
+
 
 <!-- START OF HIT COUNTER CODE -->
 <br><script language='JavaScript' src='http://www.counter160.com/js.js?img=11'></script><br>
