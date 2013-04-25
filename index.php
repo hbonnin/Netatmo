@@ -151,8 +151,11 @@ function Allow(tab) // ok firefox, safari, !ok chrome
 <td>
 	<!-- ################################ -->
 	<form method='post' action='graphiques.php' onsubmit='return valider(this)'>	
-	<!--<TABLE  style='width:420px; height:215px; border:2px solid grey;'>
-	<TABLE  style='width:420px; height:215px; border:2px solid grey;'>-->
+<!--
+	<form method='post' action='lastDays.php' onsubmit='return valider(this)'>	
+-->	
+	
+	<!--<TABLE  style='width:420px; height:215px; border:2px solid grey;'>-->
 	<TABLE  style='border:2px solid grey;'>
 	<caption><b>Graphiques d'une station</b></caption>
 	<TR>
@@ -251,7 +254,7 @@ echo("
 
 <!-- Invisible table --> 
 <table class='ds_box' cellpadding='0' cellspacing='0' id='ds_conclass' style='display: none;'>
-	<caption id='id_caption'style='background-color: #ccc; color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 11px;'>xxxx</caption>
+	<caption id='id_caption'style='background-color: #ccc; color: #00F; font-family: Arial, Helvetica, sans-serif; font-size: 15px;'>xxxx</caption>
 	<tr><td id='ds_calclass'></td></tr>
 </table>
 

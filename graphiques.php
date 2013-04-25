@@ -7,8 +7,8 @@ date_default_timezone_set("UTC");
 if(isset($argc) && $argc >1)
 	{$stationId=0; 
 	$date_end = time();
-	$date_beg = time() - (48 * 60 * 60);
-	$interval = "max";
+	$date_beg = time() - (10 * 24 * 60 * 60);
+	$interval = "1day";
 	$man = 1;
 	}
 else 
@@ -116,6 +116,7 @@ for($i=0; $i < $num;++$i)
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
+	//{return sprintf('%4.1f <i>(%s)</i>',$temp,date("H:i",$tempDate)); 
 	}    
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = '';
@@ -133,15 +134,36 @@ echo("
               var data1 = new google.visualization.DataTable();
 ");
 /********************************************/
+function tipHTML2($idate,$tmax,$hum)
+	{return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '</table>';
+	}
+function tipHTML3($idate,$tmax,$tmin,$hum)
+	{return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td></tr>'
+	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '</table>';
+	}
+function tipHTML5($idate,$datemax,$datemin,$tmax,$tmin,$hum)
+	{return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td>'
+	. '<td style=\"font-size: 12px;\">' . date('H:i',$datemax) .'</tr>'
+	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td>'
+	. '<td style=\"font-size: 12px; \">' . date('H:i',$datemin) .'</tr>'	
+	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '</table>';
+	}
+
 if($inter > 30)
 	{echo("              
 	          data.addColumn('string', 'Date');
+        	  data.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
         	  data.addColumn('number', 'Tmax °'); 
-        	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  
         	  data.addColumn('number', 'Tmin °');     	  
-        	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data.addColumn('number', 'Humidity %');  
-              data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });
          	  data.addColumn('number', '');   	  
 	");
  			$keys= array_keys($meas);
@@ -155,38 +177,33 @@ if($inter > 30)
             	else
             		$idate = date("d/m/y",$itime); 
             		 
-            	$tmin = $tmax = $hum = $humtip = $mintip = $maxtip = '';
+            	$tmin = $tmax = $hum = $tip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < 2*60*60) //changement d'horaire
             		{if($ii < $num -1)++$ii;
             		else $break = 1;           			
             		$tmin = $meas[$key][0];
             		$tmax = $meas[$key][1];
+             		$hum = $meas[$key][2];  
             		if($inter == 24*60)
-            			{$mintip = tip($tmin,$meas[$key][3]);        		
-            			$maxtip = tip($tmax,$meas[$key][4]); 
-            			}           		
-            		else
-            			{$mintip = sprintf('%4.1f',$tmin);          		
-            			$maxtip = sprintf('%4.1f',$tmax);
-            			}
-            		$hum = $meas[$key][2]/4;  
-            		$humtip = sprintf('%d', ($hum)*4);           		
+						$tip = tipHTML5($idate,$meas[$key][4],$meas[$key][3],$tmax,$tmin,$hum);          		
+					else
+						$tip = tipHTML3($idate,$tmax,$tmin,$hum);
             		}
-                echo("data.addRow([\"$idate\",$tmax,'$maxtip',$tmin,'$mintip',$hum,'$humtip',1]);\n"); 
+                echo("data.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum/4,1]);\n"); 
+                if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-           	echo("data.removeColumn(7);\n");				      
+           	echo("data.removeColumn(5);\n");				      
 			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    	
 	}
 else
 	{
 	echo("              
 	          data.addColumn('string', 'Date');
+        	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  	          
         	  data.addColumn('number', 'T°'); 
-        	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  
         	  data.addColumn('number', 'Humidity %');  
-              data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });
          	  data.addColumn('number', '');   	  
 	");
 
@@ -198,35 +215,56 @@ else
             do
             	{$day = idate('w',$itime);
             	$idate = $jour[$day] . date(" H:i",$itime);           		 
-            	$tmin =  $hum = $humtip = $mintip =  '';
+            	$tmin =  $hum = $tip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < $inter*2*60) // mesures décalées
             		{if($ii < $num -1)++$ii;
             		else $break = 1;           			
             		$tmin = $meas[$key][0];
-            		$mintip = sprintf('%4.1f',$tmin);          		
-            		$hum = $meas[$key][1]/4;  
-            		$humtip = sprintf('%d', ($hum)*4); 
+            		$hum = $meas[$key][1];  
             		$itime = $keys[$ii]; 
-            		$idate = $jour[$day] . date(" H:i",$itime);         		
+            		$idate = $jour[$day] . date(" H:i",$itime);         		           		
+					$tip = tipHTML2($idate,$tmin,$hum);
             		}
-                echo("data.addRow([\"$idate\",$tmin,'$mintip',$hum,'$humtip',1]);\n"); 
+                echo("data.addRow([\"$idate\",'$tip',$tmin,$hum/4,1]);\n"); 
+                if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-           	echo("data.removeColumn(5);\n");				      
+           	echo("data.removeColumn(4);\n");				      
 			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';  
 	}
+	
 /************************************/			     	                    
+function tip1HTML6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
+	{return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td></tr>'
+	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . 'ppm</b></td></tr>'
+	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . 'mb</b></td></tr>'
+	. '<tr><td><i>Noise max</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . 'db</b></td></tr>'
+	. '</table>';
+	}
+function tip1HTML5($idate,$tmax,$hum,$co,$pres,$noise)
+	{return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . 'ppm</b></td></tr>'
+	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . 'mb</b></td></tr>'
+	. '<tr><td><i>Noise</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . 'db</b></td></tr>'
+	. '</table>';
+	}
+	
+
 if($inter > 30)			
 	{echo("
 	          data1.addColumn('string', 'Date');
+        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data1.addColumn('number', 'Tmax °');
         	  data1.addColumn('number', 'Tmin °');
         	  data1.addColumn('number', 'Humidity %');
         	  data1.addColumn('number', 'CO2 ppm');
-        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data1.addColumn('number', 'Pres mb');
-        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data1.addColumn('number', 'Noise Max db');  
           	  data1.addColumn('number', '');   	         	    
 	");
@@ -239,7 +277,7 @@ if($inter > 30)
             		$idate = date("d/m/y:H",$itime); 
             	else
             		$idate = date("d/m/y",$itime);  
-            	$temp = $hum = $co = $pres = $noise = $tooltip = '';
+            	$temp = $hum = $co = $pres = $noise = $tip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < 2*60*60) //changement d'horaire
             		{if($ii < $num -1)++$ii; 
@@ -248,27 +286,27 @@ if($inter > 30)
             		$tmax = $meas1[$key][1];
                 	$hum = $meas1[$key][2];
                 	$co = $meas1[$key][3];
-                	$co = min($co,1000);$co /= 10;
-                	$tipCO2 = sprintf('%d',$co *10);                
-                	$pres = $meas1[$key][4]-970;
-                	$tipPRES = sprintf('%d',$pres +970);
-                	$noise = $meas1[$key][5];
+                	$pres = $meas1[$key][4];
+                	$noise = $meas1[$key][5];                	
+                	$tip = tip1HTML6($idate,$tmax,$tmin,$hum,$co,$pres,$noise);
+                	$co = min($co,1000);$co /= 10;           
+                	$pres = $pres-970;
                 	}
-                echo("data1.addRow([\"$idate\",$tmax,$tmin,$hum,$co,'$tipCO2',$pres,'$tipPRES',$noise,1]);\n");                
+                echo("data1.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,$co,$pres,$noise,1]);\n");                
+                if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-            echo("data1.removeColumn(9);\n");				      
+            echo("data1.removeColumn(8);\n");				      
 			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    	
 	}
 else
 	{echo("
 	          data1.addColumn('string', 'Date');
+        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data1.addColumn('number', 'T°');
         	  data1.addColumn('number', 'Humidity %');
         	  data1.addColumn('number', 'CO2 ppm');
-        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data1.addColumn('number', 'Pres mb');
-        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  data1.addColumn('number', 'Noise db');  
           	  data1.addColumn('number', '');   	         	    
 	");
@@ -288,32 +326,34 @@ else
             		$tmin = $meas1[$key][0];
                 	$hum = $meas1[$key][1];
                 	$co = $meas1[$key][2];
-                	$co = min($co,1000);$co /= 10;
-                	$tipCO2 = sprintf('%d',$co *10);                
-                	$pres = $meas1[$key][3]-970;
+                	$pres = $meas1[$key][3];
                 	$tipPRES = sprintf('%d',$pres +970);
-                	$noise = $meas1[$key][4];
+                	$noise = $meas1[$key][4];                	
+                	$tip = tip1HTML5($idate,$tmin,$hum,$co,$pres,$noise);
+                	$co = min($co,1000);$co /= 10;             
+                	$pres = $pres-970;
             		$itime = $keys[$ii];          		
                 	}
-                echo("data1.addRow([\"$idate\",$tmin,$hum,$co,'$tipCO2',$pres,'$tipPRES',$noise,1]);\n");                
+                echo("data1.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
+                if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-            echo("data1.removeColumn(8);\n");				      
+            echo("data1.removeColumn(7);\n");				      
 			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    
  	} 
 if($inter > 30) 	                                
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, {title: $title $visupt,focusTarget: 'category',colors: ['red','blue','green'] });
-              var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',colors: ['red','blue','green','orange','brown','#f0b0f0'] });
+             chart.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green'] });
+             var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
+             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green','orange','brown','#f0b0f0'] });
 ");
 else
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, {title: $title $visupt,focusTarget: 'category',colors: ['red','green'] });
+             chart.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green'] });
               var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',colors: ['red','green','orange','brown','#f0b0f0'] });
+             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green','orange','brown','#f0b0f0'] });
 ");
 
 
