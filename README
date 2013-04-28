@@ -2,7 +2,7 @@ Netatmo
 
 Netatmo uses the Netatmo php sdk and some Google development tools for the graphics.
 The server needs to have a php version >= 5, with curl and json enabled.
-You can  see a demo at  http://fraysseix.webatu.com/MyNetatmo/
+If you have a Netmo account, you can  see a demo at  http://fraysseix.webatu.com/MyNetatmo/
 and a readme  with pictures at http://fraysseix.webatu.com/MyNetatmo/README.html
 
 Main windows:
