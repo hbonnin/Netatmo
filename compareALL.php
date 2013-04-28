@@ -29,20 +29,32 @@ else {
 	$interval = $_POST["select"];
 	}
 
-$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
-$helper = new NAApiHelper();
-
-try {
-    $tokens = $client->getAccessToken();        
+session_start();
+if(isset($_SESSION['client']))
+    $client = $_SESSION['client'];
     
-} catch(NAClientException $ex) {
-    echo "An error happend while trying to retrieve your tokens\n";
-    exit(-1);
-}
-
-$devicelist = $client->api("devicelist", "POST");
-$devicelist = $helper->SimplifyDeviceList($devicelist);
-$mesures = $helper->GetLastMeasures($client,$devicelist);
+$helper = new NAApiHelper();
+if(isset($_SESSION['devicelist']))
+    $devicelist = $_SESSION['devicelist'];
+else
+	{try {
+		$devicelist = $client->api("devicelist", "POST");
+		}
+	catch(NAClientException $ex) {
+		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
+		echo("$ex");
+		exit(-1);
+		}	
+	$devicelist = $helper->SimplifyDeviceList($devicelist);
+    $_SESSION['devicelist'] = $devicelist;
+    }
+if(isset($_SESSION['mesures']))
+    $mesures = $_SESSION['mesures'];
+else
+	{$mesures = $helper->GetLastMeasures($client,$devicelist);
+	$_SESSION['mesures'] = $mesures;
+	}
+    
 $numStations = count($devicelist["devices"]);
 
 $view = array($numStations);

@@ -58,23 +58,41 @@ else // 3hours
 	$req =  "min_temp,max_temp,Humidity";	
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";
 	}
-	
-$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
+
+session_start();
+if(isset($_SESSION['client']))
+    $client = $_SESSION['client'];
+
 $helper = new NAApiHelper();
+if(isset($_SESSION['devicelist']))
+    $devicelist = $_SESSION['devicelist'];
+else
+	{try {
+		$devicelist = $client->api("devicelist", "POST");
+		}
+	catch(NAClientException $ex) {
+		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
+		echo("$ex");
+		exit(-1);
+		}	
+	$devicelist = $helper->SimplifyDeviceList($devicelist);
+    $_SESSION['devicelist'] = $devicelist;
+    }
+if(isset($_SESSION['mesures']))
+    $mesures = $_SESSION['mesures'];
+else
+	{$mesures = $helper->GetLastMeasures($client,$devicelist);
+	$_SESSION['mesures'] = $mesures;
+	}
 
-try {
-    $tokens = $client->getAccessToken();        
-    
-} catch(NAClientException $ex) {
-    echo "An error happend while trying to retrieve your tokens\n";
-    exit(-1);
-}
-
+/*
+$helper = new NAApiHelper();
 $devicelist = $client->api("devicelist", "POST");
 $devicelist = $helper->SimplifyDeviceList($devicelist);
+*/
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
-$mesures = $helper->GetLastMeasures($client,$devicelist);
+//$mesures = $helper->GetLastMeasures($client,$devicelist);
 $stat0 = $mesures[$stationId]['station_name'];
 	// exterieur
     $params = array("scale" => $interval
@@ -190,7 +208,8 @@ if($inter > 30)
 					else
 						$tip = tipHTML3($idate,$tmax,$tmin,$hum);
             		}
-                echo("data.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum/4,1]);\n"); 
+            	if($hum)$hum = $hum/4;	
+                echo("data.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
@@ -226,7 +245,8 @@ else
             		$idate = $jour[$day] . date(" H:i",$itime);         		           		
 					$tip = tipHTML2($idate,$tmin,$hum);
             		}
-                echo("data.addRow([\"$idate\",'$tip',$tmin,$hum/4,1]);\n"); 
+            	if($hum)$hum = $hum/4;	
+                echo("data.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
@@ -289,7 +309,7 @@ if($inter > 30)
                 	$pres = $meas1[$key][4];
                 	$noise = $meas1[$key][5];                	
                 	$tip = tip1HTML6($idate,$tmax,$tmin,$hum,$co,$pres,$noise);
-                	$co = min($co,1000);$co /= 10;           
+                	if($co){$co = min($co,1000);$co /= 10;}           
                 	$pres = $pres-970;
                 	}
                 echo("data1.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,$co,$pres,$noise,1]);\n");                
@@ -330,7 +350,7 @@ else
                 	$tipPRES = sprintf('%d',$pres +970);
                 	$noise = $meas1[$key][4];                	
                 	$tip = tip1HTML5($idate,$tmin,$hum,$co,$pres,$noise);
-                	$co = min($co,1000);$co /= 10;             
+                	if($co){$co = min($co,1000);$co /= 10;}             
                 	$pres = $pres-970;
             		$itime = $keys[$ii];          		
                 	}
