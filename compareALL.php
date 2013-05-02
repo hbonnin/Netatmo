@@ -32,6 +32,16 @@ else {
 session_start();
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
+else
+	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
+	try {
+    	$tokens = $client->getAccessToken();       
+		} catch(NAClientException $ex) {
+    		echo ("Identifiant ou mot de passe incorrect");
+		exit(-1);	
+		}
+	$_SESSION['client'] = $client;	
+	}  
     
 $helper = new NAApiHelper();
 if(isset($_SESSION['devicelist']))
@@ -105,7 +115,6 @@ for($i = 0;$i < $numStations;$i++)
 
 if($man)
 {
-//print_r($keys[0]);
 
 for($i=0; $i < count($keys[0]);++$i)
 	{$key = $keys[0][$i];  
@@ -117,10 +126,6 @@ for($i=0; $i < count($keys[0]);++$i)
 $idate = date("d/m/y H:i",$minDateBeg);
 echo("debut:$idate");
 }
-
-//$idate = date("d/m/y H:i",$minDateBeg);
-//$iidate = date("d/m/y H:i",$date_beg);
-//echo("debut:$iidate  $idate");
 
 if($interval == "1week")
 	$inter = 7;

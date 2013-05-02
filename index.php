@@ -34,7 +34,6 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 	session_start();  
 	if(isset($_SESSION['msg']))
 		$msg = $_SESSION['msg'];
-
 	session_destroy();
 
 echo("

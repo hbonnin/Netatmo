@@ -8,7 +8,6 @@ $test_username = $_POST["username"];
 $test_password = $_POST["password"]; 
 
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
-//$helper = new NAApiHelper();
 
 session_start();  
 
@@ -23,8 +22,9 @@ try {
 
 $_SESSION['user'] = $test_username;
 $_SESSION['password'] = $test_password;
-$_SESSION['client'] = $client;
-unset($_SESSION['devicelist']);	
+//$_SESSION['client'] = $client;
+$_SESSION['tokens'] = $tokens;
 
+unset($_SESSION['devicelist']);	
 header("location:menu.php");
 ?>

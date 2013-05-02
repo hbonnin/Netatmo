@@ -21,8 +21,56 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 
 session_start();
+$code = $_GET["code"];
+
+if(!empty($code))
+	{$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
+    if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
+    	{$token_url = "https://api.netatmo.net/oauth2/token";
+    	$postdata = http_build_query(array(
+            							'grant_type' => "authorization_code",
+            							'client_id' => $client_id,
+            							'client_secret' => $client_secret,
+            							'code' => $code,
+            							'redirect_uri' => $my_url               
+        								));
+    	$opts = array('http' => array(
+        							'method'  => 'POST',
+        							'header'  => 'Content-type: application/x-www-form-urlencoded;charset=UTF-8',
+        							'content' => $postdata
+    								));
+    	$context  = stream_context_create($opts);
+    	$response = file_get_contents($token_url, false, $context);
+    	$params = null;
+    	$params = json_decode($response, true);
+		$access_token = $params['access_token'];
+		$refresh_token = $params['refresh_token'];
+		$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
+		$_SESSION['client'] = $client;	
+		}
+	else
+		echo("The state does not match.");
+	}		
+if(isset($_SESSION['tokens'])) // menu called from login
+    {$tokens = $_SESSION['tokens'];
+	$access_token = $tokens['access_token'];
+	$refresh_token = $tokens['refresh_token'];
+	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
+	$_SESSION['client'] = $client;
+    }
+	
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
+else
+	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
+	try {
+    	$tokens = $client->getAccessToken();       
+		} catch(NAClientException $ex) {
+    		echo ("Identifiant ou mot de passe incorrect");
+		exit(-1);	
+		}
+	$_SESSION['client'] = $client;	
+	}      
 
 $helper = new NAApiHelper();
 if(isset($_SESSION['devicelist']))
@@ -45,14 +93,11 @@ else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-    
-    
+     
 $num = count($devicelist["devices"]);
 date_default_timezone_set("Europe/Paris");
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
-
-
 
 echo("
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
@@ -230,7 +275,7 @@ echo("
 	
 	</td></TR>
 	<TR>
-	<TD>Choisir une station
+	<TD>Choisir des stations
 	</TD>
 	<TD>
 	<table>

@@ -4,11 +4,24 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'Geolocalize.php';
 
+
 date_default_timezone_set("Europe/Paris");
 session_start();
+
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
-    
+else
+	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
+	try {
+    	$tokens = $client->getAccessToken();       
+		} catch(NAClientException $ex) {
+    		echo ("Identifiant ou mot de passe incorrect");
+		exit(-1);	
+		}
+	$_SESSION['client'] = $client;	
+	}  
+
+	    
 $helper = new NAApiHelper();
 if(isset($_SESSION['devicelist']))
     $devicelist = $_SESSION['devicelist'];
@@ -18,7 +31,7 @@ else
 		}
 	catch(NAClientException $ex) {
 		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-		echo("$ex");
+		echo("erreur:$ex");
 		exit(-1);
 		}	
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
@@ -30,7 +43,10 @@ else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-   
+if ($_GET["action"] == 'refresh')
+	{$mesures = $helper->GetLastMeasures($client,$devicelist);
+	$_SESSION['mesures'] = $mesures;	
+	}   
     
 $numStations = count($devicelist["devices"]);
 $latitude = array($numStations);
@@ -143,11 +159,12 @@ for($i = 0;$i < $numStations;$i++)
 	echo("</td>");
 	}
 echo("</tr></table>
-	
-  <div style='width: 640px; height: 30px; position: relative;'> </div>
-  <div style='width: 640px; height: 20px; position: relative;'> 
-  <i>Déplacer la souris sur un marqueur pour voir les informations</i>
-  </div>	
+	<div style='width: 640px; height: 10px; position: relative;'> </div>
+	<input type=\"button\" style=\"color:#030; background-color: #cceeff;\" value=\"refresh\" onclick=\"window.location='icones.php?action=refresh';\">		
+	<div style='width: 640px; height: 15px; position: relative;'> </div>
+	<div style='width: 640px; height: 20px; position: relative;'> 
+	<i>Déplacer la souris sur un marqueur pour voir les informations</i>
+	</div>	
   
   <div id='map_canvas' style='width: 50%; height:400px; border:solid 3px black;'> 
   	</div>

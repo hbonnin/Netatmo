@@ -62,6 +62,17 @@ else // 3hours
 session_start();
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
+else
+	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
+	try {
+    	$tokens = $client->getAccessToken();       
+		} catch(NAClientException $ex) {
+    		echo ("Identifiant ou mot de passe incorrect");
+		exit(-1);	
+		}
+	$_SESSION['client'] = $client;	
+	}  
+
 
 $helper = new NAApiHelper();
 if(isset($_SESSION['devicelist']))
@@ -85,14 +96,9 @@ else
 	$_SESSION['mesures'] = $mesures;
 	}
 
-/*
-$helper = new NAApiHelper();
-$devicelist = $client->api("devicelist", "POST");
-$devicelist = $helper->SimplifyDeviceList($devicelist);
-*/
+
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
-//$mesures = $helper->GetLastMeasures($client,$devicelist);
 $stat0 = $mesures[$stationId]['station_name'];
 	// exterieur
     $params = array("scale" => $interval
