@@ -19,8 +19,14 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once 'NAApiClient.php';
 require_once 'Config.php';
-
+/*
+require_once('../FirePHPCore/fb.php');
+if($_SERVER['HTTP_HOST'] != '127.0.0.1')
+	FB::setEnabled(false);
+FB::log($_SERVER, "dumping an array");
+*/
 session_start();
+
 $code = $_GET["code"];
 
 if(!empty($code))
@@ -93,7 +99,13 @@ else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-     
+/*
+echo("<pre>");
+echo "session:" . session_id();
+print_r($_COOKIE);
+echo("</pre>");  
+FB::log($mesures, "array");
+*/
 $num = count($devicelist["devices"]);
 date_default_timezone_set("Europe/Paris");
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));

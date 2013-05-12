@@ -4,9 +4,9 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'Geolocalize.php';
 
-
-date_default_timezone_set("Europe/Paris");
+session_set_cookie_params(1200); 
 session_start();
+date_default_timezone_set("Europe/Paris");
 
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];

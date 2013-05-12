@@ -22,8 +22,8 @@ try {
 
 $_SESSION['user'] = $test_username;
 $_SESSION['password'] = $test_password;
-//$_SESSION['client'] = $client;
-$_SESSION['tokens'] = $tokens;
+$_SESSION['client'] = $client;
+//$_SESSION['tokens'] = $tokens;
 
 unset($_SESSION['devicelist']);	
 header("location:menu.php");

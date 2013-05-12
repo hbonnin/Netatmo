@@ -1,4 +1,5 @@
 <?php
+//session_set_cookie_params(1200); 
 
 $man = 0;
 if(isset($argc) && $argc > 1)
@@ -11,6 +12,8 @@ function compareALL($man)
 {
 require_once 'NAApiClient.php';
 require_once 'Config.php';
+session_start();
+
 date_default_timezone_set("UTC");
 
 if($man)
@@ -29,7 +32,6 @@ else {
 	$interval = $_POST["select"];
 	}
 
-session_start();
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
 else

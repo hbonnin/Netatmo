@@ -1,4 +1,13 @@
 <?php 
+	session_start();
+	$msg = '';	
+	if(isset($_SESSION['msg']))
+		$msg = $_SESSION['msg'];
+	unset($_SESSION['msg']);	
+/*		
+	$_SESSION=array();
+	session_destroy();
+*/
 echo("
 <!--
 Name: Netatmo PHP Graphics
@@ -29,14 +38,6 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <center>
 <h2> Entrez vos identifiants Netatmo </h2>
 
-");
-	$msg = '';
-	session_start();  
-	if(isset($_SESSION['msg']))
-		$msg = $_SESSION['msg'];
-	session_destroy();
-
-echo("
 <h3 style='color:red;'>$msg</h3>
 <form id='login' action='login.php' method='post' accept-charset='UTF-8'>
 

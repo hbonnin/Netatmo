@@ -2,6 +2,8 @@
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 
+session_set_cookie_params(1200); 
+session_start();
 date_default_timezone_set("UTC");
 
 if(isset($argc) && $argc >1)
@@ -59,7 +61,6 @@ else // 3hours
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";
 	}
 
-session_start();
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
 else

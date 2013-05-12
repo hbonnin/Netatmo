@@ -1,21 +1,12 @@
          
 <?php 
 require_once 'Config.php';
-    
-	echo("
-	<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
-
-	<html xmlns='http://www.w3.org/1999/xhtml'>
-	<head>
-	<title>Netatmo login</title>
-	<meta http-equiv='Content-Type' content='text/html; charset=utf8' />
-	</head>
-	<body>
-	");
-
-
-    if(session_id())session_destroy();
-    session_id("98");
+/*
+    if(session_id())
+		{$_SESSION=array();
+    	session_destroy();
+    	}
+*/
     session_start();
     
     $my_url = "http://" . $_SERVER['SERVER_NAME'] . "/Netatmo/menu.php";
@@ -53,6 +44,5 @@ require_once 'Config.php';
     $context  = stream_context_create($opts);
     $response = file_get_contents($token_url, false, $context);
     }
-	echo("</body></html>");
     ?>
         
