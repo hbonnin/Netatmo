@@ -90,6 +90,7 @@ else
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     $_SESSION['devicelist'] = $devicelist;
     }
+    
 if(isset($_SESSION['mesures']))
     $mesures = $_SESSION['mesures'];
 else
@@ -137,6 +138,7 @@ for($i=0; $i < $num;++$i)
 	echo("$i date:$idate tmin:$tmin<br>\n");
 	} 
 }
+
 
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
@@ -223,7 +225,7 @@ if($inter > 30)
            	echo("data.removeColumn(5);\n");				      
 			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    	
 	}
-else
+else   //max ou 30 minites
 	{
 	echo("              
 	          data.addColumn('string', 'Date');
@@ -282,6 +284,8 @@ function tip1HTML5($idate,$tmax,$hum,$co,$pres,$noise)
 	. '</table>';
 	}
 	
+// Max et Min pression
+
 
 if($inter > 30)			
 	{echo("
@@ -296,7 +300,17 @@ if($inter > 30)
           	  data1.addColumn('number', '');   	         	    
 	");
  			$keys= array_keys($meas1);
-			$num = count($keys);	
+			$num = count($keys);
+			// Compute Max et Min pression	
+			$MaxPression = 0;
+			$MinPression = 2000;
+			for($i=0; $i < $num;++$i)
+				{$pres = $meas1[$keys[$i]][4];
+				$MaxPression = max($MaxPression,$pres);
+				$MinPression = min($MinPression,$pres);
+				}	
+			$xp = 100/($MaxPression - $MinPression);		
+		
 			$itime = $keys[0];  
 	        $ii = $break = 0;	
             do
@@ -317,7 +331,7 @@ if($inter > 30)
                 	$noise = $meas1[$key][5];                	
                 	$tip = tip1HTML6($idate,$tmax,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}           
-                	$pres = $pres-970;
+                	$pres = ($pres-$MinPression)*$xp;
                 	}
                 echo("data1.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
@@ -326,7 +340,7 @@ if($inter > 30)
             echo("data1.removeColumn(8);\n");				      
 			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    	
 	}
-else
+else  //max ou 30 minutes
 	{echo("
 	          data1.addColumn('string', 'Date');
         	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
@@ -340,6 +354,16 @@ else
 
  			$keys= array_keys($meas1);
 			$num = count($keys);	
+			// Compute Max et Min pression	
+			$MaxPression = 0;
+			$MinPression = 2000;
+			for($i=0; $i < $num;++$i)
+				{$pres = $meas1[$keys[$i]][3];
+				$MaxPression = max($MaxPression,$pres);
+				$MinPression = min($MinPression,$pres);
+				}
+			$xp = 100/($MaxPression - $MinPression);		
+
 			$itime = $keys[0];  
 	        $ii = $break = 0;	
             do
@@ -354,11 +378,10 @@ else
                 	$hum = $meas1[$key][1];
                 	$co = $meas1[$key][2];
                 	$pres = $meas1[$key][3];
-                	$tipPRES = sprintf('%d',$pres +970);
                 	$noise = $meas1[$key][4];                	
                 	$tip = tip1HTML5($idate,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}             
-                	$pres = $pres-970;
+                	$pres = ($pres-$MinPression)*$xp;
             		$itime = $keys[$ii];          		
                 	}
                 echo("data1.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
@@ -402,4 +425,5 @@ echo("
   </body>
 </html>
 ");
+//echo("min:$MinPression  max:$MaxPression");
 ?>
