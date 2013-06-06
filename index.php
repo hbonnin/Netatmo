@@ -54,6 +54,8 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <input type='submit' name='Submit' value='Submit' />
  
 </form>
+<br><br>
+<p style='font-size: 12px;'> Ce logiciel libre, sous license GPL, est disponible sur le site:<br><A href='https://github.com/hbonnin/Netatmo'>https://github.com/hbonnin/Netatmo'/A></p>
 </center>
 </body>
 <? >

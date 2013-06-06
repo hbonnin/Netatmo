@@ -37,26 +37,31 @@ else
 	
 if($interval=="1week")
 	{$inter = 7*24*60;
+	$tinter = '1 semaine';
 	$req =  "min_temp,max_temp,Humidity,date_min_temp,date_max_temp";
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";	
 	}
 else if($interval=="1day")
 	{$inter = 24*60;
+	$tinter = '1 jour';
 	$req =  "min_temp,max_temp,Humidity,date_min_temp,date_max_temp";
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";		
 	}
 else if($interval=="30min")
 	{$inter = 30;
+	$tinter = '30 minutes';
 	$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
 	}	
 else if($interval=="max")
 	{$inter = 5;
+	$tinter = '5 minutes';
 	$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
 	}
 else // 3hours
 	{$inter = 3*60;
+	$tinter = '3 heures';
 	$req =  "min_temp,max_temp,Humidity";	
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";
 	}
@@ -223,7 +228,8 @@ if($inter > 30)
                 $itime += $inter*60;
                 }while($break != 1);
            	echo("data.removeColumn(5);\n");				      
-			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    	
+			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
+      	                    	
 	}
 else   //max ou 30 minites
 	{
@@ -260,7 +266,8 @@ else   //max ou 30 minites
                 $itime += $inter*60;
                 }while($break != 1);
            	echo("data.removeColumn(4);\n");				      
-			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';  
+			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
+
 	}
 	
 /************************************/			     	                    
@@ -338,7 +345,8 @@ if($inter > 30)
                 $itime += $inter*60;
                 }while($break != 1);
             echo("data1.removeColumn(8);\n");				      
-			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    	
+			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
+     	                    	
 	}
 else  //max ou 30 minutes
 	{echo("
@@ -389,7 +397,7 @@ else  //max ou 30 minutes
                 $itime += $inter*60;
                 }while($break != 1);
             echo("data1.removeColumn(7);\n");				      
-			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures)' .'"';       	                    
+			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
  	} 
 if($inter > 30) 	                                
 echo("                   

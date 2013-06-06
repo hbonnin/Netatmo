@@ -172,7 +172,7 @@ function Allow(tab)
 		el1.hidden = false;
 		}
 	else if(i == 3)
-		{duree.innerHTML = 'Fréquence des mesures (15 jours)';
+		{duree.innerHTML = 'Fréquence des mesures (14 jours)';
 		el0.disabled = true;
 		el0.hidden = true;
 		el1.disabled = false;
