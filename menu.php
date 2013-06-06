@@ -162,25 +162,31 @@ function Allow(tab)
   	{for (var i = 0;i < tab.length;i++)
 		if(tab[i].selected)break;		
 	var el1 = document.getElementById('id_date1');
-	var el0 = document.getElementById('id_date0');	
+	var el0 = document.getElementById('id_date0');
+	var duree = document.getElementById('id_duree');	
     if(i < 3)
-		{el0.style.color = 'black';
+		{duree.innerHTML = 'Fréquence des mesures';
 		el0.disabled = false;
-		el1.style.color = 'black';
+		el0.hidden = false;
 		el1.disabled=false;
+		el1.hidden = false;
 		}
 	else if(i == 3)
-		{el0.style.color = 'red';
+		{duree.innerHTML = 'Fréquence des mesures (15 jours)';
 		el0.disabled = true;
-		el1.style.color = 'black';
+		el0.hidden = true;
 		el1.disabled = false;
+		el1.hidden = false;
 		}				
 	else
-		{el0.style.color = 'red';
+		{duree.innerHTML = 'Fréquence des mesures (2 jours)';
 		el0.disabled=true;
-		el1.style.color = 'red';
+		el0.hidden=true;
+		el0.disabled = true;
 		el1.disabled=true;
-		}					
+		el1.hidden = true;
+		}
+									
     return true;		
 	}
 
@@ -220,27 +226,28 @@ function Allow(tab)
 	<TABLE  style='border:2px solid grey;'>
 	<caption><b>Graphiques d'une station</b></caption>
 	<TR>
-	<TD style='height:25px; width:200px;'>Début des mesures
+	<TD style='height:25px; width:230px;'>Début des mesures
 	</TD>
-	<TD><input id='id_date0' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);'></TD>
+	<TD><input id='id_date0' disabled=true hidden=true; style='color:black; width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);'></TD>
 	</TR><TR>
 	<TD style='height:25px;'>Fin des mesures</TD>
-	<TD><input id='id_date1' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></TD>
+	<TD><input id='id_date1' disabled=true hidden=true; style='color:black; width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></TD>
 	</TR><TR>
-	<TD>Intervalle des mesures
+	<TD id='id_duree'>Fréquence des mesures (2 jours)
 	</TD>
+	
 	<td><table>
 	<select name='select' onChange='Allow(this);'>
 		<option value='1week' > 1 semaine </option>
-		<option value='1day' selected='selected'> 1 journée </option>
+		<option value='1day' > 1 journée </option>
 		<option value='3hours' > 3 heures </option>
-		<option value='30min' > 30 minutes </option>
-		<option value='max' > max </option>
+		<option value='30min'> 30 minutes </option>
+		<option value='max' selected='selected'> 5 minutes </option>
 	</select>
 	</td></tr>
-
 	</table>
 	</TR><TR>
+	
 	<TD>Choisir une station
 	</TD>
 	<TD>
@@ -278,7 +285,7 @@ echo("
 	<TD style='height:25px;'>Fin des mesures</TD>
 	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></TD>
     </tr>
-	<TR><td>Intervalle des mesures</td>
+	<TR><td>Fréquence des mesures</td>
 	<td>
 	<select name='select'>
 		<option value='1week'> 1 semaine</option>
@@ -311,6 +318,11 @@ echo("
 
 </td>
 </table>
+
+<form method='post' action='index.php'>
+<input type='submit' value='logout' style='color: #aa0000; font-size: 14px;'>
+</form>
+
 
 
 <!-- Invisible table --> 

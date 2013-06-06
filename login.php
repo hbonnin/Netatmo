@@ -23,8 +23,7 @@ try {
 $_SESSION['user'] = $test_username;
 $_SESSION['password'] = $test_password;
 $_SESSION['client'] = $client;
-//$_SESSION['tokens'] = $tokens;
-
-unset($_SESSION['devicelist']);	
+//$_SESSION['tokens'] = $tokens;	
+//unset($_SESSION['client']);	
 header("location:menu.php");
 ?>

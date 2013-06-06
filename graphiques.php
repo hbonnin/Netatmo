@@ -425,5 +425,4 @@ echo("
   </body>
 </html>
 ");
-//echo("min:$MinPression  max:$MaxPression");
 ?>

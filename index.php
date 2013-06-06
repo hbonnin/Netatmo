@@ -3,11 +3,12 @@
 	$msg = '';	
 	if(isset($_SESSION['msg']))
 		$msg = $_SESSION['msg'];
-	unset($_SESSION['msg']);	
-/*		
+	//unset($_SESSION['msg']);	
+	if(isset($_COOKIE[session_name()]))
+		setcookie(session_name(), “”,time()-3600,“/”);
 	$_SESSION=array();
 	session_destroy();
-*/
+
 echo("
 <!--
 Name: Netatmo PHP Graphics

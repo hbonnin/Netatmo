@@ -1,7 +1,7 @@
 
 table.t {
 	background-color: #cceeff;
-	width: 230px;
+	width: 210px;
 	height:15px;
 	border: 1px solid grey;
 	}
@@ -12,7 +12,7 @@ td.c1   {color: red;
 	width:80px;
 	}
 td.e  {
-	width:10px;
+	width:5px;
 	}
 	
 td.hl   {color: green;
