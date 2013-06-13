@@ -231,7 +231,7 @@ if($inter > 30)
 			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
       	                    	
 	}
-else   //max ou 30 minites
+else   //max ou 30 minutes
 	{
 	echo("              
 	          data.addColumn('string', 'Date');
@@ -248,7 +248,10 @@ else   //max ou 30 minites
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	$idate = $jour[$day] . date(" H:i",$itime);           		 
+            	if($inter == 30)
+            		$idate = date("d/m/y",$itime); 
+            	else
+            		$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$tmin =  $hum = $tip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < $inter*2*60) // mesures décalées
@@ -257,8 +260,11 @@ else   //max ou 30 minites
             		$tmin = $meas[$key][0];
             		$hum = $meas[$key][1];  
             		$itime = $keys[$ii]; 
-            		$idate = $jour[$day] . date(" H:i",$itime);         		           		
-					$tip = tipHTML2($idate,$tmin,$hum);
+	            	if($inter == 30)        		
+            			$iidate = date("d/m/y H:i",$itime);
+            		else	         		           		
+            			$iidate = $jour[$day] . date(" H:i",$itime);         		           		
+					$tip = tipHTML2($iidate,$tmin,$hum);
             		}
             	if($hum)$hum = $hum/4;	
                 echo("data.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
@@ -376,7 +382,10 @@ else  //max ou 30 minutes
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	$idate = $jour[$day] . date(" H:i",$itime);           		 
+            	if($inter == 30)
+            		$idate = date("d/m/y",$itime); 
+            	else
+            		$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$temp = $hum = $co = $pres = $noise = $tooltip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < $inter*2*60) 
@@ -386,11 +395,15 @@ else  //max ou 30 minutes
                 	$hum = $meas1[$key][1];
                 	$co = $meas1[$key][2];
                 	$pres = $meas1[$key][3];
-                	$noise = $meas1[$key][4];                	
-                	$tip = tip1HTML5($idate,$tmin,$hum,$co,$pres,$noise);
+                	$noise = $meas1[$key][4];  
+            		$itime = $keys[$ii];          		                	
+	            	if($inter == 30)        		
+            			$iidate = date("d/m/y H:i",$itime);
+            		else	         		           		
+            			$iidate = $jour[$day] . date(" H:i",$itime);         		           		
+                	$tip = tip1HTML5($iidate,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}             
                 	$pres = ($pres-$MinPression)*$xp;
-            		$itime = $keys[$ii];          		
                 	}
                 echo("data1.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
