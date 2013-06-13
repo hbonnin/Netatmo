@@ -139,7 +139,7 @@ function valider(frm)
 	var date1 = frm.elements['date1'].value;
 	var saisie1 = (date1).split('/');
 	var endday = new Date(eval(saisie1[2]),eval(saisie1[1])-1,eval(saisie1[0]));
-	if(endday - date < 24*60*60*1000)	
+	if((endday - date < 24*60*60*1000) && (i < 2))	
 		{frm.date1.focus();		
 		alert('Date ' + date.getDate() +'/'+ (date.getMonth()+1) +'/'+ date.getFullYear()
 		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
@@ -165,21 +165,21 @@ function Allow(tab)
 	var el0 = document.getElementById('id_date0');
 	var duree = document.getElementById('id_duree');	
     if(i < 3)
-		{duree.innerHTML = 'Fréquence des mesures';
+		{duree.innerHTML = 'Fréquence';
 		el0.disabled = false;
 		el0.hidden = false;
 		el1.disabled=false;
 		el1.hidden = false;
 		}
 	else if(i == 3)
-		{duree.innerHTML = 'Fréquence des mesures (14 jours)';
+		{duree.innerHTML = 'Fréquence (durée: 14 jours)';
 		el0.disabled = true;
 		el0.hidden = true;
 		el1.disabled = false;
 		el1.hidden = false;
 		}				
 	else
-		{duree.innerHTML = 'Fréquence des mesures (2 jours)';
+		{duree.innerHTML = 'Fréquence (durée: 2 jours)';
 		el0.disabled=true;
 		el0.hidden=true;
 		el0.disabled = true;
@@ -226,14 +226,14 @@ function Allow(tab)
 	<TABLE  style='border:2px solid grey;'>
 	<caption><b>Graphiques d'une station</b></caption>
 	<TR>
-	<TD style='height:25px; width:230px;'>Début des mesures
+	<TD style='height:25px; width:200px;'>Début des mesures
 	</TD>
 	<TD><input id='id_date0' disabled=true hidden=true; style='color:black; width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);'></TD>
 	</TR><TR>
 	<TD style='height:25px;'>Fin des mesures</TD>
 	<TD><input id='id_date1' disabled=true hidden=true; style='color:black; width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></TD>
 	</TR><TR>
-	<TD id='id_duree'>Fréquence des mesures (2 jours)
+	<TD id='id_duree'>Fréquence (durée: 2 jours)
 	</TD>
 	
 	<td><table>
@@ -285,7 +285,7 @@ echo("
 	<TD style='height:25px;'>Fin des mesures</TD>
 	<TD><input id='id_date' style='width: 95px; height: 19px; border:1px solid blue; font-size:15px;'type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></TD>
     </tr>
-	<TR><td>Fréquence des mesures</td>
+	<TR><td>Fréquence</td>
 	<td>
 	<select name='select'>
 		<option value='1week'> 1 semaine</option>
