@@ -14,6 +14,12 @@ td.c1   {color: red;
 td.e  {
 	width:5px;
 	}
+td.minimax  {color: blue;
+	font-family: Helvetica, serif;
+	font-size: 12px;
+	text-align:right;
+	height:15px;
+	}
 	
 td.hl   {color: green;
 	font-family: Helvetica, serif;

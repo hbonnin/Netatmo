@@ -1,6 +1,6 @@
 <?php
 
-function fill($station,$res)
+function fill($station,$res,$tmin,$tmax)
 	{$dat0 = date('d/m/Y H:i',$res[0]['time']);
 	$dat1 = date('d/m/Y H:i',$res[1]['time']);
 	echo("
@@ -13,6 +13,10 @@ function fill($station,$res)
 	<td class='e'></td>
 	<td><IMG SRC='maison.png' ALT='insideside' height='40'></td> 
 	<td class='c1'>{$res[0]['Temperature']}°</td>
+	</tr><tr>
+<!--	<td class='minimax' colspan='2'>${tmin}° <font color='black'>-&nbsp</font><font color='red'>${tmax}°</font></td>
+-->
+	<td class='minimax' colspan='2'>${tmin}° &nbsp<font color='red'>${tmax}°</font></td>
 	</tr><tr>
 	<td class='hl'>Humidité</td>
 	<td class='h'>{$res[1]['Humidity']}%</td>

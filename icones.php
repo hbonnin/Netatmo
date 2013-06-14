@@ -151,11 +151,33 @@ echo("
 <tr>
 ");
 
+// calsul des minimax
+$date_end = time();
+$date_beg = $date_end - (24 * 60 * 60);
+$tmins =  array($numStations);
+$tmaxs =  array($numStations);
+for($i = 0;$i < $numStations;$i++)
+	{$device_id = $devicelist["devices"][$i]["_id"];
+	$module_id = $devicelist["devices"][$i]["modules"][0]["_id"];
+	$params = array("scale" => "1day"
+    	, "type" => "min_temp,max_temp"
+    	, "date_begin" => $date_beg
+    	, "date_end" => $date_end
+    	, "optimize" => true
+    	, "device_id" => $device_id
+    	, "module_id" => $module_id);
+    $tmesure = $client->api("getmeasure", "POST", $params);	
+    $tmins[$i] = $tmesure[0]['value'][0][0];   
+    $tmaxs[$i] = $tmesure[0]['value'][0][1];   
+    }
+
+
+    
 for($i = 0;$i < $numStations;$i++)
 	{$res = $mesures[$i]["modules"];
 	$station = $mesures[$i]['station_name'];
 	echo("<td>");
-	fill($station,$res);
+	fill($station,$res,$tmins[$i],$tmaxs[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>
