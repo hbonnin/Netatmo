@@ -1,80 +1,69 @@
 
 table.t {
 	background-color: #cceeff;
-	width: 210px;
-	height:15px;
 	border: 1px solid grey;
-	}
-td.c1   {color: red;
 	font-family: Helvetica, serif;
+	}
+th	{color: black;
+	font-size: 14px;
+	text-align:center;
+	}		
+td.c1   {color: red;
 	font-size: 17px;
 	text-align:right;
-	width:80px;
 	}
+td.alt	 {color:#666666;
+	font-size: 11px;
+	text-align:center;
+	font-style:italic;
+	}	
 td.e  {
-	width:5px;
+	width:8px;
 	}
 td.minimax  {color: blue;
-	font-family: Helvetica, serif;
 	font-size: 12px;
 	text-align:right;
-	height:15px;
-	}
-	
+	}	
 td.hl   {color: green;
-	font-family: Helvetica, serif;
 	font-size: 11px;
 	text-align:left;
 	height:15px;
 	}
 td.h   {color: green;
-	font-family: Helvetica, serif;
 	font-size: 12px;
 	text-align:right;
 	}	
 td.pl   {color: #444444;
-	font-family: Helvetica, serif;
 	font-size: 11px;
 	text-align:left;
 	height:15px;
 	}
 td.p   {color: #444444;
-	font-family: Helvetica, serif;
 	font-size: 12px;
 	text-align:right;
 	}	
 	
 td.nl   {color: #cc00cc;
-	font-family: Helvetica, serif;
 	font-size: 11px;
 	text-align:left;
 	height:15px;
 	}
 td.n   {color: #cc00cc;
-	font-family: Helvetica, serif;
 	font-size: 12px;
 	text-align:right;
 	}	
 	
 td.cl   {color: #b09000;
-	font-family: Helvetica, serif;
 	font-size: 11px;
 	text-align:left;
 	height:15px;
 	}
 td.c   {color: #908000;
-	font-family: Helvetica, serif;
 	font-size: 12px;
 	text-align:right;
 	}
-th	{color: black;
-	font-family: Helvetica, serif;
-	font-size: 13px;
-	text-align:center;
-	}	
 td.s	{color: black;
-	font-family: Helvetica, serif;
 	font-size: 9px;
-	text-align:center;
+	text-align:left;
 	font-style:italic;
 	}	

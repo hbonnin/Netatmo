@@ -50,15 +50,15 @@ if ($_GET["action"] == 'refresh')
     
 $numStations = count($devicelist["devices"]);
 $latitude = array($numStations);
-$longitude  = array($numStations);
-$label = array($numStations);
+$latitude = array($numStations);
+$alt = array($numStations);
 $slabel = array($numStations);
 for($i = 0;$i < $numStations;$i++)
 	{$latitude[$i] = $devicelist["devices"][$i]["place"]["location"][1];
     $longitude[$i] = $devicelist["devices"][$i]["place"]["location"][0];
     $res = $mesures[$i]["modules"];
-    $alt = $devicelist["devices"][$i]["place"]["altitude"];
-    $name = $mesures[$i]['station_name'] . ' (' . $alt . 'm)';
+    $alt[$i] = $devicelist["devices"][$i]["place"]["altitude"];
+    $name = $mesures[$i]['station_name'] . ' (' . $alt[i] . 'm)';
     $places = geolocalize($latitude[$i],$longitude[$i]);
     $txtEXT = sprintf("<font size=2>Ext:</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
 	$txtINT = sprintf("<font size=2>Int:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
@@ -170,14 +170,12 @@ for($i = 0;$i < $numStations;$i++)
     $tmins[$i] = $tmesure[0]['value'][0][0];   
     $tmaxs[$i] = $tmesure[0]['value'][0][1];   
     }
-
-
-    
+// Tracé des icones    
 for($i = 0;$i < $numStations;$i++)
 	{$res = $mesures[$i]["modules"];
 	$station = $mesures[$i]['station_name'];
 	echo("<td>");
-	fill($station,$res,$tmins[$i],$tmaxs[$i]);
+	fill($station,$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>
