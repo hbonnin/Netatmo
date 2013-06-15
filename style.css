@@ -18,9 +18,9 @@ td.alt	 {color:#666666;
 	font-style:italic;
 	}	
 td.e  {
-	width:8px;
+	width:12px;
 	}
-td.minimax  {color: blue;
+td.minimax  {color: #000077;
 	font-size: 12px;
 	text-align:right;
 	}	
@@ -32,7 +32,12 @@ td.hl   {color: green;
 td.h   {color: green;
 	font-size: 12px;
 	text-align:right;
-	}	
+	}
+td.hunit  {color: green;
+	width:10px;
+	text-align:left;
+	font-size: 10px;
+	}		
 td.pl   {color: #444444;
 	font-size: 11px;
 	text-align:left;
@@ -42,16 +47,25 @@ td.p   {color: #444444;
 	font-size: 12px;
 	text-align:right;
 	}	
-	
-td.nl   {color: #cc00cc;
+td.punit  {color: #444444;
+	width:10px;
+	text-align:left;
+	font-size: 10px;
+	}		
+td.nl   {color: #990099;
 	font-size: 11px;
 	text-align:left;
 	height:15px;
 	}
-td.n   {color: #cc00cc;
+td.n   {color: #990099;
 	font-size: 12px;
 	text-align:right;
 	}	
+td.nunit  {color: #990099;
+	width:10px;
+	text-align:left;
+	font-size: 10px;
+	}
 	
 td.cl   {color: #b09000;
 	font-size: 11px;
@@ -62,6 +76,12 @@ td.c   {color: #908000;
 	font-size: 12px;
 	text-align:right;
 	}
+td.cunit  {color:#908000;
+	width:10px;
+	text-align:left;
+	font-size: 10px;
+	}
+	
 td.s	{color: black;
 	font-size: 9px;
 	text-align:left;
