@@ -71,19 +71,17 @@ for($i = 0;$i < $numStations;$i++)
 	}	
 
 echo("
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 
-'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
-<html xmlns='http://www.w3.org/1999/xhtml'>
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <title>Staions Netatmo</title>
-<meta http-equiv='Content-Type' content='text/html; charset=utf8' />
+<meta charset='utf-8'>
 <link type='text/css' rel='stylesheet'  href='style.css'>
     <script type='text/javascript'
 ");    
 	if($use_google_key ==1)
-		echo("src='https://maps.googleapis.com/maps/api/js?key=$google_key&sensor=false'>");
+		echo("src='https://maps.googleapis.com/maps/api/js?key=$google_key&amp;sensor=false'>");
 	else
-		echo("src='https://maps.googleapis.com/maps/api/js?&sensor=false'>");
+		echo("src='https://maps.googleapis.com/maps/api/js?&amp;sensor=false'>");
 echo("
     </script>
     <script type='text/javascript' src='StyledMarker.js'></script>
@@ -142,12 +140,12 @@ echo("
     </script>
     </head>
   
-  <body onload='initialize()'>
+  <body style='text-align:center;' onload='initialize()'>
   <!--<body>-->
   <!--<div  style='width: 100%; height: 20%;' >--> 
-  	
-<center>
-<table>
+
+	
+<table style='margin-left:auto; margin-right:auto; margin-top:0px;'>
 <tr>
 ");
 
@@ -167,8 +165,12 @@ for($i = 0;$i < $numStations;$i++)
     	, "device_id" => $device_id
     	, "module_id" => $module_id);
     $tmesure = $client->api("getmeasure", "POST", $params);	
-    $tmins[$i] = $tmesure[0]['value'][0][0];   
-    $tmaxs[$i] = $tmesure[0]['value'][0][1];   
+    if(count($tmesure[0]['value'][0]))
+    	{$tmins[$i] = $tmesure[0]['value'][0][0];   
+    	$tmaxs[$i] = $tmesure[0]['value'][0][1];
+    	}
+    else
+       $tmins[$i] = $tmaxs[$i] = '-'; 
     }
 // Tracé des icones    
 for($i = 0;$i < $numStations;$i++)
@@ -179,19 +181,31 @@ for($i = 0;$i < $numStations;$i++)
 	echo("</td>");
 	}
 echo("</tr></table>
-	<div style='width: 640px; height: 10px; position: relative;'> </div>
+  	<div style='width: 50%; height:5px;'> </div>
 	<input type=\"button\" style=\"color:#030; background-color: #cceeff;\" value=\"refresh\" onclick=\"window.location='icones.php?action=refresh';\">		
-	<div style='width: 640px; height: 15px; position: relative;'> </div>
-	<div style='width: 640px; height: 20px; position: relative;'> 
+  	<div style='width: 50%; height:8px;'> </div>
+	<div style='width: 640px; height: 20px; position: relative; margin-left:auto; margin-right:auto;'> 
 	<i>Déplacer la souris sur un marqueur pour voir les informations</i>
 	</div>	
-  
-  <div id='map_canvas' style='width: 50%; height:400px; border:solid 3px black;'> 
-  	</div>
+ 	
+  	<div id='map_canvas' style='width: 50%; height:400px; border:solid 3px black; margin-left:auto; margin-right:auto;'> </div>
+  	<div style='width: 50%; height:5px;'> </div>
+	<input type=\"button\" style=\"color:#000000; background-color: #ffffff;\" value=\"Back\" onclick=\"window.location='menu.php';\">		
+	
+
 <!-- START OF HIT COUNTER CODE -->
-<br><script language='JavaScript' src='http://www.counter160.com/js.js?img=11'></script><br><a href='http://www.000webhost.com'><img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' border='0' align='texttop'></a><a href='http://www.hosting24.com'><img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' border='0' align='texttop'></a>
+<!--
+<script src='http://www.counter160.com/js.js?img=11'></script><br>
+<a href='http://www.000webhost.com'>
+<img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' style='border:0px'>
+</a>
+<a href='http://www.hosting24.com'>
+<img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' style='border:0px' >
+</a>
+-->
 <!-- END OF HIT COUNTER CODE -->
-</center>
+
+
 </body>
 </html>
 ");

@@ -4,8 +4,7 @@
 $man = 0;
 if(isset($argc) && $argc > 1)
 	$man = 1;
-
-		
+	
 compareALL($man);
 
 function compareALL($man)
@@ -74,7 +73,7 @@ for($i = 0 ;$i < $numStations; $i++)
 	$view[$i] = 0;
 
 if($man == 1)
-	$view[0] = $view[3] = 1;
+	$view[0] = $view[1] = 1;
 else	
 	{foreach($_POST['stats'] as $chkbx)
 		{$view[$chkbx] = 1;
@@ -141,9 +140,10 @@ function tip($temp,$tempDate)
 
 
 echo("
-<html>
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
-  <meta HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf8\">
+  <title>Staions Netatmo</title>
+  <meta charset='utf-8'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
@@ -222,20 +222,17 @@ echo("
                                   
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
-             chart.draw(data, {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
+             chart.draw(data, {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
              var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
-             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['blue','red', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
+             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
             
              } // draw chart 
             
           </script>
   </head>
-  <body>
-  	<center>    
-    <div id='chartMin' style='width:100%; height:50%;'></div>
-    <div id='chartMax' style='width:100%; height:50%; '></div>
-
-    </center>
+  <body>  
+    <div id='chartMin' style='width:100%; height:300px; margin-left:auto; margin-right:auto;'></div>
+    <div id='chartMax' style='width:100%; height:300px;  margin-left:auto; margin-right:auto;'></div>
   </body>
 </html>
 ");

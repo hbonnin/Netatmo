@@ -1,25 +1,28 @@
 <?php
 
 function fill($station,$alt,$res,$tmin,$tmax)
-	{$dat0 = date('d/m/Y H:i',$res[0]['time']);
-	$dat1 = date('d/m/Y H:i',$res[1]['time']);
+	{$dat0 = date('d/m/Y',$res[0]['time']);
+	$time0 = date('H:i',$res[0]['time']);
+	$dat1 = date('d/m/Y',$res[1]['time']);
+	$time1 = date('H:i',$res[1]['time']);
+	
 	$pres = intval($res[0]['Pressure']+.5);
 	echo("
 	<table class='t'>
 	<tr>
-	<th colspan='6'>$station</th>
-	<tr></tr>
-	<td  colspan='6' class='alt'>(${alt}m)</th>	
+	<td colspan='7' class='th'>$station</td>
+	</tr><tr>
+	<td  colspan='7' class='alt'>(${alt}m)</td>	
 	</tr><tr>
 	
-	<td><IMG SRC='sun.png' ALT='outside' height='40'></td> 
+	<td><img src='sun.png' ALT='outside' height='40'/></td> 
 	<td  class='c1' colspan='2'>{$res[1]['Temperature']}°</td>
-	<td class='e'></td>
-	<td><IMG SRC='maison.png' ALT='insideside' height='40'></td> 
+	<td></td>
+	<td><img src='maison.png' ALT='insideside' height='40'/></td> 
 	<td class='c1' colspan='2'>{$res[0]['Temperature']}°</td>
 	</tr><tr>
 	
-	<td class='pl'>MinMax</td><td class='minimax' colspan='2' >${tmin}°&nbsp<font color='#bb0000'>${tmax}°</font></td>
+	<td class='pl'>MinMax</td><td class='minimax' colspan='2' >${tmin}°&nbsp;<span style='color:#bb0000;'>${tmax}°</span></td>
 	<td class='e'></td>
 	<td class='cl'>CO2</td>
 	<td class='c'>{$res[0]['CO2']} </td><td class='cunit'>ppm</td>
@@ -38,9 +41,11 @@ function fill($station,$alt,$res,$tmin,$tmax)
 	<td class='nl'>Noise</td>
 	<td class='n'>{$res[0]['Noise']}</td><td class='nunit'> db</td>
 	</tr><tr>
-	<td class='s'colspan='2'>$dat1</td>
+	
+	<td class='s'>$dat1</td><td class='s' style='text-align:right;'>$time1</td>
 	<td></td><td></td>
-	<td class='s' colspan='2'>$dat0</td>
+	<td class='s' >$dat0</td><td class='s' style='text-align:right;'>$time0</td>
+	<td></td>
 	</tr>
 	</table>
 ");

@@ -1,11 +1,13 @@
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+
 <?php 
 	session_start();
 	$msg = '';	
 	if(isset($_SESSION['msg']))
 		$msg = $_SESSION['msg'];
 	//unset($_SESSION['msg']);	
-	if(isset($_COOKIE[session_name()]))
-		setcookie(session_name(), “”,time()-3600,“/”);
+	//if(isset($_COOKIE[session_name()]))
+		//setcookie(session_name(), “”,time()-3600,“/”);
 	$_SESSION=array();
 	session_destroy();
 
@@ -28,21 +30,19 @@ You should have received a copy of the GNU General Public License
 along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
 
-<html xmlns='http://www.w3.org/1999/xhtml'>
 <head>
 <title>Staions Netatmo</title>
-<meta http-equiv='Content-Type' content='text/html; charset=utf8' />
+<meta charset='utf-8'>
 </head>
-<body>
-<center>
+<body style='text-align:center;'>
+
 <h2> Entrez vos identifiants Netatmo </h2>
 
 <h3 style='color:red;'>$msg</h3>
 <form id='login' action='login.php' method='post' accept-charset='UTF-8'>
 
-<table align='center'>
+<table style='margin-left:auto; margin-right:auto;'>
 <tr> 
 <td>UserName:</td>
 <td><input type='text' name='username' id='username'  maxlength='50' /></td>
@@ -55,10 +55,12 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
  
 </form>
 <br><br>
-<p style='font-size: 12px;'> Ce logiciel libre, sous license GPL, est disponible sur le site:<br><A href='https://github.com/hbonnin/Netatmo'>https://github.com/hbonnin/Netatmo'/A></p>
-</center>
+<p style='font-size: 12px;'> Ce logiciel libre, sous license GPL, est disponible sur le site:<br>
+<a href='https://github.com/hbonnin/Netatmo'>https://github.com/hbonnin/Netatmo'</a>
+</p>
 </body>
-<? >
+
+
 </html>
 ");
 ?>

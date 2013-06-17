@@ -1,24 +1,26 @@
-
 table.t {
 	background-color: #cceeff;
-	border: 1px solid grey;
+	border: 1px solid gray;
 	font-family: Helvetica, serif;
+	padding:2px;
 	}
-th	{color: black;
-	font-size: 14px;
+td.th	{color: black;
+	font-size: 18px;
 	text-align:center;
+	vertical-align:bottom;
 	}		
-td.c1   {color: red;
-	font-size: 17px;
-	text-align:right;
-	}
 td.alt	 {color:#666666;
 	font-size: 11px;
 	text-align:center;
 	font-style:italic;
+	vertical-align:top;
 	}	
+td.c1   {color: red;
+	font-size: 18px;
+	text-align:center;
+	}
 td.e  {
-	width:12px;
+	width:10px;
 	}
 td.minimax  {color: #000077;
 	font-size: 12px;

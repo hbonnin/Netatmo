@@ -156,9 +156,10 @@ $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam");
 $visupt = '';
 
 echo("
-<html>
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
-  <meta HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf8\">
+  <title>Staions Netatmo</title>
+  <meta charset='utf-8'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
@@ -436,16 +437,16 @@ echo("
           </script>
   </head>
   <body>
-    <center>
+    
   	<!--<h3>Graphiques de $stat0</h3>
 	<table>
     <tr><td id='chart1_div' style='width: 600px; height: §00px; border:2px solid white;'>
     </td><td id='chart_div' style='width: 600px; height: §00px; border:2px solid white;'>
     </td></tr></table>-->
 
-    <div id='chart1_div' style='width:100%; height:55%;'></div>
-    <div id='chart_div' style='width:100%; height:45%; '></div>
-    </center>
+    <div id='chart1_div' style='width:100%; height:400px; margin-left:auto; margin-right:auto;'></div>
+    <div id='chart_div' style='width:100%; height:250px; margin-left:auto; margin-right:auto;'></div>
+    
   </body>
 </html>
 ");
