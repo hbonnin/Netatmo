@@ -118,10 +118,19 @@ echo("
 <meta charset='utf-8'>
 <script type='text/javascript' src='calendrier.js'></script>
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrier.css' />
+
+<style type='text/css'>
+table	{
+	text-align:left;
+	}
+.date  {color:black;
+	width:95px;
+	border:1px solid blue;
+	font-size:15px;
+	}
+</style>
+ 
 <script type='text/javascript'>
-
-
-
 //<![CDATA[
 
 function valider(frm)
@@ -214,20 +223,20 @@ function Allow(tab)
 <td>
 	<!-- ################################ -->
 	<form method='post' action='graphiques.php' onsubmit='return valider(this)'>	
-	<table  style='border:2px solid grey; text-align:left;'>
+	<table  style='border:2px solid grey;'>
 	<caption><b>Graphiques d'une station</b></caption>
 	<tr>
 	<td style='height:25px; width:180px;'>Début des mesures
 	</td>
-	<td><input id='id_date0'  hidden disabled  type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);'  style=' color:black; width: 95px; height: 19px; border:1px solid blue; font-size:15px;'></td>
+	<td><input class='date' id='id_date0'  hidden disabled  type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);'></td>
 	</tr><tr>
 	<td style='height:25px;'>Fin des mesures</td>
-	<td><input id='id_date1' hidden disabled  type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'  style=' color:black; width: 95px; height: 19px; border:1px solid blue; font-size:15px;'></td>
+	<td><input class='date' id='id_date1' hidden disabled  type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></td>
 	</tr><tr>
 	<td id='id_duree' style='height:25px;'>Fréquence (durée: 2 jours)
 	</td>	
 	<td>
-	<table style='text-align:left;'><tr><td>
+	<table><tr><td>
 	<select name='select' onChange='Allow(this);'>
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' > 1 journée </option>
@@ -242,7 +251,7 @@ function Allow(tab)
 	<td>Choisir une station
 	</td>
 	<td>
-	<table style='text-align:left;'>
+	<table>
 ");
 
 for($i = 0;$i < $num;$i++)
@@ -265,16 +274,16 @@ echo("
 <td>
 	<!-- ################################ -->
 	<form method='post' action='compareALL.php' onsubmit='return valider(this)'>
-	<table  style='border:2px solid grey; text-align:left;'>
+	<table  style='border:2px solid grey;'>
 	<caption><b>Comparaison des température extérieures </b></caption>
 	<tr>
 	<td style='height:25px; width:180px;'>Début des mesures
 	</td>
-	<td><input style='width: 95px; border:1px solid blue; font-size:15px;' type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);' />
+	<td><input class='date' type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);' />
 	</td></tr>
 	<tr>
 	<td style='height:25px;'>Fin des mesures</td>
-	<td><input style='width: 95px; border:1px solid blue; font-size:15px;' type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></td>
+	<td><input class='date' type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></td>
     </tr>
 	<tr><td style='height:25px;'>Fréquence</td>
 	<td>
@@ -288,7 +297,7 @@ echo("
 	<td>Choisir des stations
 	</td>
 	<td>
-	<table style='text-align:left;'>
+	<table>
 ");
 
 for($i = 0;$i < $num;$i++)

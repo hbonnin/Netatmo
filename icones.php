@@ -47,7 +47,7 @@ if ($_GET["action"] == 'refresh')
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;	
 	}   
-    
+       
 $numStations = count($devicelist["devices"]);
 $latitude = array($numStations);
 $latitude = array($numStations);
@@ -172,17 +172,16 @@ for($i = 0;$i < $numStations;$i++)
     else
        $tmins[$i] = $tmaxs[$i] = '-'; 
     }
+ 
 // Tracé des icones    
 for($i = 0;$i < $numStations;$i++)
 	{$res = $mesures[$i]["modules"];
-	$station = $mesures[$i]['station_name'];
 	echo("<td>");
-	fill($station,$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
+	fill($devicelist["devices"][$i],$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>
-  	<div style='width: 50%; height:5px;'> </div>
-	<input type=\"button\" style=\"color:#030; background-color: #cceeff;\" value=\"refresh\" onclick=\"window.location='icones.php?action=refresh';\">		
+	<input type=\"button\" style=\"color:#030; background-color: #cceeff;\" value=\"Refresh\" onclick=\"window.location='icones.php?action=refresh';\">		
   	<div style='width: 50%; height:8px;'> </div>
 	<div style='width: 640px; height: 20px; position: relative; margin-left:auto; margin-right:auto;'> 
 	<i>Déplacer la souris sur un marqueur pour voir les informations</i>
