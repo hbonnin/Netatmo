@@ -6,7 +6,7 @@ If you have a Netmo account, you can  see a demo at  http://fraysseix.webatu.com
 and a readme  with pictures at http://fraysseix.webatu.com/Netatmo/README.html
 
 Main windows:
-	- Display on a Google map all the stations and their extra modules with their last measures,
+	- Display on a Google map all the last measures of all stations and extra modules,
  	- Graphics of the measures of one station 
           (5 minutes, 30 minutes, 3 hours, 1 day or 1 week interval for a given period),
 	- Graphics of the temperatures of selected stations (1 day or 1 week), 
