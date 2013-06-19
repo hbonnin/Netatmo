@@ -6,16 +6,16 @@ If you have a Netmo account, you can  see a demo at  http://fraysseix.webatu.com
 and a readme  with pictures at http://fraysseix.webatu.com/Netatmo/README.html
 
 Main windows:
-	- Display on a Google map all the stations with their last measures,
+	- Display on a Google map all the stations and their extra modules with their last measures,
  	- Graphics of the measures of one station 
-          (all measures, 30 minutes, 3 hours, 1 day or 1 week interval for a given period),
+          (5 minutes, 30 minutes, 3 hours, 1 day or 1 week interval for a given period),
 	- Graphics of the temperatures of selected stations (1 day or 1 week), 
 	  five stations seems a limit for visibility.
 
 Remarks:
 	- If the measure interval is 30 minutes, the period of measures is 14 days 
 	  before the end of measures.
-	- If the measure interval is max, the period of measures is 2 days.
+	- If the measure interval is 5 minutes, the period of measures is 2 days.
 	- The weekly measures always end on Thursdays.
 	- If you replace index.php by indexNetatmo.php, you will be forwarded
 	  to the Netatmo site for identification.
