@@ -32,7 +32,7 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <head>
-<title>Staions Netatmo</title>
+<title>Stations Netatmo</title>
 <meta charset='utf-8'>
 </head>
 <body style='text-align:center;'>

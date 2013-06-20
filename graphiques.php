@@ -106,7 +106,7 @@ else
 
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
-//echo("<pre>");print_r($devicelist["devices"][0]);echo("</pre>");
+//echo("<pre>");print_r($devicelist["devices"][4]);echo("</pre>");
 
 $stat0 = $mesures[$stationId]['station_name'];
 	// exterieur
@@ -158,7 +158,7 @@ $visupt = '';
 echo("
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
-  <title>Staions Netatmo</title>
+  <title>Stations Netatmo</title>
   <meta charset='utf-8'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript'>

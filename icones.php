@@ -64,16 +64,30 @@ for($i = 0;$i < $numStations;$i++)
 	$txtINT = sprintf("<font size=2>Int:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
 			,$res[0]['CO2'],$res[0]['Noise']);
 	if($places == "BAD")		
-    	$label[$i] = '<b>' . $name . '</b><br>' . $txtINT . '<br>' . $txtEXT ;
+    	$p = '<b>' . $name . '</b><br>';
 	else
-    	$label[$i] = '<b>' . $places[1] . '</b><br><font size=2>' . $places[0] . '</font><br><br>' . $txtINT . '<br>' . $txtEXT;
+    	$p = '<b>' . $places[1] . '</b><br><font size=2>' . $places[0] . '</font>'; 
+    	
+    $label[$i] = $p	. '<br><ul style=\"text-align:left; font-size:11px; list-style-type:none;\"><li>' . $txtINT . '</li><li>' . $txtEXT .'</li>';
+    	
+	$nModule = count($res);
+  	for($j = 2; $j < $nModule ; $j++)
+  		{$name = $res[$j]["module_name"];
+  		$temp = $res[$j]["Temperature"];
+  		$hum = $res[$j]["Humidity"];
+  		$co2 = $res[$j]["CO2"];		
+  		$text = '<li><font size=2>' . $name. ':</font> ' . $temp .'° ' .$hum. ' % ' .$co2. ' ppm</li>';
+  		$label[$i] = $label[$i] . $text;
+  		}
+  	$label[$i] = $label[$i] . '</ul>';
+
     $slabel[$i] = $res[1]['Temperature'] . '°';	      	  
 	}	
 
 echo("
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
-<title>Staions Netatmo</title>
+<title>Stations Netatmo</title>
 <meta charset='utf-8'>
 <link type='text/css' rel='stylesheet'  href='style.css'>
     <script type='text/javascript'

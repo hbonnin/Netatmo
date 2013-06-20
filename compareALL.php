@@ -142,7 +142,7 @@ function tip($temp,$tempDate)
 echo("
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
-  <title>Staions Netatmo</title>
+  <title>Stations Netatmo</title>
   <meta charset='utf-8'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript'>

@@ -114,7 +114,7 @@ $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 echo("
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
-<title>Staions Netatmo</title>
+<title>Stations Netatmo</title>
 <meta charset='utf-8'>
 <script type='text/javascript' src='calendrier.js'></script>
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrier.css' />
