@@ -2,8 +2,8 @@
 
 function fill($devicelist,$alt,$res,$tmin,$tmax)
 	{$station = $devicelist["station_name"];
-	$ext_name = $devicelist["module_name"];
-	$int_name = $devicelist["modules"][0]["module_name"];
+	$int_name = $devicelist["module_name"];
+	$ext_name = $devicelist["modules"][0]["module_name"];
 	$nModule = count($res);
 	$dat0 = date('d/m/Y',$res[0]['time']);
 	$time0 = date('H:i',$res[0]['time']);
@@ -71,7 +71,7 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
   			$co2 = $res[$j]["CO2"];		
   			echo("<tr>
   			<td style='width:80px;'>$name</td>
-  			<td style='color:#ff0000;'>$temp °</td>
+  			<td style='color:#ff0000;'>{$temp}°</td>
   			<td class='h'>$hum %</td>
   			<td class='c'>$co2 ppm</td>
   			</tr>");
