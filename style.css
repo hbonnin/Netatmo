@@ -114,7 +114,7 @@ td.modules	{
   	font-size:12px;
   	text-align:left;
 	}
-.tooltip span	{color:black;
+.tooltip div	{color:black;
   	visibility: hidden;
   	position: absolute;
   	padding-top:5%;
@@ -128,7 +128,7 @@ td.modules	{
 .tooltip:hover	{
   	border: 0;
 	}
-.tooltip:hover span	{
+.tooltip:hover div	{
   	visibility: visible;
 	}
 

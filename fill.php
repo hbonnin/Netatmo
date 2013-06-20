@@ -60,9 +60,9 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
 		<td class='modules' colspan='7'>
 		<a href='#' class='tooltip'>
   		Autres modules:
-  		<span>
+  		<div>
   		<table>
-  		<tr><td></td>	<td> Temp</td>	<td>Hum</td>	<td>CO2</td><tr>
+  		<tr><td></td>	<td> Temp</td>	<td>Hum</td>	<td>CO2</td></tr>
   		");
   		for($j = 2; $j < $nModule ; $j++)
   			{$name = $res[$j]["module_name"];
@@ -76,15 +76,15 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
   			<td class='c'>$co2 ppm</td>
   			</tr>");
   			}
-  		echo("</table></span></a></td></tr>");
+  		echo("</table></div></a></td></tr></table>");
   		}
 	else
 		echo("	
-		<td class='modules'>
+		<td class='modules' colspan='7'>
 		<a href='#' class='tooltip'>
   		&nbsp;
 		</a></td></tr>
+		</table>
 		");
-	echo("</table>");
 }
 ?>
