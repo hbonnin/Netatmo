@@ -12,15 +12,11 @@ Main windows:
 	- Graphics of the temperatures of selected stations (1 day or 1 week), 
 	  five stations seems a limit for visibility.
 
-Remarks:
+Remark:
 	- If the measure interval is 30 minutes, the period of measures is 14 days 
 	  before the end of measures.
 	- If the measure interval is max, the period of measures is 2 days.
 	- The weekly measures always end on Thursdays.
-	- If you replace index.php by indexNetatmo.php, you will be forwarded
-	  to the Netatmo site for identification.
-	- If you replace index.php by menu.php, you will be automatically logged,
-	  using the informations stored in config.php.
 
 Install:
 	- Unzip the archive,
