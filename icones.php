@@ -10,7 +10,7 @@ date_default_timezone_set("Europe/Paris");
 
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
-else
+else 
 	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 	try {
     	$tokens = $client->getAccessToken();       
@@ -37,16 +37,17 @@ else
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     $_SESSION['devicelist'] = $devicelist;
     }
-if(isset($_SESSION['mesures']))
+    
+if(isset($_GET["action"]) && $_GET["action"]  == 'refresh')
+	{$mesures = $helper->GetLastMeasures($client,$devicelist);
+	$_SESSION['mesures'] = $mesures;	
+	}   
+else if(isset($_SESSION['mesures']))
     $mesures = $_SESSION['mesures'];
 else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-if ($_GET["action"] == 'refresh')
-	{$mesures = $helper->GetLastMeasures($client,$devicelist);
-	$_SESSION['mesures'] = $mesures;	
-	}   
        
 $numStations = count($devicelist["devices"]);
 $latitude = array($numStations);
@@ -58,13 +59,12 @@ for($i = 0;$i < $numStations;$i++)
     $longitude[$i] = $devicelist["devices"][$i]["place"]["location"][0];
     $res = $mesures[$i]["modules"];
     $alt[$i] = $devicelist["devices"][$i]["place"]["altitude"];
-    $name = $mesures[$i]['station_name'] . ' (' . $alt[i] . 'm)';
     $places = geolocalize($latitude[$i],$longitude[$i]);
     $txtEXT = sprintf("<font size=2>Ext:</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
 	$txtINT = sprintf("<font size=2>Int:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
 			,$res[0]['CO2'],$res[0]['Noise']);
 	if($places == "BAD")		
-    	$p = '<b>' . $name . '</b><br>';
+    	$p = '<b>' . $mesures[$i]['station_name'] . ' (' . $alt[$i] . 'm)' . '</b><br>';
 	else
     	$p = '<b>' . $places[1] . '</b><br><font size=2>' . $places[0] . '</font>'; 
     	
@@ -163,7 +163,7 @@ echo("
 <tr>
 ");
 
-// calsul des minimax
+// calcul des minimax
 $date_end = time();
 $date_beg = $date_end - (24 * 60 * 60);
 $tmins =  array($numStations);
@@ -179,7 +179,8 @@ for($i = 0;$i < $numStations;$i++)
     	, "device_id" => $device_id
     	, "module_id" => $module_id);
     $tmesure = $client->api("getmeasure", "POST", $params);	
-    if(count($tmesure[0]['value'][0]))
+    //if(count($tmesure[0]['value'][0]))
+    if(count($tmesure))
     	{$tmins[$i] = $tmesure[0]['value'][0][0];   
     	$tmaxs[$i] = $tmesure[0]['value'][0][1];
     	}
@@ -196,12 +197,12 @@ for($i = 0;$i < $numStations;$i++)
 	}
 echo("</tr></table>
 	<input type=\"button\" style=\"color:#030; background-color: #cceeff;\" value=\"Refresh\" onclick=\"window.location='icones.php?action=refresh';\">		
-  	<div style='width: 50%; height:8px;'> </div>
+  	<div style='width: 50%; height:5px;'> </div>
 	<div style='width: 640px; height: 20px; position: relative; margin-left:auto; margin-right:auto;'> 
 	<i>Déplacer la souris sur un marqueur pour voir les informations</i>
 	</div>	
  	
-  	<div id='map_canvas' style='width: 50%; height:400px; border:solid 3px black; margin-left:auto; margin-right:auto;'> </div>
+  	<div id='map_canvas' style='width: 50%; height:385px; border:solid 3px black; margin-left:auto; margin-right:auto;'> </div>
   	<div style='width: 50%; height:5px;'> </div>
 	<input type=\"button\" style=\"color:#000000; background-color: #ffffff;\" value=\"Back\" onclick=\"window.location='menu.php';\">		
 	

@@ -52,7 +52,7 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
 	<td class='s'>$dat1</td><td class='s' style='text-align:right;'>$time1</td>
 	<td></td><td></td>
 	<td class='s' >$dat0</td><td class='s' style='text-align:right;'>$time0</td>
-	<td></td>	
+	<td></td>
 	</tr><tr>
 	");
 	if($nModule > 2)
@@ -81,7 +81,7 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
 	else
 		echo("	
 		<td class='modules' colspan='7'>
-		<a href='#' class='tooltip'>
+		<a href='#' class='tooltip'  style='text-decoration:none;'>
   		&nbsp;
 		</a></td></tr>
 		</table>

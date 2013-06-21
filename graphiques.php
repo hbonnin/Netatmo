@@ -67,7 +67,9 @@ else // 3hours
 	}
 
 if(isset($_SESSION['client']))
-    $client = $_SESSION['client'];
+    {$client = $_SESSION['client'];
+    //echo("<pre>");print_r($client);echo("</pre");
+    }
 else
 	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 	try {
@@ -95,7 +97,7 @@ else
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     $_SESSION['devicelist'] = $devicelist;
     }
-    
+  
 if(isset($_SESSION['mesures']))
     $mesures = $_SESSION['mesures'];
 else
@@ -240,7 +242,7 @@ else   //5 ou 30 minutes
 	echo("              
 	          data.addColumn('string', 'Date');
         	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  	          
-        	  data.addColumn('number', 'T'); 
+        	  data.addColumn('number', 'Temp.'); 
         	  data.addColumn('number', 'Humidity');  
          	  data.addColumn('number', '');   	  
 	");
@@ -358,11 +360,11 @@ if($inter > 30)
 			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
      	                    	
 	}
-else  //max ou 30 minutes
+else  // 5 minutes ou 30 minutes
 	{echo("
 	          data1.addColumn('string', 'Date');
         	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
-        	  data1.addColumn('number', 'T');
+        	  data1.addColumn('number', 'Temp.');
         	  data1.addColumn('number', 'Humidity');
         	  data1.addColumn('number', 'CO2');
         	  data1.addColumn('number', 'Pressure');

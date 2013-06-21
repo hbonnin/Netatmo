@@ -10,7 +10,7 @@
 		//setcookie(session_name(), “”,time()-3600,“/”);
 	$_SESSION=array();
 	session_destroy();
-
+//phpinfo();
 echo("
 <!--
 Name: Netatmo PHP Graphics

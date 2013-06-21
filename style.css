@@ -1,8 +1,6 @@
 html {
-// border:1px solid blue;
  }
 body {
- //border:1px solid red;
  margin:0;
  padding:0;
  }
@@ -100,16 +98,17 @@ td.s	{color: black;
 	font-size: 9px;
 	text-align:left;
 	font-style:italic;
+	height:17px;
 	}	
 
 /****************************/
 td.modules	{
   	text-align:left;
+  	font-size:12px;
 }
 .tooltip	{
   	position: relative;
   	background: #cceeff;
-  	//text-decoration: none;
   	color: #000077;
   	font-size:12px;
   	text-align:left;

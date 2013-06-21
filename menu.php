@@ -27,10 +27,13 @@ FB::log($_SERVER, "dumping an array");
 */
 session_start();
 
-$code = $_GET["code"];
-
-if(!empty($code))
-	{$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
+if(isset($_GET["error"]))
+    {if($_GET["error"] == "access_denied")
+        {echo "You refused the application's access\n";exit(-1);}
+    }
+if(isset($_GET["code"]) && !isset($_SESSION['client'])) // menu called from indexNetatmo.php
+	{$code = $_GET["code"];
+	$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
     if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
     	{$token_url = "https://api.netatmo.net/oauth2/token";
     	$postdata = http_build_query(array(
@@ -53,10 +56,12 @@ if(!empty($code))
 		$refresh_token = $params['refresh_token'];
 		$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 		$_SESSION['client'] = $client;	
+		//echo("<pre>");print_r($client);echo("</pre");
 		}
 	else
-		echo("The state does not match.");
+		{echo("The state does not match.");exit(-1);}
 	}		
+/*	
 if(isset($_SESSION['tokens'])) // menu called from login
     {$tokens = $_SESSION['tokens'];
 	$access_token = $tokens['access_token'];
@@ -64,9 +69,11 @@ if(isset($_SESSION['tokens'])) // menu called from login
 	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 	$_SESSION['client'] = $client;
     }
-	
-if(isset($_SESSION['client']))
-    $client = $_SESSION['client'];
+*/	
+if(isset($_SESSION['client']))// menu called from login or reload
+    {$client = $_SESSION['client'];
+	//echo("<pre>");print_r($client);echo("</pre");	  
+    }
 else
 	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 	try {
@@ -99,13 +106,7 @@ else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-/*
-echo("<pre>");
-echo "session:" . session_id();
-print_r($_COOKIE);
-echo("</pre>");  
-FB::log($mesures, "array");
-*/
+
 $num = count($devicelist["devices"]);
 date_default_timezone_set("Europe/Paris");
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
@@ -218,7 +219,7 @@ function Allow(tab)
 	</td></tr>
 	</table>
 	
-<table style='border-spacing:5px; 30px; margin-left:auto; margin-right:auto;'>
+<table style='border-spacing:5px; margin-left:auto; margin-right:auto;'>
 <tr>
 <td>
 	<!-- ################################ -->
