@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Netatmo php program</title>
+<meta http-equiv='Content-Type' content='text/html; charset=utf8' />
+</head>
+<body>
+<a href='http://www.000webhost.com/' target='_blank'><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15' border='0' /></a>
+
+<P>
+This program uses the Netatmo php sdk and some Google development tools for the graphics.<br>
+The server needs to have a php version >= 5, with curl and json enabled.<br>
+If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.webatu.com/Netatmo/">Netatmo</A>
+
+</p>
+<h3>Main windows:</h3>
+<ul>
+<li>	Display the last measures on a Google map of all the stations and their modules,</li>
+
+<li>    Graphics of the measures of one station 
+          (max, 30 minutes, 3 hours, 1 day or 1 week interval for a given period),</li>
+<li>Graphics of the temperatures of selected stations (1 day or 1 week), 
+	  five or six stations seems a limit for visibility.</li>
+</ul>
+<h3>Remarks:</h3>
+<ul>
+<li>	If the measure interval is 30 minutes, the period of measures is 14 days 
+	  before the end of measures.</li>
+<li>	If the measure interval is 5 minutes, the period of measures is 2 days 
+	  before the end of measures.</li>
+<li>   The weekly measures always end on Thursdays.</li>
+<li>	If you replace index.php by indexNetatmo.php, you will be forwarded
+       to the Netatmo site for identification.</li>
+<li> If you replace index.php by menu.php, you will be automatically logged,
+      using the informations stored in config.php.</li>
+
+
+</ul>
+<h3>Install:</h3>
+<ul>
+<li>	Unzip the archive</li>
+<li>	Put your personal information in Config.php</li>
+<li>	open index.php in your web browser</li>
+</ul>  
+<h3>Screenshots:</h3>
+<h4>Last mesures</h4>
+<IMG SRC="google.png" ALT="google.png" TITLE="Last Measures">
+<h4>Graphics</h4>
+<table>
+<tr><td>Graphics of one station</td><td>Temperatures of 4 stations<td></tr>
+<tr>
+<td><IMG SRC="graphiques.jpg" ALT="Graphique" TITLE="Graphics of one station"></td>
+<td><IMG SRC="compare.jpg" ALT="Compare" TITLE="Temperatures of 4 stations"></td>
+</tr>
+</table>
+<center>
+<!-- START OF HIT COUNTER CODE -->
+<br><script language='JavaScript' src='http://www.counter160.com/js.js?img=11'></script><br><a href='http://www.000webhost.com'><img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' border='0' align='texttop'></a><a href='http://www.hosting24.com'><img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' border='0' align='texttop'></a>
+<!-- END OF HIT COUNTER CODE -->
+</center>
+</body>
+</html>
