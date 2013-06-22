@@ -11,7 +11,8 @@
 	$_SESSION=array();
 	session_destroy();
 //phpinfo();
-echo("
+?>
+
 <!--
 Name: Netatmo PHP Graphics
 Author: Hubert de Fraysseix
@@ -34,12 +35,13 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
+<link rel='icon' href='favicon.ico' />
 </head>
 <body style='text-align:center;'>
 
 <h2> Entrez vos identifiants Netatmo </h2>
 
-<h3 style='color:red;'>$msg</h3>
+<h3 style='color:red;'><?php $msg ?></h3>
 <form id='login' action='login.php' method='post' accept-charset='UTF-8'>
 
 <table style='margin-left:auto; margin-right:auto;'>
@@ -62,5 +64,4 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 
 
 </html>
-");
-?>
+

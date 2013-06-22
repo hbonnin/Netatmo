@@ -162,6 +162,7 @@ echo("
   <head>
   <title>Stations Netatmo</title>
   <meta charset='utf-8'>
+    <link rel='icon' href='favicon.ico' />
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
@@ -447,7 +448,7 @@ echo("
     </td></tr></table>-->
 
     <div id='chart1_div' style='width:100%; height:400px; margin-left:auto; margin-right:auto;'></div>
-    <div id='chart_div' style='width:100%; height:250px; margin-left:auto; margin-right:auto;'></div>
+    <div id='chart_div' style='width:100%; height:270px; margin-left:auto; margin-right:auto;'></div>
     
   </body>
 </html>

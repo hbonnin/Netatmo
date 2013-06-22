@@ -92,6 +92,7 @@ echo("
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
+<link rel='icon' href='favicon.ico' />
 <link type='text/css' rel='stylesheet'  href='style.css'>
     <script type='text/javascript'
 ");    

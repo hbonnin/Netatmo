@@ -116,6 +116,7 @@ echo("
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <title>Stations Netatmo</title>
+<link rel='icon' href='favicon.ico' />
 <meta charset='utf-8'>
 <script type='text/javascript' src='calendrier.js'></script>
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrier.css' />
