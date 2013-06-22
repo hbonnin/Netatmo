@@ -60,8 +60,11 @@ for($i = 0;$i < $numStations;$i++)
     $res = $mesures[$i]["modules"];
     $alt[$i] = $devicelist["devices"][$i]["place"]["altitude"];
     $places = geolocalize($latitude[$i],$longitude[$i]);
-    $txtEXT = sprintf("<font size=2>Ext:</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
-	$txtINT = sprintf("<font size=2>Int:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
+    $int_name = $devicelist["devices"][$i]["module_name"];
+	$ext_name = $devicelist["devices"][$i]["modules"][0]["module_name"];
+
+    $txtEXT = sprintf("<font size=2>$ext_name :</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
+	$txtINT = sprintf("<font size=2>$int_name:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
 			,$res[0]['CO2'],$res[0]['Noise']);
 	if($places == "BAD")		
     	$p = '<b>' . $mesures[$i]['station_name'] . ' (' . $alt[$i] . 'm)' . '</b><br>';
