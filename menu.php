@@ -111,8 +111,9 @@ $num = count($devicelist["devices"]);
 date_default_timezone_set("Europe/Paris");
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+?>
 
-echo("
+
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <title>Stations Netatmo</title>
@@ -202,7 +203,6 @@ function Allow(tab)
 
 //]]>
 </script>
-
 </head>
 
 <body style='text-align:center;'>
@@ -230,10 +230,10 @@ function Allow(tab)
 	<tr>
 	<td style='height:25px; width:180px;'>Début des mesures
 	</td>
-	<td><input class='date' id='id_date0'  hidden disabled  type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);'></td>
+	<td><input class='date' id='id_date0'  hidden disabled  type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr><tr>
 	<td style='height:25px;'>Fin des mesures</td>
-	<td><input class='date' id='id_date1' hidden disabled  type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></td>
+	<td><input class='date' id='id_date1' type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);'></td>
 	</tr><tr>
 	<td id='id_duree' style='height:25px;'>Fréquence (durée: 2 jours)
 	</td>	
@@ -243,8 +243,8 @@ function Allow(tab)
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' > 1 journée </option>
 		<option value='3hours' > 3 heures </option>
-		<option value='30min'> 30 minutes </option>
-		<option value='max' selected='selected'> 5 minutes </option>
+		<option value='30min'selected='selected'> 30 minutes </option>
+		<option value='max' > 5 minutes </option>
 	</select>
 	</td></tr>
 	</table>
@@ -254,8 +254,8 @@ function Allow(tab)
 	</td>
 	<td>
 	<table>
-");
 
+<?php
 for($i = 0;$i < $num;$i++)
 	{$stat = $mesures[$i]['station_name'];
 	$arr = str_split($stat,17);
@@ -265,9 +265,9 @@ for($i = 0;$i < $num;$i++)
 	else
 		echo("<tr><td><input type='radio' name='station' value='$i'> $stat </td></tr>");		
 	}
+?>	
 	
-	
-echo("
+
 	</table>
 	</td></tr></TABLE>
 	<input type='submit'>
@@ -281,11 +281,11 @@ echo("
 	<tr>
 	<td style='height:25px; width:180px;'>Début des mesures
 	</td>
-	<td><input class='date' type='text' name='date0' value=\"$datebeg\" onclick='ds_sh(this,0);' />
+	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);' />
 	</td></tr>
 	<tr>
-	<td style='height:25px;'>Fin des mesures</td>
-	<td><input class='date' type='text' name='date1' value=\"$dateend\" onclick='ds_sh(this,1);'></td>
+	<td style='height:25px;'>Fin des mesures</td>	
+	<td><input class='date' type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);'></td>	
     </tr>
 	<tr><td style='height:25px;'>Fréquence</td>
 	<td>
@@ -300,8 +300,8 @@ echo("
 	</td>
 	<td>
 	<table>
-");
 
+<?php
 for($i = 0;$i < $num;$i++)
 	{$stat = $mesures[$i]['station_name'];
 	$arr = str_split($stat,17);
@@ -311,8 +311,8 @@ for($i = 0;$i < $num;$i++)
 	else
 		echo("<tr><td><input type='checkbox' name='stats[]' value='$i'  > $stat </td></tr>");
 	}
-	
-echo("
+?>	
+
 	</table>
 	</td></TABLE>
 	<input type='submit'>
@@ -348,7 +348,4 @@ echo("
 
 
 </body>
-
 </html>
-");
-?>
