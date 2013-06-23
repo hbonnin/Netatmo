@@ -87,7 +87,7 @@ for($i = 0;$i < $numStations;$i++)
     $slabel[$i] = $res[1]['Temperature'] . '°';	      	  
 	}	
 
-echo("
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <title>Stations Netatmo</title>
@@ -95,13 +95,12 @@ echo("
 <link rel='icon' href='favicon.ico' />
 <link type='text/css' rel='stylesheet'  href='style.css'>
     <script type='text/javascript'
-");    
+<?php   
 	if($use_google_key == 1)
 		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key&amp;sensor=false'>");
 	else
 		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places&amp;sensor=false'>");
-			
-echo("
+?>
     </script>
     <script type='text/javascript' src='StyledMarker.js'></script>
     <script type='text/javascript'>
@@ -129,7 +128,7 @@ echo("
   		var LatLng = [];
   		var label = [];
   		var slabel = [];
-");
+<?php
   		echo("var num = $numStations;\n");
   		for($i = 0;$i < $numStations;$i++)
   			{echo("lat[$i] = $latitude[$i];\n");
@@ -137,7 +136,7 @@ echo("
   			echo("label[$i] = \"$label[$i]\";\n");
   			echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   			}
-echo("  				
+?> 				
   		for(i=0;i < num;i++)
   			LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
   					
@@ -159,21 +158,54 @@ echo("
 
 		cloudLayer = new google.maps.weather.CloudLayer();
 		cloudLayer.setMap(map);
-/*		
-	var weatherLayer = new google.maps.weather.WeatherLayer({temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS});
-	google.maps.event.addListener(weatherLayer, 'click', function(e) {
-  alert('The current temperature at ' + e.featureDetails.location + ' is '
-        + e.featureDetails.current.temperature + ' degrees.');
-		});
-*/		
-	}
-	function showHideCloud()
-		{if(show)
-			{cloudLayer.setMap(null);show = 0;}
-		else
-			{cloudLayer.setMap(map);show = 1;}	
-		}
 
+	var homeControlDiv = document.createElement('div');
+  	var homeControl = new HomeControl(homeControlDiv, map);
+
+  	homeControlDiv.index = 1;
+  	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);		
+	}
+	
+	
+	function HomeControl(controlDiv, map) {
+
+  // Set CSS styles for the DIV containing the control
+  // Setting padding to 5 px will offset the control
+  // from the edge of the map.
+  controlDiv.style.padding = '5px';
+
+  // Set CSS for the control border.
+  var controlUI = document.createElement('div');
+  controlUI.style.backgroundColor = 'white';
+  controlUI.style.borderStyle = 'solid';
+  controlUI.style.borderWidth = '1px';
+  controlUI.style.cursor = 'pointer';
+  controlUI.style.textAlign = 'center';
+  controlUI.title = 'Click hide/diplay the clouds';
+  controlDiv.appendChild(controlUI);
+
+  // Set CSS for the control interior.
+  var controlText = document.createElement('div');
+  controlText.style.fontFamily = 'Arial,sans-serif';
+  controlText.style.fontSize = '15px';
+  controlText.style.paddingLeft = '4px';
+  controlText.style.paddingRight = '4px';
+  controlText.innerHTML = 'Hide Clouds';
+  controlUI.appendChild(controlText);
+
+  // Setup the click event listeners
+  google.maps.event.addDomListener(controlUI, 'click', function() 
+  		{if(show)
+			{cloudLayer.setMap(null);show = 0;
+			controlText.innerHTML = 'Show Clouds';
+			}
+		else
+			{cloudLayer.setMap(map);show = 1;
+  			controlText.innerHTML = 'Hide Clouds';
+			}	
+		}
+  );
+}
     </script>
     </head>
   
@@ -184,7 +216,7 @@ echo("
 	
 <table style='margin-left:auto; margin-right:auto; margin-top:0px;'>
 <tr>
-");
+<?php
 
 // calcul des minimax
 $date_end = time();
@@ -218,17 +250,17 @@ for($i = 0;$i < $numStations;$i++)
 	fill($devicelist["devices"][$i],$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
 	echo("</td>");
 	}
-echo("</tr></table>
-	<input type=\"button\" style=\"color:#030; background-color: #cceeff;\" value=\"Refresh\" onclick=\"window.location='icones.php?action=refresh';\">		
+?>
+	
+</tr></table>
+	<input type="button" style="color:#030; background-color: #cceeff;" value="Refresh" onclick="window.location='icones.php?action=refresh';">		
   	<div style='width: 50%; height:5px;'> </div>
 	<div style='width: 640px; height: 20px; position: relative; margin-left:auto; margin-right:auto;'> 
-	<i>Déplacer la souris sur un marqueur pour voir les informations &nbsp;&nbsp;</i>
- 	</div>		
+	<i>Déplacer la souris sur un marqueur pour voir les informations &nbsp;&nbsp;</i></div>		
   	<div id='map_canvas' style='width: 50%; height:385px; border:solid 3px black; margin-left:auto; margin-right:auto;'> </div>
   	<div style='width: 50%; height:5px;'> </div>
-	<input type=\"button\" style=\"color:#000000; background-color: #ffffff;\" value=\"Back\" onclick=\"window.location='menu.php';\">		
- 	<input type=\"button\" style=\"color:#030;  background-color: #eeaa00;\" value=\"NUAGES\" onclick=\"showHideCloud();\">	
-
+	<input type="button" style="color:#000000; background-color: #ffffff;" value="Back" onclick="window.location='menu.php';">		
+ 
 
 <!-- START OF HIT COUNTER CODE -->
 <!--
@@ -245,6 +277,3 @@ echo("</tr></table>
 
 </body>
 </html>
-");
-
-?>
