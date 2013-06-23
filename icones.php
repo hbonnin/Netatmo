@@ -129,69 +129,70 @@ for($i = 0;$i < $numStations;$i++)
   		var label = [];
   		var slabel = [];
 <?php
-  		echo("var num = $numStations;\n");
-  		for($i = 0;$i < $numStations;$i++)
-  			{echo("lat[$i] = $latitude[$i];\n");
-  			echo("lng[$i] = $longitude[$i];\n");
-  			echo("label[$i] = \"$label[$i]\";\n");
-  			echo("slabel[$i] = \"$slabel[$i]\";\n");  			
-  			}
+	echo("var num = $numStations;\n");
+  	for($i = 0;$i < $numStations;$i++)
+  		{echo("lat[$i] = $latitude[$i];\n");
+  		echo("lng[$i] = $longitude[$i];\n");
+  		echo("label[$i] = \"$label[$i]\";\n");
+  		echo("slabel[$i] = \"$slabel[$i]\";\n");  			
+  		}
 ?> 				
-  		for(i=0;i < num;i++)
-  			LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
+	for(i=0;i < num;i++)
+  		LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
   					
-    	var center = new google.maps.LatLngBounds(LatLng[0]);
-  		for(i=1;i < num;i++)
-    		center.extend(LatLng[i]);
+    var center = new google.maps.LatLngBounds(LatLng[0]);
+  	for(i=1;i < num;i++)
+    	center.extend(LatLng[i]);
 
-       var mapOptions = {
-          zoom: 5,
-          center: center.getCenter(),
-          mapTypeId: google.maps.MapTypeId.HYBRID
+	var mapOptions = {
+        zoom: 5,
+        center: center.getCenter(),
+        mapTypeId: google.maps.MapTypeId.HYBRID
         };
         
-        map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
-  		//map.fitBounds(center);		  		
+    map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
+  	//map.fitBounds(center);		  		
     	 	
-		for(i=0 ; i < num;i++)
-			markers[i] = createMarker(LatLng[i],label[i],slabel[i],map);
+	for(i=0 ; i < num;i++)
+		markers[i] = createMarker(LatLng[i],label[i],slabel[i],map);
 
-		cloudLayer = new google.maps.weather.CloudLayer();
-		cloudLayer.setMap(map);
-
+	// add cloud layer
+	cloudLayer = new google.maps.weather.CloudLayer();
+	cloudLayer.setMap(map);
 	var homeControlDiv = document.createElement('div');
   	var homeControl = new HomeControl(homeControlDiv, map);
-
   	homeControlDiv.index = 1;
-  	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);		
-	}
-	
-	
+  	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+  	// add weather layer
+	var weatherLayer = new google.maps.weather.WeatherLayer({
+ 	 temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS
+	});
+	weatherLayer.setMap(map);	  			
+	}	
 	function HomeControl(controlDiv, map) {
+	  // Set CSS styles for the DIV containing the control
+ 	 // Setting padding to 5 px will offset the control
+	  // from the edge of the map.
+	  controlDiv.style.padding = '5px';
 
-  // Set CSS styles for the DIV containing the control
-  // Setting padding to 5 px will offset the control
-  // from the edge of the map.
-  controlDiv.style.padding = '5px';
+	  // Set CSS for the control border.
+	  var controlUI = document.createElement('div');
+	  controlUI.style.backgroundColor = 'white';
+	  controlUI.style.borderStyle = 'solid';
+	  controlUI.style.borderWidth = '1px';
+	  controlUI.style.cursor = 'pointer';
+ 	  controlUI.style.textAlign = 'center';
+	  controlUI.title = 'Click hide/diplay the clouds';
+	  controlDiv.appendChild(controlUI);
 
-  // Set CSS for the control border.
-  var controlUI = document.createElement('div');
-  controlUI.style.backgroundColor = 'white';
-  controlUI.style.borderStyle = 'solid';
-  controlUI.style.borderWidth = '1px';
-  controlUI.style.cursor = 'pointer';
-  controlUI.style.textAlign = 'center';
-  controlUI.title = 'Click hide/diplay the clouds';
-  controlDiv.appendChild(controlUI);
-
-  // Set CSS for the control interior.
-  var controlText = document.createElement('div');
-  controlText.style.fontFamily = 'Arial,sans-serif';
-  controlText.style.fontSize = '15px';
-  controlText.style.paddingLeft = '4px';
-  controlText.style.paddingRight = '4px';
-  controlText.innerHTML = 'Hide Clouds';
-  controlUI.appendChild(controlText);
+	  // Set CSS for the control interior.
+	  var controlText = document.createElement('div');
+	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontSize = '15px';
+	  controlText.style.paddingLeft = '4px';
+	  controlText.style.paddingRight = '4px';
+	  controlText.innerHTML = 'Hide Clouds';
+	  controlUI.appendChild(controlText);
 
   // Setup the click event listeners
   google.maps.event.addDomListener(controlUI, 'click', function() 
