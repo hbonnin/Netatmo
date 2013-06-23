@@ -96,14 +96,18 @@ echo("
 <link type='text/css' rel='stylesheet'  href='style.css'>
     <script type='text/javascript'
 ");    
-	if($use_google_key ==1)
-		echo("src='https://maps.googleapis.com/maps/api/js?key=$google_key&amp;sensor=false'>");
+	if($use_google_key == 1)
+		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key&amp;sensor=false'>");
 	else
-		echo("src='https://maps.googleapis.com/maps/api/js?&amp;sensor=false'>");
+		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places&amp;sensor=false'>");
+			
 echo("
     </script>
     <script type='text/javascript' src='StyledMarker.js'></script>
     <script type='text/javascript'>
+    var cloudLayer;
+    var map;
+    var show = 1;
     
 	function createMarker(pos,label,slabel,map) 
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
@@ -142,18 +146,33 @@ echo("
     		center.extend(LatLng[i]);
 
        var mapOptions = {
-          zoom: 10,
+          zoom: 5,
           center: center.getCenter(),
           mapTypeId: google.maps.MapTypeId.HYBRID
         };
         
-        var map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
-  		map.fitBounds(center)		  		
+        map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
+  		//map.fitBounds(center);		  		
     	 	
 		for(i=0 ; i < num;i++)
-			markers[i] = createMarker(LatLng[i],label[i],slabel[i],map)
+			markers[i] = createMarker(LatLng[i],label[i],slabel[i],map);
 
+		cloudLayer = new google.maps.weather.CloudLayer();
+		cloudLayer.setMap(map);
+/*		
+	var weatherLayer = new google.maps.weather.WeatherLayer({temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS});
+	google.maps.event.addListener(weatherLayer, 'click', function(e) {
+  alert('The current temperature at ' + e.featureDetails.location + ' is '
+        + e.featureDetails.current.temperature + ' degrees.');
+		});
+*/		
 	}
+	function showHideCloud()
+		{if(show)
+			{cloudLayer.setMap(null);show = 0;}
+		else
+			{cloudLayer.setMap(map);show = 1;}	
+		}
 
     </script>
     </head>
@@ -203,13 +222,13 @@ echo("</tr></table>
 	<input type=\"button\" style=\"color:#030; background-color: #cceeff;\" value=\"Refresh\" onclick=\"window.location='icones.php?action=refresh';\">		
   	<div style='width: 50%; height:5px;'> </div>
 	<div style='width: 640px; height: 20px; position: relative; margin-left:auto; margin-right:auto;'> 
-	<i>Déplacer la souris sur un marqueur pour voir les informations</i>
-	</div>	
- 	
+	<i>Déplacer la souris sur un marqueur pour voir les informations &nbsp;&nbsp;</i>
+ 	</div>		
   	<div id='map_canvas' style='width: 50%; height:385px; border:solid 3px black; margin-left:auto; margin-right:auto;'> </div>
   	<div style='width: 50%; height:5px;'> </div>
 	<input type=\"button\" style=\"color:#000000; background-color: #ffffff;\" value=\"Back\" onclick=\"window.location='menu.php';\">		
-	
+ 	<input type=\"button\" style=\"color:#030;  background-color: #eeaa00;\" value=\"NUAGES\" onclick=\"showHideCloud();\">	
+
 
 <!-- START OF HIT COUNTER CODE -->
 <!--
