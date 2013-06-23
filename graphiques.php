@@ -17,7 +17,7 @@ else
 	{$man = 0;	 
 	$interval = $_POST["select"];
 	$stationId = $_POST["station"];
-	if($interval =="max")
+	if($interval =="max")//5 minutes
 		{$date_end = time();
 		$date_beg = $date_end - (48 * 60 * 60);
 		}
@@ -26,11 +26,12 @@ else
 		$txt = explode("/",$date1);
 		$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 		if($interval =="30min")
-			$date_beg = $date_end - (14 * 24 * 60 * 60);
-		else
+			$date_beg = $date_end - (14 * 24 * 60 * 60) - (30 * 60);
+		else //3hours 1day 1week
 			{$date0 = $_POST["date0"];
 			$txt = explode("/",$date0);
 			$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+			$date_beg -= 24*60*60;
 			}
 		}	
 	}
@@ -110,6 +111,9 @@ $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
 //echo("<pre>");print_r($devicelist["devices"][4]);echo("</pre>");
 
+$int_name = $devicelist["devices"][$stationId]["module_name"];
+$ext_name = $devicelist["devices"][$stationId]["modules"][0]["module_name"];
+
 $stat0 = $mesures[$stationId]['station_name'];
 	// exterieur
     $params = array("scale" => $interval
@@ -128,50 +132,12 @@ $stat0 = $mesures[$stationId]['station_name'];
     , "date_end" => $date_end
     , "optimize" => false
     , "device_id" => $device_id);
-    $meas1 = $client->api("getmeasure", "POST", $params);
-
-if($man)
-{
-echo("inter=$inter");		
-$idate = date("d/m/y H:i",$date_beg);	
-echo("date_beg:$idate\n");
-$idate = date("d/m/y H:i",$date_end);	
-echo("date_end:$idate\n");
-$keys= array_keys($meas);
-$num = count($keys);
-echo("num:$num\n");
-for($i=0; $i < $num;++$i)
-	{$key = $keys[$i];  
-	$idate = date("d/m/y H:i s",$key);
-	$tmin = $meas[$key][0];
-	echo("$i date:$idate tmin:$tmin<br>\n");
-	} 
-}
-
+    $meas1 = $client->api("getmeasure", "POST", $params); 
 
 date_default_timezone_set("Europe/Paris");
-function tip($temp,$tempDate)
-	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
-	//{return sprintf('%4.1f <i>(%s)</i>',$temp,date("H:i",$tempDate)); 
-	}    
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = '';
 
-echo("
-<!DOCTYPE html SYSTEM 'about:legacy-compat'>
-  <head>
-  <title>Stations Netatmo</title>
-  <meta charset='utf-8'>
-    <link rel='icon' href='favicon.ico' />
-    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-    <script type='text/javascript'>
-      google.load('visualization', '1', {packages:['corechart']});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-              var data = new google.visualization.DataTable();
-              var data1 = new google.visualization.DataTable();
-");
-/********************************************/
 function tipHTML2($idate,$tmax,$hum)
 	{return '<table><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
@@ -195,6 +161,21 @@ function tipHTML5($idate,$datemax,$datemin,$tmax,$tmin,$hum)
 	. '</table>';
 	}
 
+echo("
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+  <head>
+  <title>Stations Netatmo</title>
+  <meta charset='utf-8'>
+    <link rel='icon' href='favicon.ico' />
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['corechart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+              var data = new google.visualization.DataTable();
+              var data1 = new google.visualization.DataTable();
+");
+
 if($inter > 30) //1week, 1day, 3hours
 	{echo("              
 	          data.addColumn('string', 'Date');
@@ -208,6 +189,7 @@ if($inter > 30) //1week, 1day, 3hours
 			$num = count($keys);
 			if($num <= 73)$visupt = ",pointSize:3";	
 			$itime = $keys[0];  
+			$nDays = ($keys[$num-1] - $itime);
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
@@ -235,8 +217,6 @@ if($inter > 30) //1week, 1day, 3hours
                 $itime += $inter*60;
                 }while($break != 1);
            	echo("data.removeColumn(5);\n");				      
-			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
-      	                    	
 	}
 else   //5 ou 30 minutes
 	{
@@ -252,6 +232,7 @@ else   //5 ou 30 minutes
 			$num = count($keys);
 			if($num <= 73)$visupt = ",pointSize:3";	
 			$itime = $keys[0];  
+			$nDays = ($keys[$num-1] - $itime);
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
@@ -279,9 +260,8 @@ else   //5 ou 30 minutes
                 $itime += $inter*60;
                 }while($break != 1);
            	echo("data.removeColumn(4);\n");				      
-			$title = '"Exterieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
-
 	}
+	$title = '"' .$stat0. '-' .$ext_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
 	
 /************************************/			     	                    
 function tip1HTML6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
@@ -329,7 +309,8 @@ if($inter > 30)
 				}	
 			$xp = 100/($MaxPression - $MinPression);		
 		
-			$itime = $keys[0];  
+			$itime = $keys[0];
+			$nDays = ($keys[$num-1] - $itime); 
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
@@ -358,7 +339,6 @@ if($inter > 30)
                 $itime += $inter*60;
                 }while($break != 1);
             echo("data1.removeColumn(8);\n");				      
-			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
      	                    	
 	}
 else  // 5 minutes ou 30 minutes
@@ -384,8 +364,8 @@ else  // 5 minutes ou 30 minutes
 				$MinPression = min($MinPression,$pres);
 				}
 			$xp = 100/($MaxPression - $MinPression);		
-
-			$itime = $keys[0];  
+			$itime = $keys[0]; 
+			$nDays = ($keys[$num-1] - $itime);
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
@@ -417,8 +397,9 @@ else  // 5 minutes ou 30 minutes
                 $itime += $inter*60;
                 }while($break != 1);
             echo("data1.removeColumn(7);\n");				      
-			$title1 = '"Intérieur: ' . $stat0 . ' (' . $num . ' mesures / '. $tinter .')"';       	                    
  	} 
+	$title1 = '"' .$stat0. '-' .$int_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
+		
 if($inter > 30) 	                                
 echo("                   
              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
@@ -439,17 +420,17 @@ echo("
              }  
           </script>
   </head>
-  <body>
-    
-  	<!--<h3>Graphiques de $stat0</h3>
-	<table>
-    <tr><td id='chart1_div' style='width: 600px; height: §00px; border:2px solid white;'>
-    </td><td id='chart_div' style='width: 600px; height: §00px; border:2px solid white;'>
-    </td></tr></table>-->
-
-    <div id='chart1_div' style='width:100%; height:400px; margin-left:auto; margin-right:auto;'></div>
+  <body style='margin:0; padding:0;'>
+<!--      
+	<table style='width:100%; height:100%px; margin-left:auto; margin-right:auto;  border:1px solid black;'>
+    <tr><td id='chart1_div' style='height: 390px;'>
+    </tr><tr>
+    </td><td id='chart_div' style='height: 270px;'>
+    </td></tr></table>
+-->
+    <div id='chart1_div' style='width:100%; height:390px; margin-left:auto; margin-right:auto;'></div>
     <div id='chart_div' style='width:100%; height:270px; margin-left:auto; margin-right:auto;'></div>
-    
+   
   </body>
 </html>
 ");
