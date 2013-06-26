@@ -400,7 +400,7 @@ $num = count($devicelist["devices"]);
 	<!--<div class='graphic' >-->
 	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>	
 	<table class='graphic'>
-	<caption style='text-align:center;'>Graphiques d'une station</caption>
+	<caption style='text-align:center;  font-weight:bold;'>Graphiques d'une station</caption>
 	<tr>
 	<td style='height:25px; width:130px; font-weight:bold;'>Début</td>
 	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
