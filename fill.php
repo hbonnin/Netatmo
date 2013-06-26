@@ -9,7 +9,6 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
 	$time0 = date('H:i',$res[0]['time']);
 	$dat1 = date('d/m/Y',$res[1]['time']);
 	$time1 = date('H:i',$res[1]['time']);
-	
 	$pres = intval($res[0]['Pressure']+.5);
 	echo("
 	<table class='t'>
@@ -54,7 +53,7 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
 	<td class='s' >$dat0</td><td class='s' style='text-align:right;'>$time0</td>
 	<td></td>
 	</tr><tr>
-	");
+");	
 	if($nModule > 2)
 		{echo("	
 		<td class='modules' colspan='7'>
@@ -76,7 +75,7 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
   			<td class='c'>$co2 ppm</td>
   			</tr>");
   			}
-  		echo("</table></div></a></td></tr></table>");
+  		echo("</table></div></a> </td></tr></table>");
   		}
 	else
 		echo("	

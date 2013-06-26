@@ -33,7 +33,7 @@ function ds_gettop(el) {
 setTimeout(
 	function(){
 		// Output Element
-		ds_oe = ds_getel('ds_calclass');
+		ds_oe = ds_getel('ds_calclass');		
 		// Container
 		ds_ce = ds_getel('ds_conclass');
 	}, 100

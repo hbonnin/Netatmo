@@ -19,57 +19,8 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once 'NAApiClient.php';
 require_once 'Config.php';
-/*
-require_once('../FirePHPCore/fb.php');
-if($_SERVER['HTTP_HOST'] != '127.0.0.1')
-	FB::setEnabled(false);
-FB::log($_SERVER, "dumping an array");
-*/
 session_start();
 
-if(isset($_GET["error"]))
-    {if($_GET["error"] == "access_denied")
-        {echo "You refused the application's access\n";exit(-1);}
-    }
-if(isset($_GET["code"]) && !isset($_SESSION['client'])) // menu called from indexNetatmo.php
-	{$code = $_GET["code"];
-	$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
-    if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
-    	{$token_url = "https://api.netatmo.net/oauth2/token";
-    	$postdata = http_build_query(array(
-            							'grant_type' => "authorization_code",
-            							'client_id' => $client_id,
-            							'client_secret' => $client_secret,
-            							'code' => $code,
-            							'redirect_uri' => $my_url               
-        								));
-    	$opts = array('http' => array(
-        							'method'  => 'POST',
-        							'header'  => 'Content-type: application/x-www-form-urlencoded;charset=UTF-8',
-        							'content' => $postdata
-    								));
-    	$context  = stream_context_create($opts);
-    	$response = file_get_contents($token_url, false, $context);
-    	$params = null;
-    	$params = json_decode($response, true);
-		$access_token = $params['access_token'];
-		$refresh_token = $params['refresh_token'];
-		$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
-		$_SESSION['client'] = $client;	
-		//echo("<pre>");print_r($client);echo("</pre");
-		}
-	else
-		{echo("The state does not match.");exit(-1);}
-	}		
-/*	
-if(isset($_SESSION['tokens'])) // menu called from login
-    {$tokens = $_SESSION['tokens'];
-	$access_token = $tokens['access_token'];
-	$refresh_token = $tokens['refresh_token'];
-	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
-	$_SESSION['client'] = $client;
-    }
-*/	
 if(isset($_SESSION['client']))// menu called from login or reload
     {$client = $_SESSION['client'];
 	//echo("<pre>");print_r($client);echo("</pre");	  
@@ -100,13 +51,14 @@ else
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     $_SESSION['devicelist'] = $devicelist;
     }
+//*************************************************************    
 if(isset($_SESSION['mesures']))
     $mesures = $_SESSION['mesures'];
 else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-
+//***************************************************************
 $num = count($devicelist["devices"]);
 date_default_timezone_set("Europe/Paris");
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
@@ -121,6 +73,7 @@ $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 <meta charset='utf-8'>
 <script type='text/javascript' src='calendrier.js'></script>
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrier.css' />
+<script type='text/javascript' src='validate.js'></script>	
 
 <style type='text/css'>
 table	{
@@ -133,76 +86,6 @@ table	{
 	}
 </style>
  
-<script type='text/javascript'>
-//<![CDATA[
-
-function valider(frm)
-	{
-	var date0 = frm.elements['date0'].value;
-	var tab = frm.elements['select'];
-	for (var i = 0;i < tab.length;i++)
-		{if(tab[i].selected)
-			{var inter = tab[i].value;
-			break;
-			}
-		}
-	var saisie = (date0).split('/');
-	var date = new Date(eval(saisie[2]),eval(saisie[1])-1,eval(saisie[0]));
-	var date1 = frm.elements['date1'].value;
-	var saisie1 = (date1).split('/');
-	var endday = new Date(eval(saisie1[2]),eval(saisie1[1])-1,eval(saisie1[0]));
-	if((endday - date < 24*60*60*1000) && (i < 2))	
-		{frm.date1.focus();		
-		alert('Date ' + date.getDate() +'/'+ (date.getMonth()+1) +'/'+ date.getFullYear()
-		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
-    	return false;
-    	}
- 	// i=0 1week i=1 1day  i=2 3hours i=3 30minute	i=4 max
-	var nmesure = (endday-date)/(24*60*60*1000);
-	if(i == 2)nmesure *= 8;
-	else if(i == 3){nmesure *= 48;return true;}
-	else if(i == 4){nmesure *= 288;return true;}
-	else if(i == 0)nmesure /= 7;
-	nmesure = Math.floor(nmesure+.5);		  	
-    if(nmesure > 1024) 
-    	{alert(nmesure + ' > 1024 mesures');
-    	return false;
-    	}	
-    return true;
-  }
-function Allow(tab) 
-  	{for (var i = 0;i < tab.length;i++)
-		if(tab[i].selected)break;		
-	var el1 = document.getElementById('id_date1');
-	var el0 = document.getElementById('id_date0');
-	var duree = document.getElementById('id_duree');	
-    if(i < 3)
-		{duree.innerHTML = 'Fréquence';
-		el0.disabled = false;
-		el0.hidden = false;
-		el1.disabled=false;
-		el1.hidden = false;
-		}
-	else if(i == 3)
-		{duree.innerHTML = 'Fréquence (durée: 14 jours)';
-		el0.disabled = true;
-		el0.hidden = true;
-		el1.disabled = false;
-		el1.hidden = false;
-		}				
-	else
-		{duree.innerHTML = 'Fréquence (durée: 2 jours)';
-		el0.disabled=true;
-		el0.hidden=true;
-		el0.disabled = true;
-		el1.disabled=true;
-		el1.hidden = true;
-		}									
-    return true;		
-	}
-
-//]]>
-</script>
 </head>
 
 <body style='text-align:center;'>

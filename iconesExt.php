@@ -4,9 +4,89 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'Geolocalize.php';
 
-session_set_cookie_params(1200); 
+//session_set_cookie_params(1200); 
 session_start();
 date_default_timezone_set("Europe/Paris");
+
+function refreshToken($client_id,$client_secret)
+    {$token_url = "https://api.netatmo.net/oauth2/token";
+    $postdata = http_build_query(array(
+         							'grant_type' => "refresh_token",
+            						'refresh_token' => $_SESSION['refresh_token'],
+            						'client_id' => $client_id,
+            						'client_secret' => $client_secret
+        							));
+    $opts = array('http' => array(
+        							'method'  => 'POST',
+        							'header'  => 'Content-type: application/x-www-form-urlencoded;charset=UTF-8',
+        							'content' => $postdata
+    								));
+    $context  = stream_context_create($opts);
+    $response = file_get_contents($token_url, false, $context);
+    $params = null;
+    $params = json_decode($response, true);
+	//echo("<pre>\nPARAMS");print_r($params);echo("</pre>");
+	$access_token = $params['access_token'];
+	$refresh_token = $params['refresh_token'];
+	$expires = $params['expires_in'];
+	//$_SESSION['access_token'] = $access_token;
+	$_SESSION['refresh_token'] = $refresh_token;		
+	$_SESSION['time'] = time();
+	$_SESSION['expires'] = $expires;
+	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
+	$_SESSION['client'] = $client;
+	}
+
+if(isset($_SESSION['time']))
+    {$time_left = $_SESSION['time'] + $_SESSION['expires'] - time();
+	//echo("\ntime_left:$time_left"); 	
+	if($time_left < 0) 
+		refreshToken($client_id,$client_secret);
+//  if($time_left < 10700)refreshToken($client_id,$client_secret);
+	}
+if(isset($_GET["error"]))
+    {if($_GET["error"] == "access_denied")
+        {echo "You refused the application's access\n";exit(-1);}
+    }
+if(isset($_GET["code"]) && !isset($_SESSION['client'])) // menu called from indexNetatmo.php
+	{$code = $_GET["code"];
+	$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
+    if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
+    	{$token_url = "https://api.netatmo.net/oauth2/token";
+    	$postdata = http_build_query(array(
+            							'grant_type' => "authorization_code",
+            							'client_id' => $client_id,
+            							'client_secret' => $client_secret,
+            							'code' => $code,
+            							'redirect_uri' => $my_url               
+        								));
+    	$opts = array('http' => array(
+        							'method'  => 'POST',
+        							'header'  => 'Content-type: application/x-www-form-urlencoded;charset=UTF-8',
+        							'content' => $postdata
+    								));
+    	$context  = stream_context_create($opts);
+    	$response = file_get_contents($token_url, false, $context);
+    	$params = null;
+    	$params = json_decode($response, true);
+		$access_token = $params['access_token'];
+		$refresh_token = $params['refresh_token'];
+		//$expire = $params['expire_in'];
+		$expires = $params['expires_in'];
+		//$_SESSION['access_token'] = $access_token;
+		$_SESSION['refresh_token'] = $refresh_token;		
+		$_SESSION['time'] = time();
+		//$_SESSION['expire'] = $expire;
+		$_SESSION['expires'] = $expires;
+		$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
+		$_SESSION['client'] = $client;	
+		}
+	else
+		{echo("The state does not match.");exit(-1);}
+	}	
+		
+
+
 
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
@@ -37,7 +117,10 @@ else
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     $_SESSION['devicelist'] = $devicelist;
     }
-    
+
+	
+   
+/***********************************/    
 if(isset($_GET["action"]) && $_GET["action"]  == 'refresh')
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;	
@@ -48,8 +131,10 @@ else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-       
+/**********************************************/
+
 $numStations = count($devicelist["devices"]);
+//if($numStations == 5)--$numStations;
 $latitude = array($numStations);
 $latitude = array($numStations);
 $alt = array($numStations);
@@ -93,17 +178,19 @@ for($i = 0;$i < $numStations;$i++)
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
 <link rel='icon' href='favicon.ico' />
-<link type='text/css' rel='stylesheet'  href='style.css'>
-    <script type='text/javascript'
+<link type='text/css' rel='stylesheet'  href='style.css'/>
+<script type='text/javascript' src='validate.js'></script>	
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrier.css' />
+<script type='text/javascript'
 <?php   
 	if($use_google_key == 1)
 		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key&amp;sensor=false'>");
 	else
 		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places&amp;sensor=false'>");
 ?>
-    </script>
-    <script type='text/javascript' src='StyledMarker.js'></script>
-    <script type='text/javascript'>
+</script>
+<script type='text/javascript' src='StyledMarker.js'></script>
+<script type='text/javascript'>
     var cloudLayer;
     var map;
     var show = 1;
@@ -245,19 +332,21 @@ for($i = 0;$i < $numStations;$i++)
   			controlText.innerHTML = 'Hide Clouds';
 			}	
 		});
-	 }		
+	 }	
+	 //google.maps.event.addDomListener(window, 'load', initialize);	
 	}//initialize
-    google.maps.event.addDomListener(window, 'load', initialize);
-
-    </script>
-    </head>
-  
+</script>
+<script type='text/javascript' src='calendrier.js'></script> 
+</head>
   <body style='text-align:center;' onload='initialize()'>
-  <!--<body>-->
-  <!--<div  style='width: 100%; height: 20%;' >--> 
 
+<!-- Invisible table for calendar --> 
+<table class="ds_box"  id="ds_conclass" style="display: none;" >
+	<caption id="id_caption" style="background-color:#ccc; color:#00a; font-family: Arial, Helvetica, sans-serif; font-size: 15px;">xxxx</caption>
+	<tr><td id="ds_calclass">aaa</td></tr>
+</table>
 	
-<table style='margin-left:auto; margin-right:auto; margin-top:0px;'>
+<table style='margin-left:auto; margin-right:auto;  margin-top:0px; margin-bottom:0px; '>
 <tr>
 <?php
 
@@ -293,31 +382,154 @@ for($i = 0;$i < $numStations;$i++)
 	fill($devicelist["devices"][$i],$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
 	echo("</td>");
 	}
-?>
-	
-</tr></table>
- 	<div id='map_canvas' style='width: 50%; height:420px; border:solid 1px gray; margin-left:auto; margin-right:auto;'> </div>
-<!--	
- 	<div style='width: 640px; height: 20px; position: relative; margin-left:auto; margin-right:auto;'> 
-	<i>Déplacer la souris sur un marqueur pour voir les informations &nbsp;&nbsp;</i></div>		
--->	 	
-	<input type="button" style="color:#030; background-color: #cceeff;" value="Refresh" onclick="window.location='icones.php?action=refresh';">		
-	<input type="button" style="color:#000000; background-color: #cceeff;" value="Back" onclick="window.location='menu.php';">		
+echo("</tr></table>");	
+$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+$num = count($devicelist["devices"]);
 
- 
+?>
+
+<!--	
+	<input type="button" style="color:#030; background-color: #cceeff;" value="Refresh" onclick="window.location='iconesExt.php?action=refresh';">		
+	<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="window.location='indexNetatmo.php?logout';">		
+-->	
+<div class='container'>
+<table class='container'>
+<tr><td class='container'>
+
+	<!--<div class='graphic' >-->
+	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>	
+	<table class='graphic'>
+	<caption style='text-align:center;'>Graphiques d'une station</caption>
+	<tr>
+	<td style='height:25px; width:130px; font-weight:bold;'>Début</td>
+	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
+	</tr>
+
+	<tr>
+	<td style='height:25px;'>Fin</td>
+	<td><input class='date' id='id_date1'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' ></td>
+	</tr>
+
+	<tr>
+	<td id='id_duree' style='height:25px;'>Fréquence</td>	
+	<td>
+		<table><tr><td>
+		<select name='select' onChange='Allow(this);'>
+		<option value='1week' > 1 semaine </option>
+		<option value='1day' selected='selected' > 1 journée </option>
+		<option value='3hours' > 3 heures </option>
+		<option value='30min'> 30 minutes </option>
+		<option value='max' > 5 minutes </option>
+		</select>
+		</td></tr>
+		</table>
+	</td>	
+	</tr>
+	
+	<tr>
+		<td>Choisir une station</td>
+		<td>
+			
+<?php
+echo("<table>\n");
+for($i = 0;$i < $num;$i++)
+	{$stat = $mesures[$i]['station_name'];
+	$arr = str_split($stat,17);
+    $stat = $arr[0];
+    if($i == 0)
+		echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
+	else
+		echo("<tr><td style='font-size:12px;'><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
+	}
+echo("</table>\n");
+?>	
+	</td></tr>		
+	<tr><td><input type='submit'></td><td></td></tr>
+	</table>	
+	</form>
+	<!--</div>-->
+
+<!--  ***************************************** -->	
+</td>
+<td><div id='map_canvas'  class='map_canvas'> </div></td>
+<!--  ***************************************** -->	
+<td class='container'>
+
+	<!--<div class='graphicC' >-->
+	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
+	<table class='graphicC'>
+	<caption style='text-align:center; font-weight:bold;'>Comparaison de stations</caption>
+	<tr>
+	<td style='height:25px; width:130px;'>Début</td>
+	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
+	</tr>
+	
+	<tr>
+	<td style='height:25px;'>Fin</td>
+	<td><input class='date'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' ></td>
+	</tr>
+	
+	<tr>
+	<td style='height:25px;'>Fréquence</td>	
+	<td>
+		<table><tr><td>
+		<select name='select' onChange='Allow(this);'>
+		<option value='1week' > 1 semaine </option>
+		<option value='1day' selected='selected' > 1 journée </option>
+		</select>
+		</td></tr>
+		</table>
+	</td>	
+	</tr>
+	
+	<tr>
+		<td>Choisir une station</td>
+		<td>
+
+<?php
+echo("<table>\n");
+for($i = 0;$i < $num;$i++)
+	{$stat = $mesures[$i]['station_name'];
+	$arr = str_split($stat,17);
+    $stat = $arr[0];
+    if($i == 0)
+		echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
+	else
+		echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
+	}
+echo("</table>\n");	
+?>			
+	</td>
+	</tr>
+	<tr><td><input type='submit'></td><td></td></tr>
+	</table>
+	</form>
+				
+	<!--</div>-->
+</td></tr></table></div>
+
+	<input type="button" style="color:#030; background-color: #cceeff;" value="Refresh" onclick="window.location='iconesExt.php?action=refresh';">		
+	<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="window.location='indexNetatmo.php?logout';">		
+
 
 <!-- START OF HIT COUNTER CODE -->
-<!--
-<script src='http://www.counter160.com/js.js?img=11'></script><br>
+<div class='clear'></div>
+<!--<div style='height:5px; width:100%; background-color:red;'></div>-->
+<div class='counter'>
+<script src='http://www.counter160.com/js.js?img=15'></script>
+<br>
 <a href='http://www.000webhost.com'>
-<img src='http://www.counter160.com/images/11/left.png' alt='Free web hosting' style='border:0px'>
+<img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px'>
 </a>
 <a href='http://www.hosting24.com'>
-<img alt='Web hosting' src='http://www.counter160.com/images/11/right.png' style='border:0px' >
+<img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
 </a>
--->
-<!-- END OF HIT COUNTER CODE -->
-
+</div>
+<div class='host'>
+<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15'/></a>
+</div>
 
 </body>
 </html>
+

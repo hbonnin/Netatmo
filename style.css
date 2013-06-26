@@ -11,7 +11,7 @@ table.t {
 	padding:2px;
 	}
 td.th	{color: black;
-	font-size: 18px;
+	font-size: 16px;
 	text-align:center;
 	vertical-align:bottom;
 	}		
@@ -26,7 +26,7 @@ td.c1   {color: red;
 	text-align:center;
 	}
 td.name   {color: #444444;
-	font-size: 15px;
+	font-size: 13px;
 	text-align:left;
 	}	
 td.e  {
@@ -99,7 +99,93 @@ td.s	{color: black;
 	text-align:left;
 	font-style:italic;
 	height:17px;
-	}	
+	}
+		
+.date  {color:black;
+	width:75px;
+	border:1px solid blue;
+	font-size:12px;
+	}
+table.graphic {color:black;
+	text-align:left;
+	width:265px;
+	//height:210px;	
+	border:solid 1px gray;
+	background-color:#cceeff;
+	font-size:14px;
+}
+div.container	{
+    width: 1210px;
+    border:solid whte;
+	margin-left:auto;
+	margin-right:auto;
+}
+table.container {
+	//border:solid 1px gray;
+	padding-top:0px;
+}
+td.container {
+	vertical-align:bottom;
+}
+
+table.graphicC {color:black;
+	text-align:left;
+	width:265px;
+	//height:210px;		
+	border:solid 1px gray;
+	background-color:#cceeff;
+	font-size:14px;
+}
+div.graphic {
+    //float:left;
+	//position:relative;
+	//top:-247px;
+	width:265px;
+	//height:210px;	
+	background-color:#5588AA;
+	//margin-left:15px;
+}
+div.graphicC {
+    //float:right;
+	//position:relative;
+	//top:-247px;
+	width:265px;
+	//height:210px;	
+	background-color:#5588AA;
+	//margin-right:15px;
+}
+div.map_canvas	{
+    position:relative;
+    width: 680px;
+    border:solid 1px gray;
+	height:420px;
+	margin-left:auto;
+	margin-right:auto;
+}
+div.input_canvas	{
+    //position:relative;
+    width:400px;
+	//margin-left:auto;
+	//margin-right:auto;  
+}
+div.counter	{
+	float:right;
+	//position:relative;
+	//top:-205px;
+	margin-right:150px;	
+	font-size:11px;
+}
+div.host	{
+	float:left;
+	position:relative;
+	//top:-210px;
+	margin-left:150px;	
+}
+.clear 	{
+    clear:both;
+ 
+}
+
 
 /****************************/
 td.modules	{
