@@ -1,13 +1,8 @@
 <?php
-//session_set_cookie_params(1200); 
 
-$man = 0;
-if(isset($argc) && $argc > 1)
-	$man = 1;
-	
-compareALL($man);
+compareALL();
 
-function compareALL($man)
+function compareALL()
 {
 require_once 'NAApiClient.php';
 require_once 'Config.php';
@@ -15,13 +10,13 @@ session_start();
 
 date_default_timezone_set("UTC");
 
-if($man)
-	{
-	$date_end = time();
+if(!isset($_POST["date0"]))
+	{$date_end = time();
 	$date_beg = time() - (70 * 24 * 60 * 60);
 	$interval = '1week';
+	$man = 1;
 	}
-else {	 	
+else {$man = 0;	 	
 	$date0 = $_POST["date0"];
 	$txt = explode("/",$date0);
 	$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);

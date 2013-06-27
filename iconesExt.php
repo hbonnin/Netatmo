@@ -25,11 +25,9 @@ function refreshToken($client_id,$client_secret)
     $response = file_get_contents($token_url, false, $context);
     $params = null;
     $params = json_decode($response, true);
-	//echo("<pre>\nPARAMS");print_r($params);echo("</pre>");
 	$access_token = $params['access_token'];
 	$refresh_token = $params['refresh_token'];
 	$expires = $params['expires_in'];
-	//$_SESSION['access_token'] = $access_token;
 	$_SESSION['refresh_token'] = $refresh_token;		
 	$_SESSION['time'] = time();
 	$_SESSION['expires'] = $expires;
@@ -71,12 +69,9 @@ if(isset($_GET["code"]) && !isset($_SESSION['client'])) // menu called from inde
     	$params = json_decode($response, true);
 		$access_token = $params['access_token'];
 		$refresh_token = $params['refresh_token'];
-		//$expire = $params['expire_in'];
 		$expires = $params['expires_in'];
-		//$_SESSION['access_token'] = $access_token;
 		$_SESSION['refresh_token'] = $refresh_token;		
 		$_SESSION['time'] = time();
-		//$_SESSION['expire'] = $expire;
 		$_SESSION['expires'] = $expires;
 		$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 		$_SESSION['client'] = $client;	
@@ -84,10 +79,7 @@ if(isset($_GET["code"]) && !isset($_SESSION['client'])) // menu called from inde
 	else
 		{echo("The state does not match.");exit(-1);}
 	}	
-		
-
-
-
+	
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
 else 
@@ -117,22 +109,10 @@ else
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     $_SESSION['devicelist'] = $devicelist;
     }
-
-	
    
-/***********************************/    
-if(isset($_GET["action"]) && $_GET["action"]  == 'refresh')
-	{$mesures = $helper->GetLastMeasures($client,$devicelist);
-	$_SESSION['mesures'] = $mesures;	
-	}   
-else if(isset($_SESSION['mesures']))
-    $mesures = $_SESSION['mesures'];
-else
-	{$mesures = $helper->GetLastMeasures($client,$devicelist);
-	$_SESSION['mesures'] = $mesures;
-	}
-/**********************************************/
-
+$mesures = $helper->GetLastMeasures($client,$devicelist);
+$_SESSION['mesures'] = $mesures;
+	
 $numStations = count($devicelist["devices"]);
 //if($numStations == 5)--$numStations;
 $latitude = array($numStations);
@@ -180,7 +160,7 @@ for($i = 0;$i < $numStations;$i++)
 <link rel='icon' href='favicon.ico' />
 <link type='text/css' rel='stylesheet'  href='style.css'/>
 <script type='text/javascript' src='validate.js'></script>	
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrier.css' />
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
 <script type='text/javascript'
 <?php   
 	if($use_google_key == 1)
@@ -194,14 +174,16 @@ for($i = 0;$i < $numStations;$i++)
     var cloudLayer;
     var map;
     var show = 1;
+    var showMarker;
     
 	function createMarker(pos,label,slabel,map) 
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
 		//var marker = new google.maps.Marker({'position':pos ,'map':map });
-		marker.setZIndex(103);
+		marker.setZIndex(1);
 		var infowindow = new google.maps.InfoWindow({'content'  : label});
 	   	google.maps.event.addListener(marker, 'click', function() 
        		{marker.setZIndex(marker.getZIndex()-1);
+       		//marker.setVisible(false);
        		});  
        google.maps.event.addListener(marker, 'mouseover', function(){infowindow.open(map, marker);});
        google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);});         	 
@@ -259,6 +241,12 @@ for($i = 0;$i < $numStations;$i++)
   	var cloudControl = new CloudControl(cloudControlDiv, map);
   	cloudControlDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(cloudControlDiv);
+
+	// add marker control
+	var markerControlDiv = document.createElement('div');
+  	var markerControl = new MarkerControl(markerControlDiv, map);
+  	markerControlDiv.index = 1;
+  	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerControlDiv);
 
   	// add weather layer
 	var weatherLayer = new google.maps.weather.WeatherLayer({
@@ -332,8 +320,48 @@ for($i = 0;$i < $numStations;$i++)
   			controlText.innerHTML = 'Hide Clouds';
 			}	
 		});
-	 }	
-	 //google.maps.event.addDomListener(window, 'load', initialize);	
+		}
+	function MarkerControl(controlDiv, map) {
+	  // Set CSS styles for the DIV containing the control
+ 	 // Setting padding to 5 px will offset the control
+	  // from the edge of the map.
+	  controlDiv.style.padding = '5px 0px 0px 0px'; //5 1 0 0
+
+	  // Set CSS for the control border.
+	  var controlUI = document.createElement('div');
+	  controlUI.style.backgroundColor = 'white';
+	  controlUI.style.borderStyle = 'solid';
+	  controlUI.style.borderColor = 'gray';	  
+	  controlUI.style.borderWidth = '1px';
+	  controlUI.style.cursor = 'pointer';
+ 	  controlUI.style.textAlign = 'center';
+	  controlUI.title = 'Click hide/display the markers';
+	  controlDiv.appendChild(controlUI);
+
+	  // Set CSS for the control interior.
+	  var controlText = document.createElement('div');
+	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontSize = '15px';
+	  controlText.style.paddingLeft = '4px';
+	  controlText.style.paddingRight = '4px';
+	  controlText.innerHTML = 'Hide Markers';
+	  controlUI.appendChild(controlText);	
+  	  // Setup the click event listeners
+  	  google.maps.event.addDomListener(controlUI, 'click', function() 
+  	  	{if(showMarker)
+			{for(i=0 ; i < num;i++)
+				markers[i].setVisible(false);
+			controlText.innerHTML = 'Show Markers';
+			showMarker = 0;
+			}
+		else
+			{for(i=0 ; i < num;i++)
+				markers[i].setVisible(true);
+  			controlText.innerHTML = 'Hide Markers';
+  			showMarker = 1;
+			}	
+		});
+	 }
 	}//initialize
 </script>
 <script type='text/javascript' src='calendrier.js'></script> 
@@ -342,11 +370,11 @@ for($i = 0;$i < $numStations;$i++)
 
 <!-- Invisible table for calendar --> 
 <table class="ds_box"  id="ds_conclass" style="display: none;" >
-	<caption id="id_caption" style="background-color:#ccc; color:#00a; font-family: Arial, Helvetica, sans-serif; font-size: 15px;">xxxx</caption>
+	<caption id="id_caption" class='ds_caption'">xxxx</caption>
 	<tr><td id="ds_calclass">aaa</td></tr>
 </table>
 	
-<table style='margin-left:auto; margin-right:auto;  margin-top:0px; margin-bottom:0px; '>
+<table style='margin-left:auto; margin-right:auto;  margin-top:0px; margin-bottom:0px; padding:0px '>
 <tr>
 <?php
 
@@ -389,15 +417,10 @@ $num = count($devicelist["devices"]);
 
 ?>
 
-<!--	
-	<input type="button" style="color:#030; background-color: #cceeff;" value="Refresh" onclick="window.location='iconesExt.php?action=refresh';">		
-	<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="window.location='indexNetatmo.php?logout';">		
--->	
 <div class='container'>
 <table class='container'>
 <tr><td class='container'>
 
-	<!--<div class='graphic' >-->
 	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>	
 	<table class='graphic'>
 	<caption style='text-align:center;  font-weight:bold;'>Graphiques d'une station</caption>
@@ -448,7 +471,6 @@ echo("</table>\n");
 	<tr><td><input type='submit'></td><td></td></tr>
 	</table>	
 	</form>
-	<!--</div>-->
 
 <!--  ***************************************** -->	
 </td>
@@ -456,7 +478,6 @@ echo("</table>\n");
 <!--  ***************************************** -->	
 <td class='container'>
 
-	<!--<div class='graphicC' >-->
 	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
 	<table class='graphicC'>
 	<caption style='text-align:center; font-weight:bold;'>Comparaison de stations</caption>
@@ -506,12 +527,9 @@ echo("</table>\n");
 	</table>
 	</form>
 				
-	<!--</div>-->
 </td></tr></table></div>
 
-	<input type="button" style="color:#030; background-color: #cceeff;" value="Refresh" onclick="window.location='iconesExt.php?action=refresh';">		
-	<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="window.location='indexNetatmo.php?logout';">		
-
+<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="window.location='indexNetatmo.php?logout';">		
 
 <!-- START OF HIT COUNTER CODE -->
 <div class='clear'></div>

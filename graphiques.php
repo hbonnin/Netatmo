@@ -6,16 +6,15 @@ session_set_cookie_params(1200);
 session_start();
 date_default_timezone_set("UTC");
 
-if(isset($argc) && $argc >1)
+
+if(!isset($_POST["select"]))
 	{$stationId=0; 
 	$date_end = time();
 	$date_beg = time() - (10 * 24 * 60 * 60);
 	$interval = "1day";
-	$man = 1;
 	}
 else 
-	{$man = 0;	 
-	$interval = $_POST["select"];
+	{$interval = $_POST["select"];
 	$stationId = $_POST["station"];
 	if($interval =="max")//5 minutes
 		{$date_end = time();

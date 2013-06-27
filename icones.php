@@ -48,7 +48,7 @@ else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-       
+     
 $numStations = count($devicelist["devices"]);
 $latitude = array($numStations);
 $latitude = array($numStations);

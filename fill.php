@@ -11,7 +11,7 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
 	$time1 = date('H:i',$res[1]['time']);
 	$pres = intval($res[0]['Pressure']+.5);
 	echo("
-	<table class='t'>
+	<table class='icone'>
 	<tr>
 	<td colspan='7' class='th'>$station</td>
 	</tr><tr>

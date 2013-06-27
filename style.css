@@ -4,11 +4,11 @@ body {
  margin:0;
  padding:0;
  }
-table.t {
+table.icone {
 	background-color: #cceeff;
 	border: 1px solid gray;
 	font-family: Helvetica, serif;
-	padding:2px;
+	padding:0px;
 	}
 td.th	{color: black;
 	font-size: 16px;
@@ -78,7 +78,6 @@ td.nunit  {color: #990099;
 	text-align:left;
 	font-size: 10px;
 	}
-	
 td.cl   {color: #b09000;
 	font-size: 11px;
 	text-align:left;
@@ -92,8 +91,7 @@ td.cunit  {color:#908000;
 	width:10px;
 	text-align:left;
 	font-size: 10px;
-	}
-	
+	}	
 td.s	{color: black;
 	font-size: 9px;
 	text-align:left;
@@ -109,85 +107,57 @@ td.s	{color: black;
 table.graphic {color:black;
 	text-align:left;
 	width:265px;
-	//height:210px;	
 	border:solid 1px gray;
 	background-color:#cceeff;
 	font-size:14px;
 }
 div.container	{
-    width: 1210px;
-    border:solid whte;
+    width: 1225px;
 	margin-left:auto;
 	margin-right:auto;
+	padding:0px;
 }
 table.container {
-	//border:solid 1px gray;
 	padding-top:0px;
 }
 td.container {
 	vertical-align:bottom;
 }
-
 table.graphicC {color:black;
 	text-align:left;
 	width:265px;
-	//height:210px;		
 	border:solid 1px gray;
 	background-color:#cceeff;
 	font-size:14px;
 }
-div.graphic {
-    //float:left;
-	//position:relative;
-	//top:-247px;
-	width:265px;
-	//height:210px;	
-	background-color:#5588AA;
-	//margin-left:15px;
-}
-div.graphicC {
-    //float:right;
-	//position:relative;
-	//top:-247px;
-	width:265px;
-	//height:210px;	
-	background-color:#5588AA;
-	//margin-right:15px;
-}
 div.map_canvas	{
     position:relative;
     width: 680px;
-    border:solid 1px gray;
+    border:solid 2px gray;
 	height:420px;
 	margin-left:auto;
 	margin-right:auto;
 }
 div.input_canvas	{
-    //position:relative;
     width:400px;
-	//margin-left:auto;
-	//margin-right:auto;  
 }
 div.counter	{
 	float:right;
-	//position:relative;
-	//top:-205px;
+	position:relative;
+	top:-20px;
 	margin-right:150px;	
 	font-size:11px;
 }
 div.host	{
 	float:left;
 	position:relative;
-	//top:-210px;
-	margin-left:150px;	
+	margin-left:150px;
+	top:-20px;
 }
 .clear 	{
     clear:both;
- 
 }
 
-
-/****************************/
 td.modules	{
   	text-align:left;
   	font-size:12px;
