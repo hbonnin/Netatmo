@@ -1,16 +1,18 @@
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 
 <?php 
+require_once 'Config.php';
+
 	session_start();
 	$msg = '';	
 	if(isset($_SESSION['msg']))
 		$msg = $_SESSION['msg'];
-	//unset($_SESSION['msg']);	
-	//if(isset($_COOKIE[session_name()]))
-		//setcookie(session_name(), “”,time()-3600,“/”);
 	$_SESSION=array();
 	session_destroy();
-//phpinfo();
+    if(!empty($test_username) && !empty($test_password))
+    	echo("<script> top.location.href='menu.php'</script>");   	   
+
+
 ?>
 
 <!--
