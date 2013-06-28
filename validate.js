@@ -40,7 +40,7 @@ function Allow(tab)
 	var el0 = document.getElementById('id_date0');
 	var duree = document.getElementById('id_duree');	
     if(i < 3)
-		{duree.innerHTML = 'Fréquence';
+		{duree.innerHTML = 'Fréquence ';
 		el0.disabled = false;
 		el0.hidden = false;
 		el1.disabled=false;

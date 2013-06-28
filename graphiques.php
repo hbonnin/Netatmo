@@ -1,11 +1,16 @@
 <?php
 require_once 'NAApiClient.php';
 require_once 'Config.php';
+require_once 'initClient.php';
 
-session_set_cookie_params(1200); 
 session_start();
-date_default_timezone_set("UTC");
+date_default_timezone_set("Europe/Paris");
 
+initClient();
+$client = $_SESSION['client'];
+$devicelist = $_SESSION['devicelist'];
+$mesures = $_SESSION['mesures'];
+$from = $_SESSION['calledfrom']; 
 
 if(!isset($_POST["select"]))
 	{$stationId=0; 
@@ -66,52 +71,13 @@ else // 3hours
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";
 	}
 
-if(isset($_SESSION['client']))
-    {$client = $_SESSION['client'];
-    //echo("<pre>");print_r($client);echo("</pre");
-    }
-else
-	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
-	try {
-    	$tokens = $client->getAccessToken();       
-		} catch(NAClientException $ex) {
-    		echo ("Identifiant ou mot de passe incorrect");
-		exit(-1);	
-		}
-	$_SESSION['client'] = $client;	
-	}  
-
-
-$helper = new NAApiHelper();
-if(isset($_SESSION['devicelist']))
-    $devicelist = $_SESSION['devicelist'];
-else
-	{try {
-		$devicelist = $client->api("devicelist", "POST");
-		}
-	catch(NAClientException $ex) {
-		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-		echo("$ex");
-		exit(-1);
-		}	
-	$devicelist = $helper->SimplifyDeviceList($devicelist);
-    $_SESSION['devicelist'] = $devicelist;
-    }
-  
-if(isset($_SESSION['mesures']))
-    $mesures = $_SESSION['mesures'];
-else
-	{$mesures = $helper->GetLastMeasures($client,$devicelist);
-	$_SESSION['mesures'] = $mesures;
-	}
-
-
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
-//echo("<pre>");print_r($devicelist["devices"][4]);echo("</pre>");
 
 $int_name = $devicelist["devices"][$stationId]["module_name"];
 $ext_name = $devicelist["devices"][$stationId]["modules"][0]["module_name"];
+
+date_default_timezone_set("UTC");
 
 $stat0 = $mesures[$stationId]['station_name'];
 	// exterieur
@@ -160,7 +126,7 @@ function tipHTML5($idate,$datemax,$datemin,$tmax,$tmin,$hum)
 	. '</table>';
 	}
 
-echo("
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
   <title>Stations Netatmo</title>
@@ -173,17 +139,18 @@ echo("
       function drawChart() {
               var data = new google.visualization.DataTable();
               var data1 = new google.visualization.DataTable();
-");
+<?php
 
 if($inter > 30) //1week, 1day, 3hours
-	{echo("              
-	          data.addColumn('string', 'Date');
-        	  data.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
-        	  data.addColumn('number', 'Tmax'); 
-        	  data.addColumn('number', 'Tmin');     	  
-        	  data.addColumn('number', 'Humidity');  
-         	  data.addColumn('number', '');   	  
-	");
+	{           
+echo("	 
+	 		data.addColumn('string', 'Date');
+        	data.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
+        	data.addColumn('number', 'Tmax'); 
+        	data.addColumn('number', 'Tmin');     	  
+        	data.addColumn('number', 'Humidity');  
+         	data.addColumn('number', '');   	  
+");
  			$keys= array_keys($meas);
 			$num = count($keys);
 			if($num <= 73)$visupt = ",pointSize:3";	
@@ -414,8 +381,7 @@ echo("
              chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green','orange','brown','#f0b0f0'] });
 ");
 
-
-echo("            
+?>           
              }  
           </script>
   </head>
@@ -429,8 +395,10 @@ echo("
 -->
     <div id='chart1_div' style='width:100%; height:390px; margin-left:auto; margin-right:auto;'></div>
     <div id='chart_div' style='width:100%; height:270px; margin-left:auto; margin-right:auto;'></div>
-   
+
+ <input type="button" style="color:#000000; background-color: #cceeff;" value="Back" onclick="top.location.href=<?php echo("$from"); ?>" ;>	
+ <input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="top.location.href='logout.php'";>		
+ 
+
   </body>
 </html>
-");
-?>

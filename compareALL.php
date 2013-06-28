@@ -1,31 +1,25 @@
 <?php
 
-compareALL();
-
-function compareALL()
-{
 require_once 'NAApiClient.php';
 require_once 'Config.php';
+require_once 'initClient.php';
+
 session_start();
+$client = $_SESSION['client'];
+$devicelist = $_SESSION['devicelist'];
+$mesures = $_SESSION['mesures'];
+$from = $_SESSION['calledfrom']; 
 
 date_default_timezone_set("UTC");
 
-if(!isset($_POST["date0"]))
-	{$date_end = time();
-	$date_beg = time() - (70 * 24 * 60 * 60);
-	$interval = '1week';
-	$man = 1;
-	}
-else {$man = 0;	 	
-	$date0 = $_POST["date0"];
-	$txt = explode("/",$date0);
-	$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
-	$date1 = $_POST["date1"];
-	$txt = explode("/",$date1);
-	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-	$interval = $_POST["select"];
-	}
-
+$date0 = $_POST["date0"];
+$txt = explode("/",$date0);
+$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
+$date1 = $_POST["date1"];
+$txt = explode("/",$date1);
+$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+$interval = $_POST["select"];
+/*
 if(isset($_SESSION['client']))
     $client = $_SESSION['client'];
 else
@@ -60,20 +54,16 @@ else
 	{$mesures = $helper->GetLastMeasures($client,$devicelist);
 	$_SESSION['mesures'] = $mesures;
 	}
-    
+ */   
 $numStations = count($devicelist["devices"]);
 
 $view = array($numStations);
 for($i = 0 ;$i < $numStations; $i++)
 	$view[$i] = 0;
 
-if($man == 1)
-	$view[0] = $view[1] = 1;
-else	
-	{foreach($_POST['stats'] as $chkbx)
-		{$view[$chkbx] = 1;
-		}
-	}
+foreach($_POST['stats'] as $chkbx)
+	$view[$chkbx] = 1;
+
 $numview = 0;  // Nombre de stations cochées
 for($i = 0 ;$i < $numStations; $i++)
 	if($view[$i])++$numview;
@@ -108,21 +98,6 @@ for($i = 0;$i < $numStations;$i++)
     $nmesures[$i] = count($keys[$i]);
     }
     
-
-if($man)
-{
-
-for($i=0; $i < count($keys[0]);++$i)
-	{$key = $keys[0][$i];  
-	$idate = date("d/m/y H:i",$key);
-	$tmin = $mesure[0][$key][0];
-	$tmax = $mesure[0][$key][1];
-	echo("$i:$key date:$idate tmin:$tmin tmax:$tmax <br>\n");
-	} 
-$idate = date("d/m/y H:i",$minDateBeg);
-echo("debut:$idate");
-}
-
 if($interval == "1week")
 	$inter = 7;
 else
@@ -215,7 +190,7 @@ echo("
 				echo("data1.removeColumn(1+2*$numview);\n");				 
 
                                   
-echo("                   
+?>                  
              var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
              chart.draw(data, {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
              var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
@@ -228,9 +203,9 @@ echo("
   <body>  
     <div id='chartMin' style='width:100%; height:300px; margin-left:auto; margin-right:auto;'></div>
     <div id='chartMax' style='width:100%; height:300px;  margin-left:auto; margin-right:auto;'></div>
+	<input type="button" style="color:#000000; background-color: #cceeff;" value="Back" onclick="top.location.href=<?php echo("$from"); ?>" ;>	
+	<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="top.location.href='logout.php'";>		
+
   </body>
 </html>
-");
 
-}
-?>

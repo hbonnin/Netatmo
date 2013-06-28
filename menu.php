@@ -8,7 +8,7 @@ Netatmo PHP Graphics is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License.
 
-Netatmo PHP Widget is distributed in the hope that it will be useful,
+Netatmo PHP Graphics is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -19,7 +19,19 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once 'NAApiClient.php';
 require_once 'Config.php';
+require_once 'initClient.php';
+
 session_start();
+date_default_timezone_set("Europe/Paris");
+$from = explode("/",$_SERVER['SCRIPT_NAME']);
+$_SESSION['calledfrom'] = "'". $from[2] ."'";
+// reload page => recalculer $mesures
+//if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
+initClient();
+$client = $_SESSION['client'];
+$devicelist = $_SESSION['devicelist'];
+$mesures = $_SESSION['mesures'];
+/*
 
 if(isset($_SESSION['client']))// menu called from login or reload
     {$client = $_SESSION['client'];
@@ -59,6 +71,7 @@ else
 	$_SESSION['mesures'] = $mesures;
 	}
 //***************************************************************
+*/
 $num = count($devicelist["devices"]);
 date_default_timezone_set("Europe/Paris");
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
@@ -204,11 +217,7 @@ for($i = 0;$i < $num;$i++)
 </td>
 </table>
 
-<form method='post' action='index.php'>
-<input type='submit' value='logout' style='color: #aa0000; font-size: 14px;'>
-</form>
-
-
+<input type='button' value='logout' style='color: #aa0000; font-size: 14px;' onclick="top.location.href='logout.php'">
 
 <!-- Invisible table --> 
 <table class='ds_box'  id='ds_conclass' style='display: none;'>

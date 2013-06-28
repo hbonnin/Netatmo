@@ -123,13 +123,6 @@ table.container {
 td.container {
 	vertical-align:bottom;
 }
-table.graphicC {color:black;
-	text-align:left;
-	width:265px;
-	border:solid 1px gray;
-	background-color:#cceeff;
-	font-size:14px;
-}
 div.map_canvas	{
     position:relative;
     width: 680px;

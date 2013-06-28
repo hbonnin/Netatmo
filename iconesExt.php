@@ -1,120 +1,23 @@
 <?php
-require_once 'fill.php';
 require_once 'NAApiClient.php';
 require_once 'Config.php';
+require_once 'initClient.php';
 require_once 'Geolocalize.php';
+require_once 'fill.php';
 
-//session_set_cookie_params(1200); 
+
 session_start();
 date_default_timezone_set("Europe/Paris");
-
-function refreshToken($client_id,$client_secret)
-    {$token_url = "https://api.netatmo.net/oauth2/token";
-    $postdata = http_build_query(array(
-         							'grant_type' => "refresh_token",
-            						'refresh_token' => $_SESSION['refresh_token'],
-            						'client_id' => $client_id,
-            						'client_secret' => $client_secret
-        							));
-    $opts = array('http' => array(
-        							'method'  => 'POST',
-        							'header'  => 'Content-type: application/x-www-form-urlencoded;charset=UTF-8',
-        							'content' => $postdata
-    								));
-    $context  = stream_context_create($opts);
-    $response = file_get_contents($token_url, false, $context);
-    $params = null;
-    $params = json_decode($response, true);
-	$access_token = $params['access_token'];
-	$refresh_token = $params['refresh_token'];
-	$expires = $params['expires_in'];
-	$_SESSION['refresh_token'] = $refresh_token;		
-	$_SESSION['time'] = time();
-	$_SESSION['expires'] = $expires;
-	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
-	$_SESSION['client'] = $client;
-	}
-
-if(isset($_SESSION['time']))
-    {$time_left = $_SESSION['time'] + $_SESSION['expires'] - time();
-	//echo("\ntime_left:$time_left"); 	
-	if($time_left < 0) 
-		refreshToken($client_id,$client_secret);
-//  if($time_left < 10700)refreshToken($client_id,$client_secret);
-	}
-if(isset($_GET["error"]))
-    {if($_GET["error"] == "access_denied")
-        {echo "You refused the application's access\n";exit(-1);}
-    }
-if(isset($_GET["code"]) && !isset($_SESSION['client'])) // menu called from indexNetatmo.php
-	{$code = $_GET["code"];
-	$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
-    if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
-    	{$token_url = "https://api.netatmo.net/oauth2/token";
-    	$postdata = http_build_query(array(
-            							'grant_type' => "authorization_code",
-            							'client_id' => $client_id,
-            							'client_secret' => $client_secret,
-            							'code' => $code,
-            							'redirect_uri' => $my_url               
-        								));
-    	$opts = array('http' => array(
-        							'method'  => 'POST',
-        							'header'  => 'Content-type: application/x-www-form-urlencoded;charset=UTF-8',
-        							'content' => $postdata
-    								));
-    	$context  = stream_context_create($opts);
-    	$response = file_get_contents($token_url, false, $context);
-    	$params = null;
-    	$params = json_decode($response, true);
-		$access_token = $params['access_token'];
-		$refresh_token = $params['refresh_token'];
-		$expires = $params['expires_in'];
-		$_SESSION['refresh_token'] = $refresh_token;		
-		$_SESSION['time'] = time();
-		$_SESSION['expires'] = $expires;
-		$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
-		$_SESSION['client'] = $client;	
-		}
-	else
-		{echo("The state does not match.");exit(-1);}
-	}	
-	
-if(isset($_SESSION['client']))
-    $client = $_SESSION['client'];
-else 
-	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
-	try {
-    	$tokens = $client->getAccessToken();       
-		} catch(NAClientException $ex) {
-    		echo ("Identifiant ou mot de passe incorrect");
-		exit(-1);	
-		}
-	$_SESSION['client'] = $client;	
-	}  
-
-	    
-$helper = new NAApiHelper();
-if(isset($_SESSION['devicelist']))
-    $devicelist = $_SESSION['devicelist'];
-else
-	{try {
-		$devicelist = $client->api("devicelist", "POST");
-		}
-	catch(NAClientException $ex) {
-		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-		echo("erreur:$ex");
-		exit(-1);
-		}	
-	$devicelist = $helper->SimplifyDeviceList($devicelist);
-    $_SESSION['devicelist'] = $devicelist;
-    }
-   
-$mesures = $helper->GetLastMeasures($client,$devicelist);
-$_SESSION['mesures'] = $mesures;
+$from = explode("/",$_SERVER['SCRIPT_NAME']);
+$_SESSION['calledfrom'] = "'". $from[2] ."'";
+// reload page => recalculer $mesures
+if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
+initClient();
+$client = $_SESSION['client'];
+$devicelist = $_SESSION['devicelist'];
+$mesures = $_SESSION['mesures'];
 	
 $numStations = count($devicelist["devices"]);
-//if($numStations == 5)--$numStations;
 $latitude = array($numStations);
 $latitude = array($numStations);
 $alt = array($numStations);
@@ -127,7 +30,6 @@ for($i = 0;$i < $numStations;$i++)
     $places = geolocalize($latitude[$i],$longitude[$i]);
     $int_name = $devicelist["devices"][$i]["module_name"];
 	$ext_name = $devicelist["devices"][$i]["modules"][0]["module_name"];
-
     $txtEXT = sprintf("<font size=2>$ext_name :</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
 	$txtINT = sprintf("<font size=2>$int_name:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
 			,$res[0]['CO2'],$res[0]['Noise']);
@@ -370,7 +272,7 @@ for($i = 0;$i < $numStations;$i++)
 
 <!-- Invisible table for calendar --> 
 <table class="ds_box"  id="ds_conclass" style="display: none;" >
-	<caption id="id_caption" class='ds_caption'">xxxx</caption>
+	<caption id="id_caption" class='ds_caption'>xxxx</caption>
 	<tr><td id="ds_calclass">aaa</td></tr>
 </table>
 	
@@ -425,7 +327,7 @@ $num = count($devicelist["devices"]);
 	<table class='graphic'>
 	<caption style='text-align:center;  font-weight:bold;'>Graphiques d'une station</caption>
 	<tr>
-	<td style='height:25px; width:130px; font-weight:bold;'>Début</td>
+	<td style='height:25px; width:130px;'>Début</td>
 	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 
@@ -435,40 +337,40 @@ $num = count($devicelist["devices"]);
 	</tr>
 
 	<tr>
-	<td id='id_duree' style='height:25px;'>Fréquence</td>	
+	<td id='id_duree' style='height:25px;'>Fréquence
+	</td>	
 	<td>
-		<table><tr><td>
 		<select name='select' onChange='Allow(this);'>
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' selected='selected' > 1 journée </option>
 		<option value='3hours' > 3 heures </option>
 		<option value='30min'> 30 minutes </option>
 		<option value='max' > 5 minutes </option>
-		</select>
-		</td></tr>
-		</table>
+		</select>		
 	</td>	
 	</tr>
-	
+
 	<tr>
 		<td>Choisir une station</td>
-		<td>
-			
-<?php
-echo("<table>\n");
-for($i = 0;$i < $num;$i++)
-	{$stat = $mesures[$i]['station_name'];
-	$arr = str_split($stat,17);
-    $stat = $arr[0];
-    if($i == 0)
-		echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
-	else
-		echo("<tr><td style='font-size:12px;'><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
-	}
-echo("</table>\n");
-?>	
-	</td></tr>		
-	<tr><td><input type='submit'></td><td></td></tr>
+		<td>			
+		<?php
+		echo("<table>\n");
+		for($i = 0;$i < $num;$i++)
+			{$stat = $mesures[$i]['station_name'];
+			$arr = str_split($stat,17);
+			$stat = $arr[0];
+			if($i == 0)
+				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
+			else
+				echo("<tr><td style='font-size:12px;'><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
+			}
+		echo("</table>\n");
+		?>	
+		</td>
+	</tr>
+	
+	<tr><td><input type='submit'></td><td></td>
+	</tr>
 	</table>	
 	</form>
 
@@ -479,8 +381,9 @@ echo("</table>\n");
 <td class='container'>
 
 	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
-	<table class='graphicC'>
+	<table class='graphic'>
 	<caption style='text-align:center; font-weight:bold;'>Comparaison de stations</caption>
+	
 	<tr>
 	<td style='height:25px; width:130px;'>Début</td>
 	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
@@ -494,42 +397,39 @@ echo("</table>\n");
 	<tr>
 	<td style='height:25px;'>Fréquence</td>	
 	<td>
-		<table><tr><td>
 		<select name='select' onChange='Allow(this);'>
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' selected='selected' > 1 journée </option>
-		</select>
-		</td></tr>
-		</table>
+		</select>		
 	</td>	
 	</tr>
 	
 	<tr>
-		<td>Choisir une station</td>
+		<td>Choisir des stations</td>
 		<td>
-
 <?php
-echo("<table>\n");
-for($i = 0;$i < $num;$i++)
-	{$stat = $mesures[$i]['station_name'];
-	$arr = str_split($stat,17);
-    $stat = $arr[0];
-    if($i == 0)
-		echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
-	else
-		echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
-	}
-echo("</table>\n");	
+		echo("<table>\n");
+		for($i = 0;$i < $num;$i++)
+			{$stat = $mesures[$i]['station_name'];
+			$arr = str_split($stat,17);
+			$stat = $arr[0];
+			if($i == 0)
+				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
+			else
+				echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
+			}
+		echo("</table>\n");	
 ?>			
-	</td>
+		</td>
 	</tr>
+	
 	<tr><td><input type='submit'></td><td></td></tr>
 	</table>
 	</form>
 				
 </td></tr></table></div>
 
-<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="window.location='indexNetatmo.php?logout';">		
+<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="window.location='logout.php';">		
 
 <!-- START OF HIT COUNTER CODE -->
 <div class='clear'></div>
