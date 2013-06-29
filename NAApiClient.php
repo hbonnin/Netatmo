@@ -27,7 +27,7 @@ class NAClientException extends Exception
     * @param $result
     *   The result from the API server.
     */
-    public function __construct($code, $message, $error_type) 
+    public function __construct($code, $message, $error_type)
     {
         $this->error_type = $error_type;
         parent::__construct($message, $code);
@@ -114,7 +114,7 @@ class NAApiClient
    * @return
    *   The value of the variable.
    */
-    public function getVariable($name, $default = NULL) 
+    public function getVariable($name, $default = NULL)
     {
         return isset($this->conf[$name]) ? $this->conf[$name] : $default;
     }
@@ -125,7 +125,7 @@ class NAApiClient
     {
         return $this->refresh_token;
     }
-    
+
     /**
     * Sets a persistent variable.
     *
@@ -136,7 +136,7 @@ class NAApiClient
     * @param $value
     *   The value to set.
     */
-    public function setVariable($name, $value) 
+    public function setVariable($name, $value)
     {
         $this->conf[$name] = $value;
         return $this;
@@ -158,7 +158,7 @@ class NAApiClient
             call_user_func_array($cb, array(array("access_token" => $this->access_token, "refresh_token" => $this->refresh_token)));
         }
     }
-    
+
     private function setTokens($value)
     {
         if(isset($value["access_token"]))
@@ -173,7 +173,7 @@ class NAApiClient
         }
         if(isset($update)) $this->updateSession();
     }
-    
+
     /**
      * Set token stored by application (in session generally) into this object
     **/
@@ -204,7 +204,7 @@ class NAApiClient
     *   - object_cb : (optionale) An object for which func_cb method will be applied if object_cb exists
     *   - func_cb : (optional) A method called back to store tokens in its context (session for instance)
     */
-    public function __construct($config = array()) 
+    public function __construct($config = array())
     {
         // If tokens are provided let's store it
         if(isset($config["access_token"]))
@@ -230,20 +230,20 @@ class NAApiClient
                 $this->setVariable($key, $val);
             }
         }
- 
+
         // Other else configurations.
-        foreach ($config as $name => $value) 
+        foreach ($config as $name => $value)
         {
             $this->setVariable($name, $value);
         }
-    
+
         if($this->getVariable("code") == null && isset($_GET["code"]))
         {
             $this->setVariable("code", $_GET["code"]);
         }
   }
-    
-      /**
+
+    /**
    * Default options for cURL.
    */
     public static $CURL_OPTS = array(
@@ -254,7 +254,7 @@ class NAApiClient
         CURLOPT_USERAGENT      => 'netatmoclient',
         CURLOPT_HTTPHEADER     => array("Accept: application/json"),
     );
-  
+
     /**
     * Makes an HTTP request.
     *
@@ -273,24 +273,24 @@ class NAApiClient
     * @return
     *   The json_decoded result or NAClientException if pb happend
     */
-    public function makeRequest($path, $method = 'GET', $params = array()) 
+    public function makeRequest($path, $method = 'GET', $params = array())
     {
         $ch = curl_init();
         $opts = self::$CURL_OPTS;
-        if ($params) 
+        if ($params)
         {
-            switch ($method) 
+            switch ($method)
             {
                 case 'GET':
                     $path .= '?' . http_build_query($params, NULL, '&');
                 break;
                 // Method override as we always do a POST.
                 default:
-                    if ($this->getVariable('file_upload_support')) 
+                    if ($this->getVariable('file_upload_support'))
                     {
                         $opts[CURLOPT_POSTFIELDS] = $params;
                     }
-                    else 
+                    else
                     {
                         $opts[CURLOPT_POSTFIELDS] = http_build_query($params, NULL, '&');
                     }
@@ -300,7 +300,7 @@ class NAApiClient
         $opts[CURLOPT_URL] = $path;
         // Disable the 'Expect: 100-continue' behaviour. This causes CURL to wait
         // for 2 seconds if the server does not support this header.
-        if (isset($opts[CURLOPT_HTTPHEADER])) 
+        if (isset($opts[CURLOPT_HTTPHEADER]))
         {
             $existing_headers = $opts[CURLOPT_HTTPHEADER];
             $existing_headers[] = 'Expect:';
@@ -309,7 +309,7 @@ class NAApiClient
                 $existing_headers[] = 'CLIENT_IP: '.$ip;
             $opts[CURLOPT_HTTPHEADER] = $existing_headers;
         }
-        else 
+        else
         {
             $opts[CURLOPT_HTTPHEADER] = array('Expect:');
         }
@@ -317,15 +317,18 @@ class NAApiClient
         curl_setopt_array($ch, $opts);
         //hubert
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($ch);
 
-        if ($result === FALSE) 
+        $result = curl_exec($ch);
+        if ($result === FALSE)
         {
-            $e = new NACurlErrorType(curl_errno($ch), curl_error($ch));
+            $e = new NACurlErrorType(curl_errno($ch), curl_error($ch));            
             curl_close($ch);
             throw $e;
         }
         curl_close($ch);
+
+        $result = str_replace('HTTP/1.0','HTTP/1.1',$result);
+        $result = str_replace("HTTP/1.1 200 Connection established\r\n\r\n",'',$result);
 
         // Split the HTTP response into header and body.
         list($headers, $body) = explode("\r\n\r\n", $result);
@@ -356,9 +359,9 @@ class NAApiClient
                 throw new NAApiErrorType($matches[1], $matches[2], null);
             }
             throw new NAApiErrorType($matches[1], $matches[2], $decode);
-        }    
+        }
     }
-    
+
     /**
     * Retrieve an access token following the best grant to recover it (order id : code, refresh_token, password)
     *
@@ -374,7 +377,7 @@ class NAApiClient
         if($this->getVariable('code'))// grant_type == authorization_code.
         {
             return $this->getAccessTokenFromAuthorizationCode($this->getVariable('code'));
-        }            
+        }
         else if($this->refresh_token)// grant_type == refresh_token
         {
             return $this->getAccessTokenFromRefreshToken($this->refresh_token);
@@ -385,7 +388,7 @@ class NAApiClient
         }
         else throw new NAInternalErrorType("No access token stored");
     }
-   
+
 
     /**
     * Get url to redirect to oauth2.0 netatmo authorize endpoint
@@ -398,12 +401,12 @@ class NAApiClient
     *   state returned in redirect_uri
     */
     public function getAuthorizeUrl($scope = null, $state = null)
-    {        
-        $redirect_uri = $this->getRedirectUri();      
+    {
+        $redirect_uri = $this->getRedirectUri();
         $params = array("scope" => $scope, "state" => $state, "client_id" => $this->getVariable("client_id"), "client_secret" => $this->getVariable("client_secret"), "response_type" => "code", "redirect_uri" => $redirect_uri);
         return $this->getUri($this->getVariable("authorize_uri"), $params);
     }
- 
+
     /**
     * Get access token from OAuth2.0 token endpoint with authorization code.
     *
@@ -419,10 +422,10 @@ class NAApiClient
     * @thrown
     *  A NAClientException if unable to retrieve an access_token
     */
-    private function getAccessTokenFromAuthorizationCode($code) 
+    private function getAccessTokenFromAuthorizationCode($code)
     {
         $redirect_uri = $this->getRedirectUri();
-        if($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL && $redirect_uri != NULL) 
+        if($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL && $redirect_uri != NULL)
         {
             $ret = $this->makeRequest($this->getVariable('access_token_uri'),
                 'POST',
@@ -458,9 +461,9 @@ class NAApiClient
     * @thrown
     *  A NAClientException if unable to retrieve an access_token
    */
-    private function getAccessTokenFromPassword($username, $password) 
+    private function getAccessTokenFromPassword($username, $password)
     {
-        if ($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL) 
+        if ($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL)
         {
             $ret = $this->makeRequest(
                 $this->getVariable('access_token_uri'),
@@ -479,7 +482,7 @@ class NAApiClient
         else
             throw new NAInternalErrorType("missing args for getting password grant");
     }
-    
+
     /**
     * Get access token from OAuth2.0 token endpoint with basic user
     * credentials.
@@ -497,9 +500,9 @@ class NAApiClient
     * @thrown
     *  A NAClientException if unable to retrieve an access_token
     */
-    private function getAccessTokenFromRefreshToken() 
+    private function getAccessTokenFromRefreshToken()
     {
-        if ($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL && ($refresh_token = $this->refresh_token) != NULL) 
+        if ($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL && ($refresh_token = $this->refresh_token) != NULL)
         {
             $ret = $this->makeRequest(
                 $this->getVariable('access_token_uri'),
@@ -517,11 +520,11 @@ class NAApiClient
         else
             throw new NAInternalErrorType("missing args for getting refresh token grant");
     }
-    
+
     /**
     * Make an OAuth2.0 Request.
     *
-    * Automatically append "access_token" in query parameters 
+    * Automatically append "access_token" in query parameters
     *
     * @param $path
     *   The target path, relative to base_path/service_uri
@@ -535,11 +538,11 @@ class NAApiClient
     *
     * @throws OAuth2Exception
     */
-    protected function makeOAuth2Request($path, $method = 'GET', $params = array(), $reget_token = true) 
+    protected function makeOAuth2Request($path, $method = 'GET', $params = array(), $reget_token = true)
     {
         try
         {
-            $res = $this->getAccessToken();  
+            $res = $this->getAccessToken();
         }
         catch(NAApiErrorType $ex)
         {
@@ -609,18 +612,18 @@ class NAApiClient
      *
      * @throws NAClientException
     */
-    public function api($path, $method = 'GET', $params = array(), $secure = false) 
+    public function api($path, $method = 'GET', $params = array(), $secure = false)
     {
-        if (is_array($method) && empty($params)) 
+        if (is_array($method) && empty($params))
         {
             $params = $method;
             $method = 'GET';
         }
 
         // json_encode all params values that are not strings.
-        foreach ($params as $key => $value) 
+        foreach ($params as $key => $value)
         {
-            if (!is_string($value)) 
+            if (!is_string($value))
             {
                 $params[$key] = json_encode($value);
             }
@@ -629,7 +632,7 @@ class NAApiClient
         if(isset($res["body"])) return $res["body"];
     else return $res;
     }
-    
+
     /**
      * Make a REST call to a Netatmo server that do not need access_token
      *
@@ -647,16 +650,16 @@ class NAApiClient
     */
     public function noTokenApi($path, $method = 'GET', $params = array())
     {
-        if (is_array($method) && empty($params)) 
+        if (is_array($method) && empty($params))
         {
             $params = $method;
             $method = 'GET';
         }
 
         // json_encode all params values that are not strings.
-        foreach ($params as $key => $value) 
+        foreach ($params as $key => $value)
         {
-            if (!is_string($value)) 
+            if (!is_string($value))
             {
                 $params[$key] = json_encode($value);
             }
@@ -666,20 +669,20 @@ class NAApiClient
     }
 
     static public function str_replace_once($str_pattern, $str_replacement, $string)
-    { 
+    {
         if (strpos($string, $str_pattern) !== false)
-        { 
-            $occurrence = strpos($string, $str_pattern); 
-            return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern)); 
-        } 
-        return $string; 
-    } 
+        {
+            $occurrence = strpos($string, $str_pattern);
+            return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern));
+        }
+        return $string;
+    }
 
     /**
     * Since $_SERVER['REQUEST_URI'] is only available on Apache, we
     * generate an equivalent using other environment variables.
     */
-    function getRequestUri() 
+    function getRequestUri()
     {
         if (isset($_SERVER['REQUEST_URI'])) {
             $uri = $_SERVER['REQUEST_URI'];
@@ -707,7 +710,7 @@ class NAApiClient
    * @return
    *   The current URL.
    */
-    protected function getCurrentUri() 
+    protected function getCurrentUri()
     {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
           ? 'https://'
@@ -746,7 +749,7 @@ class NAApiClient
         if(!empty($redirect_uri)) return $redirect_uri;
         else return $this->getCurrentUri();
     }
-    
+
     /**
     * Build the URL for given path and parameters.
     *
@@ -758,7 +761,7 @@ class NAApiClient
     * @return
     *   The URL for the given parameters.
     */
-    protected function getUri($path = '', $params = array(), $secure = false) 
+    protected function getUri($path = '', $params = array(), $secure = false)
     {
         $url = $this->getVariable('services_uri') ? $this->getVariable('services_uri') : $this->getVariable('base_uri');
         if($secure == true)
@@ -786,16 +789,16 @@ class NAApiClient
  */
 class NAApiHelper
 {
-    public function SimplifyDeviceList($devicelist) 
+    public function SimplifyDeviceList($devicelist)
     {
-        foreach ($devicelist["devices"] as $d=>$device) 
+        foreach ($devicelist["devices"] as $d=>$device)
         {
             $moduledetails=Array();
-            foreach ($device["modules"] as $module) 
+            foreach ($device["modules"] as $module)
             {
-                foreach ($devicelist["modules"] as $moduledetail) 
+                foreach ($devicelist["modules"] as $moduledetail)
                 {
-                    if ($module==$moduledetail['_id']) 
+                    if ($module==$moduledetail['_id'])
                     {
                         $moduledetails[]=$moduledetail;
                     }
@@ -807,11 +810,11 @@ class NAApiHelper
         unset($devicelist["modules"]);
         return($devicelist);
     }
-    public function GetLastMeasure($client, $device, $module=null) 
+    public function GetLastMeasure($client, $device, $module=null)
     {
         $params = array("scale" => "max", "type" => "Temperature,CO2,Humidity,Pressure,Noise", "date_end" => "last", "device_id" => $device);
         $result = array();
-        if (!is_null($module)) 
+        if (!is_null($module))
         {
             $params["module_id"]=$module;
         }
@@ -828,16 +831,16 @@ class NAApiHelper
         return($result);
 
     }
-    public function GetLastMeasures($client,$simplifieddevicelist) 
+    public function GetLastMeasures($client,$simplifieddevicelist)
     {
         $results = Array();
-        foreach ($simplifieddevicelist["devices"] as $device) 
+        foreach ($simplifieddevicelist["devices"] as $device)
         {
             $result = Array();
             if(isset($device["station_name"])) $result["station_name"] = $device["station_name"];
             if(isset($device["modules"][0])) $result["modules"][0]["module_name"] = $device["module_name"];
             $result["modules"][0] = array_merge($result["modules"][0], $this->GetLastMeasure($client,$device["_id"]));
-            foreach ($device["modules"] as $module) 
+            foreach ($device["modules"] as $module)
             {
                 $addmodule = Array();
                 if(isset($module["module_name"])) $addmodule["module_name"] = $module["module_name"];

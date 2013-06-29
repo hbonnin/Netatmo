@@ -2,6 +2,7 @@
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'initClient.php';
+require_once 'menus.php';
 
 session_start();
 date_default_timezone_set("Europe/Paris");
@@ -11,33 +12,27 @@ $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
 $from = $_SESSION['calledfrom']; 
+$stationId = $_POST["station"];
+$interval = $_POST["select"];
+       
+//$user = $client->api("getuser", "POST");
 
-if(!isset($_POST["select"]))
-	{$stationId=0; 
-	$date_end = time();
-	$date_beg = time() - (10 * 24 * 60 * 60);
-	$interval = "1day";
+if($interval =="max")//5 minutes
+	{$date_end = time();
+	$date_beg = $date_end - (48 * 60 * 60);
 	}
-else 
-	{$interval = $_POST["select"];
-	$stationId = $_POST["station"];
-	if($interval =="max")//5 minutes
-		{$date_end = time();
-		$date_beg = $date_end - (48 * 60 * 60);
+else
+	{$date1 = $_POST["date1"];
+	$txt = explode("/",$date1);
+	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+	if($interval =="30min")
+		$date_beg = $date_end - (14 * 24 * 60 * 60) - (30 * 60);
+	else //3hours 1day 1week
+		{$date0 = $_POST["date0"];
+		$txt = explode("/",$date0);
+		$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+		$date_beg -= 24*60*60;
 		}
-	else
-		{$date1 = $_POST["date1"];
-		$txt = explode("/",$date1);
-		$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-		if($interval =="30min")
-			$date_beg = $date_end - (14 * 24 * 60 * 60) - (30 * 60);
-		else //3hours 1day 1week
-			{$date0 = $_POST["date0"];
-			$txt = explode("/",$date0);
-			$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-			$date_beg -= 24*60*60;
-			}
-		}	
 	}
 	
 if($interval=="1week")
@@ -87,17 +82,29 @@ $stat0 = $mesures[$stationId]['station_name'];
     , "date_end" => $date_end
     , "optimize" => false
     , "device_id" => $device_id
-    , "module_id" => $module_id);
-    $meas = $client->api("getmeasure", "POST", $params);
-    
+    , "module_id" => $module_id);  
+    try
+    	{$meas = $client->api("getmeasure", "POST", $params);
+    	}
+    catch(NAClientException $ex)
+    	{echo "An error happend while trying to retrieve your last measures\n";
+        echo $ex->getMessage()."\n";
+    	}
+    	
  	// interieur    
     $params = array("scale" => $interval
     , "type" => $req1
     , "date_begin" => $date_beg
     , "date_end" => $date_end
     , "optimize" => false
-    , "device_id" => $device_id);
-    $meas1 = $client->api("getmeasure", "POST", $params); 
+    , "device_id" => $device_id); 
+    try
+    	{$meas1 = $client->api("getmeasure", "POST", $params); 
+		}
+    catch(NAClientException $ex)
+    	{echo "An error happend while trying to retrieve your last measures\n";
+        echo $ex->getMessage()."\n";
+    	}
 
 date_default_timezone_set("Europe/Paris");
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
@@ -368,23 +375,28 @@ else  // 5 minutes ou 30 minutes
 		
 if($inter > 30) 	                                
 echo("                   
-             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green'] });
-             var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green','orange','brown','#f0b0f0'] });
+             var chartExt = new google.visualization.LineChart(document.getElementById('chartExt'));
+             chartExt.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green'] });
+             var chartInt = new google.visualization.LineChart(document.getElementById('chartInt'));
+             chartInt.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green','orange','brown','#f0b0f0'] });
 ");
 else
 echo("                   
-             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-             chart.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green'] });
-              var chart1 = new google.visualization.LineChart(document.getElementById('chart1_div'));
-             chart1.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green','orange','brown','#f0b0f0'] });
+             var chartExt = new google.visualization.LineChart(document.getElementById('chartExt'));
+             chartExt.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green'] });
+              var chartInt = new google.visualization.LineChart(document.getElementById('chartInt'));
+             chartInt.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green','orange','brown','#f0b0f0'] });
 ");
 
 ?>           
              }  
           </script>
-  </head>
+
+<script type='text/javascript' src='calendrier.js'></script> 
+<link type='text/css' rel='stylesheet'  href='style.css'/>
+<script type='text/javascript' src='validate.js'></script>	
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
+</head>
   <body style='margin:0; padding:0;'>
 <!--      
 	<table style='width:100%; height:100%px; margin-left:auto; margin-right:auto;  border:1px solid black;'>
@@ -393,12 +405,48 @@ echo("
     </td><td id='chart_div' style='height: 270px;'>
     </td></tr></table>
 -->
-    <div id='chart1_div' style='width:100%; height:390px; margin-left:auto; margin-right:auto;'></div>
-    <div id='chart_div' style='width:100%; height:270px; margin-left:auto; margin-right:auto;'></div>
 
- <input type="button" style="color:#000000; background-color: #cceeff;" value="Back" onclick="top.location.href=<?php echo("$from"); ?>" ;>	
- <input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="top.location.href='logout.php'";>		
+<?php
+$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+$num = count($devicelist["devices"]);
+?>
+<table style='border:solid 2px white; padding:0px;'>
+<tr>
+<td  style='vertical-align:bottom;'>
+<?php
+drawMenuCompare();
+?>
+</td>
+    <td  style='vertical-align:bottom;'>
+    <div id='chartInt' class='chartInt' ></div></td>
+ </tr>
  
+ <tr>
+ <td style='vertical-align:bottom;'>
+<?php
+drawMenuStation();
+?>
+ </td>
+    <td style='vertical-align:bottom;'>
+    <div id='chartExt' class='chartExt' ></div></td>
+</tr>
+</table>
+	<table><tr><td>
+	<form method='post' action=<?php echo($from); ?> >
+	<input type='submit' value='Main menu' style='color:black; background-color:#ddd;'>			
+	</form>
+	</td><td>
+	<form method='post' action='logout.php'>		
+	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;'>		
+	</form> 
+	</td></tr></table>	
+	
+<!-- Invisible table for calendar --> 
+<table class="ds_box"  id="ds_conclass" style="display: none;" >
+	<caption id="id_caption" class='ds_caption'>xxxx</caption>
+	<tr><td id="ds_calclass">aaa</td></tr>
+</table>
 
   </body>
 </html>

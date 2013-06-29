@@ -104,12 +104,28 @@ td.s	{color: black;
 	border:1px solid blue;
 	font-size:12px;
 	}
+div.chartInt	{
+	width:1000px;
+	height:330px;
+	//border:solid 2px black;
+}
+div.chartExt	{
+	width:1000px;
+	height:300px;
+	//border:solid 2px black;
+}
+div.chartMinMax	{
+	width:1000px;
+	height:315px;
+	//border:solid 2px black;
+}
 table.graphic {color:black;
 	text-align:left;
 	width:265px;
 	border:solid 1px gray;
-	background-color:#cceeff;
+	//background-color:#cceeff;
 	font-size:14px;
+	border:solid 1px black;
 }
 div.container	{
     width: 1225px;

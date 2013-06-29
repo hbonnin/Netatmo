@@ -3,6 +3,7 @@
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'initClient.php';
+require_once 'menus.php';
 
 session_start();
 $client = $_SESSION['client'];
@@ -19,42 +20,6 @@ $date1 = $_POST["date1"];
 $txt = explode("/",$date1);
 $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 $interval = $_POST["select"];
-/*
-if(isset($_SESSION['client']))
-    $client = $_SESSION['client'];
-else
-	{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
-	try {
-    	$tokens = $client->getAccessToken();       
-		} catch(NAClientException $ex) {
-    		echo ("Identifiant ou mot de passe incorrect");
-		exit(-1);	
-		}
-	$_SESSION['client'] = $client;	
-	}  
-    
-$helper = new NAApiHelper();
-if(isset($_SESSION['devicelist']))
-    $devicelist = $_SESSION['devicelist'];
-else
-	{try {
-		$devicelist = $client->api("devicelist", "POST");
-		}
-	catch(NAClientException $ex) {
-		$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-		echo("$ex");
-		exit(-1);
-		}	
-	$devicelist = $helper->SimplifyDeviceList($devicelist);
-    $_SESSION['devicelist'] = $devicelist;
-    }
-if(isset($_SESSION['mesures']))
-    $mesures = $_SESSION['mesures'];
-else
-	{$mesures = $helper->GetLastMeasures($client,$devicelist);
-	$_SESSION['mesures'] = $mesures;
-	}
- */   
 $numStations = count($devicelist["devices"]);
 
 $view = array($numStations);
@@ -199,12 +164,59 @@ echo("
              } // draw chart 
             
           </script>
+<script type='text/javascript' src='calendrier.js'></script> 
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
+<link type='text/css' rel='stylesheet'  href='style.css'/>
+<script type='text/javascript' src='validate.js'></script>	
   </head>
+ 
   <body>  
-    <div id='chartMin' style='width:100%; height:300px; margin-left:auto; margin-right:auto;'></div>
+ <!-- 
+    <div id='chartMin' class='chartMinMax' style='width:100%; height:300px; margin-left:auto; margin-right:auto;'></div>
     <div id='chartMax' style='width:100%; height:300px;  margin-left:auto; margin-right:auto;'></div>
-	<input type="button" style="color:#000000; background-color: #cceeff;" value="Back" onclick="top.location.href=<?php echo("$from"); ?>" ;>	
-	<input type="button" style="color:#000000; background-color: #cceeff;" value="Logout" onclick="top.location.href='logout.php'";>		
+-->
+
+<?php
+$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+$num = count($devicelist["devices"]);
+?>
+<table style='border:solid 2px white; padding:0px;'>
+<tr>
+<td  style='vertical-align:bottom;'>
+<?php
+drawMenuCompare();
+?>
+</td>
+    <td  style='vertical-align:bottom;'>
+    <div id='chartMin' class='chartMinMax' ></div></td>
+ </tr>
+ 
+ <tr>
+ <td style='vertical-align:bottom;'>
+<?php
+drawMenuStation();
+?>
+ </td>
+    <td style='vertical-align:bottom;'>
+    <div id='chartMax' class='chartMinMax' ></div></td>
+</tr>
+</table>
+	<table><tr><td>
+	<form method='post' action=<?php echo($from); ?> >
+	<input type='submit' value='Main menu' style='color:black; background-color:#ddd;'>			
+	</form>
+	</td><td>
+	<form method='post' action='logout.php'>		
+	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;'>		
+	</form> 
+	</td></tr></table>	
+ 
+<!-- Invisible table for calendar --> 
+<table class="ds_box"  id="ds_conclass" style="display: none;" >
+	<caption id="id_caption" class='ds_caption'>xxxx</caption>
+	<tr><td id="ds_calclass">aaa</td></tr>
+</table>
 
   </body>
 </html>

@@ -1,9 +1,4 @@
 <?php
-function logout()
-	{$_SESSION=array();
-    session_destroy();
-    exit(-1);
-    }
 function refreshToken()
     {global $client_id,$client_secret;
     date_default_timezone_set("Europe/Paris");
@@ -30,16 +25,20 @@ function refreshToken()
 	$_SESSION['time'] = time();
 	$_SESSION['expires'] = $expires;
 	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
-	$_SESSION['client'] = $client;
+	$_SESSION['client'] = $client;		
 	}
 
 function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password;
+	$debug = 0;
+	if($debug)echo("initclient / ");	
 
 	if(isset($_SESSION['time']))
 		{$time_left = $_SESSION['time'] + $_SESSION['expires'] - time();
 		if($time_left < 0) 
+			{if($debug)echo("Refresh token / ");
 			refreshToken();
+			}
 		}
 	if(isset($_GET["error"]))
 		{if($_GET["error"] == "access_denied")
@@ -74,6 +73,7 @@ function initClient()
 			$_SESSION['expires'] = $expires;
 			$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 			$_SESSION['client'] = $client;	
+			if($debug)echo("client from token / ");				
 			}
 		else
 			{echo("The state does not match.");exit(-1);}
@@ -90,6 +90,7 @@ function initClient()
 			exit(-1);	
 			}
 		$_SESSION['client'] = $client;	
+		if($debug)echo("client from password / ");		
 		}  	
 	
 	$helper = new NAApiHelper();
@@ -105,15 +106,19 @@ function initClient()
 			echo("erreur:$ex");
 			exit(-1);
 			}	
+			
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
 		$_SESSION['devicelist'] = $devicelist;
+		if($debug)echo("device liste / ");			
 		}
 		
 	if(isset($_SESSION['mesures']))
 			$mesures = $_SESSION['mesures'];
 		else
-   			{$mesures = $helper->GetLastMeasures($client,$devicelist);
+   			{
+   			$mesures = $helper->GetLastMeasures($client,$devicelist);
 			$_SESSION['mesures'] = $mesures;
+			if($debug)echo("mesures / ");	
 			}
 	}
 ?>
