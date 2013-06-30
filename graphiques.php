@@ -372,20 +372,24 @@ else  // 5 minutes ou 30 minutes
             echo("data1.removeColumn(7);\n");				      
  	} 
 	$title1 = '"' .$stat0. '-' .$int_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
-		
+
+$common = "focusTarget:'category',tooltip: {isHtml: true}";
+$extra = "backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:35,width:\"80%\",height:\"70%\"}";
+$param = $common . ',' .$extra;
+
 if($inter > 30) 	                                
 echo("                   
              var chartExt = new google.visualization.LineChart(document.getElementById('chartExt'));
-             chartExt.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green'] });
+             chartExt.draw(data, {title: $title $visupt,colors: ['red','blue','green'],$param});
              var chartInt = new google.visualization.LineChart(document.getElementById('chartInt'));
-             chartInt.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','blue','green','orange','brown','#f0b0f0'] });
+             chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
 ");
 else
-echo("                   
+echo("                 
              var chartExt = new google.visualization.LineChart(document.getElementById('chartExt'));
-             chartExt.draw(data, {title: $title $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green'] });
+             chartExt.draw(data, {title: $title $visupt,colors: ['red','green'],$param});
               var chartInt = new google.visualization.LineChart(document.getElementById('chartInt'));
-             chartInt.draw(data1, {title: $title1 $visupt,focusTarget: 'category',tooltip: {isHtml: true},colors: ['red','green','orange','brown','#f0b0f0'] });
+             chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
 ");
 
 ?>           
@@ -398,37 +402,31 @@ echo("
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
 </head>
   <body style='margin:0; padding:0;'>
-<!--      
-	<table style='width:100%; height:100%px; margin-left:auto; margin-right:auto;  border:1px solid black;'>
-    <tr><td id='chart1_div' style='height: 390px;'>
-    </tr><tr>
-    </td><td id='chart_div' style='height: 270px;'>
-    </td></tr></table>
--->
-
 <?php
+//echo $extra;
+//echo $common;
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 $num = count($devicelist["devices"]);
 ?>
-<table style='border:solid 2px white; padding:0px;'>
+<table style='border:solid 2px white; padding:0px; width:100%;'>
 <tr>
-<td  style='vertical-align:bottom;'>
+<td>
 <?php
 drawMenuCompare();
 ?>
 </td>
-    <td  style='vertical-align:bottom;'>
+    <td  style='vertical-align:bottom; width:100%;'>
     <div id='chartInt' class='chartInt' ></div></td>
  </tr>
  
  <tr>
- <td style='vertical-align:bottom;'>
+ <td>
 <?php
 drawMenuStation();
 ?>
  </td>
-    <td style='vertical-align:bottom;'>
+    <td style='vertical-align:bottom; width:100%;'>
     <div id='chartExt' class='chartExt' ></div></td>
 </tr>
 </table>

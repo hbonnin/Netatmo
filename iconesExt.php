@@ -84,12 +84,17 @@ for($i = 0;$i < $numStations;$i++)
 		//var marker = new google.maps.Marker({'position':pos ,'map':map });
 		marker.setZIndex(1);
 		var infowindow = new google.maps.InfoWindow({'content'  : label});
-	   	google.maps.event.addListener(marker, 'click', function() 
+	   	google.maps.event.addListener(marker, 'rightclick', function() 
        		{marker.setZIndex(marker.getZIndex()-1);
        		//marker.setVisible(false);
        		});  
        google.maps.event.addListener(marker, 'mouseover', function(){infowindow.open(map, marker);});
-       google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);});         	 
+       google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
+       google.maps.event.addListener(marker, 'click', function()
+       		{map.setCenter(marker.getPosition());
+  			map.setZoom(12);
+       		}); 
+ 
     	return marker;  
 		}
 

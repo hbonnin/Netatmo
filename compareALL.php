@@ -157,9 +157,9 @@ echo("
                                   
 ?>                  
              var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
-             chart.draw(data, {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
              var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
-             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget: 'category'} );
+             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'80%',height:"70%"} });
+             chart.draw(data,   {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'80%',height:"70%"} });
             
              } // draw chart 
             
@@ -171,34 +171,29 @@ echo("
   </head>
  
   <body>  
- <!-- 
-    <div id='chartMin' class='chartMinMax' style='width:100%; height:300px; margin-left:auto; margin-right:auto;'></div>
-    <div id='chartMax' style='width:100%; height:300px;  margin-left:auto; margin-right:auto;'></div>
--->
-
 <?php
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 $num = count($devicelist["devices"]);
 ?>
-<table style='border:solid 2px white; padding:0px;'>
+<table style='padding:0px; width:100%;'>
 <tr>
-<td  style='vertical-align:bottom;'>
+<td  style='vertical-align:top;'>
 <?php
 drawMenuCompare();
 ?>
 </td>
-    <td  style='vertical-align:bottom;'>
+    <td  style='vertical-align:bottom; width:100%;'>
     <div id='chartMin' class='chartMinMax' ></div></td>
  </tr>
  
  <tr>
- <td style='vertical-align:bottom;'>
+ <td style='vertical-align:top;'>
 <?php
 drawMenuStation();
 ?>
  </td>
-    <td style='vertical-align:bottom;'>
+    <td style='vertical-align:bottom; width:100%;'>
     <div id='chartMax' class='chartMinMax' ></div></td>
 </tr>
 </table>

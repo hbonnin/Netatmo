@@ -4,7 +4,8 @@ function drawMenuStation()
 ?>	
 	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>	
 	<table class='graphic'>
-	<caption style='text-align:center;  font-weight:bold;'>Graphiques d'une station</caption>
+	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:10px;  padding-bottom:5px'>Graphiques d'une station</caption> 
+	</tr>
 	<tr>
 	<td style='height:25px; width:130px;'>Début</td>
 	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
@@ -59,7 +60,8 @@ function drawMenuCompare()
 ?>
 	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
 	<table class='graphic'>
-	<caption style='text-align:center; font-weight:bold;'>Comparaison de stations</caption>
+	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:10px; padding-bottom:5px'>
+	Comparaison de stations</td></tr>
 	
 	<tr>
 	<td style='height:25px; width:130px;'>Début</td>

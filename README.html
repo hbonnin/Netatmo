@@ -12,34 +12,28 @@
 <P>
 This program uses the Netatmo php sdk and some Google development tools for the graphics.<br>
 The server needs to have a php version >= 5, with curl and json enabled.<br>
-If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.webatu.com/Netatmo/">Netatmo</A>
-or <A href="http://fraysseix.webatu.com/Netatmo/indexNetatmo.php">Netatmo 2</A>. 
-This last link presents a new interface.
+If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.webatu.com/Netatmo/">Netatmo</A>.
 
 
 </p>
 <h3>Main windows:</h3>
 <ul>
-<li>	Display the last measures on a Google map of all the stations and their modules<br>
-		(The Google map provides weather forecast and cloud cover),
+<li>	Display the last measures on a Google map of all the stations and their modules.	
 </li>
 
-<li>    Graphics of the measures of one station 
-          (max, 30 minutes, 3 hours, 1 day or 1 week interval for a given period),</li>
-<li>Graphics of the temperatures of selected stations (1 day or 1 week), 
-	  five or six stations seems a limit for visibility.</li>
+<li>    Graphics of the measures of one station.<br>
+		(5 minutes, 30 minutes, 3 hours, 1 day, 1 week).
+</li>
+<li>	Graphics of the temperatures of selected stations.<br>
+		(1 day or 1 week), 
+</li>
 </ul>
-<h3>Remarks:</h3>
+<h3>Remarks on the Google map :</h3>
 <ul>
-<li>	If the measure interval is 30 minutes, the period of measures is 14 days 
-	  before the end of measures.</li>
-<li>	If the measure interval is 5 minutes, the period of measures is 2 days 
-	  before the end of measures.</li>
-<li>   The weekly measures always end on Thursdays.</li>
-<li>	If you replace index.php by indexNetatmo.php, you will be forwarded
-       to the Netatmo site for identification.</li>
-<li> If you filled config.php with your username and password, you will be automatically loged</li>
-
+<li>	If the mouse is over a green marker, the measures of the station are displayed.</li>
+<li>	Left clicking on a green marker zoom on the marker (click on home to return to the original display.</li>
+<li>    Right clicking on a green marker to see the marker below.</li>
+<li>	Click on a meteo marker to get weather forecast.</li>
 
 </ul>
 <h3>Install:</h3>
