@@ -11,7 +11,7 @@ initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
-$from = $_SESSION['calledfrom']; 
+//$from = $_SESSION['calledfrom']; 
 $stationId = $_POST["station"];
 $interval = $_POST["select"];
        
@@ -401,7 +401,7 @@ echo("
 <script type='text/javascript' src='validate.js'></script>	
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
 </head>
-  <body style='margin:0; padding:0;'>
+  <body>
 <?php
 //echo $extra;
 //echo $common;
@@ -430,15 +430,6 @@ drawMenuStation();
     <div id='chartExt' class='chartExt' ></div></td>
 </tr>
 </table>
-	<table><tr><td>
-	<form method='post' action=<?php echo($from); ?> >
-	<input type='submit' value='Main menu' style='color:black; background-color:#ddd;'>			
-	</form>
-	</td><td>
-	<form method='post' action='logout.php'>		
-	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;'>		
-	</form> 
-	</td></tr></table>	
 	
 <!-- Invisible table for calendar --> 
 <table class="ds_box"  id="ds_conclass" style="display: none;" >

@@ -9,8 +9,8 @@ require_once 'menus.php';
 
 session_start();
 date_default_timezone_set("Europe/Paris");
-$from = explode("/",$_SERVER['SCRIPT_NAME']);
-$_SESSION['calledfrom'] = $from[2];
+//$from = explode("/",$_SERVER['SCRIPT_NAME']);
+//$_SESSION['calledfrom'] = $from[2];
 // reload page => recalculer $mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
 initClient();
@@ -274,7 +274,7 @@ for($i = 0;$i < $numStations;$i++)
 </script>
 <script type='text/javascript' src='calendrier.js'></script> 
 </head>
-  <body style='text-align:center;' onload='initialize()'>
+  <body class='iconesExt' onload='initialize()'>
 
 <!-- Invisible table for calendar --> 
 <table class="ds_box"  id="ds_conclass" style="display: none;" >
@@ -339,12 +339,16 @@ drawMenuCompare();
 ?>	
 </td></tr></table></div>
 
-<input type="button" style="color:red; background-color:#ddd;" value="Logout" onclick="window.location='logout.php';">		
 
 <!-- START OF HIT COUNTER CODE -->
-<div class='clear'></div>
-<!--<div style='height:5px; width:100%; background-color:red;'></div>-->
-<div class='counter'>
+<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
+<!--
+<table class='counter'>
+<tr>
+<td><td class='container'>
+<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15'/></a>
+</td>
+<td class='container'>
 <script src='http://www.counter160.com/js.js?img=15'></script>
 <br>
 <a href='http://www.000webhost.com'>
@@ -353,11 +357,8 @@ drawMenuCompare();
 <a href='http://www.hosting24.com'>
 <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
 </a>
-</div>
-<div class='host'>
-<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15'/></a>
-</div>
-
+</td></tr></table>
+-->
 </body>
 </html>
 

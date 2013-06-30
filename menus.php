@@ -49,10 +49,24 @@ function drawMenuStation()
 		</td>
 	</tr>
 	
-	<tr><td><input type='submit' style='background-color:#ddd;'></td><td></td>
+	<tr><td>
+	
+	<input type='submit' style='background-color:#ddd;'>
+		</form>
+	
+	</td>
+	<td><form  action='iconesExt.php' method='post'>
+	<input type='submit' value='Main menu' style='color:black; background-color:#ddd;'/>
+	</form>
+	</td>
+	<td>		
+	<td><form action='logout.php' method='post'>
+	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;' />	
+	</form>
+	</td>
 	</tr>
 	</table>	
-	</form>
+	
 <?php	
 	}
 function drawMenuCompare()

@@ -9,8 +9,6 @@ session_start();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
-$from = $_SESSION['calledfrom']; 
-
 date_default_timezone_set("UTC");
 
 $date0 = $_POST["date0"];
@@ -197,15 +195,6 @@ drawMenuStation();
     <div id='chartMax' class='chartMinMax' ></div></td>
 </tr>
 </table>
-	<table><tr><td>
-	<form method='post' action=<?php echo($from); ?> >
-	<input type='submit' value='Main menu' style='color:black; background-color:#ddd;'>			
-	</form>
-	</td><td>
-	<form method='post' action='logout.php'>		
-	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;'>		
-	</form> 
-	</td></tr></table>	
  
 <!-- Invisible table for calendar --> 
 <table class="ds_box"  id="ds_conclass" style="display: none;" >
