@@ -77,6 +77,7 @@ echo("
   <head>
   <title>Stations Netatmo</title>
   <meta charset='utf-8'>
+  <link rel='icon' href='favicon.ico' />
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
@@ -156,8 +157,8 @@ echo("
 ?>                  
              var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
              var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
-             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'80%',height:"70%"} });
-             chart.draw(data,   {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'80%',height:"70%"} });
+             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
+             chart.draw(data,   {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
             
              } // draw chart 
             
@@ -175,23 +176,24 @@ $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 $num = count($devicelist["devices"]);
 ?>
 <table style='padding:0px; width:100%;'>
+
 <tr>
-<td  style='vertical-align:top;'>
+<td  style='padding:0px; vertical-align:bottom;'>
 <?php
 drawMenuCompare();
 ?>
 </td>
-    <td  style='vertical-align:bottom; width:100%;'>
+    <td  style='padding:0px; vertical-align:bottom; width:100%;'>
     <div id='chartMin' class='chartMinMax' ></div></td>
  </tr>
  
  <tr>
- <td style='vertical-align:top;'>
+ <td style='padding:0px; vertical-align:bottom;'>
 <?php
 drawMenuStation();
 ?>
  </td>
-    <td style='vertical-align:bottom; width:100%;'>
+    <td style='padding:0px; vertical-align:bottom; width:100%;'>
     <div id='chartMax' class='chartMinMax' ></div></td>
 </tr>
 </table>

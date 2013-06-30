@@ -49,21 +49,21 @@ function Allow(tab)
 alert(x);
 */
     if(i < 3)
-		{duree.innerHTML = 'Fréquence';
+		{duree.innerHTML = ' ';
 		el0.disabled = false;
 		el0.hidden = false;
 		el1.disabled=false;
 		el1.hidden = false;
 		}
 	else if(i == 3)
-		{duree.innerHTML = 'Fréquence (14 jours)';
+		{duree.innerHTML = '(14 jours)';
 		el0.disabled = true;
 		el0.hidden = true;
 		el1.disabled = false;
 		el1.hidden = false;
 		}				
 	else
-		{duree.innerHTML = 'Fréquence (2 jours)';
+		{duree.innerHTML = '(2 jours)';
 		el0.disabled=true;
 		el0.hidden=true;
 		el0.disabled = true;

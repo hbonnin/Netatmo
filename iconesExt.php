@@ -6,11 +6,8 @@ require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
 
-
 session_start();
 date_default_timezone_set("Europe/Paris");
-//$from = explode("/",$_SERVER['SCRIPT_NAME']);
-//$_SESSION['calledfrom'] = $from[2];
 // reload page => recalculer $mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
 initClient();

@@ -17,7 +17,7 @@ function drawMenuStation()
 	</tr>
 
 	<tr>
-	<td id='id_duree' style='height:25px;'>Fréquence
+	<td  style='height:25px;'>Fréquence
 	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
@@ -29,7 +29,7 @@ function drawMenuStation()
 		</select>		
 	</td>	
 	</tr>
-
+	<tr><td id='id_duree' style='height:12px;font-size:12px'></td><td></td></tr>	
 	<tr>
 		<td>Choisir une station</td>
 		<td>			
@@ -37,7 +37,7 @@ function drawMenuStation()
 		echo("<table>\n");
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mesures[$i]['station_name'];
-			$arr = str_split($stat,17);
+			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($i == 0)
 				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
@@ -48,19 +48,11 @@ function drawMenuStation()
 		?>	
 		</td>
 	</tr>
-	
 	<tr><td>
-	
 	<input type='submit' style='background-color:#ddd;'>
-		</form>
-	
-	</td>
-	<td><form  action='iconesExt.php' method='post'>
-	<input type='submit' value='Main menu' style='color:black; background-color:#ddd;'/>
 	</form>
-	</td>
-	<td>		
-	<td><form action='logout.php' method='post'>
+	</td><td>
+	<form action='logout.php' method='post'>
 	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;' />	
 	</form>
 	</td>
@@ -86,9 +78,9 @@ function drawMenuCompare()
 	<td style='height:25px;'>Fin</td>
 	<td><input class='date'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' ></td>
 	</tr>
-	
 	<tr>
-	<td style='height:25px;'>Fréquence</td>	
+	<td style='height:25px;'>Fréquence
+	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
 		<option value='1week' > 1 semaine </option>
@@ -96,7 +88,7 @@ function drawMenuCompare()
 		</select>		
 	</td>	
 	</tr>
-	
+		<tr><td  style='height:12px;'>&nbsp;</td><td></td></tr>	
 	<tr>
 		<td>Choisir des stations</td>
 		<td>
@@ -104,7 +96,7 @@ function drawMenuCompare()
 		echo("<table>\n");
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mesures[$i]['station_name'];
-			$arr = str_split($stat,17);
+			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($i == 0)
 				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
@@ -116,9 +108,16 @@ function drawMenuCompare()
 		</td>
 	</tr>
 	
-	<tr><td><input type='submit' style='background-color:#ddd;'></td><td></td></tr>
-	</table>
+	<tr><td><input type='submit' style='background-color:#ddd;'></td>
 	</form>
+	<td>
+	<form  action='iconesExt.php' method='post'>
+	<input type='submit' value="Page d'acceuil" style='color:black; background-color:#ddd;'/>
+	</form>	
+	
+	</td></tr>
+	</table>
+	
 
 <?php
 	}
