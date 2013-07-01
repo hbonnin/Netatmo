@@ -3,7 +3,7 @@ Netatmo
 Netatmo uses the Netatmo php sdk and some Google development tools for the graphics.
 The server needs to have a php version >= 5, with curl, json and session enabled.
 If you have a Netmo account, you can  see a demo at  http://fraysseix.webatu.com/Netatmo/
-and a readme  with pictures at http://fraysseix.webatu.com/Netatmo/README.html
+and a readme  with pictures at <a http://fraysseix.webatu.com/Netatmo/README.html>Netatmo Graphics</a>
 
 Main windows:
 	- Display on a Google map all the last measures of all stations and extra modules
