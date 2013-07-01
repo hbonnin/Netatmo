@@ -14,8 +14,6 @@ try {
     	header("location:index.php");
 		exit(-1);	
 	}
-//$_SESSION['user'] = $test_username;
-//$_SESSION['password'] = $test_password;
 $_SESSION['client'] = $client;
-header("location:menu.php");
+header("location:iconesExt.php");
 ?>
