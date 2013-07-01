@@ -17,9 +17,10 @@ $mesures = $_SESSION['mesures'];
 	
 $numStations = count($devicelist["devices"]);
 $latitude = array($numStations);
-$latitude = array($numStations);
+$longitude = array($numStations);
 $alt = array($numStations);
 $slabel = array($numStations);
+$label = array($numStations);
 for($i = 0;$i < $numStations;$i++)
 	{$latitude[$i] = $devicelist["devices"][$i]["place"]["location"][1];
     $longitude[$i] = $devicelist["devices"][$i]["place"]["location"][0];
@@ -338,7 +339,17 @@ drawMenuStation();
 drawMenuCompare();
 ?>	
 </td></tr></table></div>
-
+<!--
+<script>
+	var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+	document.write('size:'+x+'x'+y);
+</script>
+-->
 
 <!-- START OF HIT COUNTER CODE -->
 <a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
