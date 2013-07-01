@@ -74,7 +74,8 @@ for($i = 0;$i < $numStations;$i++)
     var cloudLayer;
     var map;
     var show = 1;
-    var showMarker;
+    var showMarker = 1;
+    var controlText;
     
 	function createMarker(pos,label,slabel,map) 
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
@@ -82,8 +83,9 @@ for($i = 0;$i < $numStations;$i++)
 		marker.setZIndex(1);
 		var infowindow = new google.maps.InfoWindow({'content'  : label});
 	   	google.maps.event.addListener(marker, 'rightclick', function() 
-       		{marker.setZIndex(marker.getZIndex()-1);
-       		//marker.setVisible(false);
+       		{//marker.setZIndex(marker.getZIndex()-1);
+       		marker.setVisible(false);
+       		controlText.innerHTML = 'Show Markers';showMarker =0;
        		});  
        google.maps.event.addListener(marker, 'mouseover', function(){infowindow.open(map, marker);});
        google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
@@ -122,6 +124,7 @@ for($i = 0;$i < $numStations;$i++)
         zoom: 5,
         center: center.getCenter(),
         disableDefaultUI: true,
+        disableDoubleClickZoom: true,
         mapTypeId: google.maps.MapTypeId.HYBRID
         };
         
@@ -148,7 +151,7 @@ for($i = 0;$i < $numStations;$i++)
   	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(cloudControlDiv);
 
 	// add marker control
-	var markerControlDiv = document.createElement('div');
+	markerControlDiv = document.createElement('div');
   	var markerControl = new MarkerControl(markerControlDiv, map);
   	markerControlDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerControlDiv);
@@ -244,7 +247,7 @@ for($i = 0;$i < $numStations;$i++)
 	  controlDiv.appendChild(controlUI);
 
 	  // Set CSS for the control interior.
-	  var controlText = document.createElement('div');
+	  controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Arial,sans-serif';
 	  controlText.style.fontSize = '15px';
 	  controlText.style.paddingLeft = '4px';
