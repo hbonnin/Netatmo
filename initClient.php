@@ -86,7 +86,8 @@ function initClient()
 		try {
 			$tokens = $client->getAccessToken();       
 			} catch(NAClientException $ex) {
-				echo ("Identifiant ou mot de passe incorrect");
+				echo ("Identifiant ($test_username)\n
+				ou mot de passe ($test_password) incorrect (id:$client-id secret:$client_secret");
 			exit(-1);	
 			}
 		$_SESSION['client'] = $client;	

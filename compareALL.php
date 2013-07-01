@@ -197,7 +197,8 @@ drawMenuStation();
     <div id='chartMax' class='chartMinMax' ></div></td>
 </tr>
 </table>
- 
+
+
 <!-- Invisible table for calendar --> 
 <table class="ds_box"  id="ds_conclass" style="display: none;" >
 	<caption id="id_caption" class='ds_caption'>xxxx</caption>
