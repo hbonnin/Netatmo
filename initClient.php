@@ -32,7 +32,6 @@ function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password;
 	$debug = 0;
 	if($debug)echo("initclient / ");	
-
 	if(isset($_SESSION['time']))
 		{$time_left = $_SESSION['time'] + $_SESSION['expires'] - time();
 		if($time_left < 0) 
@@ -47,7 +46,7 @@ function initClient()
 	if(isset($_GET["code"]) && !isset($_SESSION['client'])) // login on Netatmo
 		{$code = $_GET["code"];
 		$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
-		if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
+ 		if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
 			{$token_url = "https://api.netatmo.net/oauth2/token";
 			$postdata = http_build_query(array(
 											'grant_type' => "authorization_code",
@@ -78,7 +77,6 @@ function initClient()
 		else
 			{echo("The state does not match.");exit(-1);}
 		}	
-	
 	if(isset($_SESSION['client']))
 		$client = $_SESSION['client'];
 	else  // si identifiant et mot de passe dans config.php
@@ -86,9 +84,14 @@ function initClient()
 		try {
 			$tokens = $client->getAccessToken();       
 			} catch(NAClientException $ex) {
-				echo ("Identifiant ($test_username)\n
-				ou mot de passe ($test_password) incorrect (id:$client-id secret:$client_secret");
-			exit(-1);	
+				if(!isset($_SESSION['state']))
+					{echo ("User:$test_username 
+					ou mot de passe:$test_password
+					ou id:$client-id ou secret:$client_secret incorrect");
+					exit(-1);
+				}
+				else 
+					echo("<script> top.location.href='logout.php'</script>");
 			}
 		$_SESSION['client'] = $client;	
 		if($debug)echo("client from password / ");		

@@ -15,7 +15,6 @@ $mesures = $_SESSION['mesures'];
 $stationId = $_POST["station"];
 $interval = $_POST["select"];
        
-//$user = $client->api("getuser", "POST");
 
 if($interval =="max")//5 minutes
 	{$date_end = time();
@@ -379,16 +378,16 @@ $param = $common . ',' .$extra;
 
 if($inter > 30) 	                                
 echo("                   
-             var chartExt = new google.visualization.LineChart(document.getElementById('chartExt'));
+             var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
              chartExt.draw(data, {title: $title $visupt,colors: ['red','blue','green'],$param});
-             var chartInt = new google.visualization.LineChart(document.getElementById('chartInt'));
+             var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
              chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
 ");
 else
 echo("                 
-             var chartExt = new google.visualization.LineChart(document.getElementById('chartExt'));
+             var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
              chartExt.draw(data, {title: $title $visupt,colors: ['red','green'],$param});
-              var chartInt = new google.visualization.LineChart(document.getElementById('chartInt'));
+              var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
              chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
 ");
 
@@ -402,40 +401,11 @@ echo("
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
 </head>
   <body>
-<?php
-//echo $extra;
-//echo $common;
-$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
-$num = count($devicelist["devices"]);
-?>
-<table style='padding:0px; width:100%;'>
-<tr>
-<td style='padding:0px; vertical-align:bottom;'>
-<?php
-drawMenuCompare();
-?>
-</td>
-    <td  style='padding:0px; vertical-align:bottom; width:100%;'>
-    <div id='chartInt' class='chartInt' ></div></td>
- </tr>
- 
- <tr>
- <td style='padding:0px; vertical-align:bottom;'>
-<?php
-drawMenuStation();
-?>
- </td>
-    <td style='padding:0px; vertical-align:bottom; width:100%;'>
-    <div id='chartExt' class='chartExt' ></div></td>
-</tr>
-</table>
-	
-<!-- Invisible table for calendar --> 
-<table class="ds_box"  id="ds_conclass" style="display: none;" >
-	<caption id="id_caption" class='ds_caption'>xxxx</caption>
-	<tr><td id="ds_calclass">aaa</td></tr>
-</table>
-
+ <?php
+	$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+	$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+	$num = count($devicelist["devices"]);
+	drawCharts();	
+ ?>
   </body>
 </html>

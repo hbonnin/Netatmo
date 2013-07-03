@@ -6,36 +6,66 @@ require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
 
+
 session_start();
 date_default_timezone_set("Europe/Paris");
+/* Slow on Webatu */
+if(!isset($_GET['width'])  & isset($_GET['code']))
+	{$code = $_GET['code'];
+	$state = $_GET['state'];
+	$txt = 'code='.$code.'&state='.$state;
+    echo("<script> top.location.href='size.php?$txt'</script>");   	
+   	}
+ 	
+// width and height of the navigator window
+if(isset($_GET['width']))
+	$_SESSION['width'] = $_GET['width'];
+if(isset($_GET['height']))
+	$_SESSION['height'] = $_GET['height'];
+
 // reload page => recalculer $mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
+
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
-	
 $numStations = count($devicelist["devices"]);
+
+//
 $latitude = array($numStations);
 $longitude = array($numStations);
 $alt = array($numStations);
 $slabel = array($numStations);
 $label = array($numStations);
+
 for($i = 0;$i < $numStations;$i++)
 	{$latitude[$i] = $devicelist["devices"][$i]["place"]["location"][1];
     $longitude[$i] = $devicelist["devices"][$i]["place"]["location"][0];
-    $res = $mesures[$i]["modules"];
+	}
+// to speed reloading we compute only once the locations
+$places = array($numStations);
+if(isset($_SESSION['places']))
+	$places = $_SESSION['places'];
+else
+	{for($i = 0;$i < $numStations;$i++)
+		$places[$i] = geolocalize($latitude[$i],$longitude[$i]);
+	$_SESSION['places'] = $places;	
+	}
+
+for($i = 0;$i < $numStations;$i++)
+	{$res = $mesures[$i]["modules"];
     $alt[$i] = $devicelist["devices"][$i]["place"]["altitude"];
-    $places = geolocalize($latitude[$i],$longitude[$i]);
+    $place = $places[$i];
     $int_name = $devicelist["devices"][$i]["module_name"];
 	$ext_name = $devicelist["devices"][$i]["modules"][0]["module_name"];
     $txtEXT = sprintf("<font size=2>$ext_name :</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
 	$txtINT = sprintf("<font size=2>$int_name:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
 			,$res[0]['CO2'],$res[0]['Noise']);
-	if($places == "BAD")		
+	if($place == "BAD")		
     	$p = '<b>' . $mesures[$i]['station_name'] . ' (' . $alt[$i] . 'm)' . '</b><br>';
 	else
-    	$p = '<b>' . $places[1] . '</b><br><font size=2>' . $places[0] . '</font>'; 
+    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] . '</font>'; 
     	
     $label[$i] = $p	. '<br><ul style=\"text-align:left; font-size:11px; list-style-type:none;\"><li>' . $txtINT . '</li><li>' . $txtEXT .'</li>';
     	
@@ -282,11 +312,10 @@ for($i = 0;$i < $numStations;$i++)
 	<caption id="id_caption" class='ds_caption'>xxxx</caption>
 	<tr><td id="ds_calclass">aaa</td></tr>
 </table>
-	
-<table style='margin-left:auto; margin-right:auto;  margin-top:0px; margin-bottom:0px; padding:0px '>
-<tr>
-<?php
 
+
+<!-- Tracé des icones -->	
+<?php
 // calcul des minimax
 $date_end = time();
 $date_beg = $date_end - (24 * 60 * 60);
@@ -311,7 +340,9 @@ for($i = 0;$i < $numStations;$i++)
     else
        $tmins[$i] = $tmaxs[$i] = '-'; 
     }
- 
+ echo("<table style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
+		<tr>");
+
 // Tracé des icones    
 for($i = 0;$i < $numStations;$i++)
 	{$res = $mesures[$i]["modules"];
@@ -320,39 +351,35 @@ for($i = 0;$i < $numStations;$i++)
 	echo("</td>");
 	}
 echo("</tr></table>");	
+
+?>
+
+<!-- trace des menus et de la Google map -->
+<!--<div class='container'>-->
+<table class='container'>
+<tr>
+<td class='container'>
+<?php
 $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 $num = count($devicelist["devices"]);
 
-?>
-
-<div class='container'>
-<table class='container'>
-<tr><td class='container'>
-<?php
-drawMenuStation();
+drawMenuStation('');
 ?>
 </td>
-<td><div id='map_canvas'  class='map_canvas'> </div></td>
+<!-- GOOGLE MAP -->
+<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:470px; border:solid 2px gray;'> </div>
+</td>
 <td class='container'>
 <?php
-drawMenuCompare();
+drawMenuCompare('');
 ?>	
-</td></tr></table></div>
-<!--
-<script>
-	var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-    x = w.innerWidth || e.clientWidth || g.clientWidth,
-    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-	document.write('size:'+x+'x'+y);
-</script>
--->
+</td>
+</tr>
+</table>
+<!--</div>-->
+<?php drawLogoutBack(); ?>
 
-<!-- START OF HIT COUNTER CODE -->
-<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
 <!--
 <table class='counter'>
 <tr>

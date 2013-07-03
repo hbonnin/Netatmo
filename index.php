@@ -1,3 +1,9 @@
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+<head>
+<meta charset='utf-8'>
+</head>
+<body>
+
 <?php 
 /*
 Name: Netatmo PHP Graphics
@@ -20,7 +26,17 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 require_once 'Config.php';
     session_start();
     if(!empty($test_username) && !empty($test_password))
-    	echo("<script> top.location.href='iconesExt.php'</script>");
+   			echo("
+    	   	<script>
+    		var w = window,
+    		d = document,
+    		e = d.documentElement,
+    		g = d.getElementsByTagName('body')[0],
+    		x = w.innerWidth || e.clientWidth || g.clientWidth,
+    		y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+    		top.location.href = 'iconesExt.php?width='+x+'&height='+y;
+			</script>
+			");    	
     else
      	{$my_url = "http://" . $_SERVER['SERVER_NAME'] . "/Netatmo/iconesExt.php";
     	$_SESSION['state'] = md5(uniqid(rand(), TRUE));
@@ -30,4 +46,5 @@ require_once 'Config.php';
     	echo("<script> top.location.href='" . $dialog_url . "'</script>");
     	}   	   	
 ?>
-        
+</body>
+</html>

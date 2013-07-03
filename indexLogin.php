@@ -9,9 +9,19 @@ require_once 'Config.php';
 		$msg = $_SESSION['msg'];
 	$_SESSION=array();
 	session_destroy();
+	
     if(!empty($test_username) && !empty($test_password))
-    	echo("<script> top.location.href='iconesExt.php'</script>");   	   
-
+    	echo("
+    	   	<script>
+    		var w = window,
+    		d = document,
+    		e = d.documentElement,
+    		g = d.getElementsByTagName('body')[0],
+    		x = w.innerWidth || e.clientWidth || g.clientWidth,
+    		y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+    		top.location.href = 'iconesExt.php?width='+x+'&height='+y;
+			</script>
+			");
 
 ?>
 
@@ -63,7 +73,5 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <a href='https://github.com/hbonnin/Netatmo'>https://github.com/hbonnin/Netatmo'</a>
 </p>
 </body>
-
-
 </html>
 

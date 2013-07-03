@@ -155,10 +155,10 @@ echo("
 
                                   
 ?>                  
-             var chart = new google.visualization.LineChart(document.getElementById('chartMin'));
-             var chart1 = new google.visualization.LineChart(document.getElementById('chartMax'));
-             chart1.draw(data1, {title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
-             chart.draw(data,   {title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
+             var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
+             var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
+             chartMax.draw(data1,{title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
+             chartMin.draw(data ,{title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
             
              } // draw chart 
             
@@ -169,41 +169,14 @@ echo("
 <script type='text/javascript' src='validate.js'></script>	
   </head>
  
-  <body>  
-<?php
-$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
-$num = count($devicelist["devices"]);
+  <body> 
+ <?php
+	$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+	$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+	$num = count($devicelist["devices"]);
+	drawCharts();
 ?>
-<table style='padding:0px; width:100%;'>
 
-<tr>
-<td  style='padding:0px; vertical-align:bottom;'>
-<?php
-drawMenuCompare();
-?>
-</td>
-    <td  style='padding:0px; vertical-align:bottom; width:100%;'>
-    <div id='chartMin' class='chartMinMax' ></div></td>
- </tr>
- 
- <tr>
- <td style='padding:0px; vertical-align:bottom;'>
-<?php
-drawMenuStation();
-?>
- </td>
-    <td style='padding:0px; vertical-align:bottom; width:100%;'>
-    <div id='chartMax' class='chartMinMax' ></div></td>
-</tr>
-</table>
-
-
-<!-- Invisible table for calendar --> 
-<table class="ds_box"  id="ds_conclass" style="display: none;" >
-	<caption id="id_caption" class='ds_caption'>xxxx</caption>
-	<tr><td id="ds_calclass">aaa</td></tr>
-</table>
 
   </body>
 </html>

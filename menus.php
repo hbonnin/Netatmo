@@ -1,13 +1,45 @@
 <?php
-function drawMenuStation()
+function drawLogoutBack()
+	{
+?>
+<table style='margin:auto; '><tr>
+	<td>
+	<form  action='iconesExt.php' method='post'>
+	<input type='submit' value="Main menu" style='color:black; background-color:#ddd;'/>
+	</form>
+	</td><td>
+	<form action='logout.php' method='post'>
+	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;' />	
+	</form>	
+	</td>
+	<td>
+	<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
+	</td>		
+	<td style='font-size:11px;'>
+<?php
+	if(isset($_SESSION['width']))
+		echo("{$_SESSION['width']} x {$_SESSION['height']}");
+?>
+	</td></tr>
+	</table>
+
+<?php
+	}
+function drawMenuStation($h)
 	{global $datebeg,$dateend,$num,$mesures;
 ?>	
-	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>	
-	<table class='graphic'>
-	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;  padding-bottom:5px'>Graphiques d'une station</caption> 
+<!-- DrawMenu Station -->
+	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>
+<?php	
+	if($h)
+		echo("<table class='graphic' style='height:$h; width:220px;'>");
+	else
+		echo("<table class='graphic' style='border-spacing:5px;'>");
+?>	
+	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;  padding-bottom:5px'>Graphiques d'une station</td> 
 	</tr>
 	<tr>
-	<td class='graphic'>Début</td>
+	<td >Début</td>
 	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 
@@ -17,7 +49,7 @@ function drawMenuStation()
 	</tr>
 
 	<tr>
-	<td  style='height:25px;'>Fréquence
+	<td id='id_duree' style='height:25px;'>Fréquence
 	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
@@ -29,7 +61,6 @@ function drawMenuStation()
 		</select>		
 	</td>	
 	</tr>
-	<tr><td id='id_duree' style='height:10px;font-size:10px'></td><td></td></tr>	
 	<tr>
 		<td>Choisir une station</td>
 		<td>			
@@ -45,32 +76,35 @@ function drawMenuStation()
 				echo("<tr><td style='font-size:12px;'><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
 			}
 		echo("</table>\n");
-		?>	
+		?>
 		</td>
-	</tr>
 	<tr><td>
-	<input type='submit' value='Go'style='background-color:#ddd;'>
-	</form>
-	</td><td>
-	<form action='logout.php' method='post'>
-	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;' />	
-	</form>
-	</td>
+	<input type='submit' value='Go' style='background-color:#ddd;'>
+	</td><td></td>		
 	</tr>
-	</table>	
+	</table>
+	</form>	
 	
+<!-- End DrawMenu Station -->	
 <?php	
 	}
-function drawMenuCompare()
+function drawMenuCompare($h)
 	{global $datebeg,$dateend,$num,$mesures;
 ?>
+<!-- DrawMenu Compare -->
 	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
-	<table class='graphic'>
+<?php	
+	if($h)
+		echo("<table class='graphic' style='height:$h; width:220px; '>");
+	else
+		echo("<table class='graphic' style='border-spacing:5px;'>");
+?>	
+
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px; padding-bottom:5px'>
 	Comparaison de stations</td></tr>
 	
 	<tr>
-	<td class='graphic'>Début</td>
+	<td>Début</td>
 	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 	
@@ -88,7 +122,6 @@ function drawMenuCompare()
 		</select>		
 	</td>	
 	</tr>
-		<!--<tr><td  style='height:12px;'>&nbsp;</td><td></td></tr>	-->
 	<tr>
 		<td>Choisir des stations</td>
 		<td>
@@ -109,16 +142,46 @@ function drawMenuCompare()
 	</tr>
 	
 	<tr><td><input type='submit' value='Go' style='background-color:#ddd;'></td>
-	</form>
-	<td>
-	<form  action='iconesExt.php' method='post'>
-	<input type='submit' value="Acceuil" style='color:black; background-color:#ddd;'/>
+	<td></td></tr>
+	</table>
 	</form>	
 	
-	</td></tr>
-	</table>
-	
+<!-- End DrawMenu Compare -->
+
 
 <?php
+	}
+function drawCharts()
+	{echo("<table style='padding:0px; width:100%; margin-bottom:-5px;'>
+	<tr>
+	<td style='padding:0px; vertical-align:bottom;'>
+	");
+	$h = '310px'; 
+	drawMenuCompare($h); 
+	echo("
+	</td>
+		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
+		<div id='chart0' class='chart' style='height:$h'></div></td>
+	 </tr>
+	 <tr>
+	 <td style='padding:0px; vertical-align:bottom;'>
+	 ");
+	drawMenuStation($h);
+	echo("
+	 </td>
+		<td style='padding:0px; vertical-align:bottom; width:100%;'>
+		<div id='chart1' class='chart' style='height:$h'></div></td>
+	</tr>
+	</table>
+	");
+	drawLogoutBack(); 
+	echo("
+		<!-- Invisible table for calendar --> 
+		<table class='ds_box'  id='ds_conclass' style='display: none;' >
+		<caption id='id_caption' class='ds_caption'>xxxx</caption>
+		<tr><td id='ds_calclass'>aaa</td></tr>
+		</table>
+	");
+	
 	}
 ?>

@@ -39,31 +39,22 @@ function Allow(tab)
 	var el1 = document.getElementById('id_date1');
 	var el0 = document.getElementById('id_date0');
 	var duree = document.getElementById('id_duree');
-/*	
-	var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-    x = w.innerWidth || e.clientWidth || g.clientWidth,
-    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-alert(x);
-*/
     if(i < 3)
-		{duree.innerHTML = ' ';
+		{duree.innerHTML = 'Fréquence';
 		el0.disabled = false;
 		el0.hidden = false;
 		el1.disabled=false;
 		el1.hidden = false;
 		}
 	else if(i == 3)
-		{duree.innerHTML = '(14 jours)';
+		{duree.innerHTML = 'Fréquence (14j)';
 		el0.disabled = true;
 		el0.hidden = true;
 		el1.disabled = false;
 		el1.hidden = false;
 		}				
 	else
-		{duree.innerHTML = '(2 jours)';
+		{duree.innerHTML = 'Fréquence (2j)';
 		el0.disabled=true;
 		el0.hidden=true;
 		el0.disabled = true;
