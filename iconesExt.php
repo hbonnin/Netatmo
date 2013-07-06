@@ -373,7 +373,7 @@ drawMenuStation();
 ?>
 </td>
 <!-- GOOGLE MAP -->
-<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:465px; border:solid 2px gray;'> </div>
+<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:460px; border:solid 2px gray;'> </div>
 </td>
 <td class='container'>
 <?php

@@ -167,8 +167,10 @@ function drawCharts()
 	<tr>
 	<td style='padding:0px; vertical-align:bottom;'>
 	");
-	$h = '310px'; 
-	drawMenuCompare($h); 
+	$hh = 310;
+    $h = $hh . 'px';
+    $h1 = $hh+2 .'px';
+	drawMenuCompare($h1); 
 	echo("
 	</td>
 		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
@@ -177,7 +179,7 @@ function drawCharts()
 	 <tr>
 	 <td style='padding:0px; vertical-align:bottom;'>
 	 ");
-	drawMenuStation($h);
+	drawMenuStation($h1);
 	echo("
 	 </td>
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
@@ -212,7 +214,7 @@ function drawMenuModules($stationNum,$h ='')
 ?>	
 
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px; padding-bottom:5px'>
-	Comparaison de Modules</td></tr>
+	Comparaison de modules</td></tr>
 	
 	<tr>
 	<td>Début</td>

@@ -146,14 +146,13 @@ if($view[0])
     $minDateBeg = min($minDateBeg,$dateBeg[0]);    
     $nmesures[0] = count($keys[0]);    
     }
-echo("<pre>");
+//echo("<pre>");
 //print_r($view);
 //print_r($nameStations);
 //print_r($modules_id);
 //print_r($mesure[2]);
 //print_r($keys[2]);
-
-echo("</pre>");
+//echo("</pre>");
 
 /**************************************************************/
 function tip($temp,$tempDate)
@@ -282,19 +281,26 @@ $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 
 
 echo("<body>");
-$h = '315px';
+$hh = 310;
+$h = $hh . 'px';
+$h1 = $hh+2 .'px';
 echo("<table style='padding:0px; width:100%; margin-bottom:-5px;'>
 	<tr>
-	<td rowspan='2' style='padding:0px; vertical-align:bottom;'>
+	<td  style='padding:0px; vertical-align:bottom;'>
 	");
-drawMenuModules($stationNum,$h);
+$num = count($devicelist["devices"]);  
 
+drawMenuCompare($h1);   
 echo("
 	</td>
 		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
 		<div id='chart0' class='chart' style='height:$h'></div></td>
 	 </tr>
 	 <tr>
+	    <td style='padding:0px; vertical-align:bottom;'>
+	 ");
+drawMenuModules($stationNum,$h1);
+echo("</td>    	 
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
 		<div id='chart1' class='chart' style='height:$h'></div></td>
 	</tr>
