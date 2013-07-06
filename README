@@ -11,7 +11,9 @@ Main windows:
  	- Graphics of the measures of one station 
           (5 minutes, 30 minutes, 3 hours, 1 day or 1 week interval for a given period),
 	- Graphics of the temperatures of selected stations (1 day or 1 week), 
-	  five stations seems a limit for visibility.
+	  five stations seems a limit for visibility,
+	- Graphics of the measures of selected extra modules (1 day or 1 week).
+
 
 Remark:
 	- If the measure interval is 30 minutes, the period of measures is 14 days 
