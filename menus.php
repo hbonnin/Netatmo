@@ -1,8 +1,10 @@
 <?php
-function drawLogoutBack()
+function drawLogoutBack($draw=true)
 	{
 ?>
-<table style='margin:auto; '><tr>
+<!-- drawLogoutBack -->
+<table style='margin:auto; '>
+	<tr>
 	<td>
 	<form  action='iconesExt.php' method='post'>
 	<input type='submit' value="Main menu" style='color:black; background-color:#ddd;'/>
@@ -22,10 +24,19 @@ function drawLogoutBack()
 ?>
 	</td></tr>
 	</table>
-
+<?php	
+	if($draw)
+		echo("
+		<table class='ds_box'  id='ds_conclass' style='display: none;' >
+		<caption id='id_caption' class='ds_caption'>xxxx</caption>
+		<tr><td id='ds_calclass'>aaa</td></tr>
+		</table>
+		");
+?>
+<!-- end drawLogoutBack -->	
 <?php
 	}
-function drawMenuStation($h)
+function drawMenuStation($h = '')
 	{global $datebeg,$dateend,$num,$mesures;
 ?>	
 <!-- DrawMenu Station -->
@@ -79,7 +90,7 @@ function drawMenuStation($h)
 		?>
 		</td>
 	<tr><td>
-	<input type='submit' value='Go' style='background-color:#ddd;'>
+	<input type='submit'  style='background-color:#ddd;'>
 	</td><td></td>		
 	</tr>
 	</table>
@@ -88,7 +99,7 @@ function drawMenuStation($h)
 <!-- End DrawMenu Station -->	
 <?php	
 	}
-function drawMenuCompare($h)
+function drawMenuCompare($h ='')
 	{global $datebeg,$dateend,$num,$mesures;
 ?>
 <!-- DrawMenu Compare -->
@@ -141,7 +152,7 @@ function drawMenuCompare($h)
 		</td>
 	</tr>
 	
-	<tr><td><input type='submit' value='Go' style='background-color:#ddd;'></td>
+	<tr><td><input type='submit'  style='background-color:#ddd;'></td>
 	<td></td></tr>
 	</table>
 	</form>	
@@ -175,6 +186,7 @@ function drawCharts()
 	</table>
 	");
 	drawLogoutBack(); 
+/*	
 	echo("
 		<!-- Invisible table for calendar --> 
 		<table class='ds_box'  id='ds_conclass' style='display: none;' >
@@ -182,6 +194,84 @@ function drawCharts()
 		<tr><td id='ds_calclass'>aaa</td></tr>
 		</table>
 	");
-	
+*/
 	}
-?>
+	
+function drawMenuModules($stationNum,$h ='')
+	{global $datebeg,$dateend,$numStations,$nameStations,$view;
+?>	
+	<!-- DrawMenu Modules -->
+	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>' onsubmit='return valider(this);'>	
+	
+<?php	
+	
+	if($h)
+		echo("<table class='graphic' style='height:$h; width:220px; border-spacing:5px; '>");
+	else
+		echo("<table class='graphic' style='border-spacing:5px;'>");
+?>	
+
+	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px; padding-bottom:5px'>
+	Comparaison de Modules</td></tr>
+	
+	<tr>
+	<td>Début</td>
+	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
+	</tr>
+	
+	<tr>
+	<td style='height:25px;'>Fin</td>
+	<td><input class='date'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' ></td>
+	</tr>
+	
+	<tr>
+	<td style='height:25px;'>Fréquence
+	</td>	
+	<td>
+		<select name='select' onChange='Allow(this);'>
+		<option value='1week' > 1 semaine </option>
+		<option value='1day' selected='selected' > 1 journée </option>
+		<!--<option value='3hours' > 3 heures </option>-->
+		</select>		
+	</td>	
+	</tr>
+	
+	<tr>
+	<td style='height:25px;'>Mesure
+	</td>	
+	<td>
+		<select name='selectMsesure'>
+		<option value='T' selected='selected'> T° </option>
+		<option value='H'  > H % </option>
+		<<option value='C'  > CO2 </option>
+		</select>		
+	</td>	
+	</tr>	
+	
+	<tr>
+		<td>Choisir des stations</td>
+		<td>
+<?php
+		echo("<table>\n");
+		for($i = 0;$i < $numStations;$i++)
+			{$stat = $nameStations[$i];
+			$arr = explode(" ",$stat);
+			$stat = $arr[0];
+			if($view[$i])
+				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
+			else
+				echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
+			}
+		echo("</table>\n");	
+?>			
+		</td>
+	</tr>
+	
+	<tr><td><input type='submit'  style='background-color:#ddd;'></td>
+	<td></td></tr>
+	</table>
+	</form>		
+<!-- End DrawMenu Module -->
+	
+<?php } ?>	
+

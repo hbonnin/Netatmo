@@ -1,3 +1,14 @@
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+  <head>
+  	<title>Stations Netatmo</title>
+  	<meta charset='utf-8'>
+    <link rel='icon' href='favicon.ico' >
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+	<script type='text/javascript' src='calendrier.js'></script> 
+	<link type='text/css' rel='stylesheet'  href='style.css'>
+	<script type='text/javascript' src='validate.js'></script>	
+	<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' >
+
 <?php
 require_once 'NAApiClient.php';
 require_once 'Config.php';
@@ -10,8 +21,7 @@ date_default_timezone_set("Europe/Paris");
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
-$mesures = $_SESSION['mesures'];
-//$from = $_SESSION['calledfrom']; 
+$mesures = $_SESSION['mesures']; 
 $stationId = $_POST["station"];
 $interval = $_POST["select"];
        
@@ -43,7 +53,7 @@ if($interval=="1week")
 else if($interval=="1day")
 	{$inter = 24*60;
 	$tinter = '1 jour';
-	$req =  "min_temp,max_temp,Humidity,date_min_temp,date_max_temp";
+	$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
 	$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
 	}
 else if($interval=="30min")
@@ -61,7 +71,7 @@ else if($interval=="max")
 else // 3hours
 	{$inter = 3*60;
 	$tinter = '3 heures';
-	$req =  "min_temp,max_temp,Humidity";	
+	$req =  "min_temp,max_temp,min_hum,max_hum";	
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";
 	}
 
@@ -122,30 +132,46 @@ function tipHTML3($idate,$tmax,$tmin,$hum)
 	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '</table>';
 	}
-function tipHTML5($idate,$datemax,$datemin,$tmax,$tmin,$hum)
+function tipHTML5($idate,$datemax,$datemin,$tmax,$tmin,$min_hum,$max_hum,$dateminh,$datemaxh)
 	{return '<table><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td>'
 	. '<td style=\"font-size: 12px;\">' . date('H:i',$datemax) .'</tr>'
 	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td>'
-	. '<td style=\"font-size: 12px; \">' . date('H:i',$datemin) .'</tr>'	
+	. '<td style=\"font-size: 12px; \">' . date('H:i',$datemin) .'</tr>'
+	. '<tr><td><i>H_max</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$max_hum) . '%</b></td>'
+	. '<td style=\"font-size: 12px;\">' . date('H:i',$datemaxh) .'</tr>'	
+	. '<tr><td><i>H min</i></td><td style=\" color: #040;\"><b>' . sprintf('%d',$min_hum) . '%</b></td>'
+	. '<td style=\"font-size: 12px;\">' . date('H:i',$dateminh) .'</tr>'
+	. '</table>';
+	}
+function tip1HTML6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
+	{return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td></tr>'
 	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
+	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
+	. '<tr><td><i>Noise max</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
+	. '</table>';
+	}
+function tip1HTML5($idate,$tmax,$hum,$co,$pres,$noise)
+	{return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
+	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
+	. '<tr><td><i>Noise</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
 	. '</table>';
 	}
 
-?>
-<!DOCTYPE html SYSTEM 'about:legacy-compat'>
-  <head>
-  <title>Stations Netatmo</title>
-  <meta charset='utf-8'>
-    <link rel='icon' href='favicon.ico' />
-    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-    <script type='text/javascript'>
+echo("
+	<script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
               var data = new google.visualization.DataTable();
               var data1 = new google.visualization.DataTable();
-<?php
+	");              
 
 if($inter > 30) //1week, 1day, 3hours
 	{           
@@ -154,7 +180,8 @@ echo("
         	data.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
         	data.addColumn('number', 'Tmax'); 
         	data.addColumn('number', 'Tmin');     	  
-        	data.addColumn('number', 'Humidity');  
+        	data.addColumn('number', 'Humidity min');  
+        	data.addColumn('number', 'Humidity max');  
          	data.addColumn('number', '');   	  
 ");
  			$keys= array_keys($meas);
@@ -170,25 +197,28 @@ echo("
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < 2*60*60) //changement d'horaire
             		{if($ii < $num -1)++$ii;
-            		else $break = 1;           			
+            		else $break = 1;      
+	//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp";
+            		
             		$tmin = $meas[$key][0];
             		$tmax = $meas[$key][1];
-             		$hum = $meas[$key][2]; 
+             		$min_hum = $meas[$key][2]; 
+             		$max_hum = $meas[$key][3]; 
              		if($inter == 3*60)
             			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);             		
  					else	
              			$iidate = $jour[$day] . date(" d/m/y ",$itime);
             		if($inter == 24*60)
-						$tip = tipHTML5($iidate,$meas[$key][4],$meas[$key][3],$tmax,$tmin,$hum);          		
+						$tip = tipHTML5($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
 					else
-						$tip = tipHTML3($iidate,$tmax,$tmin,$hum);
+						$tip = tipHTML3($iidate,$tmax,$tmin,$max_hum);
             		}
             	if($hum)$hum = $hum/4;	
-                echo("data.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,1]);\n"); 
+                echo("data.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-           	echo("data.removeColumn(5);\n");				      
+           	echo("data.removeColumn(6);\n");				      
 	}
 else   //5 ou 30 minutes
 	{
@@ -234,27 +264,6 @@ else   //5 ou 30 minutes
            	echo("data.removeColumn(4);\n");				      
 	}
 	$title = '"' .$stat0. '-' .$ext_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
-	
-/************************************/			     	                    
-function tip1HTML6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
-	{return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
-	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td></tr>'
-	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
-	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
-	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
-	. '<tr><td><i>Noise max</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
-	. '</table>';
-	}
-function tip1HTML5($idate,$tmax,$hum,$co,$pres,$noise)
-	{return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
-	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
-	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
-	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
-	. '<tr><td><i>Noise</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
-	. '</table>';
-	}
 	
 
 if($inter > 30)			
@@ -372,33 +381,28 @@ else  // 5 minutes ou 30 minutes
  	} 
 	$title1 = '"' .$stat0. '-' .$int_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
 
-$common = "focusTarget:'category',tooltip: {isHtml: true}";
-$extra = "backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:35,width:\"85%\",height:\"70%\"}";
-$param = $common . ',' .$extra;
-
+	$param = "focusTarget:'category',tooltip: {isHtml: true}";
+	$param = $param . ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
+	$param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+ 
 if($inter > 30) 	                                
 echo("                   
-             var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartExt.draw(data, {title: $title $visupt,colors: ['red','blue','green'],$param});
-             var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
-             chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
+	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
+    chartExt.draw(data, {title: $title $visupt,colors: ['red','blue','green','#00dd00'],$param});
+    var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
+    chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
 ");
 else
 echo("                 
-             var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartExt.draw(data, {title: $title $visupt,colors: ['red','green'],$param});
-              var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
-             chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
+    var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
+    chartExt.draw(data, {title: $title $visupt,colors: ['red','green'],$param});
+    var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
+    chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
 ");
 
 ?>           
              }  
-          </script>
-
-<script type='text/javascript' src='calendrier.js'></script> 
-<link type='text/css' rel='stylesheet'  href='style.css'/>
-<script type='text/javascript' src='validate.js'></script>	
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
+	</script>
 </head>
   <body>
  <?php

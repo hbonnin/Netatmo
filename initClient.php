@@ -30,6 +30,7 @@ function refreshToken()
 
 function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password;
+	date_default_timezone_set("Europe/Paris");
 	$debug = 0;
 	if($debug)echo("initclient / ");	
 	if(isset($_SESSION['time']))

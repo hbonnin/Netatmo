@@ -1,3 +1,11 @@
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+<head>
+<title>Stations Netatmo</title>
+<meta charset='utf-8'>
+<link rel='icon' href='favicon.ico'>
+<link type='text/css' rel='stylesheet'  href='style.css'>
+<script type='text/javascript' src='validate.js'></script>	
+
 <?php
 require_once 'NAApiClient.php';
 require_once 'Config.php';
@@ -10,13 +18,14 @@ require_once 'menus.php';
 session_start();
 date_default_timezone_set("Europe/Paris");
 /* Slow on Webatu */
+/*
 if(!isset($_GET['width'])  & isset($_GET['code']))
 	{$code = $_GET['code'];
 	$state = $_GET['state'];
 	$txt = 'code='.$code.'&state='.$state;
     echo("<script> top.location.href='size.php?$txt'</script>");   	
    	}
- 	
+*/ 	
 // width and height of the navigator window
 if(isset($_GET['width']))
 	$_SESSION['width'] = $_GET['width'];
@@ -84,14 +93,6 @@ for($i = 0;$i < $numStations;$i++)
 	}	
 
 ?>
-<!DOCTYPE html SYSTEM 'about:legacy-compat'>
-<head>
-<title>Stations Netatmo</title>
-<meta charset='utf-8'>
-<link rel='icon' href='favicon.ico' />
-<link type='text/css' rel='stylesheet'  href='style.css'/>
-<script type='text/javascript' src='validate.js'></script>	
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
 <script type='text/javascript'
 <?php   
 	if($use_google_key == 1)
@@ -200,7 +201,7 @@ for($i = 0;$i < $numStations;$i++)
 	  controlDiv.style.padding = '5px  0px 0px 0px';
 	  // Set CSS for the control border.
 	  var controlUI = document.createElement('div');
-	  controlUI.style.backgroundColor = 'white';
+	  controlUI.style.backgroundColor = '#cceeff';
 	  controlUI.style.borderStyle = 'solid';
 	  controlUI.style.borderColor = 'gray';	  
 	  controlUI.style.borderWidth = '1px';
@@ -211,7 +212,7 @@ for($i = 0;$i < $numStations;$i++)
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Arial,sans-serif';
-	  controlText.style.fontSize = '15px';
+	  controlText.style.fontSize = '12px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
 	  controlText.innerHTML = 'Home';
@@ -231,7 +232,7 @@ for($i = 0;$i < $numStations;$i++)
 
 	  // Set CSS for the control border.
 	  var controlUI = document.createElement('div');
-	  controlUI.style.backgroundColor = 'white';
+	  controlUI.style.backgroundColor = '#cceeff';
 	  controlUI.style.borderStyle = 'solid';
 	  controlUI.style.borderColor = 'gray';	  
 	  controlUI.style.borderWidth = '1px';
@@ -243,7 +244,7 @@ for($i = 0;$i < $numStations;$i++)
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Arial,sans-serif';
-	  controlText.style.fontSize = '15px';
+	  controlText.style.fontSize = '12px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
 	  controlText.innerHTML = 'Hide Clouds';
@@ -268,7 +269,7 @@ for($i = 0;$i < $numStations;$i++)
 
 	  // Set CSS for the control border.
 	  var controlUI = document.createElement('div');
-	  controlUI.style.backgroundColor = 'white';
+	  controlUI.style.backgroundColor = '#cceeff';
 	  controlUI.style.borderStyle = 'solid';
 	  controlUI.style.borderColor = 'gray';	  
 	  controlUI.style.borderWidth = '1px';
@@ -280,7 +281,7 @@ for($i = 0;$i < $numStations;$i++)
 	  // Set CSS for the control interior.
 	  controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Arial,sans-serif';
-	  controlText.style.fontSize = '15px';
+	  controlText.style.fontSize = '12px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
 	  controlText.innerHTML = 'Hide Markers';
@@ -303,11 +304,15 @@ for($i = 0;$i < $numStations;$i++)
 	 }
 	}//initialize
 </script>
+<!-- cannot be moved before -->
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
 <script type='text/javascript' src='calendrier.js'></script> 
+
 </head>
-  <body class='iconesExt' onload='initialize()'>
+  <body  onload='initialize()'>
 
 <!-- Invisible table for calendar --> 
+
 <table class="ds_box"  id="ds_conclass" style="display: none;" >
 	<caption id="id_caption" class='ds_caption'>xxxx</caption>
 	<tr><td id="ds_calclass">aaa</td></tr>
@@ -347,7 +352,7 @@ for($i = 0;$i < $numStations;$i++)
 for($i = 0;$i < $numStations;$i++)
 	{$res = $mesures[$i]["modules"];
 	echo("<td>");
-	fill($devicelist["devices"][$i],$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
+	fill($i,$devicelist["devices"][$i],$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>");	
@@ -364,21 +369,21 @@ $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 $num = count($devicelist["devices"]);
 
-drawMenuStation('');
+drawMenuStation();
 ?>
 </td>
 <!-- GOOGLE MAP -->
-<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:470px; border:solid 2px gray;'> </div>
+<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:465px; border:solid 2px gray;'> </div>
 </td>
 <td class='container'>
 <?php
-drawMenuCompare('');
+drawMenuCompare();
 ?>	
 </td>
 </tr>
 </table>
 <!--</div>-->
-<?php drawLogoutBack(); ?>
+<?php $draw=false; drawLogoutBack($draw); ?>
 
 <!--
 <table class='counter'>

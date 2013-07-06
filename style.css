@@ -5,12 +5,6 @@ body {
  padding:0;
  background-color:#ddd;
  }
-body.iconesExt {
-	text-align:center;
-	margin:0;
-	padding:0;
-	background-color:#ddd;
-}
 table.icone {
 	background-color: #cceeff;
 	border: 1px solid #77a;
@@ -34,7 +28,7 @@ td.c1   {color: red;
 	text-align:center;
 	}
 td.name   {color: #444444;
-	font-size: 11px;
+	font-size: 12px;
 	text-align:left;
 	}	
 td.e  {
@@ -135,25 +129,25 @@ td.container {
 	vertical-align:bottom;
 }
 td.modules	{
-  	text-align:left;
-  	font-size:12px;
+ text-align:left;
 }
 .tooltip	{
   	position: relative;
   	background: #cceeff;
   	color: #000077;
-  	font-size:12px;
+  	font-size:11px;
   	text-align:left;
 	}
 .tooltip div	{color:black;
+    font-size:12px;
   	visibility: hidden;
   	position: absolute;
   	padding-top:5%;
   	top: 100%;
-  	left: -6px;
+  	left: -4px;
   	z-index:100;
-  	width: 232px;
-  	border: 1px solid gray;
+  	width: 227px;
+  	border: 1px solid #77a;
   	background-color:#cceeff;
   	}
 .tooltip:hover	{
@@ -162,4 +156,4 @@ td.modules	{
 .tooltip:hover div	{
   	visibility: visible;
 	}
-
+                   

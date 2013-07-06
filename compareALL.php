@@ -1,5 +1,15 @@
-<?php
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+  <head>
+	<title>Stations Netatmo</title>
+	<meta charset='utf-8'>
+	<link rel='icon' href='favicon.ico'>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+	<script type='text/javascript' src='calendrier.js'></script> 
+	<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
+	<link type='text/css' rel='stylesheet'  href='style.css'>
+	<script type='text/javascript' src='validate.js'></script>	
 
+<?php
 require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'initClient.php';
@@ -71,14 +81,7 @@ function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
 
-
 echo("
-<!DOCTYPE html SYSTEM 'about:legacy-compat'>
-  <head>
-  <title>Stations Netatmo</title>
-  <meta charset='utf-8'>
-  <link rel='icon' href='favicon.ico' />
-    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);
@@ -153,20 +156,21 @@ echo("
                 }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
 
-                                  
-?>                  
+//Segoe UI Light
+//Trajan Pro
+$param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
+$param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartMax.draw(data1,{title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
-             chartMin.draw(data ,{title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:'5%',top:35,width:'83%',height:"70%"} });
-            
+             chartMax.draw(data1,{title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+             chartMin.draw(data ,{title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+			");
+			
+?>            
              } // draw chart 
             
           </script>
-<script type='text/javascript' src='calendrier.js'></script> 
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' />
-<link type='text/css' rel='stylesheet'  href='style.css'/>
-<script type='text/javascript' src='validate.js'></script>	
   </head>
  
   <body> 

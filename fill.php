@@ -1,6 +1,6 @@
 <?php
 
-function fill($devicelist,$alt,$res,$tmin,$tmax)
+function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 	{$station = $devicelist["station_name"];
 	$int_name = $devicelist["module_name"];
 	$ext_name = $devicelist["modules"][0]["module_name"];
@@ -56,7 +56,7 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
 ");	
 	if($nModule > 2)
 		{echo("	
-		<td class='modules' colspan='7'>
+		<td style='text-align:left;' colspan='7'>
 		<a href='#' class='tooltip'>
   		Autres modules:
   		<div>
@@ -75,14 +75,20 @@ function fill($devicelist,$alt,$res,$tmin,$tmax)
   			<td class='c'>$co2 ppm</td>
   			</tr>");
   			}
+  			
+  		echo("<tr></tr> <td>
+  			<form  action='modules.php?stationNum=$stationId' method='post'>
+			<input type='submit' value='Graphiques' style='font-size:10px; color:black; background-color:#cceeff;'/>
+			</form>
+			</td></tr>
+  		");
   		echo("</table></div></a> </td></tr></table>");
   		}
 	else
 		echo("	
-		<td class='modules' colspan='7'>
-		<a href='#' class='tooltip'  style='text-decoration:none;'>
-  		&nbsp;
-		</a></td></tr>
+		<td  colspan='7'>
+		&nbsp;
+		</td></tr>
 		</table>
 		");
 }
