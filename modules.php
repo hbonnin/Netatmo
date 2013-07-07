@@ -46,7 +46,6 @@ if(isset($_POST["date0"]))
     }
 else    
     $date_beg = mktime(0, 0, 0, date('m') , date('d')-30,date('y'));
-    //$date_beg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
     
 if(isset($_POST["date1"]))  
     {$date1 = $_POST["date1"];
@@ -55,12 +54,15 @@ if(isset($_POST["date1"]))
     }
 else    
     $date_end = mktime(0, 0, 0, date('m') , date('d'),date('y'));
-    //$date_end = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 
+if(isset($_SESSION['selectMesureModule']))
+    $selectMesure = $_SESSION['selectMesureModule'];
+ else 	
+	{$selectMesure = 'T';
+	$_SESSION['selectMesureModule'] = $selectMesure;
+	}
 if(isset($_POST['selectMsesure']))
     $selectMesure = $_POST['selectMsesure'];
- else 	
-	$selectMesure = 'H';
 
 $CO2 = 0;	
 if($selectMesure == 'T')
@@ -72,30 +74,32 @@ else if($selectMesure == 'H')
     $titre = 'Humidité ';
     }    
 else if($selectMesure == 'C') // ni max ni min CO2
-    {$type = 'CO2';
+    {//$type = 'CO2';
+    $type = 'min_co2,max_co2,date_min_co2,date_max_co2';
     $titre = 'CO2 ';
     $CO2 = 1;
     }    
-    
-$view = array($numStations);
-for($i = 0 ;$i < $numStations; $i++)
-	$view[$i] = 0;
-if(isset($_POST['stats']))
-    foreach($_POST['stats'] as $chkbx)
-	    $view[$chkbx] = 1;
+$_SESSION['selectMesureModule'] = $selectMesure; 
+ 
+if(isset($_SESSION['viewModule']))
+    $view = $_SESSION['viewModule'];
 else
     for($i = 0 ;$i < $numStations; $i++)
-	    $view[$i] = 1;
-if($CO2)	
-    $view[1] = 0;
+        $view[$i] = 1;
+        
+if(isset($_POST['stats']))
+    {for($i = 0 ;$i < $numStations; $i++)
+	    $view[$i] = 0;
+    foreach($_POST['stats'] as $chkbx)
+	    $view[$chkbx] = 1;
+	}
+$_SESSION['viewModule'] = $view;   
+	    
+if($CO2)$view[1] = 0;
+//$CO2 = 0;
 $numview = 0;  // Nombre de stations cochées
 for($i = 0 ;$i < $numStations; $i++)
 	if($view[$i])++$numview;
-
-if($numview == 0)
-    {echo("Il faut au moins un module...");
-    $view[0] = 1;
-    } 	
 
 if(isset($_POST["select"]))
     $interval = $_POST["select"];
@@ -189,11 +193,13 @@ echo("
             		if(abs($key - $itime) < 2*60*60) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
             			    {$tmin0 = $mesure[$j][$key][0];
+/*            			    
             			    if($CO2)
             			        {$tip =  sprintf('%4.1f',$tmin0); 
             			        $tmin0 = min($tmin0,1000);
             			        }
             			    else 
+*/
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    }
             			}        		
@@ -231,12 +237,14 @@ echo("
             		$key = $keys[$j][$ii[$j]];         		
             		if(abs($key - $itime) < 2*60*60) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
-            			    {if($CO2)
+            			    {
+/*            			    if($CO2)
             			        {$tmin0 = $mesure[$j][$key][0];
             			        $tip =  sprintf('%4.1f',$tmin0); 
             			        $tmin0 = min($tmin0,1000);
             			        }
             			    else
+*/            			    
             			        {$tmin0 = $mesure[$j][$key][1];
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			        }
@@ -250,15 +258,9 @@ echo("
                 }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
                 }
-if(!$CO2)
-    {$title = $titre . 'minimale';                
-    $title1 = $titre . 'maximale';
-    }
-else
-    {$title = $titre;                
-    $title1 = $titre;
-    }
 
+$title = $titre . 'minimum';                
+$title1 = $titre . 'maximal';
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 			echo("                                   

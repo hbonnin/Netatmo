@@ -369,7 +369,7 @@ $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 $datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 $num = count($devicelist["devices"]);
 
-drawMenuStation();
+drawMenuStation('310px');
 ?>
 </td>
 <!-- GOOGLE MAP -->
@@ -377,7 +377,7 @@ drawMenuStation();
 </td>
 <td class='container'>
 <?php
-drawMenuCompare();
+drawMenuCompare('310px');
 ?>	
 </td>
 </tr>

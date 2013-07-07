@@ -30,19 +30,36 @@ $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 $interval = $_POST["select"];
 $numStations = count($devicelist["devices"]);
 
-$view = array($numStations);
-for($i = 0 ;$i < $numStations; $i++)
-	$view[$i] = 0;
-
-foreach($_POST['stats'] as $chkbx)
-	$view[$chkbx] = 1;
+if(isset($_SESSION['viewCompare']))
+    $view = $_SESSION['viewCompare'];
+else
+    {for($i = 1 ;$i < $numStations; $i++)
+        $view[$i] = 0;
+    $view[0] = 1;
+       }
+if(isset($_POST['stats']))
+    {for($i = 0 ;$i < $numStations; $i++)
+        $vien[$i] = 0;
+    foreach($_POST['stats'] as $chkbx)
+	    $view[$chkbx] = 1;
+	}    
+$_SESSION['viewCompare'] = $view;   
 
 $numview = 0;  // Nombre de stations cochées
 for($i = 0 ;$i < $numStations; $i++)
 	if($view[$i])++$numview;
 	
-if($numview == 0){echo("Il faut au moins une station...");return;} 	
-
+$selectMesure = $_POST['selectMsesure'];
+if($selectMesure == 'T')
+    {$type = 'min_temp,max_temp,date_min_temp,date_max_temp';
+    $titre = 'Température ';
+    }
+else if($selectMesure == 'H')
+    {$type = 'min_hum,max_hum,date_min_hum,date_max_hum';
+    $titre = 'Humidité ';
+    }   
+ $_SESSION['selectMesureCompare'] = $selectMesure; 
+ 
 $mesure = array($numStations);
 $dateBeg = array($numStations);
 $nameStations = array($numStations);
@@ -57,7 +74,7 @@ for($i = 0;$i < $numStations;$i++)
 	$device_id = $devicelist["devices"][$i]["_id"];
 	$module_id = $devicelist["devices"][$i]["modules"][0]["_id"];
     $params = array("scale" => $interval
-    , "type" => "min_temp,max_temp,date_min_temp,date_max_temp"
+    , "type" => $type
     , "date_begin" => $date_beg
     , "date_end" => $date_end
     , "optimize" => false
@@ -158,13 +175,15 @@ echo("
 
 //Segoe UI Light
 //Trajan Pro
+$title = $titre . 'minimale extérieure';                
+$title1 = $titre . 'maximale extérieure';
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartMax.draw(data1,{title: 'Températures maximales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
-             chartMin.draw(data ,{title: 'Températures minimales extérieures' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+             chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+             chartMin.draw(data ,{title:'$title' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
 			");
 			
 ?>            

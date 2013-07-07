@@ -9,34 +9,38 @@
 <body>
 <a href='http://www.000webhost.com/' target='_blank'><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15' border='0' /></a>
 
-<P>
+<P style='font-size:13px'>
 This program uses the Netatmo php sdk and some Google development tools for the graphics.<br>
 The server needs to have a php version >= 5, with curl and json enabled.<br>
 If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.webatu.com/Netatmo/">Netatmo</A>.
-
-
+</p>
+<p>
+The main goal of this program is to compare different measures on the same graphic.
 </p>
 <h3>Main windows:</h3>
 <ul>
-<li>	Display the last measures on a Google map of all the stations and their modules.	
+<li>	Display the last measures on a Google map of all the stations and all their modules (including extra modules).	
 </li>
 
-<li>    Graphics of the measures of one station.<br>
+<li>    Graphics of the measures of one station,<br>
 		(5 minutes, 30 minutes, 3 hours, 1 day, 1 week).
 </li>
-<li>	Graphics of the temperatures of selected stations.<br>
+<li>	Graphics comparing the measures of selected stations: outdoor temperature or humidity, <br>
 		(1 day or 1 week), 
 </li>
-<li>	Graphics of measures of selected extra modules.<br>
+<li>	Graphics comparing measures of selected extra modules: temperature, humidity or noise,<br>
 		(1 day or 1 week), 
 </li>
 </ul>
-<h3>Remarks on the Google map :</h3>
+<h3>Using the Google map :</h3>
 <ul>
-<li>	If the mouse is over a green marker, the measures of the station are displayed.</li>
-<li>	Left clicking on a green marker zoom on the marker (click on home to return to the original display.</li>
-<li>    Right clicking on a green marker hide the marker .</li>
-<li>	Click on a meteo marker to get weather forecast.</li>
+<li>	Move over a <b>green marker</b>, to display the measures of a station.</li>
+<li>	Left click on a <b>green marker</b> to zoom on the marker .</li>
+<li>    Right click on a <b>green marker</b> to hide the marker .</li>
+<li>	Left click on a <b>meteo marker</b> to get weather forecast.</li>
+<li>	Left click on <b>Home</b> to redraw the map to original position,</li>
+<li>	Left click on <b>Hide Clouds / Show Clouds</b> to display or not the cloud layer.</li>
+<li>	Left click on <b>Hide Markers / Show Markers</b> to hide or restore the green markers.</li>
 </ul>
 <h3>Other remarks :</h3>
 <ul>
@@ -47,7 +51,7 @@ If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix
 <h3>Install:</h3>
 <ul>
 <li>	Unzip the archive</li>
-<li>	Put your personal information in Config.php</li>
+<li>	Put your personal information in Config.php.EXAMPLE and renamed it Config.php</li>
 <li>	open index.php in your web browser</li>
 </ul>  
 <h3>Screenshots:</h3>
@@ -55,10 +59,10 @@ If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix
 <IMG SRC="google.png" ALT="google.png" TITLE="Last Measures">
 <h4>Graphics</h4>
 <table>
-<tr><td>Graphics of one station</td><td>Temperatures of 4 stations<td></tr>
+<tr><td>Graphics of one station</td><td>Comparing the humidity among modules of one station<td></tr>
 <tr>
-<td><IMG SRC="graphiques.jpg" ALT="Graphique" TITLE="Graphics of one station"></td>
-<td><IMG SRC="compare.jpg" ALT="Compare" TITLE="Temperatures of 4 stations"></td>
+<td><IMG SRC="graphiques.png" width="650" ALT="graphiques.png" TITLE="Graphics of one station "></td>
+<td><IMG SRC="modules.png" width="650" ALT="modules.png" TITLE="Temperatures of 4 stations"></td>
 </tr>
 </table>
 <center>

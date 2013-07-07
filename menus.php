@@ -38,6 +38,13 @@ function drawLogoutBack($draw=true)
 	}
 function drawMenuStation($h = '')
 	{global $datebeg,$dateend,$num,$mesures;
+	
+	if(isset($_SESSION['stationId']))
+	    $stationId = $_SESSION['stationId'];
+	else
+	    {$stationId = 0;
+	    $_SESSION['stationId'] = $stationId;
+	    }
 ?>	
 <!-- DrawMenu Station -->
 	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>
@@ -45,7 +52,7 @@ function drawMenuStation($h = '')
 	if($h)
 		echo("<table class='graphic' style='height:$h; width:220px;'>");
 	else
-		echo("<table class='graphic' style='border-spacing:5px;'>");
+		echo("<table class='graphic' style='border-spacing:2px;'>");
 ?>	
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;  padding-bottom:5px'>Graphiques d'une station</td> 
 	</tr>
@@ -81,7 +88,7 @@ function drawMenuStation($h = '')
 			{$stat = $mesures[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
-			if($i == 0)
+			if($i == $stationId)
 				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
 				echo("<tr><td style='font-size:12px;'><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
@@ -101,6 +108,22 @@ function drawMenuStation($h = '')
 	}
 function drawMenuCompare($h ='')
 	{global $datebeg,$dateend,$num,$mesures;
+	
+	if(isset($_SESSION['viewCompare']))
+	    $view = $_SESSION['viewCompare'];
+	else
+	    {for($i = 1 ;$i < $num; $i++)
+	        $view[$i] = 0;
+	    $view[0] = 1;
+	    $_SESSION['viewCompare'] = $view;
+        }
+    if(isset($_SESSION['selectMesureCompare']))
+        $selectMesure = $_SESSION['selectMesureCompare'];
+    else 
+        {$selectMesure = 'T';
+        $_SESSION['selectMesureCompare'] = $selectMesure;
+        }
+       
 ?>
 <!-- DrawMenu Compare -->
 	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
@@ -108,7 +131,7 @@ function drawMenuCompare($h ='')
 	if($h)
 		echo("<table class='graphic' style='height:$h; width:220px; '>");
 	else
-		echo("<table class='graphic' style='border-spacing:5px;'>");
+		echo("<table class='graphic' style='border-spacing:2px;'>");
 ?>	
 
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px; padding-bottom:5px'>
@@ -133,6 +156,27 @@ function drawMenuCompare($h ='')
 		</select>		
 	</td>	
 	</tr>
+	
+		<tr>
+	<td style='height:25px;'>Mesure
+	</td>	
+	<td>
+		<select name='selectMsesure'>
+<?php
+        if($selectMesure == 'T')
+            echo("<option value='T' selected='selected'> T° </option>
+    		    <option value='H'  > H % </option>
+            ");
+        else
+            echo("<option value='T'> T° </option>
+    		    <option value='H'  selected='selected'> H % </option>
+            ");
+        
+?>
+ 		</select>		
+	</td>	
+	</tr>	
+
 	<tr>
 		<td>Choisir des stations</td>
 		<td>
@@ -142,7 +186,7 @@ function drawMenuCompare($h ='')
 			{$stat = $mesures[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
-			if($i == 0)
+			if($view[$i])
 				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
 				echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
@@ -163,7 +207,8 @@ function drawMenuCompare($h ='')
 <?php
 	}
 function drawCharts()
-	{echo("<table style='padding:0px; width:100%; margin-bottom:-5px;'>
+	{
+	echo("<table style='padding:0px; width:100%; margin-bottom:-5px;'>
 	<tr>
 	<td style='padding:0px; vertical-align:bottom;'>
 	");
@@ -188,19 +233,26 @@ function drawCharts()
 	</table>
 	");
 	drawLogoutBack(); 
-/*	
-	echo("
-		<!-- Invisible table for calendar --> 
-		<table class='ds_box'  id='ds_conclass' style='display: none;' >
-		<caption id='id_caption' class='ds_caption'>xxxx</caption>
-		<tr><td id='ds_calclass'>aaa</td></tr>
-		</table>
-	");
-*/
 	}
 	
 function drawMenuModules($stationNum,$h ='')
-	{global $datebeg,$dateend,$numStations,$nameStations,$view;
+	{global $datebeg,$dateend,$numStations,$nameStations;
+
+	if(isset($_SESSION['viewModule']))
+	    $view = $_SESSION['viewModule'];
+	else
+	    {for($i = 0 ;$i < $numStations; $i++)
+	        $view[$i] = 1;
+	    $_SESSION['viewModule'] = $view;
+        }	        
+	
+    if(isset($_SESSION['selectMesureModule']))
+        $selectMesure = $_SESSION['selectMesureModule'];
+    else 
+        {$selectMesure = 'T';
+        $_SESSION['selectMesureModule'] = $selectMesure;
+        }
+    
 ?>	
 	<!-- DrawMenu Modules -->
 	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>' onsubmit='return valider(this);'>	
@@ -208,9 +260,9 @@ function drawMenuModules($stationNum,$h ='')
 <?php	
 	
 	if($h)
-		echo("<table class='graphic' style='height:$h; width:220px; border-spacing:5px; '>");
+		echo("<table class='graphic' style='height:$h; width:220px; border-spacing:2px; '>");
 	else
-		echo("<table class='graphic' style='border-spacing:5px;'>");
+		echo("<table class='graphic' style='border-spacing:2px;'>");
 ?>	
 
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px; padding-bottom:5px'>
@@ -243,9 +295,25 @@ function drawMenuModules($stationNum,$h ='')
 	</td>	
 	<td>
 		<select name='selectMsesure'>
-		<option value='T' selected='selected'> T° </option>
-		<option value='H'  > H % </option>
-		<<option value='C'  > CO2 </option>
+
+<?php
+        if($selectMesure == 'T')
+            echo("<option value='T' selected='selected'> T° </option>
+    		    <option value='H'  > H % </option>
+    		    <option value='C'  > CO2 </option>
+            ");
+        else if($selectMesure == 'H')
+            echo("<option value='T'> T° </option>
+    		    <option value='H'  selected='selected'> H % </option>
+    		    <option value='C'  > CO2 </option>   
+            ");
+        else
+            echo("<option value='T'> T° </option>
+    		    <option value='H' > H % </option>
+    		    <option value='C'  selected='selected'  > CO2 </option>   
+            ");
+        
+?>
 		</select>		
 	</td>	
 	</tr>	

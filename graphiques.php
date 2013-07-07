@@ -23,7 +23,9 @@ $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures']; 
 $stationId = $_POST["station"];
+$_SESSION['stationId'] = $stationId;
 $interval = $_POST["select"];
+
        
 
 if($interval =="max")//5 minutes
