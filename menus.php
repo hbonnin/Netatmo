@@ -57,7 +57,7 @@ function drawMenuStation($h = '')
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;  padding-bottom:5px'>Graphiques d'une station</td> 
 	</tr>
 	<tr>
-	<td >Début</td>
+	<td style='height:25px;'>Début</td>
 	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 
@@ -80,7 +80,7 @@ function drawMenuStation($h = '')
 	</td>	
 	</tr>
 	<tr>
-		<td>Choisir une station</td>
+		<td style='height:25px;'>Choisir une station</td>
 		<td>			
 		<?php
 		echo("<table>\n");
@@ -138,7 +138,7 @@ function drawMenuCompare($h ='')
 	Comparaison de stations</td></tr>
 	
 	<tr>
-	<td>Début</td>
+	<td style='height:25px;'>Début</td>
 	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 	
@@ -157,7 +157,7 @@ function drawMenuCompare($h ='')
 	</td>	
 	</tr>
 	
-		<tr>
+	<tr>
 	<td style='height:25px;'>Mesure
 	</td>	
 	<td>
@@ -178,7 +178,7 @@ function drawMenuCompare($h ='')
 	</tr>	
 
 	<tr>
-		<td>Choisir des stations</td>
+		<td style='height:25px;'>Choisir des stations</td>
 		<td>
 <?php
 		echo("<table>\n");
@@ -269,7 +269,7 @@ function drawMenuModules($stationNum,$h ='')
 	Comparaison de modules</td></tr>
 	
 	<tr>
-	<td>Début</td>
+	<td style='height:25px;'>Début</td>
 	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 	
@@ -319,7 +319,7 @@ function drawMenuModules($stationNum,$h ='')
 	</tr>	
 	
 	<tr>
-		<td>Choisir des stations</td>
+		<td style='height:25px;'>Choisir des stations</td>
 		<td>
 <?php
 		echo("<table>\n");
