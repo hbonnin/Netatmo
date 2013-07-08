@@ -1,3 +1,10 @@
+<?php 
+require_once 'NAApiClient.php';
+require_once 'Config.php';
+require_once 'initClient.php';
+require_once 'menus.php';
+session_start(); 
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
   	<title>Stations Netatmo</title>
@@ -10,14 +17,7 @@
 	<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' >
 
 <?php
-require_once 'NAApiClient.php';
-require_once 'Config.php';
-require_once 'initClient.php';
-require_once 'menus.php';
-
-session_start();
 date_default_timezone_set("Europe/Paris");
-
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
@@ -49,7 +49,7 @@ else
 if($interval=="1week")
 	{$inter = 7*24*60;
 	$tinter = '1 semaine';
-	$req =  "min_temp,max_temp,Humidity,date_min_temp,date_max_temp";
+	$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	
 	$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";	
 	}
 else if($interval=="1day")
