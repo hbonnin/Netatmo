@@ -11,41 +11,28 @@ session_start();
   	<meta charset='utf-8'>
     <link rel='icon' href='favicon.ico' >
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-	<script type='text/javascript' src='calendrier.js'></script> 
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 	<script type='text/javascript' src='validate.js'></script>	
-	<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' >
 
 <?php
 date_default_timezone_set("Europe/Paris");
+if(!isset($_POST) )return;
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
-$mesures = $_SESSION['mesures']; 
-$stationId = $_POST["station"];
+$mesures = $_SESSION['mesures'];
+$stationId = $_POST['station'];
 $_SESSION['stationId'] = $stationId;
-$interval = $_POST["select"];
+$interval = $_POST['select'];
+/*
+echo("<pre>");
+print_r($_POST);
+echo("</pre>");
+*/
+$date0 = $_POST["date0"];
+$date1 = $_POST["date1"];
 
-       
 
-if($interval =="max")//5 minutes
-	{$date_end = time();
-	$date_beg = $date_end - (48 * 60 * 60);
-	}
-else
-	{$date1 = $_POST["date1"];
-	$txt = explode("/",$date1);
-	$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-	if($interval =="30min")
-		$date_beg = $date_end - (14 * 24 * 60 * 60) - (30 * 60);
-	else //3hours 1day 1week
-		{$date0 = $_POST["date0"];
-		$txt = explode("/",$date0);
-		$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-		$date_beg -= 24*60*60;
-		}
-	}
-	
 if($interval=="1week")
 	{$inter = 7*24*60;
 	$tinter = '1 semaine';
@@ -72,10 +59,29 @@ else if($interval=="max")
 	}
 else // 3hours
 	{$inter = 3*60;
-	$tinter = '3 heures';
+	$tinter = '3 heures';	
 	$req =  "min_temp,max_temp,min_hum,max_hum";	
 	$req1 = "min_temp,max_temp,Humidity,CO2,Pressure,max_noise";
 	}
+
+
+$txt = explode("/",$date1);
+$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+
+if($interval =="max")//5 minutes
+	$date_beg = $date_end - (48 * 60 * 60);	
+else if($interval =="30min")
+	$date_beg = $date_end - (14 * 24 * 60 * 60) - (30 * 60);
+else //3hours 1day 1week
+	{$txt = explode("/",$date0);
+	$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);	
+	}
+// pour tracer le calendrier	
+$datebeg = date("d/m/Y",$date_beg); 
+$dateend = date("d/m/Y",$date_end); 
+if($inter == 24*60)$date_beg -= 24*60*60;
+
+	
 
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
@@ -134,7 +140,7 @@ function tipHTML3($idate,$tmax,$tmin,$hum)
 	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '</table>';
 	}
-function tipHTML5($idate,$datemax,$datemin,$tmax,$tmin,$min_hum,$max_hum,$dateminh,$datemaxh)
+function tipHTML5($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$dateminh,$datemaxh)
 	{return '<table><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td>'
 	. '<td style=\"font-size: 12px;\">' . date('H:i',$datemax) .'</tr>'
@@ -171,20 +177,22 @@ echo("
       google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
-              var data = new google.visualization.DataTable();
-              var data1 = new google.visualization.DataTable();
+              var dataExt = new google.visualization.DataTable();
+              var dataInt = new google.visualization.DataTable();
 	");              
 
-if($inter > 30) //1week, 1day, 3hours
+if($inter > 3*60) //1week, 1day, 3hours
 	{           
 echo("	 
-	 		data.addColumn('string', 'Date');
-        	data.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
-        	data.addColumn('number', 'Tmax'); 
-        	data.addColumn('number', 'Tmin');     	  
-        	data.addColumn('number', 'Humidity min');  
-        	data.addColumn('number', 'Humidity max');  
-         	data.addColumn('number', '');   	  
+	 		dataExt.addColumn('string', 'Date');
+        	dataExt.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
+        	dataExt.addColumn('number', 'Tmax'); 
+        	dataExt.addColumn('number', 'Tmin');     	  
+        	dataExt.addColumn('number', 'Humidity min');  
+        	dataExt.addColumn('number', 'Humidity max');  
+        	dataExt.addColumn('number', 'Time Tmin');  
+        	//dataExt.addColumn('number', 'Time Tmax');  
+         	dataExt.addColumn('number', '');   	  
 ");
  			$keys= array_keys($meas);
 			$num = count($keys);
@@ -195,41 +203,38 @@ echo("
             do
             	{$day = idate('w',$itime);
            		$idate = date("d/m/y",$itime); 
-            	$tmin = $tmax = $hum = $tip = '';
+            	$tmin = $tmax = $hum = $tip = $d = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < 2*60*60) //changement d'horaire
             		{if($ii < $num -1)++$ii;
             		else $break = 1;      
-	//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp";
-            		
+	//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
             		$tmin = $meas[$key][0];
             		$tmax = $meas[$key][1];
              		$min_hum = $meas[$key][2]; 
              		$max_hum = $meas[$key][3]; 
-             		if($inter == 3*60)
-            			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);             		
- 					else	
-             			$iidate = $jour[$day] . date(" d/m/y ",$itime);
+           			$iidate = $jour[$day] . date(" d/m/y ",$itime);
             		if($inter == 24*60)
 						$tip = tipHTML5($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
 					else
 						$tip = tipHTML3($iidate,$tmax,$tmin,$max_hum);
             		}
             	if($hum)$hum = $hum/4;	
-                echo("data.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
+                $dTmin = idate('H',$meas[$key][4]);
+                echo("dataExt.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,$dTmin,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-           	echo("data.removeColumn(6);\n");				      
+           	echo("dataExt.removeColumn(7);\n");				      
 	}
 else   //5 ou 30 minutes
 	{
 	echo("              
-	          data.addColumn('string', 'Date');
-        	  data.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  	          
-        	  data.addColumn('number', 'Temp.'); 
-        	  data.addColumn('number', 'Humidity');  
-         	  data.addColumn('number', '');   	  
+	          dataExt.addColumn('string', 'Date');
+        	  dataExt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  	          
+        	  dataExt.addColumn('number', 'Temp.'); 
+        	  dataExt.addColumn('number', 'Humidity');  
+         	  dataExt.addColumn('number', '');   	  
 	");
 
  			$keys= array_keys($meas);
@@ -255,30 +260,30 @@ else   //5 ou 30 minutes
 	            	if($inter == 30)        		
             			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);
             		else	         		           		
-            			$iidate = $jour[$day] . date(" H:i",$itime);         		           		
+            			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);         		           		
 					$tip = tipHTML2($iidate,$tmin,$hum);
             		}
             	if($hum)$hum = $hum/4;	
-                echo("data.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
+                echo("dataExt.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-           	echo("data.removeColumn(4);\n");				      
+           	echo("dataExt.removeColumn(4);\n");				      
 	}
 	$title = '"' .$stat0. '-' .$ext_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
 	
 
 if($inter > 30)			
 	{echo("
-	          data1.addColumn('string', 'Date');
-        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
-        	  data1.addColumn('number', 'Tmax');
-        	  data1.addColumn('number', 'Tmin');
-        	  data1.addColumn('number', 'Humidity');
-        	  data1.addColumn('number', 'CO2');
-        	  data1.addColumn('number', 'Pressure min');
-        	  data1.addColumn('number', 'Noise');  
-          	  data1.addColumn('number', '');   	         	    
+	          dataInt.addColumn('string', 'Date');
+        	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
+        	  dataInt.addColumn('number', 'Tmax');
+        	  dataInt.addColumn('number', 'Tmin');
+        	  dataInt.addColumn('number', 'Humidity');
+        	  dataInt.addColumn('number', 'CO2');
+        	  dataInt.addColumn('number', 'Pressure min');
+        	  dataInt.addColumn('number', 'Noise');  
+          	  dataInt.addColumn('number', '');   	         	    
 	");
  			$keys= array_keys($meas1);
 			$num = count($keys);
@@ -317,23 +322,23 @@ if($inter > 30)
                 	if($co){$co = min($co,1000);$co /= 10;}           
                 	$pres = ($pres-$MinPression)*$xp;
                 	}
-                echo("data1.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,$co,$pres,$noise,1]);\n");                
+                echo("dataInt.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-            echo("data1.removeColumn(8);\n");				      
+            echo("dataInt.removeColumn(8);\n");				      
      	                    	
 	}
 else  // 5 minutes ou 30 minutes
 	{echo("
-	          data1.addColumn('string', 'Date');
-        	  data1.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
-        	  data1.addColumn('number', 'Temp.');
-        	  data1.addColumn('number', 'Humidity');
-        	  data1.addColumn('number', 'CO2');
-        	  data1.addColumn('number', 'Pressure');
-        	  data1.addColumn('number', 'Noise');  
-          	  data1.addColumn('number', '');   	         	    
+	          dataInt.addColumn('string', 'Date');
+        	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
+        	  dataInt.addColumn('number', 'Temp.');
+        	  dataInt.addColumn('number', 'Humidity');
+        	  dataInt.addColumn('number', 'CO2');
+        	  dataInt.addColumn('number', 'Pressure');
+        	  dataInt.addColumn('number', 'Noise');  
+          	  dataInt.addColumn('number', '');   	         	    
 	");
 
  			$keys= array_keys($meas1);
@@ -367,49 +372,57 @@ else  // 5 minutes ou 30 minutes
                 	$pres = $meas1[$key][3];
                 	$noise = $meas1[$key][4];  
             		$itime = $keys[$ii];          		                	
-	            	if($inter == 30)        		
-            			$iidate = $jour[$day] . date(" d/m/y",$itime) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);
-            		else	         		           		
-            			$iidate = $jour[$day] . date(" H:i",$itime);         		           		
+           			$iidate = $jour[$day] . date(" d/m/y",$itime) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);
                 	$tip = tip1HTML5($iidate,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}             
                 	$pres = ($pres-$MinPression)*$xp;
                 	}
-                echo("data1.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
+                echo("dataInt.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter*60;
                 }while($break != 1);
-            echo("data1.removeColumn(7);\n");				      
+            echo("dataInt.removeColumn(7);\n");				      
  	} 
 	$title1 = '"' .$stat0. '-' .$int_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
 
+echo("
+	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
+    var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
+    ");
 	$param = "focusTarget:'category',tooltip: {isHtml: true}";
 	$param = $param . ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 	$param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
  
-if($inter > 30) 	                                
+if($inter >= 3*60) 	                                
 echo("                   
-	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
-    chartExt.draw(data, {title: $title $visupt,colors: ['red','blue','green','#00dd00'],$param});
-    var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
-    chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
+
+    chartInt.draw(dataInt, {title: $title1 $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
 ");
 else
 echo("                 
-    var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
-    chartExt.draw(data, {title: $title $visupt,colors: ['red','green'],$param});
-    var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
-    chartInt.draw(data1, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
+    chartInt.draw(dataInt, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
+");
+
+if($inter > 3*60) 	                                
+echo("                   
+    chartExt.draw(dataExt, {title: $title $visupt,colors: ['red','blue','green','#00dd00','#aaaaff','ffaaaa'],$param});
+");
+else
+echo("                 
+    chartExt.draw(dataExt, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
 ");
 
 ?>           
              }  
 	</script>
+<script type='text/javascript' src='calendrier.js'></script> 
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' >
+	
 </head>
   <body>
  <?php
-	$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-	$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+	//$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+	//$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 	$num = count($devicelist["devices"]);
 	drawCharts();	
  ?>

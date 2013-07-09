@@ -4,8 +4,6 @@
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-	<script type='text/javascript' src='calendrier.js'></script> 
-	<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 	<script type='text/javascript' src='validate.js'></script>	
 </head>
@@ -150,13 +148,7 @@ if($view[0])
     $minDateBeg = min($minDateBeg,$dateBeg[0]);    
     $nmesures[0] = count($keys[0]);    
     }
-//echo("<pre>");
-//print_r($view);
-//print_r($nameStations);
-//print_r($modules_id);
-//print_r($mesure[2]);
-//print_r($keys[2]);
-//echo("</pre>");
+
 
 /**************************************************************/
 function tip($temp,$tempDate)
@@ -275,6 +267,8 @@ $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',font
              } // draw chart 
             
           </script>
+<script type='text/javascript' src='calendrier.js'></script> 
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
 
 <?php
 
@@ -283,6 +277,12 @@ $dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
 
 
 echo("<body>");
+		echo("
+		<table class='ds_box'  id='ds_conclass' style='display: none;' >
+		<caption id='id_caption' class='ds_caption'>xxxx</caption>
+		<tr><td id='ds_calclass'>aaa</td></tr>
+		</table>
+		");
 $hh = 310;
 $h = $hh . 'px';
 $h1 = $hh+2 .'px';
@@ -309,7 +309,7 @@ echo("</td>
 	</table>
 	");
 	
-$draw = true;
+$draw = false;
 drawLogoutBack($draw); 
 ?>
 </body>

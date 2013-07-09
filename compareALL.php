@@ -1,21 +1,22 @@
+<?php
+require_once 'NAApiClient.php';
+require_once 'Config.php';
+require_once 'initClient.php';
+require_once 'menus.php';
+session_start();
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
 	<title>Stations Netatmo</title>
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-	<script type='text/javascript' src='calendrier.js'></script> 
-	<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 	<script type='text/javascript' src='validate.js'></script>	
 
 <?php
-require_once 'NAApiClient.php';
-require_once 'Config.php';
-require_once 'initClient.php';
-require_once 'menus.php';
-
-session_start();
+date_default_timezone_set("Europe/Paris");
+initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
@@ -29,6 +30,8 @@ $txt = explode("/",$date1);
 $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 $interval = $_POST["select"];
 $numStations = count($devicelist["devices"]);
+$datebeg = $date0;
+$dateend = $date1;
 
 if(isset($_SESSION['viewCompare']))
     $view = $_SESSION['viewCompare'];
@@ -190,12 +193,15 @@ $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',font
              } // draw chart 
             
           </script>
+<script type='text/javascript' src='calendrier.js'></script> 
+<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
+     
   </head>
  
   <body> 
  <?php
-	$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-	$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+	//$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+	//$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 	$num = count($devicelist["devices"]);
 	drawCharts();
 ?>

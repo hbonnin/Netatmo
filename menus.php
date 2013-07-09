@@ -22,7 +22,20 @@ function drawLogoutBack($draw=true)
 	if(isset($_SESSION['width']))
 		echo("{$_SESSION['width']} x {$_SESSION['height']}");
 ?>
-	</td></tr>
+	</td>
+
+    <td style='display: none;'>
+    <script src='http://www.counter160.com/js.js?img=15'></script>
+    <br>
+    <a href='http://www.000webhost.com'>
+    <img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px'>
+    </a>
+    <a href='http://www.hosting24.com'>
+    <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
+    </a>
+    </td>
+</tr></table>	
+	</tr>
 	</table>
 <?php	
 	if($draw)
@@ -71,6 +84,17 @@ function drawMenuStation($h = '')
 	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
+<?php
+/*
+$opt = array (
+            0 => array ('1week','1 semaine'),
+            1 => array ('1day','1 journée'),
+            2 => array ('3hours','3 heures'),
+            3 => array ('30min','30 miniutes'),
+            4 => array ('max','5 minutes')
+            );
+*/ 
+?>
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' selected='selected' > 1 journée </option>
 		<option value='3hours' > 3 heures </option>
@@ -97,7 +121,7 @@ function drawMenuStation($h = '')
 		?>
 		</td>
 	<tr><td>
-	<input type='submit'  style='background-color:#ddd;'>
+	<input type='submit'  style='background-color:#ddd;' >
 	</td><td></td>		
 	</tr>
 	</table>
@@ -195,7 +219,7 @@ function drawMenuCompare($h ='')
 ?>			
 		</td>
 	</tr>
-	
+	<!-- onclick="this.disabled='disabled'" bloque sur ipad-->
 	<tr><td><input type='submit'  style='background-color:#ddd;'></td>
 	<td></td></tr>
 	</table>

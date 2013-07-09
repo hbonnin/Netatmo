@@ -1,9 +1,7 @@
-<!DOCTYPE html SYSTEM 'about:legacy-compat'>
-
 <?php 
+session_start();
 require_once 'Config.php';
 
-	session_start();
 	$msg = '';	
 	if(isset($_SESSION['msg']))
 		$msg = $_SESSION['msg'];
@@ -24,7 +22,7 @@ require_once 'Config.php';
 			");
 
 ?>
-
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <!--
 Name: Netatmo PHP Graphics
 Author: Hubert de Fraysseix

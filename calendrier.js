@@ -177,8 +177,11 @@ function ds_sh(t,i) {
 	ds_draw_calendar(ds_c_month, ds_c_year);
 	// To change the position properly, we must show it first.
 	ds_ce.style.display = '';
+	widthDate = t.clientWidth; 
+	widthCalendar = ds_ce.clientWidth;
 	// Move the calendar container!
 	the_left = ds_getleft(t);
+	the_left -= (widthCalendar-widthDate)/2;
 	the_top = ds_gettop(t) + t.offsetHeight;
 	ds_ce.style.left = the_left + 'px';
 	ds_ce.style.top = the_top + 'px';

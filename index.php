@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <meta charset='utf-8'>
@@ -24,7 +25,7 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 require_once 'Config.php';
-    session_start();
+    //session_start();
     if(!empty($test_username) && !empty($test_password))
    			echo("
     	   	<script>

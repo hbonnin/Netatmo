@@ -44,7 +44,7 @@ function initClient()
 		{if($_GET["error"] == "access_denied")
 			{echo "You refused the application's access\n";exit(-1);}
 		}
-	if(isset($_GET["code"]) && !isset($_SESSION['client'])) // login on Netatmo
+	if(isset($_GET["code"]) && !isset($_SESSION['client'])) // login on Netatmo (do not work on free)
 		{$code = $_GET["code"];
 		$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
  		if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
@@ -78,22 +78,30 @@ function initClient()
 		else
 			{echo("The state does not match.");exit(-1);}
 		}	
+
+    if(!isset($_SESSION['client']) &&  empty($test_username) || empty($test_password))
+        {if(isset($_SESSION['username']) && isset($_SESSION['password'] ))
+            {$test_username = $_SESSION['username'];
+            $test_password = $_SESSION['password']; 
+            }
+        }     
 	if(isset($_SESSION['client']))
 		$client = $_SESSION['client'];
 	else  // si identifiant et mot de passe dans config.php
 		{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 		try {
 			$tokens = $client->getAccessToken();       
-			} catch(NAClientException $ex) {
-				if(!isset($_SESSION['state']))
-					{echo ("User:$test_username 
-					ou mot de passe:$test_password
-					ou id:$client-id ou secret:$client_secret incorrect");
-					exit(-1);
-				}
+			} catch(NAClientException $ex) 
+			    {if(!isset($_SESSION['state']))
+					$_SESSION['emsg'] = "<br>User:$test_username
+					<br>ou mot de passe:$test_password
+					<br> ou id:$client_id
+					<br> ou secret:$client_secret incorrect<br>*****<br>".$ex->getMessage();
 				else 
-					echo("<script> top.location.href='logout.php'</script>");
-			}
+				    $_SESSION['emsg'] = $ex->getMessage();
+
+			    echo("<script> top.location.href='logout.php'</script>");				
+			    }    
 		$_SESSION['client'] = $client;	
 		if($debug)echo("client from password / ");		
 		}  	
@@ -107,9 +115,10 @@ function initClient()
 			$devicelist = $client->api("devicelist", "POST");
 			}
 		catch(NAClientException $ex) {
-			$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-			echo("erreur:$ex");
-			exit(-1);
+			//$ex = stristr(stristr($ex,"Stack trace:",true),"message");
+			$_SESSION['emsg'] = "erreur:$ex->getMessage();";
+				echo " {$_SESSION['emsg']}";
+			echo("<script> top.location.href='logout.php'</script>");	
 			}	
 			
 		$devicelist = $helper->SimplifyDeviceList($devicelist);

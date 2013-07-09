@@ -1,19 +1,20 @@
+<?php session_start(); ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
-
-<?php
-    session_start();
-	$_SESSION=array();
-    session_destroy();
-?>
-
-
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
 <link rel='icon' href='favicon.ico' />
 </head>
-<body style='text-align:center;'>
+<body >
 
 <h2> You are logged off </h2>
-</body>
-</html>
+
+<?php 
+if(isset($_SESSION['emsg']))
+    echo "message: {$_SESSION['emsg']} <br>";
+//echo "<pre>";print_r($_SESSION);echo("</pre");
+echo("</body></html>");
+
+$_SESSION=array();
+session_destroy();
+?>

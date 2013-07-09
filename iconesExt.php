@@ -1,3 +1,8 @@
+<?php
+require_once 'NAApiClient.php';
+
+session_start(); 
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <title>Stations Netatmo</title>
@@ -7,15 +12,11 @@
 <script type='text/javascript' src='validate.js'></script>	
 
 <?php
-require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
-
-
-session_start();
 date_default_timezone_set("Europe/Paris");
 /* Slow on Webatu */
 /*

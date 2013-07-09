@@ -2,12 +2,15 @@
 	background-color:#acf;
 	color:#00a;
 	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;	
 }
 .ds_box {
 	background-color: #FFF;
 	border: 2px solid #00a;
 	position: absolute;
 	z-index: 32767;
+	width:200px;
+	height:200px;
 }
 
 .ds_tbl {
@@ -18,7 +21,7 @@
 	background-color: #44a;
 	color: #FFF;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 13px;
+	font-size: 11px;
 	font-weight: bold;
 	text-align: center;
 	letter-spacing: 2px;
@@ -27,7 +30,7 @@
 .ds_subhead {
 	background-color: #acf;
 	color: #00a;
-	font-size: 12px;
+	font-size: 9px;
 	font-weight: bold;
 	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
@@ -37,7 +40,7 @@
 .ds_cell {
 	background-color: #cceeff;
 	color: #000;
-	font-size: 13px;
+	font-size: 12px;
 	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
 	padding: 5px;
