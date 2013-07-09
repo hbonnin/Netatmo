@@ -1,4 +1,30 @@
 <?php
+/* pour free */
+if ( !function_exists('json_decode') ){
+  function json_decode($content, $assoc=false){
+    require_once 'JSON.php';
+    if ( $assoc ){
+      $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
+    } else {
+      $json = new Services_JSON;
+    }
+    return $json->decode($content);
+  }
+}
+
+if ( !function_exists('json_encode') ){
+  function json_encode($content){
+    require_once 'JSON.php';
+    $json = new Services_JSON;    
+    return $json->encode($content);
+  }
+}
+
+if ( !function_exists('curl_exec') ){
+    echo("NO CURL");exit(-1);
+    }
+
+
 require_once 'AppliCommonPublic.php';
 
 define('CURL_ERROR_TYPE', 0);
@@ -317,6 +343,7 @@ class NAApiClient
         curl_setopt_array($ch, $opts);
         //hubert
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
         $result = curl_exec($ch);
         if ($result === FALSE)

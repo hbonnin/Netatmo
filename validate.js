@@ -36,30 +36,19 @@ function valider(frm)
 function Allow(tab) 
     {for (var i = 0;i < tab.length;i++)
 		if(tab[i].selected)break;		
-	var el1 = document.getElementById('id_date1');
 	var el0 = document.getElementById('id_date0');
 	var duree = document.getElementById('id_duree');
     if(i < 3)
 		{duree.innerHTML = 'Fréquence';
-		el0.disabled = false;
 		el0.hidden = false;
-		el1.disabled=false;
-		el1.hidden = false;
 		}
 	else if(i == 3)
 		{duree.innerHTML = 'Fréquence (14j)';
-		el0.disabled = true;
 		el0.hidden = true;
-		el1.disabled = false;
-		el1.hidden = false;
 		}				
 	else
 		{duree.innerHTML = 'Fréquence (2j)';
-		el0.disabled=true;
 		el0.hidden=true;
-		el0.disabled = true;
-		el1.disabled=true;
-		el1.hidden = true;
 		}	
     return true;		
 	}
