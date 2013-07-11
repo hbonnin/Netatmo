@@ -20,6 +20,8 @@ $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
 $stationNum = $_GET['stationNum'];
+$_SESSION['stationId'] = $stationNum;
+
 $res = $mesures[$stationNum]["modules"];
 $numStations = count($res);
 $device = $devicelist['devices'][$stationNum];
@@ -38,20 +40,20 @@ for($i = 1;$i < $numStations;$i++)
     $modules_id[$i] = $device['modules'][$i -1]['_id'];
     
 if(isset($_POST["date0"]))  
-    {$date0 = $_POST["date0"];
-    $txt = explode("/",$date0);
-    $date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);    
-    }
-else    
-    $date_beg = mktime(0, 0, 0, date('m') , date('d')-30,date('y'));
-    
+    $date0 = $_POST["date0"]; 
+else
+    $date0 = $_SESSION['datebeg'];  
 if(isset($_POST["date1"]))  
-    {$date1 = $_POST["date1"];
-    $txt = explode("/",$date1);
-    $date_end = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);    
-    }
-else    
-    $date_end = mktime(0, 0, 0, date('m') , date('d'),date('y'));
+    $date1 = $_POST["date1"];
+else
+    $date1 = $_SESSION['dateend']; 
+    
+$txt = explode("/",$date0);
+$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);        
+$txt = explode("/",$date1);
+$date_end = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);    
+$_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+$_SESSION['dateend'] = date("d/m/Y",$date_end); 
 
 if(isset($_SESSION['selectMesureModule']))
     $selectMesure = $_SESSION['selectMesureModule'];
@@ -62,54 +64,79 @@ if(isset($_SESSION['selectMesureModule']))
 if(isset($_POST['selectMsesure']))
     $selectMesure = $_POST['selectMsesure'];
 
+if(isset($_POST["select"]))
+    {$interval = $_POST["select"];
+    $_SESSION['selectedInter'] = $interval;    
+    }
+ else   
+    {$interval = $_SESSION['selectedInter']; 
+    $interval = checkSelect($interval,'M');
+    }
+if($interval == "1week")
+	{$inter = 7*24*60*60;
+	$tinter = '1 semaine';
+	}
+else if($interval == "1day")
+	{$inter = 24*60*60;	
+	$tinter = '1 journée';
+	}
+else //3hours	
+	{$inter = 3*60*60;
+    $tinter = '3 heures';
+    }
+
 $CO2 = 0;	
+$HTime = 1;
 if($selectMesure == 'T')
-    {$type = 'min_temp,max_temp,date_min_temp,date_max_temp';
+    {if($inter == 3*60*60)
+        {$type = 'min_temp,max_temp';$HTime = 0;}
+    else
+        $type = 'min_temp,max_temp,date_min_temp,date_max_temp';
     $titre = 'Température ';
     }
 else if($selectMesure == 'H')
-    {$type = 'min_hum,max_hum,date_min_hum,date_max_hum';
+    {if($inter == 3*60*60)
+        {$type = 'min_hum,max_hum';$HTime = 0;}
+    else
+        $type = 'min_hum,max_hum,date_min_hum,date_max_hum';
     $titre = 'Humidité ';
     }    
 else if($selectMesure == 'C') // ni max ni min CO2
     {//$type = 'CO2';
-    $type = 'min_co2,max_co2,date_min_co2,date_max_co2';
+    if($inter == 3*60*60)
+        {$type = 'min_co2,max_co2';$HTime = 0;}
+    else
+        $type = 'min_co2,max_co2,date_min_co2,date_max_co2';    
     $titre = 'CO2 ';
     $CO2 = 1;
     }    
 $_SESSION['selectMesureModule'] = $selectMesure; 
- 
+
+
 if(isset($_SESSION['viewModule']))
-    $view = $_SESSION['viewModule'];
+    {$view = $_SESSION['viewModule'];
+    if($view['station'] !=  $stationNum)
+        for($i = 0 ;$i < $numStations; $i++)
+            $view[$i] = 1;    
+    }
 else
     for($i = 0 ;$i < $numStations; $i++)
         $view[$i] = 1;
         
-if(isset($_POST['stats']))
+if(isset($_POST['selectedModules']))
     {for($i = 0 ;$i < $numStations; $i++)
 	    $view[$i] = 0;
-    foreach($_POST['stats'] as $chkbx)
+    foreach($_POST['selectedModules'] as $chkbx)
 	    $view[$chkbx] = 1;
 	}
+$view['station'] = 	$stationNum;
 $_SESSION['viewModule'] = $view;   
-	    
+
 if($CO2)$view[1] = 0;
-//$CO2 = 0;
+
 $numview = 0;  // Nombre de stations cochées
 for($i = 0 ;$i < $numStations; $i++)
 	if($view[$i])++$numview;
-
-if(isset($_POST["select"]))
-    $interval = $_POST["select"];
- else   
-    $interval = '1day';
-    
-if($interval == "1week")
-	$inter = 7*24*60*60;
-else if($interval == "1day")
-	$inter = 24*60*60;	
-else //3hours	
-	$inter = 3*60*60;
 		
 $mesure = array($numStations);
 $dateBeg = array($numStations);
@@ -154,7 +181,9 @@ if($view[0])
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
-
+function tip0($temp)
+	{return sprintf('%4.1f',$temp); 
+	}  
 echo("
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
@@ -170,10 +199,10 @@ echo("
 	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data.addColumn('number', \"$name[0]\");\n");
 				echo("data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
-	          	}
-	          	
+	          	}	          	
 	        echo("data.addColumn('number', '');\n"); 
-	        $itime = $minDateBeg;   
+
+	        $itime = $minDateBeg; 
 	        $i = 0;	
             	do {
             	$idate = date("d/m/y",$itime);
@@ -185,14 +214,10 @@ echo("
             		if(abs($key - $itime) < 2*60*60) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
             			    {$tmin0 = $mesure[$j][$key][0];
-/*            			    
-            			    if($CO2)
-            			        {$tip =  sprintf('%4.1f',$tmin0); 
-            			        $tmin0 = min($tmin0,1000);
-            			        }
-            			    else 
-*/
+            			    if($HTime)
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
+            			    else
+            			        $tip = tip($tmin0,$itime);
             			    }
             			}        		
             		echo(",$tmin0,'$tip'"); 
@@ -229,19 +254,13 @@ echo("
             		$key = $keys[$j][$ii[$j]];         		
             		if(abs($key - $itime) < 2*60*60) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
-            			    {
-/*            			    if($CO2)
-            			        {$tmin0 = $mesure[$j][$key][0];
-            			        $tip =  sprintf('%4.1f',$tmin0); 
-            			        $tmin0 = min($tmin0,1000);
-            			        }
-            			    else
-*/            			    
-            			        {$tmin0 = $mesure[$j][$key][1];
+            			    {$tmin0 = $mesure[$j][$key][1];
+              			    if($HTime)          			    
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
-            			        }
-            			    }
-            			}        		
+            			    else
+            			        $tip = tip($tmin0,$itime);
+            			    }            			    }
+            			        		
             		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 	
@@ -251,8 +270,8 @@ echo("
 				echo("data1.removeColumn(1+2*$numview);\n");				 
                 }
 
-$title = $titre . 'minimum';                
-$title1 = $titre . 'maximal';
+$title = $titre . 'minimum'. ' (' . $tinter . ')';                
+$title1 = $titre . 'maximal'. ' (' . $tinter . ')';
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 			echo("                                   
@@ -271,10 +290,6 @@ $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',font
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
 
 <?php
-
-$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
-$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-
 
 echo("<body>");
 		echo("
@@ -301,7 +316,7 @@ echo("
 	 <tr>
 	    <td style='padding:0px; vertical-align:bottom;'>
 	 ");
-drawMenuModules($stationNum,$h1);
+drawMenuModules($h1);
 echo("</td>    	 
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
 		<div id='chart1' class='chart' style='height:$h'></div></td>
@@ -309,8 +324,7 @@ echo("</td>
 	</table>
 	");
 	
-$draw = false;
-drawLogoutBack($draw); 
+drawLogoutBack(); 
 ?>
 </body>
 </html>

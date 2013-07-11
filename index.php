@@ -1,4 +1,6 @@
-<?php session_start(); ?>
+<?php session_start(); 
+$_SESSION=array();
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <meta charset='utf-8'>

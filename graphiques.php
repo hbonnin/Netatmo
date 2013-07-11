@@ -16,21 +16,38 @@ session_start();
 
 <?php
 date_default_timezone_set("Europe/Paris");
-if(!isset($_POST) )return;
+
+if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
-$stationId = $_POST['station'];
+
+if(isset($_POST["select"]))
+    {$interval = $_POST["select"];
+    $_SESSION['selectedInter'] = $interval;    
+    }
+ else   
+    $interval = $_SESSION['selectedInter']; 
+
+if(isset($_POST['date0']))
+    $date0 = $_POST['date0'];
+else
+    $date0 =$_SESSION['datebeg'];  
+if(isset($_POST['date1']))
+    $date1 = $_POST['date1'];
+else
+    $date1 = $_SESSION['dateend']; 
+    
+    
+if(isset($_POST['station'])) 
+    $stationId = $_POST['station'];
+else if(isset($_SESSION['stationId']))
+    $stationId = $_SESSION['stationId'];
+else
+    $stationId = 0;
+
 $_SESSION['stationId'] = $stationId;
-$interval = $_POST['select'];
-/*
-echo("<pre>");
-print_r($_POST);
-echo("</pre>");
-*/
-$date0 = $_POST["date0"];
-$date1 = $_POST["date1"];
 
 
 if($interval=="1week")
@@ -79,10 +96,19 @@ else //3hours 1day 1week
 // pour tracer le calendrier	
 $datebeg = date("d/m/Y",$date_beg); 
 $dateend = date("d/m/Y",$date_end); 
+$_SESSION['datebeg'] = $datebeg;
+$_SESSION['dateend'] = $dateend;
 if($inter == 24*60)$date_beg -= 24*60*60;
-
-	
-
+/*
+echo "<pre>";
+echo "POST";
+print_r($_POST);
+echo "GET";
+print_r($_GET);
+echo("dates:$date0 $date1 -> $datebeg  $dateend");
+echo (" inter:$interval  id:$stationId");
+echo "</pre>";
+*/
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
 
@@ -421,8 +447,6 @@ echo("
 </head>
   <body>
  <?php
-	//$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-	//$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 	$num = count($devicelist["devices"]);
 	drawCharts();	
  ?>

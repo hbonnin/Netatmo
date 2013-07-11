@@ -1,5 +1,6 @@
 <?php 
 session_start();
+$_SESSION=array();
 require_once 'Config.php';
 
 	$msg = '';	

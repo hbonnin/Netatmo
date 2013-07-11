@@ -14,7 +14,6 @@ if(isset($_SESSION['emsg']))
     echo "message: {$_SESSION['emsg']} <br>";
 //echo "<pre>";print_r($_SESSION);echo("</pre");
 echo("</body></html>");
-
 $_SESSION=array();
 session_destroy();
 ?>

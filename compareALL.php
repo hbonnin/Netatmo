@@ -29,9 +29,10 @@ $date1 = $_POST["date1"];
 $txt = explode("/",$date1);
 $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 $interval = $_POST["select"];
+//$_SESSION['selectedInter'] = $interval;
 $numStations = count($devicelist["devices"]);
-$datebeg = $date0;
-$dateend = $date1;
+$_SESSION['datebeg'] = $date0;
+$_SESSION['dateend'] = $date1;
 
 if(isset($_SESSION['viewCompare']))
     $view = $_SESSION['viewCompare'];
@@ -200,8 +201,6 @@ $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',font
  
   <body> 
  <?php
-	//$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-	//$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
 	$num = count($devicelist["devices"]);
 	drawCharts();
 ?>

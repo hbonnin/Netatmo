@@ -1,19 +1,96 @@
 <?php
-function drawLogoutBack($draw=true)
-	{
+$opt = array (
+            0 => array ('1week','1 semaine'),
+            1 => array ('1day','1 journée'),
+            2 => array ('3hours','3 heures'),
+            3 => array ('30min','30 miniutes'),
+            4 => array ('max','5 minutes')
+            );
+$interval = array ("G" => 4,
+                    "C"  => 1,
+                    "M"  => 2, 
+                    "opt" => $opt
+            );
+
+function checkSelect($select,$menu)
+    {$opt = array (
+            0 => array ('1week','1 semaine'),
+            1 => array ('1day','1 journée'),
+            2 => array ('3hours','3 heures'),
+            3 => array ('30min','30 miniutes'),
+            4 => array ('max','5 minutes')
+            );
+    $interval = array ("G" => 4,
+                    "C"  => 1,
+                    "M"  => 2, 
+                    "opt" => $opt
+            );
+    $iselect = selectIndex($opt,$select); 
+    $selected = min($iselect,$interval[$menu]);
+    return  $interval['opt'][$selected][0];        
+    }
+function selectIndex($opt,$select)
+    {$max = count($opt);
+    for($i = 0; $i < $max;$i++)
+        if($select == $opt[$i][0])break;
+    return $i;    
+    }
+function drawSelectInter($menu)
+    {
+    $opt = array (
+            0 => array ('1week','1 semaine'),
+            1 => array ('1day','1 journée'),
+            2 => array ('3hours','3 heures'),
+            3 => array ('30min','30 miniutes'),
+            4 => array ('max','5 minutes')
+            );
+    $interval = array ("G" => 4,
+                    "C"  => 1,
+                    "M"  => 2, 
+                    "opt" => $opt
+            );
+    $select  = $_SESSION['selectedInter'];   
+    $iselect = selectIndex($interval['opt'],$select); 
+    $selected = min($iselect,$interval[$menu]);
+    for($i = 0; $i <= $interval[$menu];$i++)
+        {$val = $interval['opt'][$i][0];
+        $txt = $interval['opt'][$i][1];
+        $sel ='';
+        if($i == $selected)$sel = "selected='selected'";
+        echo "<option value="."'" .$val."' ". $sel."/>". $txt.' </option>'."<br>";       
+        }   
+    }            
+function drawLogoutBack()
+	{if(!isset($_SESSION['stationId'] ))
+        $_SESSION['stationId'] = 0;
+    $menuModules = 'modules.php?stationNum=' . $_SESSION['stationId'];
 ?>
 <!-- drawLogoutBack -->
 <table style='margin:auto; '>
 	<tr>
 	<td>
-	<form  action='iconesExt.php' method='post'>
-	<input type='submit' value="Main menu" style='color:black; background-color:#ddd;'/>
+	<form  action='graphiques.php?extern=1' method='post'>
+	<input type='submit' class='submit' value="Graphiques d'une station" />
 	</form>
-	</td><td>
+	</td>
+	<td>
+	<form  action=<?php echo $menuModules; ?> method='post'>
+	<input type='submit' class='submit' value="Modules d'une station"  />
+	</form>
+	</td>
+	<td>
+	<form  action='iconesExt.php' method='post'>
+	<input type='submit' class='submit' value="Menu principal"/>
+	</form>
+	</td>
+	<td>
 	<form action='logout.php' method='post'>
-	<input type='submit' value='Logout' style='color:#a00; background-color:#ddd;' />	
+	<input type='submit' class='submit' value='Logout' style='color:#700; ' />	
 	</form>	
 	</td>
+    </tr></table>
+<table style='margin-left:auto; margin-right:auto; margin-top:-5px;'>
+	<tr>
 	<td>
 	<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
 	</td>		
@@ -23,7 +100,7 @@ function drawLogoutBack($draw=true)
 		echo("{$_SESSION['width']} x {$_SESSION['height']}");
 ?>
 	</td>
-
+	<!--
     <td style='display: none;'>
     <script src='http://www.counter160.com/js.js?img=15'></script>
     <br>
@@ -34,23 +111,19 @@ function drawLogoutBack($draw=true)
     <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
     </a>
     </td>
+    -->
+    <td></td>
 </tr></table>	
 	</tr>
 	</table>
-<?php	
-	if($draw)
-		echo("
-		<table class='ds_box'  id='ds_conclass' style='display: none;' >
-		<caption id='id_caption' class='ds_caption'>xxxx</caption>
-		<tr><td id='ds_calclass'>aaa</td></tr>
-		</table>
-		");
-?>
 <!-- end drawLogoutBack -->	
 <?php
 	}
 function drawMenuStation($h = '')
-	{global $datebeg,$dateend,$num,$mesures;
+	{global $num,$mesures;
+	$datebeg = $_SESSION['datebeg'];
+	$dateend = $_SESSION['dateend'];
+	
 	
 	if(isset($_SESSION['stationId']))
 	    $stationId = $_SESSION['stationId'];
@@ -59,7 +132,7 @@ function drawMenuStation($h = '')
 	    $_SESSION['stationId'] = $stationId;
 	    }
 ?>	
-<!-- DrawMenu Station -->
+<!-- DrawMenu Station -------------------------------------------------------------------->
 	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>
 <?php	
 	if($h)
@@ -68,10 +141,23 @@ function drawMenuStation($h = '')
 		echo("<table class='graphic' style='border-spacing:2px;'>");
 ?>	
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;  padding-bottom:5px'>Graphiques d'une station</td> 
-	</tr>
+	</tr>	
 	<tr>
 	<td style='height:25px;'>Début</td>
+<?php
+$interval = $_SESSION['selectedInter']; 
+if(($interval != '30min') && ($interval != 'max') )
+    echo("
+    	<td><input class=\"date\" id=\"id_date0\" type=\"text\" name=\"date0\" value=\"$datebeg\" onclick=\"ds_sh(this,0);\"></td>
+    ");
+else 
+    echo("
+    	<td><input class=\"date\" style=\"visibility:hidden; \" id=\"id_date0\" type=\"text\" name=\"date0\" value=\"$datebeg\" onclick=\"ds_sh(this,0);\"></td>
+    ");
+?>
+<!--
 	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
+-->
 	</tr>
 
 	<tr>
@@ -80,26 +166,21 @@ function drawMenuStation($h = '')
 	</tr>
 
 	<tr>
-	<td id='id_duree' style='height:25px;'>Fréquence
+	<td id='id_duree' style='height:25px;'>Fréquence 
 	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
-<?php
-/*
-$opt = array (
-            0 => array ('1week','1 semaine'),
-            1 => array ('1day','1 journée'),
-            2 => array ('3hours','3 heures'),
-            3 => array ('30min','30 miniutes'),
-            4 => array ('max','5 minutes')
-            );
-*/ 
+
+<?php	
+     drawSelectInter("G"); 
 ?>
+<!--
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' selected='selected' > 1 journée </option>
 		<option value='3hours' > 3 heures </option>
 		<option value='30min'> 30 minutes </option>
 		<option value='max' > 5 minutes </option>
+-->		
 		</select>		
 	</td>	
 	</tr>
@@ -131,7 +212,9 @@ $opt = array (
 <?php	
 	}
 function drawMenuCompare($h ='')
-	{global $datebeg,$dateend,$num,$mesures;
+	{global $num,$mesures;
+	$datebeg = $_SESSION['datebeg'];
+	$dateend = $_SESSION['dateend'];
 	
 	if(isset($_SESSION['viewCompare']))
 	    $view = $_SESSION['viewCompare'];
@@ -175,8 +258,13 @@ function drawMenuCompare($h ='')
 	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
+<?php	
+     drawSelectInter("C"); 
+?>		
+<!--
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' selected='selected' > 1 journée </option>
+-->		
 		</select>		
 	</td>	
 	</tr>
@@ -232,6 +320,12 @@ function drawMenuCompare($h ='')
 	}
 function drawCharts()
 	{
+	echo("
+		<table class='ds_box'  id='ds_conclass' style='display: none;' >
+		<caption id='id_caption' class='ds_caption'>xxxx</caption>
+		<tr><td id='ds_calclass'>aaa</td></tr>
+		</table>
+		");
 	echo("<table style='padding:0px; width:100%; margin-bottom:-5px;'>
 	<tr>
 	<td style='padding:0px; vertical-align:bottom;'>
@@ -259,8 +353,14 @@ function drawCharts()
 	drawLogoutBack(); 
 	}
 	
-function drawMenuModules($stationNum,$h ='')
-	{global $datebeg,$dateend,$numStations,$nameStations;
+function drawMenuModules($h ='')
+	{global $numStations,$nameStations;
+	$datebeg = $_SESSION['datebeg'];
+	$dateend = $_SESSION['dateend'];
+	
+    $stationNum = $_SESSION['stationId']; 
+    $devicelist = $_SESSION['devicelist'];
+    $stationName = $devicelist['devices'][$stationNum]['station_name'];
 
 	if(isset($_SESSION['viewModule']))
 	    $view = $_SESSION['viewModule'];
@@ -278,7 +378,7 @@ function drawMenuModules($stationNum,$h ='')
         }
     
 ?>	
-	<!-- DrawMenu Modules -->
+	<!-- DrawMenu Modules --->
 	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>' onsubmit='return valider(this);'>	
 	
 <?php	
@@ -289,8 +389,11 @@ function drawMenuModules($stationNum,$h ='')
 		echo("<table class='graphic' style='border-spacing:2px;'>");
 ?>	
 
-	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px; padding-bottom:5px'>
+	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;'>
 	Comparaison de modules</td></tr>
+
+	<tr><td colspan='2' style='text-align:center;  padding-bottom:5px'>
+	<?php echo $stationName ?></td></tr>
 	
 	<tr>
 	<td style='height:25px;'>Début</td>
@@ -306,10 +409,15 @@ function drawMenuModules($stationNum,$h ='')
 	<td style='height:25px;'>Fréquence
 	</td>	
 	<td>
-		<select name='select' onChange='Allow(this);'>
+		<select name='select'>
+<?php	
+     drawSelectInter("M"); 
+?>	
+<!--
 		<option value='1week' > 1 semaine </option>
 		<option value='1day' selected='selected' > 1 journée </option>
-		<!--<option value='3hours' > 3 heures </option>-->
+		<option value='3hours' > 3 heures </option>
+-->		
 		</select>		
 	</td>	
 	</tr>
@@ -352,9 +460,9 @@ function drawMenuModules($stationNum,$h ='')
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($view[$i])
-				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
+				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='selectedModules[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
-				echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
+				echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='selectedModules[]' value='$i'> $stat </td></tr>\n");		
 			}
 		echo("</table>\n");	
 ?>			

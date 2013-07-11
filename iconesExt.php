@@ -35,6 +35,9 @@ if(isset($_GET['height']))
 
 // reload page => recalculer $mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
+//interval initial
+if(!isset($_SESSION['selectedInter'] ))
+    $_SESSION['selectedInter'] = '1day';
 
 initClient();
 $client = $_SESSION['client'];
@@ -366,8 +369,11 @@ echo("</tr></table>");
 <tr>
 <td class='container'>
 <?php
-$dateend = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-$datebeg = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+if(!isset($_SESSION['datebeg']))
+    {$_SESSION['datebeg'] = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
+    $_SESSION['dateend'] = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
+    }    
+
 $num = count($devicelist["devices"]);
 
 drawMenuStation('310px');

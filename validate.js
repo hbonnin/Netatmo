@@ -40,15 +40,18 @@ function Allow(tab)
 	var duree = document.getElementById('id_duree');
     if(i < 3)
 		{duree.innerHTML = 'Fréquence';
-		el0.hidden = false;
+//		el0.hidden = false;
+		el0.style.visibility ='visible';
 		}
 	else if(i == 3)
 		{duree.innerHTML = 'Fréquence (14j)';
-		el0.hidden = true;
+		el0.style.visibility ='hidden';		
+//		el0.hidden = true;
 		}				
 	else
 		{duree.innerHTML = 'Fréquence (2j)';
-		el0.hidden=true;
+		el0.style.visibility ='hidden';		
+//		el0.hidden=true;
 		}	
     return true;		
 	}

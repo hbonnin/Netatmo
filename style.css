@@ -134,6 +134,11 @@ td.container {
 td.modules	{
  text-align:left;
 }
+.submit {
+	background-color:#cceeff;
+	color:#008;
+	font-size:12px;
+}
 .tooltip	{
   	position: relative;
   	background: #cceeff;
