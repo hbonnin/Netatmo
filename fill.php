@@ -60,10 +60,8 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 	if($nModule > 2)
 		{echo("	
 		<td style='text-align:left;' colspan='7'>
-		<!--<a href='#' class='tooltip'>-->
-		<div class='tooltip' style='text-decoration:underline;'>
-  		Autres modules:
-  		
+		<a href='#' class='tooltip'>
+  		Autres modules:	
   		<div>
   		<table>
   		<tr><td></td>	<td> Temp</td>	<td>Hum</td>	<td>CO2</td></tr>
@@ -81,15 +79,8 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
   			</tr>");
   			}
   			
-  		echo("<tr><td>
-  			<!--<form  action='modules.php?stationNum=$stationId' method='post'>-->
-			<input type='submit' value='Graphiques' style='font-size:10px; color:black; background-color:#cceeff;'>
-			<!--</form>-->
-			</td>
-			<td></td> <td></td> <td></td></tr></table>
-  		");
-  		echo("</div></div> </td></tr></table>");
-//  		echo("</div></a> </td></tr></table>");
+  		echo("</table>");
+  		echo("</div></a> </td></tr></table>");
   		}
 	else
 		echo("	
@@ -98,6 +89,5 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 		</td></tr>
 		</table>
 		");
-	echo("</form>");
 }
 ?>
