@@ -101,23 +101,20 @@ $_SESSION['dateend'] = $dateend;
 if($inter == 24*60)$date_beg -= 24*60*60;
 /*
 echo "<pre>";
-echo "POST";
-print_r($_POST);
-echo "GET";
-print_r($_GET);
-echo("dates:$date0 $date1 -> $datebeg  $dateend");
-echo (" inter:$interval  id:$stationId");
+print_r($devicelist["devices"][$stationId]);
 echo "</pre>";
 */
+
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
 
 $int_name = $devicelist["devices"][$stationId]["module_name"];
 $ext_name = $devicelist["devices"][$stationId]["modules"][0]["module_name"];
+$stat_name = $mesures[$stationId]['station_name'];
 
 date_default_timezone_set("UTC");
 
-$stat0 = $mesures[$stationId]['station_name'];
+
 	// exterieur
     $params = array("scale" => $interval
     , "type" => $req
@@ -296,7 +293,7 @@ else   //5 ou 30 minutes
                 }while($break != 1);
            	echo("dataExt.removeColumn(4);\n");				      
 	}
-	$title = '"' .$stat0. '-' .$ext_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
+	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
 	
 
 if($inter > 30)			
@@ -409,7 +406,7 @@ else  // 5 minutes ou 30 minutes
                 }while($break != 1);
             echo("dataInt.removeColumn(7);\n");				      
  	} 
-	$title1 = '"' .$stat0. '-' .$int_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
+	$titleInt = '"' .$stat_name. '-' .$int_name. '   (' .intval(.5 + $nDays/3600/24).' jours: ' . $num . ' mesures / '. $tinter .')"';       	                    	
 
 echo("
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
@@ -422,20 +419,20 @@ echo("
 if($inter >= 3*60) 	                                
 echo("                   
 
-    chartInt.draw(dataInt, {title: $title1 $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
+    chartInt.draw(dataInt, {title: $titleInt $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
 ");
 else
 echo("                 
-    chartInt.draw(dataInt, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
+    chartInt.draw(dataInt, {title: $titleInt $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
 ");
 
 if($inter > 3*60) 	                                
 echo("                   
-    chartExt.draw(dataExt, {title: $title $visupt,colors: ['red','blue','green','#00dd00','#aaaaff','ffaaaa'],$param});
+    chartExt.draw(dataExt, {title: $titleExt $visupt,colors: ['red','blue','green','#00dd00','#aaaaff','ffaaaa'],$param});
 ");
 else
 echo("                 
-    chartExt.draw(dataExt, {title: $title1 $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
+    chartExt.draw(dataExt, {title: $titleExt $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
 ");
 
 ?>           

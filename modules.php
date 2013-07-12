@@ -156,7 +156,7 @@ $keys = array($numStations);
 $nmesures = array($numStations);
 
 $minDateBeg = $date_end;
-
+$numKeys = 0;
 for($i = 1;$i < $numStations;$i++)
 	{if($view[$i] == 0)continue;
 	$moduleId = $modules_id[$i];
@@ -169,6 +169,7 @@ for($i = 1;$i < $numStations;$i++)
     , "module_id" => $moduleId);  
     $mesure[$i] = $client->api("getmeasure", "POST", $params);
     $keys[$i] = array_keys($mesure[$i]);
+    $numKeys = max($numKeys,count($keys[$i]));
     $dateBeg[$i] = $keys[$i][0];
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
     $nmesures[$i] = count($keys[$i]);    
@@ -182,6 +183,7 @@ if($view[0])
     , "device_id" => $device_id); 
     $mesure[0] = $client->api("getmeasure", "POST", $params);
     $keys[0] = array_keys($mesure[0]);
+    $numKeys = max($numKeys,count($keys[0]));
     $dateBeg[0] = $keys[0][0];
     $minDateBeg = min($minDateBeg,$dateBeg[0]);    
     $nmesures[0] = count($keys[0]);    
@@ -210,7 +212,8 @@ echo("
 				echo("data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
 	          	}	          	
 	        echo("data.addColumn('number', '');\n"); 
-
+	        $visupt = '';
+            if($numKeys <= 73)$visupt = ",pointSize:3";	
 	        $itime = $minDateBeg; 
 	        $i = 0;	
             	do {
@@ -285,9 +288,9 @@ $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\
 $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
-             chartMin.draw(data ,{title: '$title' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+             chartMin.draw(data ,{title: '$title' $visupt,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartMax.draw(data1 ,{title: '$title1' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+             chartMax.draw(data1 ,{title: '$title1' $visupt,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
 			");
 /*
 echo("
