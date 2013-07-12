@@ -355,12 +355,15 @@ function drawCharts()
 	
 function drawMenuModules($h ='')
 	{global $numStations,$nameStations;
+
+	$mesures = $_SESSION['mesures'];
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
 	
     $stationNum = $_SESSION['stationId']; 
     $devicelist = $_SESSION['devicelist'];
     $stationName = $devicelist['devices'][$stationNum]['station_name'];
+    $num = count($devicelist["devices"]);
 
 	if(isset($_SESSION['viewModule']))
 	    $view = $_SESSION['viewModule'];
@@ -392,8 +395,23 @@ function drawMenuModules($h ='')
 	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;'>
 	Comparaison de modules</td></tr>
 
-	<tr><td colspan='2' style='text-align:center;  padding-bottom:5px'>
-	<?php echo $stationName ?></td></tr>
+    <tr><td style='height:25px;'>Station  </td>
+    <td stye='width:80px;height:25px;'>
+    		<select name='selectStation'>
+		<?php
+		for($i = 0;$i < $num;$i++)
+			{$stat = $mesures[$i]['station_name'];
+			$arr = explode(" ",$stat);
+			$stat = $arr[0];
+			if($i == $_SESSION['stationId'])
+			    echo("<option value='$i' selected='selected'>$stat</option>");
+            else
+			    echo("<option value='$i'>$stat</option>");            
+			}
+    	?>
+            </select>
+    </td></tr>
+
 	
 	<tr>
 	<td style='height:25px;'>Début</td>
@@ -413,11 +431,6 @@ function drawMenuModules($h ='')
 <?php	
      drawSelectInter("M"); 
 ?>	
-<!--
-		<option value='1week' > 1 semaine </option>
-		<option value='1day' selected='selected' > 1 journée </option>
-		<option value='3hours' > 3 heures </option>
--->		
 		</select>		
 	</td>	
 	</tr>

@@ -19,7 +19,13 @@ initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
+
+// $stationNum station utilise
 $stationNum = $_GET['stationNum'];
+if(isset($_POST['selectStation']))
+    {$changedStation = ($stationNum != $_POST['selectStation']);
+    $stationNum = $_POST['selectStation'];
+    }
 $_SESSION['stationId'] = $stationNum;
 
 $res = $mesures[$stationNum]["modules"];
@@ -116,19 +122,22 @@ $_SESSION['selectMesureModule'] = $selectMesure;
 if(isset($_SESSION['viewModule']))
     {$view = $_SESSION['viewModule'];
     if($view['station'] !=  $stationNum)
-        for($i = 0 ;$i < $numStations; $i++)
+        {for($i = 0 ;$i < $numStations; $i++)
             $view[$i] = 1;    
+        $view['station'] = $stationNum;
+        }
     }
 else
     for($i = 0 ;$i < $numStations; $i++)
         $view[$i] = 1;
-        
-if(isset($_POST['selectedModules']))
+       
+if(isset($_POST['selectedModules']) && $changedStation == false)
     {for($i = 0 ;$i < $numStations; $i++)
 	    $view[$i] = 0;
     foreach($_POST['selectedModules'] as $chkbx)
 	    $view[$chkbx] = 1;
 	}
+	
 $view['station'] = 	$stationNum;
 $_SESSION['viewModule'] = $view;   
 
@@ -137,6 +146,8 @@ if($CO2)$view[1] = 0;
 $numview = 0;  // Nombre de stations cochées
 for($i = 0 ;$i < $numStations; $i++)
 	if($view[$i])++$numview;
+if($numview == 0)
+    $view[$i] = $numview = 1;
 		
 $mesure = array($numStations);
 $dateBeg = array($numStations);
@@ -181,14 +192,12 @@ if($view[0])
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
-function tip0($temp)
-	{return sprintf('%4.1f',$temp); 
-	}  
+
 echo("
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);
-      
+
       function drawChart() {
               var data = new google.visualization.DataTable();              
 	          data.addColumn('string', 'Date');
@@ -280,6 +289,14 @@ $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',font
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
              chartMax.draw(data1 ,{title: '$title1' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
 			");
+/*
+echo("
+    google.visualization.events.addListener(chartMin, 'select', selectHandler);
+    function selectHandler() {
+        alert('A table row was selected');
+        }
+");
+*/
 /**************************************************************/
 			
 ?>            
