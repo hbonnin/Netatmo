@@ -205,7 +205,7 @@ for($i = 0;$i < $numStations;$i++)
 	  controlDiv.style.padding = '5px  0px 0px 0px';
 	  // Set CSS for the control border.
 	  var controlUI = document.createElement('div');
-	  controlUI.style.backgroundColor = '#cceeff';
+	  controlUI.style.backgroundColor = 'white';
 	  controlUI.style.borderStyle = 'solid';
 	  controlUI.style.borderColor = 'gray';	  
 	  controlUI.style.borderWidth = '1px';
@@ -236,7 +236,7 @@ for($i = 0;$i < $numStations;$i++)
 
 	  // Set CSS for the control border.
 	  var controlUI = document.createElement('div');
-	  controlUI.style.backgroundColor = '#cceeff';
+	  controlUI.style.backgroundColor = 'white';
 	  controlUI.style.borderStyle = 'solid';
 	  controlUI.style.borderColor = 'gray';	  
 	  controlUI.style.borderWidth = '1px';
@@ -273,7 +273,7 @@ for($i = 0;$i < $numStations;$i++)
 
 	  // Set CSS for the control border.
 	  var controlUI = document.createElement('div');
-	  controlUI.style.backgroundColor = '#cceeff';
+	  controlUI.style.backgroundColor = 'white';
 	  controlUI.style.borderStyle = 'solid';
 	  controlUI.style.borderColor = 'gray';	  
 	  controlUI.style.borderWidth = '1px';

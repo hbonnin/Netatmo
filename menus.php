@@ -92,7 +92,9 @@ function drawLogoutBack()
 <table style='margin-left:auto; margin-right:auto; margin-top:-5px;'>
 	<tr>
 	<td>
+	
 	<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
+	
 	</td>		
 	<td style='font-size:11px;'>
 <?php
@@ -119,6 +121,7 @@ function drawLogoutBack()
 <!-- end drawLogoutBack -->	
 <?php
 	}
+//<!-- =============================================================================================== -->	
 function drawMenuStation($h = '')
 	{global $num,$mesures;
 	$datebeg = $_SESSION['datebeg'];
@@ -132,18 +135,18 @@ function drawMenuStation($h = '')
 	    $_SESSION['stationId'] = $stationId;
 	    }
 ?>	
-<!-- DrawMenu Station -------------------------------------------------------------------->
+<!-- DrawMenu Station ------------------------------------------------------------------------------------------->
 	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>
 <?php	
 	if($h)
-		echo("<table class='graphic' style='height:$h; width:220px;'>");
+		echo("<table class='graphic' style='height:$h;'>");
 	else
-		echo("<table class='graphic' style='border-spacing:2px;'>");
+		echo("<table class='graphic' style='height:370px;'>");
 ?>	
-	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;  padding-bottom:5px'>Graphiques d'une station</td> 
-	</tr>	
+	<tr><td colspan='2'  class='title'>
+	Graphiques d&#39;une station</td> </tr>	
 	<tr>
-	<td style='height:25px;'>Début</td>
+	<td>Début</td>
 <?php
 $interval = $_SESSION['selectedInter']; 
 if(($interval != '30min') && ($interval != 'max') )
@@ -155,18 +158,15 @@ else
     	<td><input class=\"date\" style=\"visibility:hidden; \" id=\"id_date0\" type=\"text\" name=\"date0\" value=\"$datebeg\" onclick=\"ds_sh(this,0);\"></td>
     ");
 ?>
-<!--
-	<td><input class='date' id='id_date0' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
--->
-	</tr>
 
+	</tr>
 	<tr>
-	<td style='height:25px;'>Fin</td>
+	<td>Fin</td>
 	<td><input class='date' id='id_date1'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' ></td>
 	</tr>
 
 	<tr>
-	<td id='id_duree' style='height:25px;'>Fréquence 
+	<td id='id_duree'>Fréquence 
 	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
@@ -185,30 +185,30 @@ else
 	</td>	
 	</tr>
 	<tr>
-		<td style='height:25px;'>Choisir une station</td>
+		<td>Station</td>
 		<td>			
 		<?php
-		echo("<table>\n");
+		echo("<table class='chk'>\n");
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mesures[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($i == $stationId)
-				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
+				echo("<tr><td><input type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
-				echo("<tr><td style='font-size:12px;'><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
+				echo("<tr><td><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
 			}
 		echo("</table>\n");
 		?>
 		</td>
-	<tr><td>
-	<input type='submit'  style='background-color:#ddd;' >
-	</td><td></td>		
+	<tr><td class='submitG'>
+	<input type='submit' class='submitG' >
+	</td><td class='submitG'></td>		
 	</tr>
 	</table>
 	</form>	
 	
-<!-- End DrawMenu Station -->	
+<!-- End DrawMenu Station ---------------------------------->	
 <?php	
 	}
 function drawMenuCompare($h ='')
@@ -232,45 +232,41 @@ function drawMenuCompare($h ='')
         }
        
 ?>
-<!-- DrawMenu Compare -->
+<!-- DrawMenu Compare ------------------------------------------------------------------------------------------->
 	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
 <?php	
 	if($h)
-		echo("<table class='graphic' style='height:$h; width:220px; '>");
+		echo("<table class='graphic' style='height:$h;'>");
 	else
-		echo("<table class='graphic' style='border-spacing:2px;'>");
+		echo("<table class='graphic' style='height:370px;' >");
 ?>	
 
-	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px; padding-bottom:5px'>
+	<tr><td colspan='2'  class='title'>
 	Comparaison de stations</td></tr>
 	
 	<tr>
-	<td style='height:25px;'>Début</td>
+	<td >Début</td>
 	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 	
 	<tr>
-	<td style='height:25px;'>Fin</td>
+	<td >Fin</td>
 	<td><input class='date'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' ></td>
 	</tr>
 	<tr>
-	<td style='height:25px;'>Fréquence
+	<td >Fréquence
 	</td>	
 	<td>
 		<select name='select' onChange='Allow(this);'>
 <?php	
      drawSelectInter("C"); 
 ?>		
-<!--
-		<option value='1week' > 1 semaine </option>
-		<option value='1day' selected='selected' > 1 journée </option>
--->		
 		</select>		
 	</td>	
 	</tr>
 	
 	<tr>
-	<td style='height:25px;'>Mesure
+	<td >Mesure
 	</td>	
 	<td>
 		<select name='selectMsesure'>
@@ -290,26 +286,25 @@ function drawMenuCompare($h ='')
 	</tr>	
 
 	<tr>
-		<td style='height:25px;'>Choisir des stations</td>
+		<td>Stations</td>
 		<td>
 <?php
-		echo("<table>\n");
+		echo("<table class='chk'>\n");
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mesures[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($view[$i])
-				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
+				echo("<tr><td><input  type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
-				echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
+				echo("<tr><td ><input  type='checkbox' name='stats[]' value='$i'> $stat </td></tr>\n");		
 			}
 		echo("</table>\n");	
 ?>			
 		</td>
 	</tr>
-	<!-- onclick="this.disabled='disabled'" bloque sur ipad-->
-	<tr><td><input type='submit'  style='background-color:#ddd;'></td>
-	<td></td></tr>
+	<tr><td class='submitG'><input type='submit' class='submitG' ></td>
+	<td class='submitG'></td></tr>
 	</table>
 	</form>	
 	
@@ -352,7 +347,7 @@ function drawCharts()
 	");
 	drawLogoutBack(); 
 	}
-	
+/*************************************************************************/	
 function drawMenuModules($h ='')
 	{global $numStations,$nameStations;
 
@@ -381,22 +376,24 @@ function drawMenuModules($h ='')
         }
     
 ?>	
-	<!-- DrawMenu Modules --->
+	<!-- DrawMenu Modules --------------------------------------------------------------------------------------->
 	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>' onsubmit='return valider(this);'>	
 	
 <?php	
 	
 	if($h)
-		echo("<table class='graphic' style='height:$h; width:220px; border-spacing:2px; '>");
+		echo("<table class='graphic' style='height:$h;'>");
 	else
-		echo("<table class='graphic' style='border-spacing:2px;'>");
+		echo("<table class='graphic'>");
 ?>	
 
-	<tr><td colspan='2' style='text-align:center; font-weight:bold; padding-top:0px;'>
+	<tr><td colspan='2' class='title'>
 	Comparaison de modules</td></tr>
-
-    <tr><td style='height:25px;'>Station  </td>
-    <td stye='width:80px;height:25px;'>
+    </tr>
+  <!--  station -->
+    <tr>
+    <td> Station </td>
+	    <td>
     		<select name='selectStation'>
 		<?php
 		for($i = 0;$i < $num;$i++)
@@ -410,21 +407,20 @@ function drawMenuModules($h ='')
 			}
     	?>
             </select>
-    </td></tr>
-
-	
+    </td>    
+    </tr>  
 	<tr>
-	<td style='height:25px;'>Début</td>
+	<td style=''>Début</td>
 	<td><input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'></td>
 	</tr>
 	
 	<tr>
-	<td style='height:25px;'>Fin</td>
+	<td style=''>Fin</td>
 	<td><input class='date'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' ></td>
 	</tr>
 	
 	<tr>
-	<td style='height:25px;'>Fréquence
+	<td style=''>Fréquence
 	</td>	
 	<td>
 		<select name='select'>
@@ -436,7 +432,7 @@ function drawMenuModules($h ='')
 	</tr>
 	
 	<tr>
-	<td style='height:25px;'>Mesure
+	<td >Mesure
 	</td>	
 	<td>
 		<select name='selectMsesure'>
@@ -464,26 +460,29 @@ function drawMenuModules($h ='')
 	</tr>	
 	
 	<tr>
-		<td style='height:25px;'>Choisir des stations</td>
+		<td>Modules</td>
 		<td>
 <?php
-		echo("<table>\n");
+		echo("<table class='chk'>\n");
 		for($i = 0;$i < $numStations;$i++)
 			{$stat = $nameStations[$i];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($view[$i])
-				echo("<tr><td style='font-size:12px;'><input style='font-size:12px;' type='checkbox' name='selectedModules[]' value='$i' checked='checked'> $stat </td></tr>\n");
+				echo("<tr><td><input type='checkbox' name='selectedModules[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
-				echo("<tr><td style='font-size:12px;'><input  type='checkbox' name='selectedModules[]' value='$i'> $stat </td></tr>\n");		
+				echo("<tr><td><input  type='checkbox' name='selectedModules[]' value='$i'> $stat </td></tr>\n");		
 			}
 		echo("</table>\n");	
 ?>			
 		</td>
 	</tr>
 	
-	<tr><td><input type='submit'  style='background-color:#ddd;'></td>
-	<td></td></tr>
+	<tr>
+		<td class='submitG'> <input type='submit' class='submitG' ></td>
+		<td class='submitG'>
+    </tr>
+
 	</table>
 	</form>		
 <!-- End DrawMenu Module -->
