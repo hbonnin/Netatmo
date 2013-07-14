@@ -341,7 +341,6 @@ for($i = 0;$i < $numStations;$i++)
     	, "device_id" => $device_id
     	, "module_id" => $module_id);
     $tmesure = $client->api("getmeasure", "POST", $params);	
-    //if(count($tmesure[0]['value'][0]))
     if(count($tmesure))
     	{$tmins[$i] = $tmesure[0]['value'][0][0];   
     	$tmaxs[$i] = $tmesure[0]['value'][0][1];

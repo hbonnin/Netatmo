@@ -12,11 +12,12 @@ table.icone {
 	background-color: #cceeff;
 	border: 1px solid #77a;
 	font-family: Helvetica, serif;
-	padding:0px;
+	padding:0px 2px 0px 2px;
+
 	margin:-1px;
 	}
 td.th	{color: black;
-	font-size: 14px;
+	font-size: 13px;
 	text-align:center;
 	vertical-align:bottom;
 	}		
@@ -44,7 +45,7 @@ td.minimax  {color: #000077;
 td.hl   {color: green;
 	font-size: 11px;
 	text-align:left;
-	height:15px;
+	height:13px;//humidite
 	}
 td.h   {color: green;
 	font-size: 12px;
@@ -58,7 +59,7 @@ td.hunit  {color: green;
 td.pl   {color: #444444;
 	font-size: 11px;
 	text-align:left;
-	height:15px;
+	height:13px; //MinMax Pression
 	}
 td.p   {color: #444444;
 	font-size: 12px;
@@ -72,7 +73,6 @@ td.punit  {color: #444444;
 td.nl   {color: #990099;
 	font-size: 11px;
 	text-align:left;
-	height:15px;
 	}
 td.n   {color: #990099;
 	font-size: 12px;
@@ -86,7 +86,6 @@ td.nunit  {color: #990099;
 td.cl   {color: #b09000;
 	font-size: 11px;
 	text-align:left;
-	height:15px;
 	}
 td.c   {color: #908000;
 	font-size: 12px;
@@ -101,87 +100,11 @@ td.s	{color: black;
 	font-size: 9px;
 	text-align:left;
 	font-style:italic;
-	height:17px;
+	height:13px;
 	}
-		
-.date  {color:black;
-	width:75px;
-	border:1px solid blue;
-	font-size:12px;
-	}
-div.chart	{
-	width:100%;
-	border:solid 1px black;
+td.a	{
+    height:12px;
 }
-table.graphic {
-	//table-layout:fixed;
-	color:black;
-	text-align:left;
-	background-color:#cceeff;
-	font-size:14px;
-	border:solid 1px #55a;
-	border-collapse:collapse;
-    width:205px;
-} 
-.graphic td {
-    height:18px;
-    max-height:25px;
-    padding:0px 0px 0px 5px;
-//    border:solid 1px #55a;
-    }
-table.chk{
-    margin-top:-2px;
-    margin-bottom:-2px;
-    border-spacing:0px;
-    padding:0px 0px 0px 0px;
-}    
-.chk td {
-	font-size:12px;
-	height:12px;
-	width:95px;
-	border-left-width:0px;
-    padding:0px;
-//    border:solid 1px #55a;
-}
-td.title {
-    height:25px;
-    text-align:center;
-    font-weight:bold;
-    padding-top:0px;
-}
-.submitG input{
-	background-color:#ddd;
-	height:22px;
-	color:#00a;
-	font-size:12px;
-}
-td.submitG {
-	//background-color:red;
-	height:30px;
-	width:90px;
-	vertical-align:bottom;
-	padding:0px;
-}
-.submit {
-	background-color:#ddd;
-	color:#00a;
-	font-size:12px;
-}
-table.container {
-	padding:0px;
-	margin-left:auto;
-	margin-right:auto;
-	margin-top:0px;
-	margin-bottom:-5px;
-	border-spacing:0px;
-}
-td.container {
-	vertical-align:bottom;
-}
-td.modules	{
- text-align:left;
-}
-
 .tooltip	{
   	position: relative;
   	background: #cceeff;
@@ -207,4 +130,123 @@ td.modules	{
 .tooltip:hover div	{
   	visibility: visible;
 	}
-                   
+ 
+ 
+.date  {color:black;
+	width:75px;
+	border:1px solid blue;
+	font-size:12px;
+	}
+div.chart	{
+	width:100%;
+	border:solid 1px black;
+}
+table.graphic {
+	color:black;
+	text-align:left;
+	background-color:#cceeff;
+	font-size:14px;
+	border:solid 1px #55a;
+	border-collapse:collapse;
+    width:205px;
+    height:310px;
+} 
+.graphic td {
+    height:18px;
+    max-height:25px;
+    padding:0px 0px 0px 5px;
+    }
+table.chk{
+    margin-top:-2px;
+    margin-bottom:-2px;
+    border-spacing:0px;
+    padding:0px 0px 0px 0px;
+}    
+.chk td {
+	font-size:12px;
+	height:12px;
+	width:95px;
+	border-left-width:0px;
+    padding:0px;
+}
+td.title {
+    height:25px;
+    text-align:center;
+    font-weight:bold;
+    padding-top:0px;
+}
+.submitG input{
+	background-color:#ddd;
+	height:22px;
+	color:#00a;
+	font-size:12px;
+}
+td.submitG {
+	height:30px;
+	width:90px;
+	vertical-align:bottom;
+	padding:0px;
+}
+.submit {
+	background-color:#ddd;
+	color:#00a;
+	font-size:12px;
+}
+table.container {
+	padding:0px;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:0px;
+	margin-bottom:-5px;
+	border-spacing:0px;
+}
+td.container {
+	vertical-align:bottom;
+}
+td.modules	{
+ text-align:left;
+}
+table.G {
+	height:312px;
+	width:205px;
+	font-size:14px;
+	background-color:#cceeff;
+	padding:0px;
+	border:0px;
+	border:solid 1px #55a;	
+	border-collapse:collapse;
+ }
+td.g	{
+	height:27px;
+	width:205px;
+	text-align:left;
+	//border:solid 1px #55a;
+    padding:0px 0px 0px 5px;	
+}
+div.fl {
+	width:95px;
+	height:27px;
+	background-color:#cceeff;
+	float:left;
+}
+div.fr {
+	width:110px;
+	height:27px;
+	background-color:#cceeff;
+	float:left;
+}  
+div.f {
+	width:205px;
+	height:27px;
+	background-color:#cceeff;
+	//float:left;
+} 
+input.g {
+	color:#00a;
+	vertical-align:bottom;
+	background-color:#ddd;
+	height:19px;
+	font-size:12px;
+	margin-left:-4px;
+	margin-bottom:25px;
+}

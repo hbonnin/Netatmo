@@ -11,9 +11,7 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 	$time1 = date('H:i',$res[1]['time']);
 	$pres = intval($res[0]['Pressure']+.5);
 	echo("
-	
-	<form  action='modules.php?stationNum=$stationId' method='post'>
-	
+		
 	<table class='icone'>
 	<tr>
 	<td colspan='7' class='th'>$station</td>
@@ -59,7 +57,7 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 ");	
 	if($nModule > 2)
 		{echo("	
-		<td style='text-align:left;' colspan='7'>
+		<td class='a'  colspan='7'>
 		<a href='#' class='tooltip'>
   		Autres modules:	
   		<div>
@@ -84,7 +82,7 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
   		}
 	else
 		echo("	
-		<td  colspan='7'>
+		<td class='a' colspan='7'>
 		&nbsp;
 		</td></tr>
 		</table>
