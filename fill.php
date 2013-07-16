@@ -15,13 +15,16 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 	<table class='icone'>
 	<tr>
 	<td colspan='7' class='th'>$station</td>
-	</tr><tr>
+	</tr>
+	<!--<tr>
 	<td  colspan='7' class='alt'>(${alt}m)</td>	
-	</tr><tr>
+	</tr>
+	<tr>
 	<td colspan='3' class='name'>$ext_name</td>
 	<td></td>
 	<td colspan='3' class='name'>$int_name</td>
-	</tr><tr>
+	</tr>-->
+	<tr>
 	<td><img src='sun.png' ALT='outside' height='40'/></td> 
 	<td  class='c1' colspan='2'>{$res[1]['Temperature']}°</td>
 	<td></td>
@@ -55,7 +58,7 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 	<td></td>
 	</tr><tr>
 ");	
-	if($nModule > 2)
+	if($nModule > 200)
 		{echo("	
 		<td class='a'  colspan='7'>
 		<a href='#' class='tooltip'>
@@ -81,11 +84,7 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
   		echo("</div></a> </td></tr></table>");
   		}
 	else
-		echo("	
-		<td class='a' colspan='7'>
-		&nbsp;
-		</td></tr>
-		</table>
-		");
+		//echo("<td class='a' colspan='7'>&nbsp;");
+		echo("</td></tr></table>");
 }
 ?>

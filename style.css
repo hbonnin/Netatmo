@@ -12,8 +12,7 @@ table.icone {
 	background-color: #cceeff;
 	border: 1px solid #77a;
 	font-family: Helvetica, serif;
-	padding:0px 2px 0px 2px;
-
+	padding:3px 2px 3px 2px;
 	margin:-1px;
 	}
 td.th	{color: black;
@@ -141,6 +140,7 @@ div.chart	{
 	width:100%;
 	border:solid 1px black;
 }
+/*
 table.graphic {
 	color:black;
 	text-align:left;
@@ -156,18 +156,14 @@ table.graphic {
     max-height:25px;
     padding:0px 0px 0px 5px;
     }
+*/    
 table.chk{
-    margin-top:-2px;
-    margin-bottom:-2px;
     border-spacing:0px;
-    padding:0px 0px 0px 0px;
 }    
 .chk td {
 	font-size:12px;
-	height:12px;
+	//height:12px;
 	width:95px;
-	border-left-width:0px;
-    padding:0px;
 }
 td.title {
     height:25px;
@@ -217,7 +213,7 @@ table.G {
 	border-collapse:collapse;
  }
 td.g	{
-	height:27px;
+	height:26px;
 	width:205px;
 	text-align:left;
 	//border:solid 1px #55a;
@@ -225,19 +221,19 @@ td.g	{
 }
 div.fl {
 	width:95px;
-	height:27px;
+	height:26px;
 	background-color:#cceeff;
 	float:left;
 }
 div.fr {
 	width:110px;
-	height:27px;
+	height:26px;
 	background-color:#cceeff;
 	float:left;
 }  
 div.f {
 	width:205px;
-	height:27px;
+	height:26px;
 	background-color:#cceeff;
 	//float:left;
 } 
@@ -249,4 +245,35 @@ input.g {
 	font-size:12px;
 	margin-left:-4px;
 	margin-bottom:25px;
+}
+
+table.bulle {
+	font-size:16px;
+	text-align:center;
+	width:214px;
+	padding:2px;
+	border:0;
+	background-color:#ffffff;}
+.bulle caption {
+	background-color:#ffffff;
+}
+.bulle th {
+	font-size:11px;
+	text-align:left;
+	height:11px;
+	width:30px;
+}
+td.name {
+	font-size:12px;
+	text-align:left;
+	height:11px;
+	margin:0;
+	padding:0;
+}
+.bulle td {
+	font-size:11px;
+	text-align:left;
+	height:13px:
+	margin:0;
+	padding:0;	
 }

@@ -74,36 +74,42 @@ function drawLogoutBack()
 	<input type='submit' class='submit' value="Graphiques d'une station" />
 	</form>
 	</td>
+	
 	<td>
 	<form  action=<?php echo $menuModules; ?> method='post'>
 	<input type='submit' class='submit' value="Modules d'une station"  />
 	</form>
 	</td>
+	
 	<td>
 	<form  action='iconesExt.php' method='post'>
 	<input type='submit' class='submit' value="Menu principal"/>
 	</form>
 	</td>
+	
 	<td>
 	<form action='logout.php' method='post'>
 	<input type='submit' class='submit' value='Logout' style='color:#700; ' />	
 	</form>	
 	</td>
-    </tr></table>
-<table style='margin-left:auto; margin-right:auto; margin-top:-5px;'>
+<!--	
+    </tr>
+    </table>
+<table style='margin-left:auto; margin-right:auto; margin-top:-8px;'>
 	<tr>
-	<td>
-	
+-->	
+	<td>	
 	<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
-	
 	</td>		
-	<td style='font-size:11px;'>
+	
 <?php
 	if(isset($_SESSION['width']))
-		echo("{$_SESSION['width']} x {$_SESSION['height']}");
+	    {echo("<td style='font-size:11px;'>");
+		echo("size:{$_SESSION['width']} x {$_SESSION['height']}");
+		echo("</td>");
+		}
 ?>
-	</td>
-	<!--
+<!--
     <td style='display: none;'>
     <script src='http://www.counter160.com/js.js?img=15'></script>
     <br>
@@ -116,9 +122,10 @@ function drawLogoutBack()
     </td>
     -->
     <td></td>
-</tr></table>	
+<!--</tr></table>-->	
 	</tr>
 	</table>
+	
 <!-- end drawLogoutBack -->	
 <?php
 	}
@@ -140,13 +147,13 @@ function drawMenuStation($h = '')
 
     <table class='G'>
 	<tr>
-	<td class='g' style='height:5px'>
-	<div class='f' style='height:5px'>
+	<td class='g' style='height:3px'>
+	<div class='f' style='height:3px'>
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:32px; width:205px; vertical-align:bottom;'>
-    <div class='f' style='height:32px; '>Graphiques d&#39;une station
+    <td class='title' style='height:30px; width:205px; vertical-align:bottom;'>
+    <div class='f' style='height:30px; '>Graphiques d&#39;une station
     </div></td></tr>	
 
 	<tr>
@@ -249,13 +256,13 @@ function drawMenuCompare($h ='')
 
     <table class='G'>
 	<tr>
-	<td class='g' style='height:5px'>
-	<div class='f' style='height:5px'>
+	<td class='g' style='height:3px'>
+	<div class='f' style='height:3px'>
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:32px; width:205px; vertical-align:bottom;'>
-    <div class='f' style='height:32px; '>Comparaison de stations
+    <td class='title' style='height:30px; width:205px; vertical-align:bottom;'>
+    <div class='f' style='height:30px; '>Comparaison de stations
     </div></td></tr>	
 
 	<tr>
@@ -405,13 +412,13 @@ function drawMenuModules($h ='')
 
   <table class='G'>
 	<tr>
-	<td class='g' style='height:5px'>
-	<div class='f' style='height:5px'>
+	<td class='g' style='height:3px'>
+	<div class='f' style='height:3px'>
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:32px; width:205px; vertical-align:bottom;'>
-    <div class='f' style='height:32px; '>Comparaison de modules
+    <td class='title' style='height:30px; width:205px; vertical-align:bottom;'>
+    <div class='f' style='height:30px; '>Comparaison de modules
     </div></td></tr>	
 
 	<tr>

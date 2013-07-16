@@ -66,34 +66,51 @@ else
 	$_SESSION['places'] = $places;	
 	}
 
+
+//Creation des InfoWindow
 for($i = 0;$i < $numStations;$i++)
 	{$res = $mesures[$i]["modules"];
     $alt[$i] = $devicelist["devices"][$i]["place"]["altitude"];
     $place = $places[$i];
     $int_name = $devicelist["devices"][$i]["module_name"];
 	$ext_name = $devicelist["devices"][$i]["modules"][0]["module_name"];
-    $txtEXT = sprintf("<font size=2>$ext_name :</font> %3.1f°  %d%%  %dmb",$res[1]['Temperature'],$res[1]['Humidity'],$res[0]['Pressure']);
-	$txtINT = sprintf("<font size=2>$int_name:</font> %3.1f°  %d%%  %dppm  %ddb",$res[0]['Temperature'],$res[0]['Humidity']
-			,$res[0]['CO2'],$res[0]['Noise']);
 	if($place == "BAD")		
     	$p = '<b>' . $mesures[$i]['station_name'] . ' (' . $alt[$i] . 'm)' . '</b><br>';
 	else
-    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] . '</font>'; 
-    	
-    $label[$i] = $p	. '<br><ul style=\"text-align:left; font-size:11px; list-style-type:none;\"><li>' . $txtINT . '</li><li>' . $txtEXT .'</li>';
-    	
-	$nModule = count($res);
-  	for($j = 2; $j < $nModule ; $j++)
-  		{$name = $res[$j]["module_name"];
-  		$temp = $res[$j]["Temperature"];
-  		$hum = $res[$j]["Humidity"];
-  		$co2 = $res[$j]["CO2"];		
-  		$text = '<li><font size=2>' . $name. ':</font> ' . $temp .'° ' .$hum. ' % ' .$co2. ' ppm</li>';
-  		$label[$i] = $label[$i] . $text;
-  		}
-  	$label[$i] = $label[$i] . '</ul>';
+    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $alt[$i] . 'm</font>)'; 
 
-    $slabel[$i] = $res[1]['Temperature'] . '°';	      	  
+	$temp = $res[0]['Temperature'];
+	$hum = $res[0]['Humidity'];
+	$co2 = $res[0]['CO2'];
+	$db  = $res[0]['Noise'];
+	$red = "style='color:#900'";
+	$green = "style='color:#070'";
+	$orange = "style='color: #b09000'";
+	$violet = "style='color:#007'";
+	
+	$tabINT = "<td class='name'>$int_name</td> <td $red>$temp</td> <td $green>$hum</td>  <td $orange>$co2</td> <td></td> <td $violet>$db</td>";	
+	$temp = $res[1]['Temperature'];
+	$hum = $res[1]['Humidity'];
+	$pres = intval($res[0]['Pressure'] + .5);
+	$tabEXT = "<td class='name'>$ext_name</td> <td $red>$temp</td> <td $green>$hum</td> <td></td> <td>$pres</td>";	
+
+    $label[$i]  = "<table class='bulle'>"
+        .'<caption >'. $p .'</caption>'
+        ."<tr><th style='width:60px;''></th> <th>T°</th> <th>H%</th> <th>Co2</th> <th>P mb</th> <th>Db</th></tr>"
+        .'<tr>' . $tabINT .'</tr>'
+        .'<tr>' . $tabEXT .'</tr>';
+        
+        $nModule = count($res);
+        for($j = 2; $j < $nModule ; $j++)
+            {$name = $res[$j]["module_name"];
+            $temp = $res[$j]["Temperature"];
+            $hum = $res[$j]["Humidity"];
+            $co2 = $res[$j]["CO2"];		
+            $tabMOD = "<tr><td class='name'>$name</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td></tr>";
+            $label[$i] = $label[$i] . '<tr>' . $tabMOD .'</tr>';        
+            }
+    $label[$i] = $label[$i] . '</table>';       
+    $slabel[$i] = $res[1]['Temperature'] . '°';	  // usilise pour les marker    	  
 	}	
 
 ?>
@@ -115,19 +132,20 @@ for($i = 0;$i < $numStations;$i++)
     
 	function createMarker(pos,label,slabel,map) 
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
-		//var marker = new google.maps.Marker({'position':pos ,'map':map });
-		marker.setZIndex(1);
-		var infowindow = new google.maps.InfoWindow({'content'  : label});
+		//marker.setZIndex(1);
+		var infowindow = new google.maps.InfoWindow(
+		    {'content'  : label});
 	   	google.maps.event.addListener(marker, 'rightclick', function() 
-       		{//marker.setZIndex(marker.getZIndex()-1);
-       		marker.setVisible(false);
+       		{marker.setVisible(false);
        		controlText.innerHTML = 'Show Markers';showMarker =0;
        		});  
        google.maps.event.addListener(marker, 'mouseover', function(){infowindow.open(map, marker);});
        google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
        google.maps.event.addListener(marker, 'click', function()
-       		{map.setCenter(marker.getPosition());
-  			map.setZoom(12);
+       		{position = marker.getPosition();
+       		pos= new google.maps.LatLng(position.lat() + .3,position.lng());//.03
+       		map.setCenter(pos);
+  			map.setZoom(9);
        		}); 
  
     	return marker;  
@@ -149,18 +167,20 @@ for($i = 0;$i < $numStations;$i++)
   		echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   		}
 ?> 				
-	for(i=0;i < num;i++)
+	for(i = 0;i < num;i++)
   		LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
-  					
+  		
     var center = new google.maps.LatLngBounds(LatLng[0]);
   	for(i=1;i < num;i++)
     	center.extend(LatLng[i]);
-
+    	       		
 	var mapOptions = {
-        zoom: 5,
+        zoom: 4,
         center: center.getCenter(),
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
+        scaleControl: true,
+            scaleControlOptions: {position: google.maps.ControlPosition.TOP_LEFT},
         mapTypeId: google.maps.MapTypeId.HYBRID
         };
         
@@ -224,7 +244,7 @@ for($i = 0;$i < $numStations;$i++)
 	  // Setup the click event listeners
   	  google.maps.event.addDomListener(controlUI, 'click', function() 
   		{map.setCenter(center.getCenter());
-  		map.setZoom(5);
+  		map.setZoom(4);
   		});
 	  }
 	 
@@ -379,7 +399,7 @@ drawMenuStation('310px');
 ?>
 </td>
 <!-- GOOGLE MAP -->
-<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:460px; border:solid 2px gray;'> </div>
+<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:510px; border:solid 2px gray;'> </div>
 </td>
 <td class='container'>
 <?php

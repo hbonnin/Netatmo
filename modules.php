@@ -22,10 +22,12 @@ $mesures = $_SESSION['mesures'];
 
 // $stationNum station utilise
 $stationNum = $_GET['stationNum'];
+
 if(isset($_POST['selectStation']))
     {$changedStation = ($stationNum != $_POST['selectStation']);
     $stationNum = $_POST['selectStation'];
     }
+    
 $_SESSION['stationId'] = $stationNum;
 
 $res = $mesures[$stationNum]["modules"];
