@@ -309,7 +309,8 @@ echo("
             if(item.column != null ) 
                 {//alert('ncol:'+data.getNumberOfColumns());
                 data.removeColumn(item.column); 
-                for(var col = item.column-2;col < num-1;col++)
+                var col0 = (item.column -1)/2;
+                for(var col = col0;col < num-1;col++)
                     colorMin[col] = colorMin[col+1];                 
                 data.removeColumn(item.column);
                 chartMin.draw(data ,{title: '$title' $visupt,colors:colorMin,$param });               
@@ -326,7 +327,8 @@ echo("
             {var item = selection[i];
             if(item.column != null)
                 {data1.removeColumn(item.column);
-                for(var col = item.column-2;col < num-1;col++)
+                var col0 = (item.column -1)/2;
+                for(var col = col0;col < num-1;col++)
                     colorMax[col] = colorMax[col+1];                 
                 data1.removeColumn(item.column); 
                 chartMax.draw(data1 ,{title: '$title1' $visupt,colors: colorMax,$param });

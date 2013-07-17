@@ -183,15 +183,56 @@ $title = $titre . 'minimale extérieure';
 $title1 = $titre . 'maximale extérieure';
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+?>
+colorMin =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
+colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
+<?php
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
-             chartMin.draw(data ,{title:'$title' ,pointSize:3,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+             chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: colorMax,$param });
+             chartMin.draw(data ,{title:'$title' ,pointSize:3,colors:colorMin,$param });
 			");
-			
-?>            
-             } // draw chart 
+?> 
+    google.visualization.events.addListener(chartMin, 'select', MinClickHandler);        
+     function MinClickHandler()
+          {if(data.getNumberOfColumns() <= 3)return;
+          var selection = chartMin.getSelection();
+          var num = colorMin.length;
+          for (var i = 0; i < selection.length; i++) 
+            {var item = selection[i];
+            if(item.column != null ) 
+                {data.removeColumn(item.column); 
+                var col0 = (item.column -1)/2;
+                for(var col = col0;col < num-1;col++)
+                    colorMin[col] = colorMin[col+1];                 
+                data.removeColumn(item.column);
+                <?php echo("chartMin.draw(data ,{title:'$title' ,pointSize:3,colors:colorMin,$param });"); ?>             
+                break;
+                }
+            }
+        }
+    google.visualization.events.addListener(chartMax, 'select', MaxClickHandler);        
+     function MaxClickHandler()
+          {if(data1.getNumberOfColumns() <= 3)return;
+          var selection = chartMax.getSelection();
+          var num = colorMax.length;
+          for (var i = 0; i < selection.length; i++) 
+            {var item = selection[i];
+            if(item.column != null)
+                {data1.removeColumn(item.column);
+                var col0 = (item.column -1)/2;
+                for(var col = col0;col < num-1;col++)
+                    colorMax[col] = colorMax[col+1]; 
+                //for(var col = 0;col < num-1;col++)alert('eff:'+item.column+'col:'+col+' '+colorMax[col]);
+                data1.removeColumn(item.column); 
+                <?php echo("chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: colorMax,$param });"); ?>
+                }
+            }
+         }
+
+
+} // draw chart 
             
           </script>
 <script type='text/javascript' src='calendrier.js'></script> 
