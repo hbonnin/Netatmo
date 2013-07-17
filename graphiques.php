@@ -416,50 +416,58 @@ echo("
 	$param = $param . ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 	$param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
  
-if($inter >= 3*60) 	
-    {$colorInt = "colors: ['red','blue','green','orange','brown','#e0b0e0']";
-    $colorExt = "colors: ['red','blue','green','#00dd00','#aaaaff','ffaaaa']";
-    }
-else
-    {$colorInt = "colors: ['red','green','orange','brown','#f0b0f0']"; 
-    $colorExt = "colors: ['red','green','orange','brown','#f0b0f0']";
-    }
+
+    echo("inter = $inter;");
+?>
+    if(inter >= 3*60) 	    
+        {colorInt =  ['red','blue','green','orange','brown','#e0b0e0'];
+        colorExt =  ['red','blue','green','#00dd00','#aaaaff','ffaaaa'];
+        }
+    else
+        {colorInt = ['red','green','orange','brown','#f0b0f0'];
+        colorExt = ['red','green','orange','brown','#f0b0f0']
+        }
+<?php
+
 echo("
-    chartInt.draw(dataInt, {title: $titleInt $visupt,$colorInt ,$param});
-    chartExt.draw(dataExt, {title: $titleExt $visupt,$colorExt,$param});
+    chartInt.draw(dataInt, {title: $titleInt $visupt,colors:colorInt ,$param});
+    chartExt.draw(dataExt, {title: $titleExt $visupt,colors:colorExt,$param});
     ");
+?>
 
-
-echo("
     google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
      function IntClickHandler()
-          {if(dataInt.getNumberOfColumns() <= 3)return;
-          var selection = chartInt.getSelection();
-          for (var i = 0; i < selection.length; i++) 
+        {if(dataInt.getNumberOfColumns() <= 3)return;
+        var selection = chartInt.getSelection();
+        var num = colorInt.length;
+        for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
             if(item.column != null) 
                 {dataInt.removeColumn(item.column); 
-                chartInt.draw(dataInt, {title: $titleInt $visupt,$colorInt,$param });
+                for(var col = item.column-2;col < num-1;col++)
+                    colorInt[col] = colorInt[col+1]; 
+                <?php echo("chartInt.draw(dataInt, {title: $titleInt $visupt,colors:colorInt,$param });");?>
                 break;
                 }
             }
         }
     google.visualization.events.addListener(chartExt, 'select', ExtClickHandler);        
-     function ExtClickHandler()
-          {if(dataExt.getNumberOfColumns() <= 3)return;
-          var selection = chartExt.getSelection();
-          for (var i = 0; i < selection.length; i++) 
+    function ExtClickHandler()
+        {if(dataExt.getNumberOfColumns() <= 3)return;
+        var selection = chartExt.getSelection();
+        var num = colorExt.length;  
+        for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
             if(item.column != null)
                 {dataExt.removeColumn(item.column); 
-                chartExt.draw(dataExt, {title: $titleExt $visupt,$colorExt,$param});
+                for(var col = item.column-2;col < num-1;col++)
+                    colorExt[col] = colorExt[col+1];                 
+                <?php echo("chartExt.draw(dataExt, {title: $titleExt $visupt,colors:colorExt,$param});");?>
                 }
             }
          }
-");
-
-?>
-             }  
+         
+} // endDraw 
            
 	</script>
 <script type='text/javascript' src='calendrier.js'></script> 
