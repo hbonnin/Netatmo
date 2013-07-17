@@ -92,12 +92,7 @@ function drawLogoutBack()
 	<input type='submit' class='submit' value='Logout' style='color:#700; ' />	
 	</form>	
 	</td>
-<!--	
-    </tr>
-    </table>
-<table style='margin-left:auto; margin-right:auto; margin-top:-8px;'>
-	<tr>
--->	
+
 	<td>	
 	<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
 	</td>		
@@ -108,26 +103,24 @@ function drawLogoutBack()
 		echo("size:{$_SESSION['width']} x {$_SESSION['height']}");
 		echo("</td>");
 		}
-?>
-<!--
-    <td style='display: none;'>
-    <script src='http://www.counter160.com/js.js?img=15'></script>
-    <br>
-    <a href='http://www.000webhost.com'>
-    <img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px'>
-    </a>
-    <a href='http://www.hosting24.com'>
-    <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
-    </a>
-    </td>
-    -->
-    <td></td>
-<!--</tr></table>-->	
-	</tr>
-	</table>
-	
-<!-- end drawLogoutBack -->	
-<?php
+	if($_SERVER['SERVER_NAME'] == '127.0.0.1')
+	    echo("<td></td></tr></table>");
+    else
+        echo("
+        <td style='display: none;'>
+        <script src='http://www.counter160.com/js.js?img=15'></script>
+        <br>
+        <a href='http://www.000webhost.com'>
+        <img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px'>
+        </a>
+        <a href='http://www.hosting24.com'>
+        <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
+        </a>
+        </td>
+        <td></td>	
+        </tr>
+        </table>
+        ");
 	}
 /* -- DrawMenuStation ************************************************************************* */
 function drawMenuStation($h = '')
