@@ -416,27 +416,51 @@ echo("
 	$param = $param . ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 	$param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
  
-if($inter >= 3*60) 	                                
-echo("                   
-
-    chartInt.draw(dataInt, {title: $titleInt $visupt,colors: ['red','blue','green','orange','brown','#e0b0e0'] ,$param});
-");
+if($inter >= 3*60) 	
+    {$colorInt = "colors: ['red','blue','green','orange','brown','#e0b0e0']";
+    $colorExt = "colors: ['red','blue','green','#00dd00','#aaaaff','ffaaaa']";
+    }
 else
-echo("                 
-    chartInt.draw(dataInt, {title: $titleInt $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
+    {$colorInt = "colors: ['red','green','orange','brown','#f0b0f0']"; 
+    $colorExt = "colors: ['red','green','orange','brown','#f0b0f0']";
+    }
+echo("
+    chartInt.draw(dataInt, {title: $titleInt $visupt,$colorInt ,$param});
+    chartExt.draw(dataExt, {title: $titleExt $visupt,$colorExt,$param});
+    ");
+
+
+echo("
+    google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
+     function IntClickHandler()
+          {if(dataInt.getNumberOfColumns() <= 3)return;
+          var selection = chartInt.getSelection();
+          for (var i = 0; i < selection.length; i++) 
+            {var item = selection[i];
+            if(item.column != null) 
+                {dataInt.removeColumn(item.column); 
+                chartInt.draw(dataInt, {title: $titleInt $visupt,$colorInt,$param });
+                break;
+                }
+            }
+        }
+    google.visualization.events.addListener(chartExt, 'select', ExtClickHandler);        
+     function ExtClickHandler()
+          {if(dataExt.getNumberOfColumns() <= 3)return;
+          var selection = chartExt.getSelection();
+          for (var i = 0; i < selection.length; i++) 
+            {var item = selection[i];
+            if(item.column != null)
+                {dataExt.removeColumn(item.column); 
+                chartExt.draw(dataExt, {title: $titleExt $visupt,$colorExt,$param});
+                }
+            }
+         }
 ");
 
-if($inter > 3*60) 	                                
-echo("                   
-    chartExt.draw(dataExt, {title: $titleExt $visupt,colors: ['red','blue','green','#00dd00','#aaaaff','ffaaaa'],$param});
-");
-else
-echo("                 
-    chartExt.draw(dataExt, {title: $titleExt $visupt,colors: ['red','green','orange','brown','#f0b0f0'] ,$param});
-");
-
-?>           
+?>
              }  
+           
 	</script>
 <script type='text/javascript' src='calendrier.js'></script> 
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' >

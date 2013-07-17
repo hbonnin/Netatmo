@@ -294,15 +294,36 @@ $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',font
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
              chartMax.draw(data1 ,{title: '$title1' $visupt,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
 			");
-/*
 echo("
-    google.visualization.events.addListener(chartMin, 'select', selectHandler);
-    function selectHandler() {
-        alert('A table row was selected');
+    google.visualization.events.addListener(chartMin, 'select', MinClickHandler);        
+     function MinClickHandler()
+          {if(data.getNumberOfColumns() <= 3)return;
+          var selection = chartMin.getSelection();
+          for (var i = 0; i < selection.length; i++) 
+            {var item = selection[i];
+            if(item.column != null ) 
+                {//alert('ncol:'+data.getNumberOfColumns()); 
+                data.removeColumn(item.column); 
+                data.removeColumn(item.column);
+                chartMin.draw(data ,{title: '$title' $visupt,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });               
+                break;
+                }
+            }
         }
+    google.visualization.events.addListener(chartMax, 'select', MaxClickHandler);        
+     function MaxClickHandler()
+          {if(data1.getNumberOfColumns() <= 3)return;
+          var selection = chartMax.getSelection();
+          for (var i = 0; i < selection.length; i++) 
+            {var item = selection[i];
+            if(item.column != null)
+                {data1.removeColumn(item.column);
+                data1.removeColumn(item.column); 
+                chartMax.draw(data1 ,{title: '$title1' $visupt,colors: ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'],$param });
+                }
+            }
+         }
 ");
-*/
-/**************************************************************/
 			
 ?>            
              } // draw chart 

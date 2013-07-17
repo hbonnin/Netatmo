@@ -134,7 +134,9 @@ for($i = 0;$i < $numStations;$i++)
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
 		//marker.setZIndex(1);
 		var infowindow = new google.maps.InfoWindow(
-		    {'content'  : label});
+		    {'content'  : label,
+		    'disableAutoPan' : true
+		    });
 	   	google.maps.event.addListener(marker, 'rightclick', function() 
        		{marker.setVisible(false);
        		controlText.innerHTML = 'Show Markers';showMarker =0;
