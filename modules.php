@@ -286,7 +286,7 @@ echo("
             			    if($HTime)
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    else
-            			        $tip = tip($tmin0,$key);
+            			        $tip = tip($tmin0,$itime);
             			    }
             			}        		
             		echo(",$tmin0,'$tip'"); 
@@ -340,7 +340,7 @@ echo("
               			    if($HTime)          			    
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    else
-            			        $tip = tip($tmin0,$key);
+            			        $tip = tip($tmin0,$itime);
             			    }            			    
             			}
             			        		

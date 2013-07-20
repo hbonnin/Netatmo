@@ -156,24 +156,7 @@ function drawMenuStation($h = '')
 	<td class='g'>
 	<div class='fl'>Début</div>
 	<div class='fr'>
-<?php
-$interval = $_SESSION['selectedInter']; 
-if($interval == '30min')
-    $txt = 'Fréquence (14j)';
-else if($interval == 'max')  
-    $txt = 'Fréquence (2j)';
-else
-    $txt = 'Fréquence';
-
-if($interval != 'aa')
-    echo("
-    	<input class=\"date\" id=\"id_date0\" type=\"text\" name=\"date0\" value=\"$datebeg\" onclick=\"ds_sh(this,0);\">
-    ");
-else 
-    echo("
-    	<input class=\"date\" style=\"visibility:hidden; \" id=\"id_date0\" type=\"text\" name=\"date0\" value=\"$datebeg\" onclick=\"ds_sh(this,0);\">
-    ");
-?>
+    <input class="date" id="id_date0" type="text" name="date0" value='<?php echo($datebeg); ?>'  onclick="ds_sh(this,0);">
     </div></td></tr>
       
 	<tr>
@@ -184,7 +167,7 @@ else
 	</div></td></tr>
 	<tr>
 	<td class='g'>
-	<div class='fl'><?php echo("<span id='id_duree' >$txt</span>");?></div>	
+	<div class='fl'>Fréquence</div>	
 	<div class='fr'>
 	<select name='select' onChange='Allow(this);'>
 <?php	
