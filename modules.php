@@ -98,7 +98,9 @@ if(isset($_POST["date1"]))
 else
     $date1 = $_SESSION['dateend']; 
     
-
+$date_beg = $date_end = 0;
+chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
+/*
 $txt = explode("/",$date1);
 $date_end = mktime(date("H"),date("i"),0,$txt[1],$txt[0],$txt[2]);  
 $date_end = min($date_end,time());
@@ -110,10 +112,11 @@ if($interval == '1week')
     $date_beg = min($date_beg,$date_end - 18*24*60*60);
 else if($interval == '1day')
     $date_beg -= 24*60*60;
-else
+else  if($interval == '3hours')
     $date_beg = min($date_beg,$date_end - 24*60*60);
-
-    
+else 
+    $date_beg = min($date_beg,$date_end - 12*60*60);
+   
 $n_mesure = min(1024,($date_end-$date_beg)/($inter));
 $date_beg = max($date_beg,($date_end - $n_mesure*$inter));
 
@@ -122,7 +125,7 @@ $datebeg = date("d/m/Y",$date_beg);
 $dateend = date("d/m/Y",$date_end); 
 $_SESSION['datebeg'] = $datebeg;
 $_SESSION['dateend'] = $dateend;
-
+*/
 
 $CO2 = 0;	
 $HTime = 1;
@@ -133,6 +136,7 @@ if($selectMesure == 'T')
     if($inter >= 24*60*60)
         $type = 'min_temp,max_temp,date_min_temp,date_max_temp';
     else if($inter == 3*60*60)
+//    else if($inter >= 30*60)
         {$type = 'min_temp,max_temp';$HTime = 0;}
     else
         {$type = 'Temperature,Humidity';$HTime = 0;
@@ -259,7 +263,7 @@ echo("
               var data = new google.visualization.DataTable();              
 	          data.addColumn('string', 'Date');
 ");
-	        {for($i = 0;$i < $numStations;$i++)
+            for($i = 0;$i < $numStations;$i++)
 	          	{if($view[$i] == 0)continue;
 	          	$ii[$i] = 0; 
 	          	$name = explode(" ",$nameStations[$i]);
@@ -296,24 +300,11 @@ echo("
             	++$i;
                 }while($itime <= $date_end);
 				echo("data.removeColumn(1+2*$numview);\n");				 
-                }
-            if($inter > 30*60)    
-                {$title = $titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. $tinter . ')'; 
-                $title1 = $titre1 . 'maximale'. ' ('.$beg.' -'.$end. ' @' . $tinter . ')';
-                }
-            else
-                {$title = $titre .  ' ('.$beg. ' - ' .$end.' @'. $tinter . ')'; 
-                $title1 = $titre1.' ('.$beg.' -'.$end. ' @' . $tinter . ')';
-                }
-                
-                
-            {                      
-           
+/***********************************************************************************/                         
 echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');
 ");
-
 	        for($i = 0;$i < $numStations;$i++)
 	          	{if($view[$i] == 0)continue;
 	          	$ii[$i] = 0; 
@@ -350,15 +341,21 @@ echo("
             	$itime += $inter;
             	++$i;
                 }while($itime <= $date_end);
-				echo("data1.removeColumn(1+2*$numview);\n");				 
+				echo("data1.removeColumn(1+2*$numview);\n");				               
+/**********************************************************************************************/
+             if($inter > 30*60)    
+                {$title = $titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. $tinter . ')'; 
+                $title1 = $titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . $tinter . ')';
                 }
-
- 
-$param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
-$param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+            else
+                {$title = $titre .  ' ('.$beg. ' - ' .$end.' @'. $tinter . ')'; 
+                $title1 = $titre1.' ('.$beg.' -'.$end. ' @' . $tinter . ')';
+                }
+            $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
+            $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 ?>
-colorMin = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
-colorMax = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
+            colorMin = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
+            colorMax = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
 <?php   
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));

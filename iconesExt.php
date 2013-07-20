@@ -38,6 +38,10 @@ if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
 //interval initial
 if(!isset($_SESSION['selectedInter'] ))
     $_SESSION['selectedInter'] = '1day';
+if(!isset($_SESSION['datebeg']))
+    {$_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d')-30,date('y')));
+    $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
+    }    
 
 initClient();
 $client = $_SESSION['client'];
@@ -390,10 +394,6 @@ echo("</tr></table>");
 <tr>
 <td class='container'>
 <?php
-if(!isset($_SESSION['datebeg']))
-    {$_SESSION['datebeg'] = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d')-30,date('y')));
-    $_SESSION['dateend'] = date("d/m/Y",mktime(0, 0, 0, date('m') , date('d'),date('y')));
-    }    
 
 $num = count($devicelist["devices"]);
 

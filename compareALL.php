@@ -15,6 +15,7 @@ session_start();
 	<script type='text/javascript' src='validate.js'></script>	
 
 <?php
+/* Ne peux actuellement etre appeler directement */
 date_default_timezone_set("Europe/Paris");
 initClient();
 $client = $_SESSION['client'];
@@ -22,18 +23,34 @@ $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
 date_default_timezone_set("UTC");
 
-$date1 = $_POST["date1"];
+if(isset($_POST["date0"]))  
+    $date0 = $_POST["date0"]; 
+else
+    $date0 = $_SESSION['datebeg'];  
+
+if(isset($_POST["date1"]))  
+    $date1 = $_POST["date1"];
+else
+    $date1 = $_SESSION['dateend']; 
+ 
+
 $txt = explode("/",$date1);
 $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 $date_end = min($date_end,time());
-$date0 = $_POST["date0"];
 $txt = explode("/",$date0);
 $date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
 $date_beg =	min($date_beg,$date_end);
 
 
-$interval = $_POST["select"];
-$_SESSION['selectedInter'] = $interval;
+if(isset($_POST["select"]))
+    {$interval = $_POST["select"];
+    $_SESSION['selectedInter'] = $interval;    
+    }
+ else   /* en fait inutil pour le moment */
+    {$interval = $_SESSION['selectedInter']; 
+    $interval = checkSelect($interval,'M');
+    }
+    
 if($interval == '1week')
     {$date_beg = min($date_beg,$date_end - 18*24*60*60);
     $inter  = 7*24*60;

@@ -1,4 +1,5 @@
 <?php
+
 $opt = array (
             0 => array ('1week','1 semaine'),
             1 => array ('1day','1 journée'),
@@ -8,12 +9,14 @@ $opt = array (
             );
 $interval = array ("G" => 4,
                 "C"  => 1,
-                "M"  => 4, 
+                "M"  => 3, 
                 "opt" => $opt
             );
 
 function checkSelect($select,$menu)
-    {$opt = array (
+    {//global $opt,$interval;
+   
+    $opt = array (
             0 => array ('1week','1 semaine'),
             1 => array ('1day','1 journée'),
             2 => array ('3hours','3 heures'),
@@ -22,9 +25,10 @@ function checkSelect($select,$menu)
             );
     $interval = array ("G" => 4,
                     "C"  => 1,
-                    "M"  => 4, 
+                    "M"  => 3, 
                     "opt" => $opt
             );
+            
     $iselect = selectIndex($opt,$select); 
     $selected = min($iselect,$interval[$menu]);
     return  $interval['opt'][$selected][0];        
@@ -36,7 +40,8 @@ function selectIndex($opt,$select)
     return $i;    
     }
 function drawSelectInter($menu)
-    {
+    {//global $opt,$interval;
+   
     $opt = array (
             0 => array ('1week','1 semaine'),
             1 => array ('1day','1 journée'),
@@ -46,9 +51,10 @@ function drawSelectInter($menu)
             );
     $interval = array ("G" => 4,
                     "C"  => 1,
-                    "M"  => 4, 
+                    "M"  => 3, 
                     "opt" => $opt
             );
+           
     $select  = $_SESSION['selectedInter'];   
     $iselect = selectIndex($interval['opt'],$select); 
     $selected = min($iselect,$interval[$menu]);
@@ -59,7 +65,32 @@ function drawSelectInter($menu)
         if($i == $selected)$sel = "selected='selected'";
         echo "<option value="."'" .$val."' ". $sel.">". $txt.' </option>'."\n";       
         }   
-    }            
+    } 
+function chkDates($date0,$date1,$interval,$inter,$date_beg,$date_end)
+    {$txt = explode("/",$date1);
+    $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+    $date_end = min($date_end,time());
+    $txt = explode("/",$date0);
+    $date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]); 
+    $date_beg =	min($date_beg,$date_end);
+
+    if($interval == '1week')
+        $date_beg = min($date_beg,$date_end - 18*24*60*60);
+    else if($interval == '1day')
+        $date_beg = min($date_beg,$date_end - 24*60*60);
+    else if($interval == '3hours')
+        $date_beg = min($date_beg,$date_end - 24*60*60);
+    else 
+        $date_beg = min($date_beg,$date_end - 12*60*60);
+    
+    $n_mesure = min(1024,($date_end-$date_beg)/($inter));
+    $date_beg = max($date_beg,($date_end - $n_mesure*$inter));  
+    $datebeg = date("d/m/Y",$date_beg); 
+    $dateend = date("d/m/Y",$date_end); 
+    $_SESSION['datebeg'] = $datebeg;
+    $_SESSION['dateend'] = $dateend; 
+    if($interval == '1day')$date_beg -= 24*60*60;
+    }    
 function drawLogoutBack()
 	{if(!isset($_SESSION['stationId'] ))
         $_SESSION['stationId'] = 0;

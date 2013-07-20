@@ -27,8 +27,10 @@ if(isset($_POST["select"]))
     {$interval = $_POST["select"];
     $_SESSION['selectedInter'] = $interval;    
     }
- else   
-    $interval = $_SESSION['selectedInter']; 
+ else   /* en fait inutil pour le moment */
+    {$interval = $_SESSION['selectedInter']; 
+    $interval = checkSelect($interval,'M');
+    }
 
 if(isset($_POST['date0']))
     $date0 = $_POST['date0'];
@@ -51,36 +53,39 @@ $_SESSION['stationId'] = $stationId;
 
 
 if($interval=="1week")
-	{$inter = 7*24*60;
+	{$inter = 7*24*60*60;
 	$tinter = '1 semaine';
 	$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";	
 	}
 else if($interval=="1day")
-	{$inter = 24*60;
+	{$inter = 24*60*60;
 	$tinter = '1 jour';
 	$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";		
 	}
+else if($interval=="3hours")
+	{$inter = 3*60*60;
+	$tinter = '3 heures';	
+	$req =  "Temperature,Humidity";	
+	$req1 = "Temperature,Humidity,max_co2,min_pressure,max_noise";
+	}	
 else if($interval=="30min")
-	{$inter = 30;
+	{$inter = 30*60;
 	$tinter = '30 minutes';
 	$req = "Temperature,Humidity";
-	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
+	$req1 = "Temperature,Humidity,max_co2,min_pressure,max_noise";
 	}	
 else if($interval=="max")
-	{$inter = 5;
+	{$inter = 5*60;
 	$tinter = '5 minutes';
 	$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
 	}
-else // 3hours
-	{$inter = 3*60;
-	$tinter = '3 heures';	
-	$req =  "Temperature,Humidity";	
-	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
-	}
-	
+$date_beg = $date_end = 0;
+chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
+
+/*	
 $txt = explode("/",$date1);
 $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
 $date_end = min($date_end,time());
@@ -92,18 +97,19 @@ if($interval == '1week')
     $date_beg = min($date_beg,$date_end - 18*24*60*60);
 else if($interval == '1day')
     $date_beg -= 24*60*60;
-else //if($interval == '3hours')
+else if($interval == '3hours')
     $date_beg = min($date_beg,$date_end - 24*60*60);
+else 
+    $date_beg = min($date_beg,$date_end - 12*60*60);
+    
+$n_mesure = min(1024,($date_end-$date_beg)/($inter));
+$date_beg = max($date_beg,($date_end - $n_mesure*$inter));
 
-$n_mesure = min(1024,($date_end-$date_beg)/($inter*60));
-$date_beg = max($date_beg,($date_end - $n_mesure*$inter*60));
-
-// pour tracer le calendrier	
 $datebeg = date("d/m/Y",$date_beg); 
 $dateend = date("d/m/Y",$date_end); 
 $_SESSION['datebeg'] = $datebeg;
 $_SESSION['dateend'] = $dateend;
-
+*/
 
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
@@ -207,7 +213,7 @@ echo("
 			$end = date("d/m/y",$keys[$num-1]); 
 			if($num <= 73)$visupt = ",pointSize:3";	
 
-if($inter > 3*60) //1week, 1day
+if($inter > 3*60*60) //1week, 1day
 	{           
 echo("	 
 	 		dataExt.addColumn('string', 'Date');
@@ -240,7 +246,7 @@ echo("
                 //$dTmin = idate('H',$meas[$key][4]);
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
-                $itime += $inter*60;
+                $itime += $inter;
                 }while($break != 1);
            	echo("dataExt.removeColumn(6);\n");				      
 	}
@@ -257,19 +263,19 @@ else   //5 ou 30 minutes ou 3 heures
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	if($inter == 30)
+            	if($inter == 30*60)
             		$idate = date("d/m/y",$itime); 
             	else
             		$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$tmin =  $hum = $tip = '';
             	$key = $keys[$ii];         		
-            	if(abs($key - $itime) < $inter*2*60) // mesures décalées
+            	if(abs($key - $itime) < $inter*2) // mesures décalées
             		{if($ii < $num -1)++$ii;
             		else $break = 1;           			
             		$tmin = $meas[$key][0];
             		$hum = $meas[$key][1];  
             		$itime = $keys[$ii]; 
-	            	if($inter == 30)        		
+	            	if($inter == 30*60)        		
             			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);
             		else	         		           		
             			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);         		           		
@@ -278,7 +284,7 @@ else   //5 ou 30 minutes ou 3 heures
             	if($hum)$hum = $hum/4;	
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
-                $itime += $inter*60;
+                $itime += $inter;
                 }while($break != 1);
            	echo("dataExt.removeColumn(4);\n");				      
 	}
@@ -293,7 +299,7 @@ else   //5 ou 30 minutes ou 3 heures
 			$end = date("d/m/y",$keys[$num-1]); 
 			if($num <= 73)$visupt = ",pointSize:3";	
 
-if($inter > 3*60)	//1week,1day,3hours		
+if($inter > 3*60*60)	//1week,1day	
 	{echo("
 	          dataInt.addColumn('string', 'Date');
         	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
@@ -331,7 +337,7 @@ if($inter > 3*60)	//1week,1day,3hours
                 	$pres = $meas1[$key][4];
                 	$noise = $meas1[$key][5];                	
  //$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
-                    if($inter >= 3*60)
+                    if($inter >= 3*60*60)
              			$iidate = $jour[$day] . date(" d/m/y",$itime) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);            		
 					else
             			$iidate = $jour[$day] . date(" d/m/y ",$itime);
@@ -341,13 +347,25 @@ if($inter > 3*60)	//1week,1day,3hours
                 	}
                 echo("dataInt.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
-                $itime += $inter*60;
+                $itime += $inter;
                 }while($break != 1);
             echo("dataInt.removeColumn(8);\n");				      
      	                    	
 	}
-else  // 5 minutes ou 30 minutes
-	{echo("
+else  // 5 minutes, 30 minutes, 3 heures
+	{if($inter >= 30*60)
+	    echo("
+	          dataInt.addColumn('string', 'Date');
+        	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
+        	  dataInt.addColumn('number', 'Temp.');
+        	  dataInt.addColumn('number', 'Humidity');
+        	  dataInt.addColumn('number', 'CO2 max');
+        	  dataInt.addColumn('number', 'Pressure min');
+        	  dataInt.addColumn('number', 'Noise max');  
+          	  dataInt.addColumn('number', '');   	         	    
+	    ");	
+	else
+	    echo("
 	          dataInt.addColumn('string', 'Date');
         	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  dataInt.addColumn('number', 'Temp.');
@@ -356,7 +374,7 @@ else  // 5 minutes ou 30 minutes
         	  dataInt.addColumn('number', 'Pressure');
         	  dataInt.addColumn('number', 'Noise');  
           	  dataInt.addColumn('number', '');   	         	    
-	");
+	    ");
 
  			// Compute Max et Min pression	
 			$MaxPression = 0;
@@ -373,13 +391,13 @@ else  // 5 minutes ou 30 minutes
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	if($inter == 30)
+            	if($inter == 30*60)
             		$idate = date("d/m/y",$itime); 
             	else
             		$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$temp = $hum = $co = $pres = $noise = $tooltip = '';
             	$key = $keys[$ii];         		
-            	if(abs($key - $itime) < $inter*2*60) 
+            	if(abs($key - $itime) < $inter*2) 
             		{if($ii < $num -1)++$ii; 
             		else $break = 1;           			          			
             		$tmin = $meas1[$key][0];
@@ -395,7 +413,7 @@ else  // 5 minutes ou 30 minutes
                 	}
                 echo("dataInt.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
-                $itime += $inter*60;
+                $itime += $inter;
                 }while($break != 1);
             echo("dataInt.removeColumn(7);\n");				      
  	} 
@@ -410,9 +428,9 @@ echo("
 	$param .= "$visupt,fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 
 
-    echo("inter = $inter;");
+    echo("inter = $inter;");  //pour le script
 ?>
-    if(inter > 3*60) 	    
+    if(inter > 3*60*60) 	    
         {colorInt =  ['red','blue','green','orange','brown','#ff69b4'];
         colorExt =  ['red','blue','green','#00dd00'];
         }
