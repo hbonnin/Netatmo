@@ -3,13 +3,13 @@ $opt = array (
             0 => array ('1week','1 semaine'),
             1 => array ('1day','1 journée'),
             2 => array ('3hours','3 heures'),
-            3 => array ('30min','30 miniutes'),
+            3 => array ('30min','30 minutes'),
             4 => array ('max','5 minutes')
             );
 $interval = array ("G" => 4,
-                    "C"  => 1,
-                    "M"  => 2, 
-                    "opt" => $opt
+                "C"  => 1,
+                "M"  => 4, 
+                "opt" => $opt
             );
 
 function checkSelect($select,$menu)
@@ -17,12 +17,12 @@ function checkSelect($select,$menu)
             0 => array ('1week','1 semaine'),
             1 => array ('1day','1 journée'),
             2 => array ('3hours','3 heures'),
-            3 => array ('30min','30 miniutes'),
+            3 => array ('30min','30 minutes'),
             4 => array ('max','5 minutes')
             );
     $interval = array ("G" => 4,
                     "C"  => 1,
-                    "M"  => 2, 
+                    "M"  => 4, 
                     "opt" => $opt
             );
     $iselect = selectIndex($opt,$select); 
@@ -41,12 +41,12 @@ function drawSelectInter($menu)
             0 => array ('1week','1 semaine'),
             1 => array ('1day','1 journée'),
             2 => array ('3hours','3 heures'),
-            3 => array ('30min','30 miniutes'),
+            3 => array ('30min','30 minutes'),
             4 => array ('max','5 minutes')
             );
     $interval = array ("G" => 4,
                     "C"  => 1,
-                    "M"  => 2, 
+                    "M"  => 4, 
                     "opt" => $opt
             );
     $select  = $_SESSION['selectedInter'];   
@@ -93,34 +93,37 @@ function drawLogoutBack()
 	</form>	
 	</td>
 
-	<td>	
-	<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='10'/></a>
-	</td>		
-	
+	<td style='font-size:12px;'>
 <?php
 	if(isset($_SESSION['width']))
-	    {echo("<td style='font-size:11px;'>");
 		echo("size:{$_SESSION['width']} x {$_SESSION['height']}");
-		echo("</td>");
-		}
-	if($_SERVER['SERVER_NAME'] == '127.0.0.1')
-	    echo("<td></td></tr></table>");
-    else
-        echo("
-        <td style='display: none;'>
+?>
+	</td>
+	</tr>
+	</table>
+	    
+<?php if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')return; ?>
+        <table style='margin:auto; font-size:11px;'>
+        <tr><td>	
+	    <a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15'/></a>
+	    </td></tr>
+	    </table>
+<!--	    
+        <table style='margin:auto; font-size:11px; display:none;'>	    
+        <tr><td>
         <script src='http://www.counter160.com/js.js?img=15'></script>
         <br>
         <a href='http://www.000webhost.com'>
-        <img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px'>
+        <img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px;'>
         </a>
         <a href='http://www.hosting24.com'>
-        <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
+        <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px;' >
         </a>
         </td>
-        <td></td>	
-        </tr>
-        </table>
-        ");
+	    </tr>
+	    </table>
+-->	    
+<?php
 	}
 /* -- DrawMenuStation ************************************************************************* */
 function drawMenuStation($h = '')
@@ -136,7 +139,7 @@ function drawMenuStation($h = '')
 	    $_SESSION['stationId'] = $stationId;
 	    }
 ?>	
-	<form method='post' action='graphiques.php' onsubmit='return valider(this);'>
+	<form method='post' action='graphiques.php'>
 
     <table class='G'>
 	<tr>
@@ -155,7 +158,14 @@ function drawMenuStation($h = '')
 	<div class='fr'>
 <?php
 $interval = $_SESSION['selectedInter']; 
-if(($interval != '30min') && ($interval != 'max') )
+if($interval == '30min')
+    $txt = 'Fréquence (14j)';
+else if($interval == 'max')  
+    $txt = 'Fréquence (2j)';
+else
+    $txt = 'Fréquence';
+
+if($interval != 'aa')
     echo("
     	<input class=\"date\" id=\"id_date0\" type=\"text\" name=\"date0\" value=\"$datebeg\" onclick=\"ds_sh(this,0);\">
     ");
@@ -172,10 +182,9 @@ else
 	<div class='fr'>
 	<input class='date' id='id_date1'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
 	</div></td></tr>
-
 	<tr>
 	<td class='g'>
-	<div class='fl'><span id='id_duree' >Fréquence</span></div>	
+	<div class='fl'><?php echo("<span id='id_duree' >$txt</span>");?></div>	
 	<div class='fr'>
 	<select name='select' onChange='Allow(this);'>
 <?php	
@@ -220,6 +229,7 @@ else
 			
 	</table>
 	</form>	
+	<div.clear></div>
 	
 <?php	
 	}
@@ -245,7 +255,7 @@ function drawMenuCompare($h ='')
         }
        
 ?>
-	<form method='post' action='compareALL.php' onsubmit='return valider(this);'>	
+	<form method='post' action='compareALL.php'>	
 
     <table class='G'>
 	<tr>
@@ -332,15 +342,23 @@ function drawMenuCompare($h ='')
 
 	</table>
 	</form>	
+	<div.clear></div>
 	
 <!-- End DrawMenu Compare -->
 
 
 <?php
 	}
-function drawCharts()
-	{
-	echo("
+function drawCharts($order='G')
+	{$menu = array (
+            'G' => array ('drawMenuCompare','drawMenuStation'),
+            'C' => array ('drawMenuStation','drawMenuCompare'),
+            'M' => array ('drawMenuCompare','drawMenuModules'),
+            );
+	$hh = 310;
+    $h = $hh . 'px';
+    $h1 = $hh+2 .'px';            
+ 	echo("
 		<table class='ds_box'  id='ds_conclass' style='display: none;' >
 		<caption id='id_caption' class='ds_caption'>xxxx</caption>
 		<tr><td id='ds_calclass'>aaa</td></tr>
@@ -350,10 +368,7 @@ function drawCharts()
 	<tr>
 	<td style='padding:0px; vertical-align:bottom;'>
 	");
-	$hh = 310;
-    $h = $hh . 'px';
-    $h1 = $hh+2 .'px';
-	drawMenuCompare($h1); 
+    $menu[$order][0]($h1);
 	echo("
 	</td>
 		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
@@ -362,7 +377,7 @@ function drawCharts()
 	 <tr>
 	 <td style='padding:0px; vertical-align:bottom;'>
 	 ");
-	drawMenuStation($h1);
+	$menu[$order][1]($h1);
 	echo("
 	 </td>
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
@@ -401,7 +416,7 @@ function drawMenuModules($h ='')
         }
     
 ?>	
-	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>' onsubmit='return valider(this);'>	
+	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>'>	
 
   <table class='G'>
 	<tr>
@@ -513,6 +528,7 @@ function drawMenuModules($h ='')
 	
 	</table>
 	</form>	
+	<div.clear></div>
 	
 <!-- End DrawMenu Module -->
 	

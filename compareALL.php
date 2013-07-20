@@ -22,17 +22,39 @@ $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
 date_default_timezone_set("UTC");
 
-$date0 = $_POST["date0"];
-$txt = explode("/",$date0);
-$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
 $date1 = $_POST["date1"];
 $txt = explode("/",$date1);
 $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+$date_end = min($date_end,time());
+$date0 = $_POST["date0"];
+$txt = explode("/",$date0);
+$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
+$date_beg =	min($date_beg,$date_end);
+
+
 $interval = $_POST["select"];
-//$_SESSION['selectedInter'] = $interval;
+$_SESSION['selectedInter'] = $interval;
+if($interval == '1week')
+    {$date_beg = min($date_beg,$date_end - 18*24*60*60);
+    $inter  = 7*24*60;
+    }
+else
+    {$inter = 24*60;
+    $date_beg -= 24*60*60;
+    }
+
+$n_mesure = min(1024,($date_end-$date_beg)/($inter*60));
+$date_beg = max($date_beg,($date_end - $n_mesure*$inter*60));
+
+// pour tracer le calendrier	
+$datebeg = date("d/m/Y",$date_beg); 
+$dateend = date("d/m/Y",$date_end); 
+$_SESSION['datebeg'] = $datebeg;
+$_SESSION['dateend'] = $dateend;
+
+
 $numStations = count($devicelist["devices"]);
-$_SESSION['datebeg'] = $date0;
-$_SESSION['dateend'] = $date1;
+
 
 if(isset($_SESSION['viewCompare']))
     $view = $_SESSION['viewCompare'];
@@ -120,7 +142,9 @@ echo("
 	          	}
 	          	
 	        echo("data.addColumn('number', '');\n"); 
-	        $itime = $minDateBeg;   
+	        $itime = $minDateBeg; 
+			$beg = date("d/m/y", $minDateBeg); 
+			$end = date("d/m/y",$date_end); 	        	        
 	        $i = 0;	
             	do {
             	$idate = date("d/m/y",$itime);
@@ -140,7 +164,8 @@ echo("
             	$itime += $inter*24*60*60;
             	++$i;
                 }while($itime < $date_end);
-				echo("data.removeColumn(1+2*$numview);\n");				 
+				echo("data.removeColumn(1+2*$numview);\n");	
+				$title = $titre . 'minimale extérieure' . '  ('.$beg.' - '.$end.')';                
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -157,6 +182,9 @@ echo("
 	          	
 	        echo("data1.addColumn('number', '');\n"); 
 	        $itime = $minDateBeg;
+			$beg = date("d/m/y", $minDateBeg); 
+			$end = date("d/m/y",$date_end); 	        
+	        
 	        $i = 0;   	
             do	{$idate = date("d/m/y",$itime);
 				echo("data1.addRow([\"$idate\"");
@@ -176,13 +204,10 @@ echo("
             	++$i;
                 }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
+				$title1 = $titre . 'maximale extérieure' . '  ('.$beg.' - '.$end.')';                
 
-//Segoe UI Light
-//Trajan Pro
-$title = $titre . 'minimale extérieure';                
-$title1 = $titre . 'maximale extérieure';
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
-$param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+$param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 ?>
 colorMin =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
 colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
@@ -243,7 +268,7 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
   <body> 
  <?php
 	$num = count($devicelist["devices"]);
-	drawCharts();
+	drawCharts('C');
 ?>
 
 

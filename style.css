@@ -6,7 +6,7 @@ body {
  margin:0;
  margin-right:2px;
  padding:0;
- background-color:#ddd;
+ background-color:#353;
  }
 table.icone {
 	background-color: #cceeff;
@@ -140,29 +140,11 @@ div.chart	{
 	width:100%;
 	border:solid 1px black;
 }
-/*
-table.graphic {
-	color:black;
-	text-align:left;
-	background-color:#cceeff;
-	font-size:14px;
-	border:solid 1px #55a;
-	border-collapse:collapse;
-    width:205px;
-    height:310px;
-} 
-.graphic td {
-    height:18px;
-    max-height:25px;
-    padding:0px 0px 0px 5px;
-    }
-*/    
 table.chk{
     border-spacing:0px;
 }    
 .chk td {
 	font-size:12px;
-	//height:12px;
 	width:95px;
 }
 td.title {
@@ -216,26 +198,21 @@ td.g	{
 	height:26px;
 	width:205px;
 	text-align:left;
-	//border:solid 1px #55a;
     padding:0px 0px 0px 5px;	
 }
 div.fl {
 	width:95px;
 	height:26px;
-	background-color:#cceeff;
 	float:left;
 }
 div.fr {
 	width:110px;
 	height:26px;
-	background-color:#cceeff;
 	float:left;
 }  
 div.f {
 	width:205px;
 	height:26px;
-	background-color:#cceeff;
-	//float:left;
 } 
 input.g {
 	color:#00a;
@@ -245,6 +222,9 @@ input.g {
 	font-size:12px;
 	margin-left:-4px;
 	margin-bottom:25px;
+}
+div.clear {
+	clear:both;;
 }
 
 table.bulle {
@@ -265,15 +245,19 @@ table.bulle {
 }
 td.name {
 	font-size:12px;
+	font-weight:normal;
 	text-align:left;
 	height:11px;
 	margin:0;
 	padding:0;
 }
 .bulle td {
-	font-size:11px;
+	font-size:12px;
 	text-align:left;
+	font-weight:bold;
 	height:13px;
 	margin:0;
 	padding:0;	
 }
+
+

@@ -14,12 +14,14 @@ function valider(frm)
 	var date1 = frm.elements['date1'].value;
 	var saisie1 = (date1).split('/');
 	var endday = new Date(eval(saisie1[2]),eval(saisie1[1])-1,eval(saisie1[0]));
+	
 	if((endday - date < 24*60*60*1000) && (i < 2))	
 		{frm.date1.focus();		
 		alert('Date ' + date.getDate() +'/'+ (date.getMonth()+1) +'/'+ date.getFullYear()
 		 +' non inférieure à '+ endday.getDate() +'/'+ (endday.getMonth()+1) +'/'+ endday.getFullYear() );
     	return false;
     	}
+   	
  	// i=0 1week i=1 1day  i=2 3hours i=3 30minute	i=4 max
 	var nmesure = (endday-date)/(24*60*60*1000);
 	if(i == 2)nmesure *= 8;
@@ -36,22 +38,19 @@ function valider(frm)
 function Allow(tab) 
     {for (var i = 0;i < tab.length;i++)
 		if(tab[i].selected)break;		
-	var el0 = document.getElementById('id_date0');
+	//var el0 = document.getElementById('id_date0');
 	var duree = document.getElementById('id_duree');
     if(i < 3)
 		{duree.innerHTML = 'Fréquence';
-//		el0.hidden = false;
-		el0.style.visibility ='visible';
+		//el0.style.visibility ='visible';
 		}
 	else if(i == 3)
 		{duree.innerHTML = 'Fréquence (14j)';
-		el0.style.visibility ='hidden';		
-//		el0.hidden = true;
+		//el0.style.visibility ='visible';		
 		}				
 	else
 		{duree.innerHTML = 'Fréquence (2j)';
-		el0.style.visibility ='hidden';		
-//		el0.hidden=true;
+		//el0.style.visibility ='visible';		
 		}	
     return true;		
 	}

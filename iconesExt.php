@@ -85,7 +85,7 @@ for($i = 0;$i < $numStations;$i++)
 	$db  = $res[0]['Noise'];
 	$red = "style='color:#900'";
 	$green = "style='color:#070'";
-	$orange = "style='color: #b09000'";
+	$orange = "style='color: brown'";
 	$violet = "style='color:#007'";
 	
 	$tabINT = "<td class='name'>$int_name</td> <td $red>$temp</td> <td $green>$hum</td>  <td $orange>$co2</td> <td></td> <td $violet>$db</td>";	
