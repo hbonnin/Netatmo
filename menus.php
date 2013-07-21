@@ -25,7 +25,7 @@ function drawSelectInter($menu)
         echo "<option value="."'" .$val."' ". $sel.">". $txt.' </option>'."\n";       
         }   
     } 
-function chkDates($date0,$date1,$interval,$inter,$date_beg,$date_end)
+function chkDates($date0,$date1,$interval,$inter)
     {$txt = explode("/",$date1);
     $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
     $date_end = min($date_end,time());
@@ -48,7 +48,9 @@ function chkDates($date0,$date1,$interval,$inter,$date_beg,$date_end)
     $dateend = date("d/m/Y",$date_end); 
     $_SESSION['datebeg'] = $datebeg;
     $_SESSION['dateend'] = $dateend; 
-    if($interval == '1day')$date_beg -= 24*60*60;
+    if($interval == '1day')$date_beg -= 24*60*60;    
+    $_SESSION['date_beg'] = $date_beg;
+    $_SESSION['date_end'] = $date_end; 
     }    
 function drawLogoutBack()
 	{if(!isset($_SESSION['stationId'] ))

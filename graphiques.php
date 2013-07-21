@@ -47,8 +47,10 @@ if(isset($_POST['date1']))
     $date1 = $_POST['date1'];
 else
     $date1 = $_SESSION['dateend']; 
-$date_beg = $date_end = 0;    	
-chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
+
+chkDates($date0,$date1,$interval,$inter);	
+$date_beg = $_SESSION['date_beg'];
+$date_end = $_SESSION['date_end'];
 
 if($interval=="1week")
 	{$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	

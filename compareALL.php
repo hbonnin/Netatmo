@@ -44,8 +44,9 @@ $sel = selectIndex($opt,$interval);
 $inter = $opt[$sel][2];
 $tinter = $opt[$sel][1];    
     
-$date_beg = $date_end = 0;
-chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
+chkDates($date0,$date1,$interval,$inter);	
+$date_beg = $_SESSION['date_beg'];
+$date_end = $_SESSION['date_end'];
 
 $numStations = count($devicelist["devices"]);
 
