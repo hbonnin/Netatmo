@@ -12,10 +12,8 @@ session_start();
 	<link rel='icon' href='favicon.ico'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
-	<script type='text/javascript' src='validate.js'></script>	
 
 <?php
-/* Ne peux actuellement etre appeler directement */
 date_default_timezone_set("Europe/Paris");
 initClient();
 $client = $_SESSION['client'];
@@ -32,15 +30,6 @@ if(isset($_POST["date1"]))
     $date1 = $_POST["date1"];
 else
     $date1 = $_SESSION['dateend']; 
- 
-
-$txt = explode("/",$date1);
-$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-$date_end = min($date_end,time());
-$txt = explode("/",$date0);
-$date_beg = mktime(0,0,0,$txt[1],$txt[0],$txt[2]);
-$date_beg =	min($date_beg,$date_end);
-
 
 if(isset($_POST["select"]))
     {$interval = $_POST["select"];
@@ -50,49 +39,39 @@ if(isset($_POST["select"]))
     {$interval = $_SESSION['selectedInter']; 
     $interval = checkSelect($interval,'M');
     }
+$opt = $_SESSION['MenuInterval']['opt']; 
+$sel = selectIndex($opt,$interval);
+$inter = $opt[$sel][2];
+$tinter = $opt[$sel][1];    
     
-if($interval == '1week')
-    {$date_beg = min($date_beg,$date_end - 18*24*60*60);
-    $inter  = 7*24*60;
-    }
-else
-    {$inter = 24*60;
-    $date_beg -= 24*60*60;
-    }
-
-$n_mesure = min(1024,($date_end-$date_beg)/($inter*60));
-$date_beg = max($date_beg,($date_end - $n_mesure*$inter*60));
-
-// pour tracer le calendrier	
-$datebeg = date("d/m/Y",$date_beg); 
-$dateend = date("d/m/Y",$date_end); 
-$_SESSION['datebeg'] = $datebeg;
-$_SESSION['dateend'] = $dateend;
-
+$date_beg = $date_end = 0;
+chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
 
 $numStations = count($devicelist["devices"]);
 
-
-if(isset($_SESSION['viewCompare']))
-    $view = $_SESSION['viewCompare'];
-else
-    {for($i = 1 ;$i < $numStations; $i++)
-        $view[$i] = 0;
-    $view[0] = 1;
-       }
 if(isset($_POST['stats']))
     {for($i = 0 ;$i < $numStations; $i++)
-        $vien[$i] = 0;
+        $view[$i] = 0;
+    $numview = 0;  // Nombre de stations cochées      
     foreach($_POST['stats'] as $chkbx)
-	    $view[$chkbx] = 1;
-	}    
-$_SESSION['viewCompare'] = $view;   
-
-$numview = 0;  // Nombre de stations cochées
-for($i = 0 ;$i < $numStations; $i++)
-	if($view[$i])++$numview;
+	    {$view[$chkbx] = 1;++$numview;}
+	if($numview == 0)
+	    {$numview = 1; $view[0] = 1;}
+	$view['numview'] = $numview;
+	}   
+else
+    {$view = $_SESSION['viewCompare'];
+    $numview = $view['numview'];
+    }
+$_SESSION['viewCompare'] = $view;   	
 	
-$selectMesure = $_POST['selectMsesure'];
+if(isset($_POST['selectMsesure']))
+    {$selectMesure = $_POST['selectMsesure'];
+    $_SESSION['selectMesureCompare'] = $selectMesure; 
+    }
+else 
+    $selectMesure = $_SESSION['selectMesureCompare'];
+    
 if($selectMesure == 'T')
     {$type = 'min_temp,max_temp,date_min_temp,date_max_temp';
     $titre = 'Température ';
@@ -101,7 +80,7 @@ else if($selectMesure == 'H')
     {$type = 'min_hum,max_hum,date_min_hum,date_max_hum';
     $titre = 'Humidité ';
     }   
- $_SESSION['selectMesureCompare'] = $selectMesure; 
+
  
 $mesure = array($numStations);
 $dateBeg = array($numStations);
@@ -130,11 +109,6 @@ for($i = 0;$i < $numStations;$i++)
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
     $nmesures[$i] = count($keys[$i]);
     }
-    
-if($interval == "1week")
-	$inter = 7;
-else
-	$inter = 1;	
 
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
@@ -178,7 +152,7 @@ echo("
             		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 	
-            	$itime += $inter*24*60*60;
+            	$itime += $inter;
             	++$i;
                 }while($itime < $date_end);
 				echo("data.removeColumn(1+2*$numview);\n");	
@@ -217,7 +191,7 @@ echo("
             		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 	
-            	$itime += $inter*24*60*60;
+            	$itime += $inter;
             	++$i;
                 }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 

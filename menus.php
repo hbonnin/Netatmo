@@ -34,9 +34,9 @@ function chkDates($date0,$date1,$interval,$inter,$date_beg,$date_end)
     $date_beg =	min($date_beg,$date_end);
 
     if($interval == '1week')
-        $date_beg = min($date_beg,$date_end - 18*24*60*60);
+        $date_beg = min($date_beg,$date_end - 26*7*24*60*60);
     else if($interval == '1day')
-        $date_beg = min($date_beg,$date_end - 24*60*60);
+        $date_beg = min($date_beg,$date_end - 7*24*60*60);
     else if($interval == '3hours')
         $date_beg = min($date_beg,$date_end - 24*60*60);
     else 
@@ -120,14 +120,8 @@ function drawMenuStation($h = '')
 	{global $num,$mesures;
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
+	$stationId = $_SESSION['stationId'];
 	
-	
-	if(isset($_SESSION['stationId']))
-	    $stationId = $_SESSION['stationId'];
-	else
-	    {$stationId = 0;
-	    $_SESSION['stationId'] = $stationId;
-	    }
 ?>	
 	<form method='post' action='graphiques.php'>
 
@@ -210,22 +204,9 @@ function drawMenuCompare($h ='')
 	{global $num,$mesures;
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
-	
-	if(isset($_SESSION['viewCompare']))
-	    $view = $_SESSION['viewCompare'];
-	else
-	    {for($i = 1 ;$i < $num; $i++)
-	        $view[$i] = 0;
-	    $view[0] = 1;
-	    $_SESSION['viewCompare'] = $view;
-        }
-    if(isset($_SESSION['selectMesureCompare']))
-        $selectMesure = $_SESSION['selectMesureCompare'];
-    else 
-        {$selectMesure = 'T';
-        $_SESSION['selectMesureCompare'] = $selectMesure;
-        }
-       
+	$view = $_SESSION['viewCompare'];
+	$selectMesure = $_SESSION['selectMesureCompare'];
+
 ?>
 	<form method='post' action='compareALL.php'>	
 
@@ -358,16 +339,16 @@ function drawCharts($order='G')
 /* drawMenuModules ************************************************************************/	
 function drawMenuModules($h ='')
 	{global $numStations,$nameStations;
-
 	$mesures = $_SESSION['mesures'];
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
-	
     $stationNum = $_SESSION['stationId']; 
     $devicelist = $_SESSION['devicelist'];
     $stationName = $devicelist['devices'][$stationNum]['station_name'];
     $num = count($devicelist["devices"]);
-
+    $selectMesure = $_SESSION['selectMesureModule'];
+    
+    // $numStations = #modules + 1
 	if(isset($_SESSION['viewModule']))
 	    $view = $_SESSION['viewModule'];
 	else
@@ -375,14 +356,7 @@ function drawMenuModules($h ='')
 	        $view[$i] = 1;
 	    $_SESSION['viewModule'] = $view;
         }	        
-	
-    if(isset($_SESSION['selectMesureModule']))
-        $selectMesure = $_SESSION['selectMesureModule'];
-    else 
-        {$selectMesure = 'T';
-        $_SESSION['selectMesureModule'] = $selectMesure;
-        }
-    
+
 ?>	
 	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>'>	
 

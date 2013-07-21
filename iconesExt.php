@@ -35,6 +35,11 @@ if(isset($_GET['height']))
 
 // reload page => recalculer $mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
+initClient();
+$client = $_SESSION['client'];
+$devicelist = $_SESSION['devicelist'];
+$mesures = $_SESSION['mesures'];
+$numStations = count($devicelist["devices"]);
 
 if(!isset($_SESSION['init']))
     {$_SESSION['init'] = true;
@@ -53,13 +58,14 @@ if(!isset($_SESSION['init']))
                                     4 => array ('max','5 minutes',5*60)
                                     )
                             );
-    $_SESSION['MenuInterval'] = $MenuInterval;    
+    $_SESSION['MenuInterval'] = $MenuInterval;  
+    for($i = 0 ;$i < $numStations; $i++)
+        $viewCompare[$i] = 1;
+    $viewCompare['numview'] = $numStations;
+    $_SESSION['viewCompare'] = $viewCompare; 
+    $_SESSION['selectMesureCompare'] = 'T';
+    $_SESSION['selectMesureModule'] = 'T';
     }
-initClient();
-$client = $_SESSION['client'];
-$devicelist = $_SESSION['devicelist'];
-$mesures = $_SESSION['mesures'];
-$numStations = count($devicelist["devices"]);
 
 
 $latitude = array($numStations);
@@ -401,7 +407,6 @@ echo("</tr></table>");
 ?>
 
 <!-- trace des menus et de la Google map -->
-<!--<div class='container'>-->
 <table class='container'>
 <tr>
     <td class='container'>
@@ -418,11 +423,10 @@ echo("</tr></table>");
         drawMenuCompare();
         ?>	
     </td>
-</tr></table>
+</tr>
+</table>
 
-<?php $draw=false; drawLogoutBack($draw); ?>
-
-
+<?php  drawLogoutBack(); ?>
 </body>
 </html>
 

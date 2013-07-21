@@ -5,7 +5,6 @@
 	<link rel='icon' href='favicon.ico'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
-	<script type='text/javascript' src='validate.js'></script>	
 
 <?php
 require_once 'NAApiClient.php';
@@ -21,7 +20,7 @@ $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
 
 // $stationNum station utilise
-$stationNum = $_GET['stationNum'];
+$stationNum = $_GET['stationNum']; // toujours défini
 
 if(isset($_POST['selectStation']))
     {$changedStation = ($stationNum != $_POST['selectStation']);
@@ -46,18 +45,15 @@ for($i = 0;$i < $numStations;$i++)
 $device_id = $device['_id'];
 $numModules = count($device['modules']);
 $modules_id[0] = $device_id;
+
 for($i = 1;$i < $numStations;$i++)    
     $modules_id[$i] = $device['modules'][$i -1]['_id'];
 
-if(isset($_SESSION['selectMesureModule']))
-    $selectMesure = $_SESSION['selectMesureModule'];
- else 	
-	{$selectMesure = 'T';
-	$_SESSION['selectMesureModule'] = $selectMesure;
-	}
 if(isset($_POST['selectMsesure']))
     $selectMesure = $_POST['selectMsesure'];
-
+else
+    $selectMesure = $_SESSION['selectMesureModule'];
+    
 if(isset($_POST["select"]))
     {$interval = $_POST["select"];
     $_SESSION['selectedInter'] = $interval;    
@@ -91,13 +87,11 @@ chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);
 $CO2 = 0;	
 $HTime = 1;
 if($selectMesure == 'T')
-    {
-    $titre = 'Température ';
+    {$titre = 'Température ';
     $titre1 = 'Température ';
     if($inter >= 24*60*60)
         $type = 'min_temp,max_temp,date_min_temp,date_max_temp';
     else if($inter == 3*60*60)
-//    else if($inter >= 30*60)
         {$type = 'min_temp,max_temp';$HTime = 0;}
     else
         {$type = 'Temperature,Humidity';$HTime = 0;
@@ -105,8 +99,7 @@ if($selectMesure == 'T')
         }
     }
 else if($selectMesure == 'H')
-    {
-    $titre = 'Humidité ';
+    {$titre = 'Humidité ';
     $titre1 = 'Humidité ';    
     if($inter >= 24*60*60)
          $type = 'min_hum,max_hum,date_min_hum,date_max_hum';
@@ -118,8 +111,7 @@ else if($selectMesure == 'H')
         }
     }    
 else if($selectMesure == 'C') 
-    {//$type = 'CO2';
-    $titre = 'CO2 ';
+    {$titre = 'CO2 ';
     $titre1 = 'CO2 ';    
     if($inter >= 24*60*60)
         $type = 'min_co2,max_co2,date_min_co2,date_max_co2';  

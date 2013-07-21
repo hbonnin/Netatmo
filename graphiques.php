@@ -12,7 +12,6 @@ session_start();
     <link rel='icon' href='favicon.ico' >
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
-	<script type='text/javascript' src='validate.js'></script>	
 
 <?php
 date_default_timezone_set("Europe/Paris");
