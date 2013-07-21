@@ -20,8 +20,12 @@ date_default_timezone_set("Europe/Paris");
 if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
 initClient();
 $client = $_SESSION['client'];
-$devicelist = $_SESSION['devicelist'];
-$mesures = $_SESSION['mesures'];
+
+if(isset($_POST['station'])) 
+    $stationId = $_POST['station'];
+else if(isset($_SESSION['stationId']))
+    $stationId = $_SESSION['stationId'];
+$_SESSION['stationId'] = $stationId;
 
 if(isset($_POST["select"]))
     {$interval = $_POST["select"];
@@ -31,6 +35,10 @@ if(isset($_POST["select"]))
     {$interval = $_SESSION['selectedInter']; 
     $interval = checkSelect($interval,'M');
     }
+$opt = $_SESSION['MenuInterval']['opt']; 
+$sel = selectIndex($opt,$interval);
+$inter = $opt[$sel][2];
+$tinter = $opt[$sel][1];	
 
 if(isset($_POST['date0']))
     $date0 = $_POST['date0'];
@@ -40,87 +48,39 @@ if(isset($_POST['date1']))
     $date1 = $_POST['date1'];
 else
     $date1 = $_SESSION['dateend']; 
-    
-    
-if(isset($_POST['station'])) 
-    $stationId = $_POST['station'];
-else if(isset($_SESSION['stationId']))
-    $stationId = $_SESSION['stationId'];
-else
-    $stationId = 0;
-
-$_SESSION['stationId'] = $stationId;
-
+$date_beg = $date_end = 0;    	
+chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
 
 if($interval=="1week")
-	{$inter = 7*24*60*60;
-	$tinter = '1 semaine';
-	$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	
+	{$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";	
 	}
 else if($interval=="1day")
-	{$inter = 24*60*60;
-	$tinter = '1 jour';
-	$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
+	{$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";		
 	}
 else if($interval=="3hours")
-	{$inter = 3*60*60;
-	$tinter = '3 heures';	
-	$req =  "Temperature,Humidity";	
+	{$req =  "Temperature,Humidity";	
 	$req1 = "Temperature,Humidity,max_co2,min_pressure,max_noise";
 	}	
 else if($interval=="30min")
-	{$inter = 30*60;
-	$tinter = '30 minutes';
-	$req = "Temperature,Humidity";
+	{$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,max_co2,min_pressure,max_noise";
 	}	
 else if($interval=="max")
-	{$inter = 5*60;
-	$tinter = '5 minutes';
-	$req = "Temperature,Humidity";
+	{$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
 	}
-$date_beg = $date_end = 0;
-chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
-
-/*	
-$txt = explode("/",$date1);
-$date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
-$date_end = min($date_end,time());
-$txt = explode("/",$date0);
-$date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]); 
-$date_beg =	min($date_beg,$date_end);
-
-if($interval == '1week')
-    $date_beg = min($date_beg,$date_end - 18*24*60*60);
-else if($interval == '1day')
-    $date_beg -= 24*60*60;
-else if($interval == '3hours')
-    $date_beg = min($date_beg,$date_end - 24*60*60);
-else 
-    $date_beg = min($date_beg,$date_end - 12*60*60);
-    
-$n_mesure = min(1024,($date_end-$date_beg)/($inter));
-$date_beg = max($date_beg,($date_end - $n_mesure*$inter));
-
-$datebeg = date("d/m/Y",$date_beg); 
-$dateend = date("d/m/Y",$date_end); 
-$_SESSION['datebeg'] = $datebeg;
-$_SESSION['dateend'] = $dateend;
-*/
-
+	
+$devicelist = $_SESSION['devicelist'];
 $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
-
 $int_name = $devicelist["devices"][$stationId]["module_name"];
 $ext_name = $devicelist["devices"][$stationId]["modules"][0]["module_name"];
+$mesures = $_SESSION['mesures'];
 $stat_name = $mesures[$stationId]['station_name'];
 
 date_default_timezone_set("UTC");
-
-
 	// exterieur
     $params = array("scale" => $interval
     , "type" => $req
@@ -480,15 +440,14 @@ echo("
          
 } // endDraw 
            
-	</script>
+</script>
 <script type='text/javascript' src='calendrier.js'></script> 
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css' >
-	
+<link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css' >
 </head>
-  <body>
+<body>
  <?php
 	$num = count($devicelist["devices"]);
 	drawCharts('G');	
  ?>
-  </body>
+</body>
 </html>

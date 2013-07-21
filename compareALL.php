@@ -276,19 +276,15 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
 
 } // draw chart 
             
-          </script>
+</script>
 <script type='text/javascript' src='calendrier.js'></script> 
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
-     
-  </head>
- 
-  <body> 
+<link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
+</head>
+ <body> 
  <?php
 	$num = count($devicelist["devices"]);
 	drawCharts('C');
 ?>
-
-
-  </body>
+</body>
 </html>
 

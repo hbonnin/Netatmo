@@ -1,60 +1,19 @@
 <?php
 
-$opt = array (
-            0 => array ('1week','1 semaine'),
-            1 => array ('1day','1 journée'),
-            2 => array ('3hours','3 heures'),
-            3 => array ('30min','30 minutes'),
-            4 => array ('max','5 minutes')
-            );
-$interval = array ("G" => 4,
-                "C"  => 1,
-                "M"  => 3, 
-                "opt" => $opt
-            );
-
 function checkSelect($select,$menu)
-    {//global $opt,$interval;
-   
-    $opt = array (
-            0 => array ('1week','1 semaine'),
-            1 => array ('1day','1 journée'),
-            2 => array ('3hours','3 heures'),
-            3 => array ('30min','30 minutes'),
-            4 => array ('max','5 minutes')
-            );
-    $interval = array ("G" => 4,
-                    "C"  => 1,
-                    "M"  => 3, 
-                    "opt" => $opt
-            );
-            
-    $iselect = selectIndex($opt,$select); 
+    {$interval  = $_SESSION['MenuInterval'];
+    $iselect = selectIndex($interval['opt'],$select); 
     $selected = min($iselect,$interval[$menu]);
     return  $interval['opt'][$selected][0];        
     }
 function selectIndex($opt,$select)
     {$max = count($opt);
     for($i = 0; $i < $max;$i++)
-        if($select == $opt[$i][0])break;
-    return $i;    
+        if($select == $opt[$i][0])return $i;
+    return 1;    
     }
 function drawSelectInter($menu)
-    {//global $opt,$interval;
-   
-    $opt = array (
-            0 => array ('1week','1 semaine'),
-            1 => array ('1day','1 journée'),
-            2 => array ('3hours','3 heures'),
-            3 => array ('30min','30 minutes'),
-            4 => array ('max','5 minutes')
-            );
-    $interval = array ("G" => 4,
-                    "C"  => 1,
-                    "M"  => 3, 
-                    "opt" => $opt
-            );
-           
+    {$interval  = $_SESSION['MenuInterval'];
     $select  = $_SESSION['selectedInter'];   
     $iselect = selectIndex($interval['opt'],$select); 
     $selected = min($iselect,$interval[$menu]);
@@ -200,7 +159,7 @@ function drawMenuStation($h = '')
 	<td class='g'>
 	<div class='fl'>Fréquence</div>	
 	<div class='fr'>
-	<select name='select' onChange='Allow(this);'>
+	<select name='select'>
 <?php	
      drawSelectInter("G"); 
 ?>
@@ -239,11 +198,10 @@ function drawMenuStation($h = '')
 	<div class='f'  style='height:20px;'>	
 	<input type='submit' class='g'>	
 	</div>
+	<!--<div.clear></div>-->
 	</td></tr>
-			
 	</table>
 	</form>	
-	<div.clear></div>
 	
 <?php	
 	}
@@ -300,7 +258,7 @@ function drawMenuCompare($h ='')
 	<td class='g'>
 	<div class='fl'><span>Fréquence</span></div>	
 	<div class='fr'>
-	<select name='select' onChange='Allow(this);'>
+	<select name='select'>
 <?php	
      drawSelectInter("C"); 
 ?>
@@ -351,16 +309,12 @@ function drawMenuCompare($h ='')
 	<td class='g'  style='height:20px;'>
 	<div class='f' style='height:20px;'>	
 	<input type='submit' class='g'>	
+	<!--<span.clear></span>	-->
 	</div>
 	</td></tr>
-
 	</table>
-	</form>	
-	<div.clear></div>
-	
+	</form>
 <!-- End DrawMenu Compare -->
-
-
 <?php
 	}
 function drawCharts($order='G')
@@ -480,7 +434,7 @@ function drawMenuModules($h ='')
 	<td class='g'>
 	<div class='fl'><span>Fréquence</span></div>	
 	<div class='fr'>
-	<select name='select' onChange='Allow(this);'>
+	<select name='select'>
 <?php	
      drawSelectInter("M"); 
 ?>
@@ -537,12 +491,12 @@ function drawMenuModules($h ='')
 	<td class='g' style='height:20px;'>
 	<div class='f' style='height:20px;'>	
 	<input type='submit' class='g'>	
+	<!--<span.clear></span>	-->
 	</div>
 	</td></tr>
-	
 	</table>
 	</form>	
-	<div.clear></div>
+
 	
 <!-- End DrawMenu Module -->
 	

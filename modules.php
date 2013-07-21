@@ -6,7 +6,7 @@
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 	<script type='text/javascript' src='validate.js'></script>	
-</head>
+
 <?php
 require_once 'NAApiClient.php';
 require_once 'Config.php';
@@ -67,26 +67,12 @@ if(isset($_POST["select"]))
     $interval = checkSelect($interval,'M');
     }
     
-if($interval == "1week")
-	{$inter = 7*24*60*60;
-	$tinter = '1 semaine';
-	}
-else if($interval == "1day")
-	{$inter = 24*60*60;	
-	$tinter = '1 journée';
-	}
-else  if($interval == "3hours")
-	{$inter = 3*60*60;
-    $tinter = '3 heures';
-    }
- else if($interval == "30min")
-	{$inter = 30*60;
-    $tinter = '30 minutes';
-    }  
- else
-	{$inter = 5*60;
-    $tinter = '5 minutes';
-    }      
+
+$opt = $_SESSION['MenuInterval']['opt']; 
+$sel = selectIndex($opt,$interval);
+$inter = $opt[$sel][2];
+$tinter = $opt[$sel][1];
+
     
 if(isset($_POST["date0"]))  
     $date0 = $_POST["date0"]; 
@@ -100,32 +86,7 @@ else
     
 $date_beg = $date_end = 0;
 chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
-/*
-$txt = explode("/",$date1);
-$date_end = mktime(date("H"),date("i"),0,$txt[1],$txt[0],$txt[2]);  
-$date_end = min($date_end,time());
-$txt = explode("/",$date0);
-$date_beg = mktime(date("H"),date("i"),0,$txt[1],$txt[0],$txt[2]);
-$date_beg = min($date_beg,$date_end);  
 
-if($interval == '1week')
-    $date_beg = min($date_beg,$date_end - 18*24*60*60);
-else if($interval == '1day')
-    $date_beg -= 24*60*60;
-else  if($interval == '3hours')
-    $date_beg = min($date_beg,$date_end - 24*60*60);
-else 
-    $date_beg = min($date_beg,$date_end - 12*60*60);
-   
-$n_mesure = min(1024,($date_end-$date_beg)/($inter));
-$date_beg = max($date_beg,($date_end - $n_mesure*$inter));
-
-// pour tracer le calendrier	
-$datebeg = date("d/m/Y",$date_beg); 
-$dateend = date("d/m/Y",$date_end); 
-$_SESSION['datebeg'] = $datebeg;
-$_SESSION['dateend'] = $dateend;
-*/
 
 $CO2 = 0;	
 $HTime = 1;
@@ -408,10 +369,10 @@ echo("
             
           </script>
 <script type='text/javascript' src='calendrier.js'></script> 
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
-
+<link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>
+</head>
+<body>
 <?php
-echo("<body>");
 $num = count($devicelist["devices"]);  
 drawCharts('M');
 ?>

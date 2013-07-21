@@ -35,21 +35,33 @@ if(isset($_GET['height']))
 
 // reload page => recalculer $mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
-//interval initial
-if(!isset($_SESSION['selectedInter'] ))
-    $_SESSION['selectedInter'] = '1day';
-if(!isset($_SESSION['datebeg']))
-    {$_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d')-30,date('y')));
-    $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
-    }    
 
+if(!isset($_SESSION['init']))
+    {$_SESSION['init'] = true;
+    $_SESSION['stationId'] = 0;
+    $_SESSION['selectedInter'] = '1day';
+    $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d')-30,date('y')));
+    $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
+    $MenuInterval = array ( "G" => 4,
+                        "C"  => 1,
+                        "M"  => 3, 
+                        "opt" => array (
+                                    0 => array ('1week','1 semaine',7*24*60*60),
+                                    1 => array ('1day','1 journée',24*60*60),
+                                    2 => array ('3hours','3 heures',3*60*60),
+                                    3 => array ('30min','30 minutes',30*60),
+                                    4 => array ('max','5 minutes',5*60)
+                                    )
+                            );
+    $_SESSION['MenuInterval'] = $MenuInterval;    
+    }
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
 $mesures = $_SESSION['mesures'];
 $numStations = count($devicelist["devices"]);
 
-//
+
 $latitude = array($numStations);
 $longitude = array($numStations);
 $alt = array($numStations);
@@ -374,7 +386,8 @@ for($i = 0;$i < $numStations;$i++)
     else
        $tmins[$i] = $tmaxs[$i] = '-'; 
     }
- echo("<table style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
+
+echo("<table style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
 		<tr>");
 
 // Tracé des icones    
@@ -385,51 +398,31 @@ for($i = 0;$i < $numStations;$i++)
 	echo("</td>");
 	}
 echo("</tr></table>");	
-
 ?>
 
 <!-- trace des menus et de la Google map -->
 <!--<div class='container'>-->
 <table class='container'>
 <tr>
-<td class='container'>
-<?php
-
-$num = count($devicelist["devices"]);
-
-drawMenuStation('310px');
-?>
-</td>
+    <td class='container'>
+        <?php
+        $num = count($devicelist["devices"]);
+        drawMenuStation();
+        ?>
+    </td>
 <!-- GOOGLE MAP -->
-<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:510px; border:solid 2px gray;'> </div>
-</td>
-<td class='container'>
-<?php
-drawMenuCompare('310px');
-?>	
-</td>
-</tr>
-</table>
-<!--</div>-->
+    <td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:510px; border:solid 2px gray;'> </div>
+    </td>
+    <td class='container'>
+        <?php
+        drawMenuCompare();
+        ?>	
+    </td>
+</tr></table>
+
 <?php $draw=false; drawLogoutBack($draw); ?>
 
-<!--
-<table class='counter'>
-<tr>
-<td><td class='container'>
-<a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15'/></a>
-</td>
-<td class='container'>
-<script src='http://www.counter160.com/js.js?img=15'></script>
-<br>
-<a href='http://www.000webhost.com'>
-<img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px'>
-</a>
-<a href='http://www.hosting24.com'>
-<img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px' >
-</a>
-</td></tr></table>
--->
+
 </body>
 </html>
 

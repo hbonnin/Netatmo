@@ -4,7 +4,7 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 	{$station = $devicelist["station_name"];
 	$int_name = $devicelist["module_name"];
 	$ext_name = $devicelist["modules"][0]["module_name"];
-	$nModule = count($res);
+	//$nModule = count($res);
 	$dat0 = date('d/m/Y',$res[0]['time']);
 	$time0 = date('H:i',$res[0]['time']);
 	$dat1 = date('d/m/Y',$res[1]['time']);
@@ -56,35 +56,8 @@ function fill($stationId,$devicelist,$alt,$res,$tmin,$tmax)
 	<td></td><td></td>
 	<td class='s' >$dat0</td><td class='s' style='text-align:right;'>$time0</td>
 	<td></td>
-	</tr><tr>
+	</tr></table>
 ");	
-	if($nModule > 200)
-		{echo("	
-		<td class='a'  colspan='7'>
-		<a href='#' class='tooltip'>
-  		Autres modules:	
-  		<div>
-  		<table>
-  		<tr><td></td>	<td> Temp</td>	<td>Hum</td>	<td>CO2</td></tr>
-  		");
-  		for($j = 2; $j < $nModule ; $j++)
-  			{$name = $res[$j]["module_name"];
-  			$temp = $res[$j]["Temperature"];
-  			$hum = $res[$j]["Humidity"];
-  			$co2 = $res[$j]["CO2"];		
-  			echo("<tr>
-  			<td style='width:80px;'>$name</td>
-  			<td style='color:#ff0000;'>{$temp}°</td>
-  			<td class='h'>$hum %</td>
-  			<td class='c'>$co2 ppm</td>
-  			</tr>");
-  			}
-  			
-  		echo("</table>");
-  		echo("</div></a> </td></tr></table>");
-  		}
-	else
-		//echo("<td class='a' colspan='7'>&nbsp;");
-		echo("</td></tr></table>");
+
 }
 ?>

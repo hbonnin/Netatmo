@@ -44,7 +44,7 @@ td.minimax  {color: #000077;
 td.hl   {color: green;
 	font-size: 11px;
 	text-align:left;
-	height:13px;//humidite
+	height:13px; /* humidité */
 	}
 td.h   {color: green;
 	font-size: 12px;
@@ -58,7 +58,7 @@ td.hunit  {color: green;
 td.pl   {color: #444444;
 	font-size: 11px;
 	text-align:left;
-	height:13px; //MinMax Pression
+	height:13px; /* MinMax Pression */
 	}
 td.p   {color: #444444;
 	font-size: 12px;
@@ -101,36 +101,6 @@ td.s	{color: black;
 	font-style:italic;
 	height:13px;
 	}
-td.a	{
-    height:12px;
-}
-.tooltip	{
-  	position: relative;
-  	background: #cceeff;
-  	color: #000077;
-  	font-size:11px;
-  	text-align:left;
-	}
-.tooltip div	{color:black;
-    font-size:12px;
-  	visibility: hidden;
-  	position: absolute;
-  	padding-top:5%;
-  	top: 100%;
-  	left: -4px;
-  	z-index:100;
-  	width: 227px;
-  	border: 1px solid #77a;
-  	background-color:#cceeff;
-  	}
-.tooltip:hover	{
-  	border: 0;
-	}
-.tooltip:hover div	{
-  	visibility: visible;
-	}
- 
- 
 .date  {color:black;
 	width:75px;
 	border:1px solid blue;
@@ -223,8 +193,11 @@ input.g {
 	margin-left:-4px;
 	margin-bottom:25px;
 }
+span.clear {
+	clear:both;
+}
 div.clear {
-	clear:both;;
+	clear:both;
 }
 
 table.bulle {
