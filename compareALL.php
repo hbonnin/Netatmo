@@ -103,6 +103,8 @@ for($i = 0;$i < $numStations;$i++)
     , "device_id" => $device_id
     , "module_id" => $module_id);  
     $mesure[$i] = $client->api("getmeasure", "POST", $params);
+    if(count($mesure[$i]) == 0)
+        {$view[$i] = 0; --$numview;continue;}
     $nameStations[$i] = $mesures[$i]['station_name'];
     $keys[$i] = array_keys($mesure[$i]);
     $dateBeg[$i] = $keys[$i][0];

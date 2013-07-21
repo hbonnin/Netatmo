@@ -27,10 +27,38 @@ function refreshToken()
 	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 	$_SESSION['client'] = $client;		
 	}
+function init($numStations)
+    {if(!isset($_SESSION['init']))
+    {$_SESSION['init'] = true;
+    $_SESSION['stationId'] = 0;
+    $_SESSION['selectedInter'] = '1day';
+    $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d')-30,date('y')));
+    $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
+    $MenuInterval = array ( "G" => 4,
+                        "C"  => 1,
+                        "M"  => 3, 
+                        "opt" => array (
+                                    0 => array ('1week','1 semaine',7*24*60*60),
+                                    1 => array ('1day','1 journée',24*60*60),
+                                    2 => array ('3hours','3 heures',3*60*60),
+                                    3 => array ('30min','30 minutes',30*60),
+                                    4 => array ('max','5 minutes',5*60)
+                                    )
+                            );
+    $_SESSION['MenuInterval'] = $MenuInterval;  
+    for($i = 0 ;$i < $numStations; $i++)
+        $viewCompare[$i] = 1;
+    $viewCompare['numview'] = $numStations;
+    $_SESSION['viewCompare'] = $viewCompare; 
+    $_SESSION['selectMesureCompare'] = 'T';
+    $_SESSION['selectMesureModule'] = 'T';
+    }
 
+    }
 function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password;
 	date_default_timezone_set("Europe/Paris");
+	
 	$debug = 0;
 	if($debug)echo("initclient / ");	
 	if(isset($_SESSION['time']))
@@ -134,5 +162,7 @@ function initClient()
 			$_SESSION['mesures'] = $mesures;
 			if($debug)echo("mesures / ");	
 			}
+	$numStations = count($devicelist["devices"]);		
+    init($numStations);			
 	}
 ?>

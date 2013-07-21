@@ -62,8 +62,6 @@ if(isset($_POST["select"]))
     {$interval = $_SESSION['selectedInter']; 
     $interval = checkSelect($interval,'M');
     }
-    
-
 $opt = $_SESSION['MenuInterval']['opt']; 
 $sel = selectIndex($opt,$interval);
 $inter = $opt[$sel][2];
@@ -78,8 +76,7 @@ else
 if(isset($_POST["date1"]))  
     $date1 = $_POST["date1"];
 else
-    $date1 = $_SESSION['dateend']; 
-    
+    $date1 = $_SESSION['dateend'];   
 $date_beg = $date_end = 0;
 chkDates($date0,$date1,$interval,$inter,&$date_beg,&$date_end);	
 
@@ -128,25 +125,38 @@ $_SESSION['selectMesureModule'] = $selectMesure;
 
 if(isset($_SESSION['viewModule']))
     {$view = $_SESSION['viewModule'];
+    $numview = $view['numview'];
     if($view['station'] !=  $stationNum)
         {for($i = 0 ;$i < $numStations; $i++)
             $view[$i] = 1;    
+        $numview = $numStations;    
         $view['station'] = $stationNum;
+        $view['numview'] = $numview;
         }
     }
-else
-    for($i = 0 ;$i < $numStations; $i++)
-        $view[$i] = 1;
-       
 if(isset($_POST['selectedModules']) && $changedStation == false)
     {for($i = 0 ;$i < $numStations; $i++)
 	    $view[$i] = 0;
     foreach($_POST['selectedModules'] as $chkbx)
 	    $view[$chkbx] = 1;
+    $numview = 0;  // Nombre de stations cochées
+    for($i = 0 ;$i < $numStations; $i++)
+	    if($view[$i])++$numview;
+	if($numview == 0)
+	    $view[0] = $numview = 1;
+        $view['station'] = $stationNum;
+        $view['numview'] = $numview;	    
 	}
-	
-$view['station'] = 	$stationNum;
+else
+    {for($i = 0 ;$i < $numStations; $i++)
+	    $view[$i] = 1;
+    $numview = $numStations;    
+    $view['station'] = $stationNum;
+    $view['numview'] = $numview;
+    }
+    
 $_SESSION['viewModule'] = $view;   
+
 if($CO2)$view[1] = 0;
 	
 $mesure = array($numStations);
@@ -174,8 +184,8 @@ for($i = 1;$i < $numStations;$i++)
     	{echo "An error happend while trying to retrieve your last measures\n";
         echo $ex->getMessage()."\n";
     	}
+    if(count($mesures[$i]) == 0){$view[$i] = 0;--$numview;continue;}    
     $keys[$i] = array_keys($mesure[$i]);
-    if(count($keys[$i]) == 0){$view[$i] = 0;continue;}    
     $numKeys = max($numKeys,count($keys[$i]));
     $dateBeg[$i] = $keys[$i][0];
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
@@ -196,12 +206,13 @@ if($view[0])
     $nmesures[0] = count($keys[0]);   
     }
 
-
+/*
 $numview = 0;  // Nombre de stations cochées
 for($i = 0 ;$i < $numStations; $i++)
 	if($view[$i])++$numview;
 if($numview == 0)
-    $view[$i] = $numview = 1;
+    $view[0] = $numview = 1;
+*/    
 /**************************************************************/
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
