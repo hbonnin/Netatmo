@@ -106,7 +106,7 @@ else if($selectMesure == 'H')
         {$type = 'min_hum,max_hum';$HTime = 0;}
     else 
         {$type = 'Humidity,CO2';$HTime = 0;
-        $titre1 = 'CO2';
+        $titre1 = 'CO2';$CO2 = 1;
         }
     }    
 else if($selectMesure == 'C') 
@@ -159,7 +159,10 @@ else
     
 $_SESSION['viewModule'] = $view;   
 
-if($CO2)$view[1] = 0;
+if($CO2)
+    {if($view[1])--$numview;
+    $view[1] = 0;
+    }
 	
 $mesure = array($numStations);
 $dateBeg = array($numStations);
