@@ -204,7 +204,6 @@ echo("
 					$tip = tipHTMLext($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
             		}
             	if($hum)$hum = $hum/4;	
-                //$dTmin = idate('H',$meas[$key][4]);
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
@@ -224,10 +223,10 @@ else   //5 ou 30 minutes ou 3 heures
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	if($inter == 30*60)
-            		$idate = date("d/m/y",$itime); 
-            	else
-            		$idate = $jour[$day] . date(" H:i",$itime);           		 
+            	//if($inter == 30*60)
+            		//$idate = date("d/m/y",$itime); 
+            	//else
+            	$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$tmin =  $hum = $tip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < $inter*2) // mesures décalées
@@ -249,7 +248,7 @@ else   //5 ou 30 minutes ou 3 heures
                 }while($break != 1);
            	echo("dataExt.removeColumn(4);\n");				      
 	}
-	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'. $tinter .')"';       	                    	
+	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'. $tinter .' '.$num.' mesures)"';       	                    	
 	
 /*********************************************************************************************************/
 
@@ -352,9 +351,9 @@ else  // 5 minutes, 30 minutes, 3 heures
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	if($inter == 30*60)
-            		$idate = date("d/m/y",$itime); 
-            	else
+            	//if($inter == 30*60)
+            		//$idate = date("d/m/y",$itime); 
+            	//else
             		$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$temp = $hum = $co = $pres = $noise = $tooltip = '';
             	$key = $keys[$ii];         		
@@ -378,7 +377,7 @@ else  // 5 minutes, 30 minutes, 3 heures
                 }while($break != 1);
             echo("dataInt.removeColumn(7);\n");				      
  	} 
-	$titleInt = '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter .')"';       	                    	
+	$titleInt = '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures)"';       	                    	
 
 echo("
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));

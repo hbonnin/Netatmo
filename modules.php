@@ -187,6 +187,9 @@ for($i = 1;$i < $numStations;$i++)
         }
     catch(NAClientException $ex)
     	{echo "An error happend while trying to retrieve your last measures\n";
+    	$_SESSION['emsg'] .= "An error happend while trying to retrieve your last measures <br>
+    	    type:$type scale:$interval device_id:$device_id module_id:$moduleId <br>";
+    	$_SESSION['emsg'] .= $ex->getMessage().'<br>';
         echo $ex->getMessage()."\n";
     	}
     if(count($mesures[$i]) == 0){$view[$i] = 0;--$numview;continue;}    
@@ -219,6 +222,7 @@ if($numview == 0)
     $view[0] = $numview = 1;
 */    
 /**************************************************************/
+$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
@@ -247,7 +251,14 @@ echo("
 			$end = date("d/m/y",$date_end); 
 	        $i = 0;	
             	do {
-            	$idate = date("d/m/y",$itime);
+            	if($inter > 3*60*60)
+            	    $idate = date("d/m/y",$itime);
+            	else if($inter== 3*60*60)   
+            	    $idate = date("d/m/y H:i",$itime);
+            	else
+            	    {$day = idate('w',$itime);
+            	    $idate = $jour[$day] . date(" H:i",$itime); 
+            	    }
 				echo("data.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
@@ -259,7 +270,7 @@ echo("
             			    if($HTime)
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    else
-            			        $tip = tip($tmin0,$itime);
+            			        $tip = $tmin0;//tip($tmin0,$itime);
             			    }
             			}        		
             		echo(",$tmin0,'$tip'"); 
@@ -288,7 +299,14 @@ echo("
 			$end = date("d/m/y",$date_end); 
 	        $i = 0;	
             	do {
-            	$idate = date("d/m/y",$itime);
+            	if($inter > 3*60*60)
+            	    $idate = date("d/m/y",$itime);
+            	else if($inter== 3*60*60)   
+            	    $idate = date("d/m/y H:i",$itime);
+            	else
+            	    {$day = idate('w',$itime);
+            	    $idate = $jour[$day] . date(" H:i",$itime);
+            	    }
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
@@ -300,7 +318,7 @@ echo("
               			    if($HTime)          			    
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    else
-            			        $tip = tip($tmin0,$itime);
+            			        $tip = $tmin0;//tip($tmin0,$itime);
             			    }            			    
             			}
             			        		
@@ -313,15 +331,17 @@ echo("
 				echo("data1.removeColumn(1+2*$numview);\n");				               
 /**********************************************************************************************/
              if($inter > 30*60)    
-                {$title = $titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. $tinter . ')'; 
-                $title1 = $titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . $tinter . ')';
+                {$title = $titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
+                $title1 = $titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
                 }
             else
-                {$title = $titre .  ' ('.$beg. ' - ' .$end.' @'. $tinter . ')'; 
-                $title1 = $titre1.' ('.$beg.' -'.$end. ' @' . $tinter . ')';
+                {$title = $titre .  ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
+                $title1 = $titre1.' ('.$beg.' -'.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
                 }
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
-            $param = $param . ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+            $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+            $param .= ',tooltip: {isHtml: true}';
+            
 ?>
             colorMin = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
             colorMax = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];

@@ -1,4 +1,6 @@
-<?php session_start(); 
+<?php 
+require_once 'NAApiClient.php';
+require_once 'NAApiClient.php';session_start(); 
 $_SESSION=array();
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>

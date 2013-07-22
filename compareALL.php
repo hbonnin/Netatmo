@@ -202,6 +202,7 @@ echo("
 
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+$param .= ',tooltip: {isHtml: true}';
 ?>
 colorMin =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
 colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];

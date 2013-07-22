@@ -29,30 +29,31 @@ function refreshToken()
 	}
 function init($numStations)
     {if(!isset($_SESSION['init']))
-    {$_SESSION['init'] = true;
-    $_SESSION['stationId'] = 0;
-    $_SESSION['selectedInter'] = '1day';
-    $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d')-30,date('y')));
-    $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
-    $MenuInterval = array ( "G" => 4,
-                        "C"  => 1,
-                        "M"  => 3, 
-                        "opt" => array (
-                                    0 => array ('1week','1 semaine',7*24*60*60),
-                                    1 => array ('1day','1 journée',24*60*60),
-                                    2 => array ('3hours','3 heures',3*60*60),
-                                    3 => array ('30min','30 minutes',30*60),
-                                    4 => array ('max','5 minutes',5*60)
-                                    )
-                            );
-    $_SESSION['MenuInterval'] = $MenuInterval;  
-    for($i = 0 ;$i < $numStations; $i++)
-        $viewCompare[$i] = 1;
-    $viewCompare['numview'] = $numStations;
-    $_SESSION['viewCompare'] = $viewCompare; 
-    $_SESSION['selectMesureCompare'] = 'T';
-    $_SESSION['selectMesureModule'] = 'T';
-    }
+        {$_SESSION['emsg'] = 'Messages d\'erreur:<br>';
+        $_SESSION['init'] = true;
+        $_SESSION['stationId'] = 0;
+        $_SESSION['selectedInter'] = '1day';
+        $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d')-30,date('y')));
+        $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
+        $MenuInterval = array ( "G" => 4,
+                            "C"  => 1,
+                            "M"  => 3, 
+                            "opt" => array (
+                                        0 => array ('1week','1 semaine',7*24*60*60),
+                                        1 => array ('1day','1 journée',24*60*60),
+                                        2 => array ('3hours','3 heures',3*60*60),
+                                        3 => array ('30min','30 minutes',30*60),
+                                        4 => array ('max','5 minutes',5*60)
+                                        )
+                                );
+        $_SESSION['MenuInterval'] = $MenuInterval;  
+        for($i = 0 ;$i < $numStations; $i++)
+            $viewCompare[$i] = 1;
+        $viewCompare['numview'] = $numStations;
+        $_SESSION['viewCompare'] = $viewCompare; 
+        $_SESSION['selectMesureCompare'] = 'T';
+        $_SESSION['selectMesureModule'] = 'T';
+        }
 
     }
 function initClient()
@@ -121,12 +122,12 @@ function initClient()
 			$tokens = $client->getAccessToken();       
 			} catch(NAClientException $ex) 
 			    {if(!isset($_SESSION['state']))
-					$_SESSION['emsg'] = "<br>User:$test_username
+					$_SESSION['emsg'] = "User:$test_username
 					<br>ou mot de passe:$test_password
 					<br> ou id:$client_id
 					<br> ou secret:$client_secret incorrect<br>*****<br>".$ex->getMessage();
 				else 
-				    $_SESSION['emsg'] = $ex->getMessage();
+				    $_SESSION['emsg'] .= $ex->getMessage();
 
 			    echo("<script> top.location.href='logout.php'</script>");				
 			    }    
@@ -144,7 +145,7 @@ function initClient()
 			}
 		catch(NAClientException $ex) {
 			//$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-			$_SESSION['emsg'] = "erreur:$ex->getMessage();";
+			$_SESSION['emsg'] .= "erreur:$ex->getMessage();";
 				echo " {$_SESSION['emsg']}";
 			echo("<script> top.location.href='logout.php'</script>");	
 			}	

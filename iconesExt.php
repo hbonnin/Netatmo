@@ -19,14 +19,15 @@ require_once 'fill.php';
 require_once 'menus.php';
 date_default_timezone_set("Europe/Paris");
 /* Slow on Webatu */
-/*
-if(!isset($_GET['width'])  & isset($_GET['code']))
-	{$code = $_GET['code'];
-	$state = $_GET['state'];
-	$txt = 'code='.$code.'&state='.$state;
-    echo("<script> top.location.href='size.php?$txt'</script>");   	
-   	}
-*/ 	
+if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')
+    {if(!isset($_GET['width'])  & isset($_GET['code']))
+        {$code = $_GET['code'];
+        $state = $_GET['state'];
+        $txt = 'code='.$code.'&state='.$state;
+        echo("<script> top.location.href='size.php?$txt'</script>");   	
+        }
+    }
+	
 // width and height of the navigator window
 if(isset($_GET['width']))
 	$_SESSION['width'] = $_GET['width'];

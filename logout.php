@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php session_start();?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <title>Stations Netatmo</title>
@@ -11,8 +11,8 @@
 
 <?php 
 if(isset($_SESSION['emsg']))
-    echo "message: {$_SESSION['emsg']} <br>";
-//echo "<pre>";print_r($_SESSION);echo("</pre");
+    echo "{$_SESSION['emsg']} <br>";
+echo "<pre>";print_r($_SESSION);echo("</pre");
 echo("</body></html>");
 $_SESSION=array();
 session_destroy();

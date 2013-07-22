@@ -280,7 +280,7 @@ class NAApiClient
         CURLOPT_USERAGENT      => 'netatmoclient',
         CURLOPT_HTTPHEADER     => array("Accept: application/json"),
     );
-
+//hubert:  CURLOPT_HTTPHEADER  semble ne servir à rien
     /**
     * Makes an HTTP request.
     *
