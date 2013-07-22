@@ -182,6 +182,7 @@ for($i = 1;$i < $numStations;$i++)
     , "optimize" => false
     , "device_id" => $device_id
     , "module_id" => $moduleId); 
+    
     try
         {$mesure[$i] = $client->api("getmeasure", "POST", $params);
         }
@@ -192,7 +193,7 @@ for($i = 1;$i < $numStations;$i++)
     	$_SESSION['emsg'] .= $ex->getMessage().'<br>';
         echo $ex->getMessage()."\n";
     	}
-    if(count($mesures[$i]) == 0){$view[$i] = 0;--$numview;continue;}    
+    if(count($mesure[$i]) == 0){$view[$i] = 0;--$numview;continue;}    
     $keys[$i] = array_keys($mesure[$i]);
     $numKeys = max($numKeys,count($keys[$i]));
     $dateBeg[$i] = $keys[$i][0];
