@@ -12,7 +12,7 @@
 <?php 
 if(isset($_SESSION['emsg']))
     echo "{$_SESSION['emsg']} <br>";
-echo "<pre>";print_r($_SESSION);echo("</pre");
+//echo "<pre>";print_r($_SESSION);echo("</pre");
 echo("</body></html>");
 $_SESSION=array();
 session_destroy();
