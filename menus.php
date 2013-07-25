@@ -33,29 +33,33 @@ function chkDates($date0,$date1,$interval,$inter)
     $date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]); 
     $date_beg =	min($date_beg,$date_end);
 
-    if($interval == '1week')
-        $date_beg = min($date_beg,$date_end - 26*7*24*60*60);
-    else if($interval == '1day')
-        $date_beg = min($date_beg,$date_end - 7*24*60*60);
-    else if($interval == '3hours')
-        $date_beg = min($date_beg,$date_end - 24*60*60);
-    else 
-        $date_beg = min($date_beg,$date_end - 12*60*60);
+    switch($interval)
+        {case '1week': $date_beg = min($date_beg,$date_end - 26*7*24*60*60);
+                        break;
+         case '1day': $date_beg = min($date_beg,$date_end - 30*24*60*60);
+                        break;
+         case '3hours': $date_beg = min($date_beg,$date_end - 7*24*60*60);
+                        break;
+         case '30min': $date_beg = min($date_beg,$date_end - 49*60*60);
+                        break;
+         case  'max':  $date_beg = min($date_beg,$date_end - 12*60*60);
+                        break;
+        }
+        
+    // 1024 max théorique
+    $n_mesure = min(512,($date_end-$date_beg)/($inter));
+    $date_beg = max($date_beg,($date_end - $n_mesure*$inter));
     
-    $n_mesure = min(1024,($date_end-$date_beg)/($inter));
-    $date_beg = max($date_beg,($date_end - $n_mesure*$inter));  
-    $datebeg = date("d/m/Y",$date_beg); 
-    $dateend = date("d/m/Y",$date_end); 
-    $_SESSION['datebeg'] = $datebeg;
-    $_SESSION['dateend'] = $dateend; 
-    if($interval == '1day')$date_beg -= 24*60*60;    
+    $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+    $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+    if($interval == '1week')$date_beg -= idate('w',$date_beg)*24*60*60;  // -> dimanche    
+    if($interval == '1day')$date_beg -= 24*60*60;  
     $_SESSION['date_beg'] = $date_beg;
     $_SESSION['date_end'] = $date_end; 
+    
     }    
 function drawLogoutBack()
-	{if(!isset($_SESSION['stationId'] ))
-        $_SESSION['stationId'] = 0;
-    $stationId = $_SESSION['stationId'];
+	{$stationId = $_SESSION['stationId'];
     $menuModules = 'modules.php?stationNum=' .$stationId ;
 ?>
 <!-- drawLogoutBack -->
@@ -301,7 +305,9 @@ function drawMenuCompare($h ='')
 <?php
 	}
 function drawCharts($order='G')
-	{$menu = array (
+	{
+    require_once 'calendrier.php';    
+	$menu = array (
             'G' => array ('drawMenuCompare','drawMenuStation'),
             'C' => array ('drawMenuStation','drawMenuCompare'),
             'M' => array ('drawMenuCompare','drawMenuModules'),

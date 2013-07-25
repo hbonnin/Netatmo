@@ -328,7 +328,7 @@ for($i = 0;$i < $numStations;$i++)
 </script>
 <!-- cannot be moved before -->
 <link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
-<script type='text/javascript' src='calendrier.js'></script> 
+<!--<script type='text/javascript' src='calendrier.js'></script>--> 
 
 </head>
   <body  onload='initialize()'>
@@ -339,7 +339,7 @@ for($i = 0;$i < $numStations;$i++)
 	<caption id="id_caption" class='ds_caption'>xxxx</caption>
 	<tr><td id="ds_calclass">aaa</td></tr>
 </table>
-
+<?php require_once 'calendrier.php'; ?>
 
 <!-- Tracé des icones -->	
 <?php

@@ -32,7 +32,7 @@ if(isset($_POST["select"]))
     }
  else   /* en fait inutil pour le moment */
     {$interval = $_SESSION['selectedInter']; 
-    $interval = checkSelect($interval,'M');
+    $interval = checkSelect($interval,'G');
     }
 $opt = $_SESSION['MenuInterval']['opt']; 
 $sel = selectIndex($opt,$interval);
@@ -172,7 +172,7 @@ echo("
 			$itime = $keys[0];  
 			$beg = date("d/m/y", $keys[0]); 
 			$end = date("d/m/y",$keys[$num-1]); 
-			if($num <= 73)$visupt = ",pointSize:3";	
+			if($num <= 48)$visupt = ",pointSize:3";	
 
 if($inter > 3*60*60) //1week, 1day
 	{           
@@ -203,7 +203,6 @@ echo("
            			$iidate = $jour[$day] . date(" d/m/y ",$itime);
 					$tip = tipHTMLext($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
             		}
-            	if($hum)$hum = $hum/4;	
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
@@ -224,9 +223,9 @@ else   //5 ou 30 minutes ou 3 heures
             do
             	{$day = idate('w',$itime);
             	//if($inter == 30*60)
-            		//$idate = date("d/m/y",$itime); 
+            	$idate = date("d/m/y H:i",$itime); 
             	//else
-            	$idate = $jour[$day] . date(" H:i",$itime);           		 
+            	//$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$tmin =  $hum = $tip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < $inter*2) // mesures décalées
@@ -241,7 +240,6 @@ else   //5 ou 30 minutes ou 3 heures
             			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);         		           		
 					$tip = tipHTMLext2($iidate,$tmin,$hum);
             		}
-            	if($hum)$hum = $hum/4;	
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
@@ -257,7 +255,7 @@ else   //5 ou 30 minutes ou 3 heures
 			$itime = $keys[0];  
 			$beg = date("d/m/y", $keys[0]); 
 			$end = date("d/m/y",$keys[$num-1]); 
-			if($num <= 73)$visupt = ",pointSize:3";	
+			if($num <= 48)$visupt = ",pointSize:3";	
 
 if($inter > 3*60*60)	//1week,1day	
 	{echo("
@@ -352,9 +350,9 @@ else  // 5 minutes, 30 minutes, 3 heures
             do
             	{$day = idate('w',$itime);
             	//if($inter == 30*60)
-            		//$idate = date("d/m/y",$itime); 
+            	$idate = date("d/m/y H:i",$itime); 
             	//else
-            		$idate = $jour[$day] . date(" H:i",$itime);           		 
+            	//$idate = $jour[$day] . date(" H:i",$itime);           		 
             	$temp = $hum = $co = $pres = $noise = $tooltip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < $inter*2) 
@@ -441,11 +439,12 @@ echo("
 } // endDraw 
            
 </script>
-<script type='text/javascript' src='calendrier.js'></script> 
+<!--<script type='text/javascript' src='calendrier.js'></script>-->
 <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css' >
 </head>
 <body>
  <?php
+    //require_once 'calendrier.php';
 	$num = count($devicelist["devices"]);
 	drawCharts('G');	
  ?>

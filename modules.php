@@ -246,7 +246,7 @@ echo("
 	          	}	          	
 	        echo("data.addColumn('number', '');\n"); 
 	        $visupt = '';
-            if($numKeys <= 73)$visupt = ",pointSize:3";	
+            if($numKeys <= 48)$visupt = ",pointSize:3";	
 	        $itime = $minDateBeg; 
 			$beg = date("d/m/y",$minDateBeg); 
 			$end = date("d/m/y",$date_end); 
@@ -254,12 +254,8 @@ echo("
             	do {
             	if($inter > 3*60*60)
             	    $idate = date("d/m/y",$itime);
-            	else if($inter== 3*60*60)   
-            	    $idate = date("d/m/y H:i",$itime);
             	else
-            	    {$day = idate('w',$itime);
-            	    $idate = $jour[$day] . date(" H:i",$itime); 
-            	    }
+            	    $idate = date("d/m/y H:i",$itime);
 				echo("data.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
@@ -302,12 +298,8 @@ echo("
             	do {
             	if($inter > 3*60*60)
             	    $idate = date("d/m/y",$itime);
-            	else if($inter== 3*60*60)   
-            	    $idate = date("d/m/y H:i",$itime);
             	else
-            	    {$day = idate('w',$itime);
-            	    $idate = $jour[$day] . date(" H:i",$itime);
-            	    }
+            	    $idate = date("d/m/y H:i",$itime);
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
@@ -397,7 +389,7 @@ echo("
              } // draw chart 
             
           </script>
-<script type='text/javascript' src='calendrier.js'></script> 
+<!--<script type='text/javascript' src='calendrier.js'></script> -->
 <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>
 </head>
 <body>
