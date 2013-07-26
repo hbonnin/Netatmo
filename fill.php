@@ -67,14 +67,10 @@ echo("
         <div >
         <table class='info'>
         <tr><td style='width:105px;'>$nameStations[0]</td>
-        <td>WiFi</td> <!--<td>$wifi</td>-->
-        <td><img src=$wifiImage ALT='wifi' height='20' /></td>
-        </tr></table>
+        <td colspan='2' style='text-align:center;'><img src=$wifiImage ALT='wifi' height='13' /></td>
+        </tr>
 "); 
-echo("
-    <table class='info'>
-    <th style='width:105px;'></th> <th>Radio</th> <th>Batterie</th>
-");    
+
     for($i = 0;$i < $numStations -1;$i++)
         {$name = $nameStations[$i + 1];
         $radio = $devices['modules'][$i]['rf_status'];
@@ -83,17 +79,15 @@ echo("
         $batteryImage = getBatteryImage($battery);
         echo("<tr>
         <td>$name</td>
-        <td><img src=$radioImage ALT='signal' height='13' /></td>
-        <td><img src=$batteryImage ALT='battery' height='13' /></td>
+        <td style='text-align:center;'><img src=$radioImage ALT='signal' height='13' /></td>
+        <td style='text-align:center;'><img src=$batteryImage ALT='battery' height='13' /></td>
         </tr>");
         }
 
 echo("
         </table>
         </div>
-
-	</a> </td>  
-	
+	</a> </td>  	
 	</tr></table>
 ");	
 }
