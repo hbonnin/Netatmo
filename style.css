@@ -151,7 +151,6 @@ td.modules	{
 }
 table.G {
 	height:312px;
-	//width:175px;
 	font-size:14px;
 	background-color:#cceeff;
 	padding:0px;
@@ -161,7 +160,6 @@ table.G {
  }
 td.g	{
 	height:26px;
-	//width:175px;
 	text-align:left;
     padding:0px 0px 0px 5px;	
 }
@@ -251,18 +249,26 @@ td.name {
   	position: absolute;
   	padding-top:5%;
   	top: 100%;
-  	left: -4px;
+  	left: -5px;
   	z-index:100;
   	width: 227px;
   	border: 1px solid #77a;
   	background-color:#cceeff;
-  	}
+  	} 	
 .tooltip:hover	{
   	border: 0;
 	}
 .tooltip:hover div	{
   	visibility: visible;
 	}
+td.tooltip {
+	text-align:left;
+	height:8px;
+	font-size:4px;
+}
+a.tooltip {
+	font-size:9px;
+}
 table.info	{
 	font-size:11px;
 	width:100%;

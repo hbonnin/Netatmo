@@ -54,20 +54,21 @@ function fill($stationId,$devices,$alt,$res,$tmin,$tmax)
 	//$wifiTime = $devices["last_status_store"];
 	//if( $wifiTime < time() - 24*60*60)$wifi = 100;
 	$wifiImage = getWiFiImage($wifi);
-	//$wifi = 100 - $wifi;
+	$firmware = $devices["firmware"];
 	// RADIO
     $numStations = count($res) ; 
     for($i = 0;$i < $numStations;$i++)
         $nameStations[$i] = $res[$i]['module_name'];
 
 echo("
-	<tr><td style='text-align:left;' colspan='7'>
-		<a href='#' class='tooltip' style='font-size:8px;'>
+	<tr><td class='tooltip' colspan='7'>
+		<a href='#' class='tooltip'>
   		Autres informations:		
         <div >
         <table class='info'>
         <tr><td style='width:105px;'>$nameStations[0]</td>
         <td colspan='2' style='text-align:center;'><img src=$wifiImage ALT='wifi' height='13' /></td>
+        <td>$firmware</td>
         </tr>
 "); 
 
@@ -77,10 +78,12 @@ echo("
         $radioImage = getRadioImage($radio);
         $battery = $devices['modules'][$i]['battery_vp']; 
         $batteryImage = getBatteryImage($battery);
+        $firmware = $devices['modules'][$i]['firmware']; 
         echo("<tr>
         <td>$name</td>
         <td style='text-align:center;'><img src=$radioImage ALT='signal' height='13' /></td>
         <td style='text-align:center;'><img src=$batteryImage ALT='battery' height='13' /></td>
+        <td>$firmware</td>
         </tr>");
         }
 
