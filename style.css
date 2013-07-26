@@ -268,7 +268,7 @@ table.info	{
 	width:100%;
 	margin:auto;
 	text-align:left;
-	background-color:white;
+	background-color:white; 
 }
 .info td {
 	height:12px;
