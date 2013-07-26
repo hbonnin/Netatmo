@@ -33,8 +33,8 @@ function init($numStations)
         $_SESSION['init'] = true;
         $_SESSION['stationId'] = 0;
         $_SESSION['selectedInter'] = '1day';
-        $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d')-30,date('y')));
         $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
+        $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $MenuInterval = array ( "G" => 4,
                             "C"  => 1,
                             "M"  => 3, 
@@ -156,11 +156,11 @@ function initClient()
 		}
 		
 	if(isset($_SESSION['mesures']))
-			$mesures = $_SESSION['mesures'];
+			$last_mesures = $_SESSION['mesures'];
 		else
    			{
-   			$mesures = $helper->GetLastMeasures($client,$devicelist);
-			$_SESSION['mesures'] = $mesures;
+   			$last_mesures = $helper->GetLastMeasures($client,$devicelist);
+			$_SESSION['mesures'] = $last_mesures;
 			if($debug)echo("mesures / ");	
 			}
 	$numStations = count($devicelist["devices"]);		

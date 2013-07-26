@@ -78,9 +78,7 @@ $device_id = $devicelist["devices"][$stationId]["_id"];
 $module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
 $int_name = $devicelist["devices"][$stationId]["module_name"];
 $ext_name = $devicelist["devices"][$stationId]["modules"][0]["module_name"];
-$mesures = $_SESSION['mesures'];
-$stat_name = $mesures[$stationId]['station_name'];
-
+$stat_name = $devicelist["devices"][$stationId]["station_name"];
 date_default_timezone_set("UTC");
 	// exterieur
     $params = array("scale" => $interval
@@ -97,7 +95,12 @@ date_default_timezone_set("UTC");
     	{echo "An error happend while trying to retrieve your last measures\n";
         echo $ex->getMessage()."\n";
     	}
-    	
+    if(count($meas) == 0)
+        {drawCharts('G');
+        echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+        return;
+        } 	
+        
  	// interieur    
     $params = array("scale" => $interval
     , "type" => $req1
@@ -444,8 +447,6 @@ echo("
 </head>
 <body>
  <?php
-    //require_once 'calendrier.php';
-	$num = count($devicelist["devices"]);
 	drawCharts('G');	
  ?>
 </body>

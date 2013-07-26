@@ -34,12 +34,12 @@ if(isset($_GET['width']))
 if(isset($_GET['height']))
 	$_SESSION['height'] = $_GET['height'];
 
-// reload page => recalculer $mesures
+// reload page => recalculer $last_mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
-$mesures = $_SESSION['mesures'];
+$last_mesures = $_SESSION['mesures'];
 $numStations = count($devicelist["devices"]);
 
 $latitude = array($numStations);
@@ -65,13 +65,13 @@ else
 
 //Creation des InfoWindow
 for($i = 0;$i < $numStations;$i++)
-	{$res = $mesures[$i]["modules"];
+	{$res = $last_mesures[$i]["modules"];
     $alt[$i] = $devicelist["devices"][$i]["place"]["altitude"];
     $place = $places[$i];
     $int_name = $devicelist["devices"][$i]["module_name"];
 	$ext_name = $devicelist["devices"][$i]["modules"][0]["module_name"];
 	if($place == "BAD")		
-    	$p = '<b>' . $mesures[$i]['station_name'] . ' (' . $alt[$i] . 'm)' . '</b><br>';
+    	$p = '<b>' . $last_mesures[$i]['station_name'] . ' (' . $alt[$i] . 'm)' . '</b><br>';
 	else
     	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $alt[$i] . 'm</font>)'; 
 
@@ -372,7 +372,7 @@ echo("<table style='margin-left:auto; margin-right:auto;  margin-top:-2px; margi
 
 // Tracé des icones    
 for($i = 0;$i < $numStations;$i++)
-	{$res = $mesures[$i]["modules"];
+	{$res = $last_mesures[$i]["modules"];
 	echo("<td>");
 	fill($i,$devicelist["devices"][$i],$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
 	echo("</td>");
@@ -390,7 +390,7 @@ echo("</tr></table>");
         ?>
     </td>
 <!-- GOOGLE MAP -->
-    <td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:510px; border:solid 2px gray;'> </div>
+    <td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:490px; border:solid 2px gray;'> </div>
     </td>
     <td class='container'>
         <?php

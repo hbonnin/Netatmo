@@ -17,7 +17,7 @@ date_default_timezone_set("Europe/Paris");
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
-$mesures = $_SESSION['mesures'];
+$last_mesures = $_SESSION['mesures'];
 
 // $stationNum station utilise
 $stationNum = $_GET['stationNum']; // toujours défini
@@ -29,8 +29,9 @@ if(isset($_POST['selectStation']))
     
 $_SESSION['stationId'] = $stationNum;
 
-$res = $mesures[$stationNum]["modules"];
-$numStations = count($res);
+$res = $last_mesures[$stationNum]["modules"];
+//$res = $devicelist["devices"][$stationNum]["modules"];
+$numStations = count($res) ;
 $device = $devicelist['devices'][$stationNum];
 // device: tous les modules mais pas la station principale
 // $numStations = $numModules + 1
@@ -208,12 +209,23 @@ if($view[0])
     , "optimize" => false
     , "device_id" => $device_id); 
     $mesure[0] = $client->api("getmeasure", "POST", $params);
+    if(count($mesure[0]) == 0)
+        {drawCharts('M');
+        echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+        return;
+        } 	  
     $keys[0] = array_keys($mesure[0]);
     $numKeys = max($numKeys,count($keys[0]));
     $dateBeg[0] = $keys[0][0];
     $minDateBeg = min($minDateBeg,$dateBeg[0]);    
     $nmesures[0] = count($keys[0]);   
     }
+ 
+if($numKeys == 0)
+    {drawCharts('M');
+    echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+    return;
+    } 	
 
 /*
 $numview = 0;  // Nombre de stations cochées

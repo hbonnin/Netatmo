@@ -18,7 +18,6 @@ date_default_timezone_set("Europe/Paris");
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
-$mesures = $_SESSION['mesures'];
 date_default_timezone_set("UTC");
 
 if(isset($_POST["date0"]))  
@@ -106,7 +105,7 @@ for($i = 0;$i < $numStations;$i++)
     $mesure[$i] = $client->api("getmeasure", "POST", $params);
     if(count($mesure[$i]) == 0)
         {$view[$i] = 0; --$numview;continue;}
-    $nameStations[$i] = $mesures[$i]['station_name'];
+    $nameStations[$i] = $devicelist["devices"][$i]["station_name"];
     $keys[$i] = array_keys($mesure[$i]);
     $dateBeg[$i] = $keys[$i][0];
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
@@ -260,7 +259,6 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
 </head>
  <body> 
  <?php
-	$num = count($devicelist["devices"]);
 	drawCharts('C');
 ?>
 </body>

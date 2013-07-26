@@ -38,7 +38,7 @@ function chkDates($date0,$date1,$interval,$inter)
                         break;
          case '1day': $date_beg = min($date_beg,$date_end - 30*24*60*60);
                         break;
-         case '3hours': $date_beg = min($date_beg,$date_end - 7*24*60*60);
+         case '3hours': $date_beg = min($date_beg,$date_end - 15*24*60*60);
                         break;
          case '30min': $date_beg = min($date_beg,$date_end - 49*60*60);
                         break;
@@ -123,11 +123,14 @@ function drawLogoutBack()
 	}
 /* -- DrawMenuStation ************************************************************************* */
 function drawMenuStation($h = '')
-	{global $num,$mesures;
+	{
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
 	$stationId = $_SESSION['stationId'];
-	
+	$last_mesures = $_SESSION['mesures'];
+    $devicelist = $_SESSION['devicelist'];
+	$num = count($devicelist["devices"]);
+
 ?>	
 	<form method='post' action='graphiques.php'>
 
@@ -138,7 +141,7 @@ function drawMenuStation($h = '')
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:30px; width:205px; vertical-align:bottom;'>
+    <td class='title' style='height:30px;  vertical-align:bottom;'>
     <div class='f' style='height:30px; '>Graphiques d&#39;une station
     </div></td></tr>	
 
@@ -174,12 +177,12 @@ function drawMenuStation($h = '')
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<td style='width:95px'>Station</td>
+		<td class='l'>Station</td>
         <td>			
             <?php
             echo("<table class='chk'>\n");
             for($i = 0;$i < $num;$i++)
-                {$stat = $mesures[$i]['station_name'];
+                {$stat = $last_mesures[$i]['station_name'];
                 $arr = explode(" ",$stat);
                 $stat = $arr[0];
                 if($i == $stationId)
@@ -207,11 +210,14 @@ function drawMenuStation($h = '')
 	}
 /* drawMenuCompare ******************************************************************************/
 function drawMenuCompare($h ='')
-	{global $num,$mesures;
+	{
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
 	$view = $_SESSION['viewCompare'];
+	$last_mesures = $_SESSION['mesures'];
 	$selectMesure = $_SESSION['selectMesureCompare'];
+	$devicelist = $_SESSION['devicelist'];
+	$num = count($devicelist["devices"]);
 
 ?>
 	<form method='post' action='compareALL.php'>	
@@ -223,7 +229,7 @@ function drawMenuCompare($h ='')
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:30px; width:205px; vertical-align:bottom;'>
+    <td class='title' style='height:30px;  vertical-align:bottom;'>
     <div class='f' style='height:30px; '>Comparaison de stations
     </div></td></tr>	
 
@@ -274,12 +280,12 @@ function drawMenuCompare($h ='')
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<td style='width:95px'>Station</td>
+		<td class='l'>Station</td>
         <td>			
 <?php
 		echo("<table class='chk'>\n");
 		for($i = 0;$i < $num;$i++)
-			{$stat = $mesures[$i]['station_name'];
+			{$stat = $last_mesures[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($view[$i])
@@ -347,7 +353,7 @@ function drawCharts($order='G')
 /* drawMenuModules ************************************************************************/	
 function drawMenuModules($h ='')
 	{global $numStations,$nameStations;
-	$mesures = $_SESSION['mesures'];
+	$last_mesures = $_SESSION['mesures'];
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
     $stationNum = $_SESSION['stationId']; 
@@ -375,7 +381,7 @@ function drawMenuModules($h ='')
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:30px; width:205px; vertical-align:bottom;'>
+    <td class='title' style='height:30px;  vertical-align:bottom;'>
     <div class='f' style='height:30px; '>Comparaison de modules
     </div></td></tr>	
 
@@ -386,7 +392,7 @@ function drawMenuModules($h ='')
 		<select name='selectStation'>            
  		<?php
 		for($i = 0;$i < $num;$i++)
-			{$stat = $mesures[$i]['station_name'];
+			{$stat = $last_mesures[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($i == $_SESSION['stationId'])
@@ -451,7 +457,7 @@ function drawMenuModules($h ='')
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<td style='width:95px'>Station</td>
+		<td class='l'>Station</td>
         <td>			
 <?php
 		echo("<table class='chk'>\n");
