@@ -54,7 +54,7 @@ function fill($stationId,$devices,$alt,$res,$tmin,$tmax)
 	$wifi = $devices["wifi_status"];
 	$wifiTime = $devices["last_status_store"];
 	$wifiT = $wifi. '  '.date("d/m/y H:i",$devices["last_status_store"]);
-	if( $wifiTime < time() - 3*60*60)$wifi = 100;
+	if( $wifiTime < time() - 30*60)$wifi = 100;
 	$wifiImage = getWiFiImage($wifi);
 	$firmware = $devices["firmware"];
 /*	

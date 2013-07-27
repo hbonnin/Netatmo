@@ -36,6 +36,7 @@ if(isset($_GET['height']))
 
 // reload page => recalculer $last_mesures
 if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
+if(isset($_SESSION['devicelist']))unset($_SESSION['devicelist']);
 initClient();
 $client = $_SESSION['client'];
 $devicelist = $_SESSION['devicelist'];
