@@ -267,13 +267,13 @@ echo("
             	if($inter > 3*60*60)
             	    $idate = date("d/m/y",$itime);
             	else
-            	    $idate = date("d/m/y H:i",$itime);
+            	    $idate = date("d/m H:i",$itime);
 				echo("data.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
             		$tmin0 = $tip = '';   
             		$key = $keys[$j][$ii[$j]]; 
-            		if(abs($key - $itime) < 2*60*60) //changement d'horaire
+            		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
             			    {$tmin0 = $mesure[$j][$key][0];
             			    if($HTime)
@@ -311,13 +311,13 @@ echo("
             	if($inter > 3*60*60)
             	    $idate = date("d/m/y",$itime);
             	else
-            	    $idate = date("d/m/y H:i",$itime);
+            	    $idate = date("d/m H:i",$itime);
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
             		$tmin0 = $tip = '';   
             		$key = $keys[$j][$ii[$j]];         		
-            		if(abs($key - $itime) < 2*60*60) //changement d'horaire
+            		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
             			    {$tmin0 = $mesure[$j][$key][1];
               			    if($HTime)          			    

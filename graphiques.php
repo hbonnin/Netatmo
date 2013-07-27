@@ -193,9 +193,9 @@ echo("
             do
             	{$day = idate('w',$itime);
            		$idate = date("d/m/y",$itime); 
-            	$tmin = $tmax = $hum = $tip = $d = '';
+            	$tmin = $tmax = $min_hum = $max_hum = $tip = $d = '';
             	$key = $keys[$ii];         		
-            	if(abs($key - $itime) < 2*60*60) //changement d'horaire
+            	if(abs($key - $itime) < 2*$inter) //changement d'horaire
             		{if($ii < $num -1)++$ii;
             		else $break = 1;      
 	//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
@@ -225,10 +225,7 @@ else   //5 ou 30 minutes ou 3 heures
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	//if($inter == 30*60)
-            	$idate = date("d/m/y H:i",$itime); 
-            	//else
-            	//$idate = $jour[$day] . date(" H:i",$itime);           		 
+            	$idate = date("d/m H:i",$itime); 
             	$tmin =  $hum = $tip = '';
             	$key = $keys[$ii];         		
             	if(abs($key - $itime) < $inter*2) // mesures décalées
@@ -236,11 +233,7 @@ else   //5 ou 30 minutes ou 3 heures
             		else $break = 1;           			
             		$tmin = $meas[$key][0];
             		$hum = $meas[$key][1];  
-            		$itime = $keys[$ii]; 
-	            	if($inter == 30*60)        		
-            			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);
-            		else	         		           		
-            			$iidate = $jour[$day] . date(" d/m/y H:i",$itime);         		           		
+            		$iidate = $jour[$day] . date(" d/m/y H:i",$key);         		           		
 					$tip = tipHTMLext2($iidate,$tmin,$hum);
             		}
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
@@ -286,9 +279,9 @@ if($inter > 3*60*60)	//1week,1day
             do
             	{$day = idate('w',$itime);
            		$idate = date("d/m/y",$itime);  
-            	$temp = $hum = $co = $pres = $noise = $tip = '';
+            	$tmin = $tmax = $hum = $co = $pres = $noise = $tip = '';
             	$key = $keys[$ii];         		
-            	if(abs($key - $itime) < 2*60*60) //changement d'horaire
+            	if(abs($key - $itime) < 2*$inter) //changement d'horaire
             		{if($ii < $num -1)++$ii; 
             		else $break = 1;           			          			
             		$tmin = $meas1[$key][0];
@@ -298,10 +291,7 @@ if($inter > 3*60*60)	//1week,1day
                 	$pres = $meas1[$key][4];
                 	$noise = $meas1[$key][5];                	
  //$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
-                    if($inter >= 3*60*60)
-             			$iidate = $jour[$day] . date(" d/m/y",$itime) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);            		
-					else
-            			$iidate = $jour[$day] . date(" d/m/y ",$itime);
+             		$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);            		
                 	$tip = tipHTMLint6($iidate,$tmax,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}           
                 	$pres = ($pres-$MinPression)*$xp;
@@ -349,16 +339,14 @@ else  // 5 minutes, 30 minutes, 3 heures
 			    $xp = 100/($MaxPression - $MinPression);
 			else
 			    $xp = 0;
+			    
 	        $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
-            	//if($inter == 30*60)
-            	$idate = date("d/m/y H:i",$itime); 
-            	//else
-            	//$idate = $jour[$day] . date(" H:i",$itime);           		 
-            	$temp = $hum = $co = $pres = $noise = $tooltip = '';
+            	$idate = date("d/m H:i",$itime); 
+            	$tmin = $hum = $co = $pres = $noise = $tip = '';
             	$key = $keys[$ii];         		
-            	if(abs($key - $itime) < $inter*2) 
+            	if(abs($key - $itime) < 2*$inter) 
             		{if($ii < $num -1)++$ii; 
             		else $break = 1;           			          			
             		$tmin = $meas1[$key][0];
@@ -366,8 +354,7 @@ else  // 5 minutes, 30 minutes, 3 heures
                 	$co = $meas1[$key][2];
                 	$pres = $meas1[$key][3];
                 	$noise = $meas1[$key][4];  
-            		$itime = $keys[$ii];          		                	
-           			$iidate = $jour[$day] . date(" d/m/y",$itime) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);
+           			$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);
                 	$tip = tipHTMLint5($iidate,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}             
                 	if($xp)$pres = ($pres-$MinPression)*$xp;
