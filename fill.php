@@ -52,10 +52,18 @@ function fill($stationId,$devices,$alt,$res,$tmin,$tmax)
     ");
     // WiFi
 	$wifi = $devices["wifi_status"];
-	//$wifiTime = $devices["last_status_store"];
-	//if( $wifiTime < time() - 24*60*60)$wifi = 100;
+	$wifiTime = $devices["last_status_store"];
+	$wifiT = $wifi. '  '.date("d/m/y H:i",$devices["last_status_store"]);
+	if( $wifiTime < time() - 3*60*60)$wifi = 100;
 	$wifiImage = getWiFiImage($wifi);
 	$firmware = $devices["firmware"];
+/*	
+	if(isset($devices['last_fw_update']))
+	    $firmwareDate = date("d/m/Y",$devices['last_fw_update']); 
+	else
+	    $firmwareDate = 'unknown';
+*/	    
+    $firmwareDate = date("d/m/Y",$devices['last_upgrade']); 
 	// RADIO
     $numStations = count($res) ; 
     for($i = 0;$i < $numStations;$i++)
@@ -67,23 +75,26 @@ echo("
   		Autres informations:		
         <div >
         <table class='info'>
-        <tr><td style='width:105px;'>$nameStations[0]</td>
-        <td colspan='2' style='text-align:center;'><img title='$wifi' src=$wifiImage ALT='wifi' height='13' /></td>
-        <td>$firmware</td>
+        <tr><td style='width:90px;'>$nameStations[0]</td>
+        <td colspan='2' style='text-align:center;'><img title='$wifiT' src=$wifiImage ALT='wifi' height='13' /></td>
+        <td title=\"$firmwareDate\">$firmware</td>
         </tr>
 "); 
 
     for($i = 0;$i < $numStations -1;$i++)
         {$name = $nameStations[$i + 1];
+        $last_message = date("d/m/y H:i",$devices['modules'][$i]['last_message']);
         $radio = $devices['modules'][$i]['rf_status'];
         $radioImage = getRadioImage($radio);
         $battery = $devices['modules'][$i]['battery_vp']; 
         $batteryImage = getBatteryImage($battery);
         $firmware = $devices['modules'][$i]['firmware']; 
+        $radioT   = $radio. ' '. $last_message;
+        $batteryT = $battery. ' '. $last_message;
         echo("<tr>
         <td>$name</td>
-        <td style='text-align:center;'><img title='$radio' src=$radioImage ALT='signal' height='13' /></td>
-        <td style='text-align:center;'><img title='$battery' src=$batteryImage ALT='battery' height='13' /></td>
+        <td style='text-align:center;'><img title='$radioT' src=$radioImage ALT='signal' height='13' /></td>
+        <td style='text-align:center;'><img title='$batteryT' src=$batteryImage ALT='battery' height='13' /></td>
         <td>$firmware</td>
         </tr>");
         }
@@ -97,7 +108,8 @@ echo("
 }
 // 56 71 86   
 function getWiFiImage($wifi)
-    {if($wifi > NAWifiRssiThreshold::RSSI_THRESHOLD_0) return 'icone/wifi_low.png';
+    {if($wifi >= 100)return 'icone/wifi_unknown.png';
+    if($wifi > NAWifiRssiThreshold::RSSI_THRESHOLD_0) return 'icone/wifi_low.png';
     if($wifi > NAWifiRssiThreshold::RSSI_THRESHOLD_1) return 'icone/wifi_medium.png';
     if($wifi > NAWifiRssiThreshold::RSSI_THRESHOLD_2) return 'icone/wifi_high.png';    
     return 'icone/wifi_full.png';
@@ -109,17 +121,10 @@ function getRadioImage($radio)
     if($radio > NARadioRssiTreshold::RADIO_THRESHOLD_2) return 'icone/signal_medium.png';
     if($radio > NARadioRssiTreshold::RADIO_THRESHOLD_3) return 'icone/signal_high.png';
     return 'icone/signal_full.png';
-    }
-/*
-function getRadioImage($radio)
-    {if($radio > 86) return 'icone/signal_verylow.png';
-    if($radio > 70) return 'icone/signal_medium.png';
-    if($radio > 56) return 'icone/signal_high.png';
-    return 'icone/signal_full.png';
-    }
-*/    
+    }  
 function getBatteryImage($battery)
     {if($battery > 5500) return 'icone/battery_full.png';
-    return 'icone/battery_high.png';
+    if($battery > 1000) return 'icone/battery_high.png';
+    return 'icone/battery_verylow.png';
     }
 ?>

@@ -14,6 +14,7 @@ table.icone {
 	font-family: Helvetica, serif;
 	padding:3px 2px 3px 2px;
 	margin:-1px;
+	width:220px;
 	}
 td.th	{color: black;
 	font-size: 15px;
@@ -236,24 +237,22 @@ td.name {
 	margin:0;
 	padding:0;	
 }
+
 .tooltip	{
   	position: relative;
-  	background: #cceeff;
-  	color: #000077;
-  	font-size:11px;
-  	text-align:left;
 	}
+
 .tooltip div	{color:black;
-    font-size:12px;
+    width:220;
   	visibility: hidden;
   	position: absolute;
-  	padding-top:5%;
+  	padding-top:5px;
   	top: 100%;
-  	left: -5px;
+  	left: -6px;
   	z-index:100;
-  	width: 227px;
+  	width: 218px;
   	border: 1px solid #77a;
-  	background-color:#cceeff;
+  	background-color:white;
   	} 	
 .tooltip:hover	{
   	border: 0;
@@ -261,23 +260,18 @@ td.name {
 .tooltip:hover div	{
   	visibility: visible;
 	}
-td.tooltip {
-	text-align:left;
-	height:8px;
-	font-size:4px;
-}
+
 a.tooltip {
 	font-size:9px;
 }
 table.info	{
-	font-size:11px;
+
 	width:100%;
 	margin:auto;
 	text-align:left;
-	background-color:white; 
+	//background-color:white; 
 }
 .info td {
-	height:15px;
+    font-size:10px;
 }
-
 
