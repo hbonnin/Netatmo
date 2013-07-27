@@ -1,4 +1,5 @@
 <?php
+require_once 'AppliCommonPublic.php';
 
 function fill($stationId,$devices,$alt,$res,$tmin,$tmax)
 	{$station = $devices["station_name"];
@@ -67,7 +68,7 @@ echo("
         <div >
         <table class='info'>
         <tr><td style='width:105px;'>$nameStations[0]</td>
-        <td colspan='2' style='text-align:center;'><img src=$wifiImage ALT='wifi' height='13' /></td>
+        <td colspan='2' style='text-align:center;'><img title='$wifi' src=$wifiImage ALT='wifi' height='13' /></td>
         <td>$firmware</td>
         </tr>
 "); 
@@ -81,8 +82,8 @@ echo("
         $firmware = $devices['modules'][$i]['firmware']; 
         echo("<tr>
         <td>$name</td>
-        <td style='text-align:center;'><img src=$radioImage ALT='signal' height='13' /></td>
-        <td style='text-align:center;'><img src=$batteryImage ALT='battery' height='13' /></td>
+        <td style='text-align:center;'><img title='$radio' src=$radioImage ALT='signal' height='13' /></td>
+        <td style='text-align:center;'><img title='$battery' src=$batteryImage ALT='battery' height='13' /></td>
         <td>$firmware</td>
         </tr>");
         }
@@ -94,21 +95,29 @@ echo("
 	</tr></table>
 ");	
 }
-
-/* 56,71,86,100 */	    
+// 56 71 86   
 function getWiFiImage($wifi)
-    {if($wifi > 90) return 'icone/wifi_low.png';
-    if($wifi > 60) return 'icone/wifi_medium.png';
-    if($wifi > 40) return 'icone/wifi_high.png';    
+    {if($wifi > NAWifiRssiThreshold::RSSI_THRESHOLD_0) return 'icone/wifi_low.png';
+    if($wifi > NAWifiRssiThreshold::RSSI_THRESHOLD_1) return 'icone/wifi_medium.png';
+    if($wifi > NAWifiRssiThreshold::RSSI_THRESHOLD_2) return 'icone/wifi_high.png';    
     return 'icone/wifi_full.png';
-    }
+    } 
+// 60,70,80,90   
 function getRadioImage($radio)
-    {if($radio > 90) return 'icone/signal_verylow.png';
-    if($radio > 80) return 'icone/signal_low.png';
-    if($radio > 70) return 'icone/signal_medium.png';
-    if($radio > 60) return 'icone/signal_high.png';
+    {if($radio > NARadioRssiTreshold::RADIO_THRESHOLD_0) return 'icone/signal_verylow.png';
+    if($radio > NARadioRssiTreshold::RADIO_THRESHOLD_1) return 'icone/signal_medium.png';
+    if($radio > NARadioRssiTreshold::RADIO_THRESHOLD_2) return 'icone/signal_medium.png';
+    if($radio > NARadioRssiTreshold::RADIO_THRESHOLD_3) return 'icone/signal_high.png';
     return 'icone/signal_full.png';
     }
+/*
+function getRadioImage($radio)
+    {if($radio > 86) return 'icone/signal_verylow.png';
+    if($radio > 70) return 'icone/signal_medium.png';
+    if($radio > 56) return 'icone/signal_high.png';
+    return 'icone/signal_full.png';
+    }
+*/    
 function getBatteryImage($battery)
     {if($battery > 5500) return 'icone/battery_full.png';
     return 'icone/battery_high.png';
