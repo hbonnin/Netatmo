@@ -53,6 +53,11 @@ function init($numStations)
         $_SESSION['viewCompare'] = $viewCompare; 
         $_SESSION['selectMesureCompare'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
+        $ipad = (bool) strpos($_SERVER['HTTP_USER_AGENT'],'iPad');
+        if($ipad)
+            $_SESSION['Ipad'] = 1;
+        else            
+            $_SESSION['Ipad'] = 0;
         }
 
     }

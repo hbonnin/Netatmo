@@ -18,6 +18,7 @@ require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
 date_default_timezone_set("Europe/Paris");
+
 /* Slow on Webatu */
 if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')
     {if(!isset($_GET['width'])  & isset($_GET['code']))

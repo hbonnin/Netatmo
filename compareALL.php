@@ -42,11 +42,53 @@ $opt = $_SESSION['MenuInterval']['opt'];
 $sel = selectIndex($opt,$interval);
 $inter = $opt[$sel][2];
 $tinter = $opt[$sel][1];    
-    
+
+if(isset($_GET['row']))// faire un zoom sur la date
+    {$row = $_GET['row'];
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];   
+    $sel = selectIndex($opt,$interval);
+    if($sel < maxIndexMenu('C'))
+        {$beg = $_SESSION['begdata'];
+        $dateRow = $beg + $row*$inter;
+        $interval = $opt[$sel + 1][0]; 
+        //$interval = checkSelect($interval,'G');
+        $sel = selectIndex($opt,$interval);
+        $inter = $opt[$sel][2];
+        $tinter = $opt[$sel][1];	
+        $date_beg = $dateRow - 50 * $inter;
+        $date_end = $dateRow + 50 * $inter;  
+        $date_end = min($date_end,time());
+        $datebeg = date("d/m/Y",$date_beg); 
+        $dateend = date("d/m/Y",$date_end);         
+        $_SESSION['selectedInter'] = $interval; 
+        $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+        $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+        $_SESSION['date_beg'] = $date_beg;
+        $_SESSION['date_end'] = $date_end;  
+        }
+    else      
+        {$numrows = ($date_end - $date_beg)/$inter;
+        $rowBeg = max(0,$row - $numrows/10);
+        $rowEnd = min($numrows - 1,$row + $numrows/10);
+        $date_beg += $rowBeg * $inter;
+        $date_end = $date_beg + $rowEnd * $inter;
+        $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+        $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+        $_SESSION['date_beg'] = $date_beg;
+        $_SESSION['date_end'] = $date_end;  
+        }
+    }
+else
+    {chkDates($date0,$date1,$interval,$inter);	
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];
+    }
+/*    
 chkDates($date0,$date1,$interval,$inter);	
 $date_beg = $_SESSION['date_beg'];
 $date_end = $_SESSION['date_end'];
-
+*/
 $numStations = count($devicelist["devices"]);
 
 if(isset($_POST['stats']))
@@ -136,6 +178,7 @@ echo("
 	          	
 	        echo("data.addColumn('number', '');\n"); 
 	        $itime = $minDateBeg; 
+	        $_SESSION['begdata'] = $minDateBeg;
 			$beg = date("d/m/y", $minDateBeg); 
 			$end = date("d/m/y",$date_end); 	        	        
 	        $i = 0;	
@@ -212,15 +255,18 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
              chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: colorMax,$param });
              chartMin.draw(data ,{title:'$title' ,pointSize:3,colors:colorMin,$param });
 			");
+$isiPad = $_SESSION['Ipad'];
+echo("var isiPad = \"$isiPad\";\n");  
 ?> 
     google.visualization.events.addListener(chartMin, 'select', MinClickHandler);        
      function MinClickHandler()
-          {if(data.getNumberOfColumns() <= 3)return;
-          var selection = chartMin.getSelection();
+          {var selection = chartMin.getSelection();
           var num = colorMin.length;
           for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.column != null ) 
+            if(item.row != null  && data.getNumberOfRows() > 20   && isiPad == 0)
+                top.location.href='compareALL.php?row='+item.row;
+            if(item.column != null && data.getNumberOfColumns() > 3) 
                 {data.removeColumn(item.column); 
                 var col0 = (item.column -1)/2;
                 for(var col = col0;col < num-1;col++)
@@ -233,17 +279,17 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
         }
     google.visualization.events.addListener(chartMax, 'select', MaxClickHandler);        
      function MaxClickHandler()
-          {if(data1.getNumberOfColumns() <= 3)return;
-          var selection = chartMax.getSelection();
+          {var selection = chartMax.getSelection();
           var num = colorMax.length;
           for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.column != null)
+            if(item.row != null  && data1.getNumberOfRows() > 20  && isiPad == 0)
+                top.location.href='compareALL.php?row='+item.row;
+            if(item.column != null && data1.getNumberOfColumns() > 3)
                 {data1.removeColumn(item.column);
                 var col0 = (item.column -1)/2;
                 for(var col = col0;col < num-1;col++)
                     colorMax[col] = colorMax[col+1]; 
-                //for(var col = 0;col < num-1;col++)alert('eff:'+item.column+'col:'+col+' '+colorMax[col]);
                 data1.removeColumn(item.column); 
                 <?php echo("chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: colorMax,$param });"); ?>
                 }

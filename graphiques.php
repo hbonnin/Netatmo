@@ -53,13 +53,11 @@ if(isset($_GET['row']))// faire un zoom sur la date
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];   
     $sel = selectIndex($opt,$interval);
-    if($sel < 4)
+    if($sel < maxIndexMenu('G'))
         {$beg = $_SESSION['begdata'];
         $dateRow = $beg + $row*$inter;
-        //$date = date("d/m/y H:i",$dateRow);
-        //echo("row:$row date:$date $date0");
         $interval = $opt[$sel + 1][0]; 
-        $interval = checkSelect($interval,'G');
+        //$interval = checkSelect($interval,'G');
         $sel = selectIndex($opt,$interval);
         $inter = $opt[$sel][2];
         $tinter = $opt[$sel][1];	
@@ -432,18 +430,22 @@ echo("
     chartInt.draw(dataInt, {title: $titleInt,colors:colorInt ,$param});
     chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});
     ");
+    
+$isiPad = $_SESSION['Ipad'];
+echo("var isiPad = \"$isiPad\";\n");     
 ?>
+
+var isiPad = navigator.userAgent.match(/iPad/i) != null;
 
     google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
      function IntClickHandler()
-        {if(dataInt.getNumberOfColumns() <= 3)return;
-        var selection = chartInt.getSelection();
+        {var selection = chartInt.getSelection();
         var num = colorInt.length;
         for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.row != null  && dataInt.getNumberOfRows() > 20) 
+            if(item.row != null  && dataInt.getNumberOfRows() > 20  && isiPad == 0 ) 
                 top.location.href='graphiques.php?row='+item.row; 
-            if(item.column != null) 
+            if(item.column != null && dataInt.getNumberOfColumns() > 3) 
                 {dataInt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
                     colorInt[col] = colorInt[col+1]; 
@@ -454,14 +456,13 @@ echo("
         }
     google.visualization.events.addListener(chartExt, 'select', ExtClickHandler);        
     function ExtClickHandler()
-        {if(dataExt.getNumberOfColumns() <= 3)return;
-        var selection = chartExt.getSelection();
+        {var selection = chartExt.getSelection();
         var num = colorExt.length;  
         for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.row != null)
+            if(item.row != null  && dataExt.getNumberOfRows() > 20  && isiPad == 0)
                 top.location.href='graphiques.php?row='+item.row;
-            if(item.column != null  && dataExt.getNumberOfRows() > 20)
+            if(item.column != null && dataExt.getNumberOfColumns() > 3) // date,tooltip
                 {dataExt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
                     colorExt[col] = colorExt[col+1];                 

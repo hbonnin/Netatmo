@@ -12,6 +12,10 @@ function selectIndex($opt,$select)
         if($select == $opt[$i][0])return $i;
     return 1;    
     }
+function maxIndexMenu($menu)
+    {$interval  = $_SESSION['MenuInterval'];
+    return $interval[$menu];
+    }
 function drawSelectInter($menu)
     {$interval  = $_SESSION['MenuInterval'];
     $select  = $_SESSION['selectedInter'];   
@@ -134,7 +138,7 @@ function drawMenuStation($h = '')
 ?>	
 	<form method='post' action='graphiques.php'>
 
-    <table class='G'>
+    <table class='G' style="height:<?php echo $h.';' ?>">
 	<tr>
 	<td class='g' style='height:3px'>
 	<div class='f' style='height:3px'>
@@ -222,7 +226,7 @@ function drawMenuCompare($h ='')
 ?>
 	<form method='post' action='compareALL.php'>	
 
-    <table class='G'>
+    <table class='G'  style="height:<?php echo $h.';' ?>">
 	<tr>
 	<td class='g' style='height:3px'>
 	<div class='f' style='height:3px'>
@@ -318,7 +322,10 @@ function drawCharts($order='G')
             'C' => array ('drawMenuStation','drawMenuCompare'),
             'M' => array ('drawMenuCompare','drawMenuModules'),
             );
-	$hh = 310;
+    if($_SESSION['Ipad'])
+        $hh = 300; 
+    else
+	    $hh = 310;
     $h = $hh . 'px';
     $h1 = $hh+2 .'px';            
  	echo("
@@ -374,7 +381,7 @@ function drawMenuModules($h ='')
 ?>	
 	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>'>	
 
-  <table class='G'>
+  <table class='G'  style="height:<?php echo $h.';' ?>">
 	<tr>
 	<td class='g' style='height:3px'>
 	<div class='f' style='height:3px'>

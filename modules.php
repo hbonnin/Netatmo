@@ -79,10 +79,53 @@ if(isset($_POST["date1"]))
 else
     $date1 = $_SESSION['dateend'];   
 
+
+if(isset($_GET['row']))// faire un zoom sur la date
+    {$row = $_GET['row'];
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];   
+    $sel = selectIndex($opt,$interval);
+    if($sel < maxIndexMenu('M'))
+        {$beg = $_SESSION['begdata'];
+        $dateRow = $beg + $row*$inter;
+        $interval = $opt[$sel + 1][0]; 
+        //$interval = checkSelect($interval,'M');
+        $sel = selectIndex($opt,$interval);
+        $inter = $opt[$sel][2];
+        $tinter = $opt[$sel][1];	
+        $date_beg = $dateRow - 50 * $inter;
+        $date_end = $dateRow + 50 * $inter;  
+        $date_end = min($date_end,time());
+        $datebeg = date("d/m/Y",$date_beg); 
+        $dateend = date("d/m/Y",$date_end);         
+        $_SESSION['selectedInter'] = $interval; 
+        $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+        $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+        $_SESSION['date_beg'] = $date_beg;
+        $_SESSION['date_end'] = $date_end;  
+        }
+    else      
+        {$numrows = ($date_end - $date_beg)/$inter;
+        $rowBeg = max(0,$row - $numrows/10);
+        $rowEnd = min($numrows - 1,$row + $numrows/10);
+        $date_beg += $rowBeg * $inter;
+        $date_end = $date_beg + $rowEnd * $inter;
+        $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+        $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+        $_SESSION['date_beg'] = $date_beg;
+        $_SESSION['date_end'] = $date_end;  
+        }
+    }
+else
+    {chkDates($date0,$date1,$interval,$inter);	
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];
+    }
+/*
 chkDates($date0,$date1,$interval,$inter);	
 $date_beg = $_SESSION['date_beg'];
 $date_end = $_SESSION['date_end'];
-
+*/
 
 $CO2 = 0;	
 $HTime = 1;
@@ -306,6 +349,7 @@ echo("
 	        $itime = $minDateBeg; 
 			$beg = date("d/m/y",$minDateBeg); 
 			$end = date("d/m/y",$date_end); 
+			$_SESSION['begdata'] = $minDateBeg;
 	        $i = 0;	
             	do {
             	if($inter > 3*60*60)
@@ -357,18 +401,27 @@ echo("
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
              chartMax.draw(data1 ,{title: '$title1' $visupt,colors: colorMax,$param });
 			");
+			
 
+$menuModules = 'modules.php?stationNum=' .$_SESSION['stationId'];
+$isiPad = $_SESSION['Ipad'];
+echo("var menuModules = \"$menuModules\";\n");  
+echo("var isiPad = \"$isiPad\";\n");  
+?>
+
+
+<?php
 echo("
     google.visualization.events.addListener(chartMin, 'select', MinClickHandler);        
      function MinClickHandler()
-          {if(data.getNumberOfColumns() <= 3)return;
-          var selection = chartMin.getSelection();
+          {var selection = chartMin.getSelection();
           var num = colorMin.length;
           for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.column != null ) 
-                {//alert('ncol:'+data.getNumberOfColumns());
-                data.removeColumn(item.column); 
+            if(item.row != null && data.getNumberOfRows() > 20   && isiPad == 0)
+                top.location.href=menuModules+'&row='+item.row;                        
+            if(item.column != null && data.getNumberOfColumns() > 3) 
+                {data.removeColumn(item.column); 
                 var col0 = (item.column -1)/2;
                 for(var col = col0;col < num-1;col++)
                     colorMin[col] = colorMin[col+1];                 
@@ -380,12 +433,13 @@ echo("
         }
     google.visualization.events.addListener(chartMax, 'select', MaxClickHandler);        
      function MaxClickHandler()
-          {if(data1.getNumberOfColumns() <= 3)return;
-          var selection = chartMax.getSelection();
+          {var selection = chartMax.getSelection();
           var num = colorMax.length;
           for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.column != null)
+            if(item.row != null  && data1.getNumberOfRows() > 20   && isiPad == 0)
+                top.location.href=menuModules+'&row='+item.row;                        
+            if(item.column != null && data1.getNumberOfColumns() > 3)
                 {data1.removeColumn(item.column);
                 var col0 = (item.column -1)/2;
                 for(var col = col0;col < num-1;col++)
