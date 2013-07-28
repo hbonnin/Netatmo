@@ -48,10 +48,49 @@ if(isset($_POST['date1']))
 else
     $date1 = $_SESSION['dateend']; 
 
-chkDates($date0,$date1,$interval,$inter);	
-$date_beg = $_SESSION['date_beg'];
-$date_end = $_SESSION['date_end'];
-
+if(isset($_GET['row']))// faire un zoom sur la date
+    {$row = $_GET['row'];
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];   
+    $sel = selectIndex($opt,$interval);
+    if($sel < 4)
+        {$beg = $_SESSION['begdata'];
+        $dateRow = $beg + $row*$inter;
+        //$date = date("d/m/y H:i",$dateRow);
+        //echo("row:$row date:$date $date0");
+        $interval = $opt[$sel + 1][0]; 
+        $interval = checkSelect($interval,'G');
+        $sel = selectIndex($opt,$interval);
+        $inter = $opt[$sel][2];
+        $tinter = $opt[$sel][1];	
+        $date_beg = $dateRow - 50 * $inter;
+        $date_end = $dateRow + 50 * $inter;  
+        $date_end = min($date_end,time());
+        $datebeg = date("d/m/Y",$date_beg); 
+        $dateend = date("d/m/Y",$date_end);         
+        $_SESSION['selectedInter'] = $interval; 
+        $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+        $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+        $_SESSION['date_beg'] = $date_beg;
+        $_SESSION['date_end'] = $date_end;  
+        }
+    else      
+        {$numrows = ($date_end - $date_beg)/$inter;
+        $rowBeg = max(0,$row - $numrows/10);
+        $rowEnd = min($numrows - 1,$row + $numrows/10);
+        $date_beg += $rowBeg * $inter;
+        $date_end = $date_beg + $rowEnd * $inter;
+        $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+        $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+        $_SESSION['date_beg'] = $date_beg;
+        $_SESSION['date_end'] = $date_end;  
+        }
+    }
+else
+    {chkDates($date0,$date1,$interval,$inter);	
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];
+    }
 if($interval=="1week")
 	{$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";	
@@ -175,6 +214,7 @@ echo("
 			$itime = $keys[0];  
 			$beg = date("d/m/y", $keys[0]); 
 			$end = date("d/m/y",$keys[$num-1]); 
+			$_SESSION['begdata'] = $keys[0];
 			if($num <= 48)$visupt = ",pointSize:3";	
 
 if($inter > 3*60*60) //1week, 1day
@@ -401,6 +441,8 @@ echo("
         var num = colorInt.length;
         for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
+            if(item.row != null  && dataInt.getNumberOfRows() > 20) 
+                top.location.href='graphiques.php?row='+item.row; 
             if(item.column != null) 
                 {dataInt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
@@ -417,7 +459,9 @@ echo("
         var num = colorExt.length;  
         for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.column != null)
+            if(item.row != null)
+                top.location.href='graphiques.php?row='+item.row;
+            if(item.column != null  && dataExt.getNumberOfRows() > 20)
                 {dataExt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
                     colorExt[col] = colorExt[col+1];                 
