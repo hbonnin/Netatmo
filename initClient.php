@@ -51,10 +51,10 @@ function init($numStations)
             $viewCompare[$i] = 1;
         $viewCompare['numview'] = $numStations;
         $_SESSION['viewCompare'] = $viewCompare; 
+        createViewmodules();
         $_SESSION['selectMesureCompare'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
-        $ipad = (bool) strpos($_SERVER['HTTP_USER_AGENT'],'iPad');
-        if($ipad)
+        if(strpos($_SERVER['HTTP_USER_AGENT'],'iPad'))
             $_SESSION['Ipad'] = 1;
         else            
             $_SESSION['Ipad'] = 0;
@@ -154,21 +154,70 @@ function initClient()
 				echo " {$_SESSION['emsg']}";
 			echo("<script> top.location.href='logout.php'</script>");	
 			}	
-			
+
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
-		$_SESSION['devicelist'] = $devicelist;
+		//$_SESSION['devicelist'] = $devicelist;
+		$mydevices = createDevicelist($devicelist);
+		$_SESSION['mydevices'] = $mydevices;
 		if($debug)echo("device liste / ");			
 		}
-		
-	if(isset($_SESSION['mesures']))
-			$last_mesures = $_SESSION['mesures'];
-		else
-   			{
-   			$last_mesures = $helper->GetLastMeasures($client,$devicelist);
-			$_SESSION['mesures'] = $last_mesures;
-			if($debug)echo("mesures / ");	
-			}
+			
 	$numStations = count($devicelist["devices"]);		
-    init($numStations);			
+    init($numStations);	
+    getScreenSize();
 	}
+function createViewmodules()
+    {$mydevices = $_SESSION['mydevices']; 
+    $numStations = $mydevices ["num"];
+    for($i = 0;$i < $numStations;$i++)
+        {$numModules = $mydevices[$i]["modules"]["num"];
+        $viewModules[$i]["numView"] = $numModules + 1;
+        for($j = 0; $j <= $numModules;$j++)
+            $viewModules[$i][$j] = 1;
+        }
+    $_SESSION['viewModules'] = $viewModules;
+    }
+function createDevicelist($devicelist)
+    {$numStations = count($devicelist["devices"]);
+    $myDevices['num'] = $numStations;
+    $myDevices['address'] = 0;
+    for($stationId = 0; $stationId <  $numStations;$stationId++)
+        {$myDevices[$stationId]['station_name'] = $devicelist["devices"][$stationId]["station_name"];
+        $myDevices[$stationId]['_id'] = $devicelist["devices"][$stationId]["_id"];
+        $myDevices[$stationId]['module_name'] = $devicelist["devices"][$stationId]["module_name"];
+        $numModules = count($devicelist["devices"][$stationId]["modules"]);
+        $myDevices[$stationId]['modules']['num'] = $numModules;
+        for($module = 0; $module < $numModules;$module++)
+            {$myDevices[$stationId]['modules'][$module]['_id'] = $devicelist["devices"][$stationId]["modules"][$module]["_id"];
+            $myDevices[$stationId]['modules'][$module]['module_name'] = $devicelist["devices"][$stationId]["modules"][$module]["module_name"];
+            $myDevices[$stationId]['modules'][$module]['type'] = $devicelist["devices"][$stationId]["modules"][$module]["type"];
+            }
+        }
+    return $myDevices;
+    }
+function getLastMeasures($devicelist)
+    {$helper = new NAApiHelper();
+	$client =  $_SESSION['client'];
+	return $helper->GetLastMeasures($client,$devicelist);
+    }
+function getDevicelist() // si je le supprime de SESSION
+    {$helper = new NAApiHelper();
+	$client =  $_SESSION['client'];
+	try {
+		$devicelist = $client->api("devicelist", "POST");
+		}
+	catch(NAClientException $ex) {
+		$_SESSION['emsg'] .= "erreur:$ex->getMessage();";
+		echo " {$_SESSION['emsg']}";
+		echo("<script> top.location.href='logout.php'</script>");	
+		}	
+    return $helper->SimplifyDeviceList($devicelist);
+    }
+function getScreenSize()
+    {// width and height of the navigator window
+    if(isset($_GET['width']))
+        $_SESSION['width'] = $_GET['width'];
+    if(isset($_GET['height']))
+        $_SESSION['height'] = $_GET['height'];
+    }
 ?>

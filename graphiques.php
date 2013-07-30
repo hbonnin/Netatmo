@@ -11,6 +11,7 @@ session_start();
   	<meta charset='utf-8'>
     <link rel='icon' href='favicon.ico' >
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript' src='size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
@@ -109,49 +110,50 @@ else if($interval=="max")
 	{$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
 	}
-	
-$devicelist = $_SESSION['devicelist'];
-$device_id = $devicelist["devices"][$stationId]["_id"];
-$module_id = $devicelist["devices"][$stationId]["modules"][0]["_id"];
-$int_name = $devicelist["devices"][$stationId]["module_name"];
-$ext_name = $devicelist["devices"][$stationId]["modules"][0]["module_name"];
-$stat_name = $devicelist["devices"][$stationId]["station_name"];
+
+$mydevices = $_SESSION['mydevices']; 
+$device_id = $mydevices[$stationId]["_id"];
+$module_id = $mydevices[$stationId]["modules"][0]["_id"];
+$int_name  = $mydevices[$stationId]["module_name"];
+$ext_name  = $mydevices[$stationId]["modules"][0]["module_name"];
+$stat_name = $mydevices[$stationId]["station_name"];
+
 date_default_timezone_set("UTC");
 	// exterieur
-    $params = array("scale" => $interval
-    , "type" => $req
-    , "date_begin" => $date_beg
-    , "date_end" => $date_end
-    , "optimize" => false
-    , "device_id" => $device_id
-    , "module_id" => $module_id);  
-    try
-    	{$meas = $client->api("getmeasure", "POST", $params);
-    	}
-    catch(NAClientException $ex)
-    	{echo "An error happend while trying to retrieve your last measures\n";
-        echo $ex->getMessage()."\n";
-    	}
-    if(count($meas) == 0)
-        {drawCharts('G');
-        echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
-        return;
-        } 	
-        
+$params = array("scale" => $interval
+                , "type" => $req
+                , "date_begin" => $date_beg
+                , "date_end" => $date_end
+                , "optimize" => false
+                , "device_id" => $device_id
+                , "module_id" => $module_id);  
+try
+    {$meas = $client->api("getmeasure", "POST", $params);
+    }
+catch(NAClientException $ex)
+    {echo "An error happend while trying to retrieve your last measures\n";
+    echo $ex->getMessage()."\n";
+    }
+if(count($meas) == 0)
+    {drawCharts('G');
+    echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+    return;
+    } 	
+    
  	// interieur    
-    $params = array("scale" => $interval
-    , "type" => $req1
-    , "date_begin" => $date_beg
-    , "date_end" => $date_end
-    , "optimize" => false
-    , "device_id" => $device_id); 
-    try
-    	{$meas1 = $client->api("getmeasure", "POST", $params); 
-		}
-    catch(NAClientException $ex)
-    	{echo "An error happend while trying to retrieve your last measures\n";
-        echo $ex->getMessage()."\n";
-    	}
+$params = array("scale" => $interval
+            , "type" => $req1
+            , "date_begin" => $date_beg
+            , "date_end" => $date_end
+            , "optimize" => false
+            , "device_id" => $device_id); 
+try
+    {$meas1 = $client->api("getmeasure", "POST", $params); 
+    }
+catch(NAClientException $ex)
+    {echo "An error happend while trying to retrieve your last measures\n";
+    echo $ex->getMessage()."\n";
+    }
 
 date_default_timezone_set("Europe/Paris");
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
@@ -435,8 +437,6 @@ $isiPad = $_SESSION['Ipad'];
 echo("var isiPad = \"$isiPad\";\n");     
 ?>
 
-var isiPad = navigator.userAgent.match(/iPad/i) != null;
-
     google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
      function IntClickHandler()
         {var selection = chartInt.getSelection();
@@ -450,7 +450,7 @@ var isiPad = navigator.userAgent.match(/iPad/i) != null;
                 for(var col = item.column-2;col < num-1;col++)
                     colorInt[col] = colorInt[col+1]; 
                 <?php echo("chartInt.draw(dataInt, {title: $titleInt,colors:colorInt,$param });");?>
-                break;
+                return;
                 }
             }
         }
@@ -467,6 +467,7 @@ var isiPad = navigator.userAgent.match(/iPad/i) != null;
                 for(var col = item.column-2;col < num-1;col++)
                     colorExt[col] = colorExt[col+1];                 
                 <?php echo("chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");?>
+                return;
                 }
             }
          }

@@ -11,13 +11,15 @@ session_start();
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript' src='size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
 date_default_timezone_set("Europe/Paris");
 initClient();
 $client = $_SESSION['client'];
-$devicelist = $_SESSION['devicelist'];
+$mydevices = $_SESSION['mydevices'];
+
 date_default_timezone_set("UTC");
 
 if(isset($_POST["date0"]))  
@@ -84,12 +86,8 @@ else
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];
     }
-/*    
-chkDates($date0,$date1,$interval,$inter);	
-$date_beg = $_SESSION['date_beg'];
-$date_end = $_SESSION['date_end'];
-*/
-$numStations = count($devicelist["devices"]);
+
+$numStations = $mydevices["num"];
 
 if(isset($_POST['stats']))
     {for($i = 0 ;$i < $numStations; $i++)
@@ -132,11 +130,11 @@ $keys = array($numStations);
 $nmesures = array($numStations);
 
 $minDateBeg = $date_end;
-
+$maxMesures = 0;
 for($i = 0;$i < $numStations;$i++)
 	{if($view[$i] == 0)continue;
-	$device_id = $devicelist["devices"][$i]["_id"];
-	$module_id = $devicelist["devices"][$i]["modules"][0]["_id"];
+	$device_id = $mydevices[$i]["_id"];
+	$module_id = $mydevices[$i]["modules"][0]["_id"];
     $params = array("scale" => $interval
     , "type" => $type
     , "date_begin" => $date_beg
@@ -147,13 +145,20 @@ for($i = 0;$i < $numStations;$i++)
     $mesure[$i] = $client->api("getmeasure", "POST", $params);
     if(count($mesure[$i]) == 0)
         {$view[$i] = 0; --$numview;continue;}
-    $nameStations[$i] = $devicelist["devices"][$i]["station_name"];
+    $nameStations[$i] = $mydevices[$i]["station_name"];
     $keys[$i] = array_keys($mesure[$i]);
     $dateBeg[$i] = $keys[$i][0];
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
     $nmesures[$i] = count($keys[$i]);
+    $maxMesures = max($maxMesures,$nmesures[$i]);
     }
-
+if($maxMesures == 0)
+    {drawCharts('C');
+    echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+    return;
+    } 
+$visupt = "";
+if($maxMesures <= 48)$visupt = ",pointSize:3";	   
 date_default_timezone_set("Europe/Paris");
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
@@ -201,7 +206,7 @@ echo("
             	++$i;
                 }while($itime < $date_end);
 				echo("data.removeColumn(1+2*$numview);\n");	
-				$title = $titre . 'minimale extérieure' . '  ('.$beg.' - '.$end.')';                
+				$title = $titre . 'minimale extérieure' . '  ('.$beg.' - '.$end.' @'. $tinter.' '.$maxMesures.' mesures)';                
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -240,7 +245,7 @@ echo("
             	++$i;
                 }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
-				$title1 = $titre . 'maximale extérieure' . '  ('.$beg.' - '.$end.')';                
+				$title1 = $titre . 'maximale extérieure' . '  ('.$beg.' - '.$end.' @'. $tinter.' '.$maxMesures.' mesures)';                
 
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
@@ -252,8 +257,8 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: colorMax,$param });
-             chartMin.draw(data ,{title:'$title' ,pointSize:3,colors:colorMin,$param });
+             chartMax.draw(data1,{title: '$title1'$visupt,colors: colorMax,$param });
+             chartMin.draw(data ,{title:'$title'$visupt,colors:colorMin,$param });
 			");
 $isiPad = $_SESSION['Ipad'];
 echo("var isiPad = \"$isiPad\";\n");  

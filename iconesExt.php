@@ -1,6 +1,5 @@
 <?php
 require_once 'NAApiClient.php';
-
 session_start(); 
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
@@ -9,7 +8,8 @@ session_start();
 <meta charset='utf-8'>
 <link rel='icon' href='favicon.ico'>
 <link type='text/css' rel='stylesheet'  href='style.css'>
-<script type='text/javascript' src='validate.js'></script>	
+<link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
+<script type='text/javascript' src='size.js'></script>
 
 <?php
 require_once 'Config.php';
@@ -29,54 +29,39 @@ if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')
         }
     }
 	
-// width and height of the navigator window
-if(isset($_GET['width']))
-	$_SESSION['width'] = $_GET['width'];
-if(isset($_GET['height']))
-	$_SESSION['height'] = $_GET['height'];
-
-// reload page => recalculer $last_mesures
-if(isset($_SESSION['mesures']))unset($_SESSION['mesures']);
-if(isset($_SESSION['devicelist']))unset($_SESSION['devicelist']);
 initClient();
 $client = $_SESSION['client'];
-$devicelist = $_SESSION['devicelist'];
-$last_mesures = $_SESSION['mesures'];
-$numStations = count($devicelist["devices"]);
-
-$latitude = array($numStations);
-$longitude = array($numStations);
-$alt = array($numStations);
+$mydevices = $_SESSION['mydevices']; 
+$numStations = $mydevices["num"];
+$devicelist = getDevicelist();
+$last_mesures = getLastMeasures($devicelist);
 $slabel = array($numStations);
 $label = array($numStations);
 
-for($i = 0;$i < $numStations;$i++)
-	{$latitude[$i] = $devicelist["devices"][$i]["place"]["location"][1];
-    $longitude[$i] = $devicelist["devices"][$i]["place"]["location"][0];
-	}
 // to speed reloading we compute only once the locations
-$places = array($numStations);
-if(isset($_SESSION['places']))
-	$places = $_SESSION['places'];
-else
-	{for($i = 0;$i < $numStations;$i++)
-		$places[$i] = geolocalize($latitude[$i],$longitude[$i]);
-	$_SESSION['places'] = $places;	
+if($mydevices['address'] == 0)
+	{$mydevices['address'] = 1;
+	for($i = 0;$i < $numStations;$i++)
+		{$mydevices[$i]['latlng']['latitude'] = $devicelist["devices"][$i]["place"]["location"][1];
+		$mydevices[$i]['latlng']['longitude'] = $devicelist["devices"][$i]["place"]["location"][0];
+		$mydevices[$i]['latlng']['altitude'] = $devicelist["devices"][$i]["place"]["altitude"];
+		$mydevices[$i]['address'] = geolocalize($mydevices[$i]['latlng']['latitude'],$mydevices[$i]['latlng']['longitude']);
+		}
+	$_SESSION['mydevices'] = $mydevices;	
 	}
-
 
 //Creation des InfoWindow
 for($i = 0;$i < $numStations;$i++)
-	{$res = $last_mesures[$i]["modules"];
-    $alt[$i] = $devicelist["devices"][$i]["place"]["altitude"];
-    $place = $places[$i];
-    $int_name = $devicelist["devices"][$i]["module_name"];
-	$ext_name = $devicelist["devices"][$i]["modules"][0]["module_name"];
+	{$altitude = $mydevices[$i]['latlng']['altitude'];
+    $place = $mydevices[$i]['address'];
+    $int_name = $mydevices[$i]["module_name"];
+	$ext_name = $mydevices[$i]["modules"][0]["module_name"];
 	if($place == "BAD")		
-    	$p = '<b>' . $last_mesures[$i]['station_name'] . ' (' . $alt[$i] . 'm)' . '</b><br>';
+    	$p = '<b>' . $mydevices[$i]['station_name'] . ' (' . $altitude . 'm)' . '</b><br>';
 	else
-    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $alt[$i] . 'm</font>)'; 
+    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm</font>)'; 
 
+    $res = $last_mesures[$i]["modules"];
 	$temp = $res[0]['Temperature'];
 	$hum = $res[0]['Humidity'];
 	$co2 = $res[0]['CO2'];
@@ -161,8 +146,8 @@ for($i = 0;$i < $numStations;$i++)
 <?php
 	echo("var num = $numStations;\n");
   	for($i = 0;$i < $numStations;$i++)
-  		{echo("lat[$i] = $latitude[$i];\n");
-  		echo("lng[$i] = $longitude[$i];\n");
+  		{echo("lat[$i] = {$mydevices[$i]['latlng']['latitude']};\n");
+  		echo("lng[$i] = {$mydevices[$i]['latlng']['longitude']};\n");
   		echo("label[$i] = \"$label[$i]\";\n");
   		echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   		}
@@ -329,8 +314,6 @@ for($i = 0;$i < $numStations;$i++)
 	}//initialize
 </script>
 <!-- cannot be moved before -->
-<link rel='stylesheet' media='screen' type='text/css' title='Design' href='calendrierBleu.css'>
-<!--<script type='text/javascript' src='calendrier.js'></script>--> 
 
 </head>
   <body  onload='initialize()'>
@@ -351,10 +334,10 @@ $date_beg = $date_end - (24 * 60 * 60);
 $tmins =  array($numStations);
 $tmaxs =  array($numStations);
 for($i = 0;$i < $numStations;$i++)
-	{$device_id = $devicelist["devices"][$i]["_id"];
-	$module_id = $devicelist["devices"][$i]["modules"][0]["_id"];
+	{$device_id = $mydevices[$i]["_id"];
+	$module_id = $mydevices[$i]["modules"][0]["_id"];
 	$params = array("scale" => "1day"
-    	, "type" => "min_temp,max_temp"
+    	, "type" => "min_temp,max_temp,date_min_temp,date_max_temp"
     	, "date_begin" => $date_beg
     	, "date_end" => $date_end
     	, "optimize" => true
@@ -362,8 +345,10 @@ for($i = 0;$i < $numStations;$i++)
     	, "module_id" => $module_id);
     $tmesure = $client->api("getmeasure", "POST", $params);	
     if(count($tmesure))
-    	{$tmins[$i] = $tmesure[0]['value'][0][0];   
-    	$tmaxs[$i] = $tmesure[0]['value'][0][1];
+    	{$tmin[$i] = $tmesure[0]['value'][0][0];   
+    	$tmax[$i] = $tmesure[0]['value'][0][1];
+    	$dtmin[$i] = $tmesure[0]['value'][0][2];
+    	$dtmax[$i] = $tmesure[0]['value'][0][3];
     	}
     else
        $tmins[$i] = $tmaxs[$i] = '-'; 
@@ -376,27 +361,34 @@ echo("<table style='margin-left:auto; margin-right:auto;  margin-top:-2px; margi
 for($i = 0;$i < $numStations;$i++)
 	{$res = $last_mesures[$i]["modules"];
 	echo("<td>");
-	fill($i,$devicelist["devices"][$i],$alt[$i],$res,$tmins[$i],$tmaxs[$i]);
+	fill($i,$devicelist["devices"][$i],$mydevices[$i],$res,$tmin[$i],$tmax[$i],$dtmin[$i],$dtmax[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>");	
 ?>
 
 <!-- trace des menus et de la Google map -->
+
 <table class='container'>
 <tr>
     <td class='container'>
         <?php
         $num = count($devicelist["devices"]);
-        drawMenuStation();
+        drawMenuStation('312px');
         ?>
     </td>
 <!-- GOOGLE MAP -->
-    <td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:490px; border:solid 2px gray;'> </div>
+<?php
+if($_SESSION['Ipad'])
+    $h = '490px'; 
+else
+    $h = '510px';
+    echo("<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:$h; border:solid 2px gray;'> </div>");
+?>
     </td>
     <td class='container'>
         <?php
-        drawMenuCompare();
+        drawMenuCompare('312px');
         ?>	
     </td>
 </tr>

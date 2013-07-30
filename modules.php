@@ -4,6 +4,7 @@
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript' src='size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
@@ -16,39 +17,34 @@ session_start();
 date_default_timezone_set("Europe/Paris");
 initClient();
 $client = $_SESSION['client'];
-$devicelist = $_SESSION['devicelist'];
-$last_mesures = $_SESSION['mesures'];
-
 // $stationNum station utilise
 $stationNum = $_GET['stationNum']; // toujours défini
-
+$changedSation = false;
 if(isset($_POST['selectStation']))
-    {$changedStation = ($stationNum != $_POST['selectStation']);
+    {$changedSation = ($_POST['selectStation'] != $stationNum); 
     $stationNum = $_POST['selectStation'];
     }
-    
+   
 $_SESSION['stationId'] = $stationNum;
 
-$res = $last_mesures[$stationNum]["modules"];
-//$res = $devicelist["devices"][$stationNum]["modules"];
-$numStations = count($res) ;
-$device = $devicelist['devices'][$stationNum];
+$mydevices = $_SESSION['mydevices']; 
+$device = $mydevices[$stationNum];
+$numStations = $device["modules"]["num"] + 1; 
+$nameStation = $device['station_name'];
+
 // device: tous les modules mais pas la station principale
 // $numStations = $numModules + 1
-
-for($i = 0;$i < $numStations;$i++)
-    $nameStations[$i] = $res[$i]['module_name'];
-
-// module principal + modules extra
 // 0 station
 // 1 module exterieur
 // extra modules
+$numModules = $device["modules"]["num"];
 $device_id = $device['_id'];
-$numModules = count($device['modules']);
+$nameStations[0] = $device["module_name"]; 
 $modules_id[0] = $device_id;
-
-for($i = 1;$i < $numStations;$i++)    
+for($i = 1;$i < $numStations;$i++) // station et modules
+    {$nameStations[$i] = $device["modules"][$i-1]["module_name"];
     $modules_id[$i] = $device['modules'][$i -1]['_id'];
+    }
 
 if(isset($_POST['selectMsesure']))
     $selectMesure = $_POST['selectMsesure'];
@@ -121,11 +117,7 @@ else
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];
     }
-/*
-chkDates($date0,$date1,$interval,$inter);	
-$date_beg = $_SESSION['date_beg'];
-$date_end = $_SESSION['date_end'];
-*/
+
 
 $CO2 = 0;	
 $HTime = 1;
@@ -167,45 +159,29 @@ else if($selectMesure == 'C')
     $CO2 = 1;
     }    
 $_SESSION['selectMesureModule'] = $selectMesure; 
+$viewModules = $_SESSION['viewModules'];
 
-
-if(isset($_SESSION['viewModule']))
-    {$view = $_SESSION['viewModule'];
-    $numview = $view['numview'];
-    if($view['station'] !=  $stationNum)
-        {for($i = 0 ;$i < $numStations; $i++)
-            $view[$i] = 1;    
-        $numview = $numStations;    
-        $view['station'] = $stationNum;
-        $view['numview'] = $numview;
-        }
-    }
-if(isset($_POST['selectedModules']) && $changedStation == false)
+if(isset($_POST['selectedModules']) && $changedSation == false)
     {for($i = 0 ;$i < $numStations; $i++)
-	    $view[$i] = 0;
+	    $viewModules[$stationNum][$i] = 0;
     foreach($_POST['selectedModules'] as $chkbx)
-	    $view[$chkbx] = 1;
+	    $viewModules[$stationNum][$chkbx] = 1;
     $numview = 0;  // Nombre de stations cochées
     for($i = 0 ;$i < $numStations; $i++)
-	    if($view[$i])++$numview;
-	if($numview == 0)
-	    $view[0] = $numview = 1;
-        $view['station'] = $stationNum;
-        $view['numview'] = $numview;	    
-	}
-else
-    {for($i = 0 ;$i < $numStations; $i++)
-	    $view[$i] = 1;
-    $numview = $numStations;    
-    $view['station'] = $stationNum;
-    $view['numview'] = $numview;
-    }
+        if($viewModules[$stationNum][$i])++$numview;
+    if($numview == 0)
+        $viewModules[$stationNum][0] = $numview = 1; 
+    $viewModules[$stationNum]["numView"] = $numview;    
+    $_SESSION['viewModules'] = $viewModules;	
+	}  
+$view = $viewModules[$stationNum];    
+$numview = $view["numView"];
     
-$_SESSION['viewModule'] = $view;   
-
 if($CO2)
     {if($view[1])--$numview;
     $view[1] = 0;
+    if($numview == 0)
+        $view[0] = $numview = 1;     
     }
 	
 $mesure = array($numStations);
@@ -269,14 +245,7 @@ if($numKeys == 0)
     echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
     return;
     } 	
-
-/*
-$numview = 0;  // Nombre de stations cochées
-for($i = 0 ;$i < $numStations; $i++)
-	if($view[$i])++$numview;
-if($numview == 0)
-    $view[0] = $numview = 1;
-*/    
+  
 /**************************************************************/
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 function tip($temp,$tempDate)
@@ -380,12 +349,12 @@ echo("
 				echo("data1.removeColumn(1+2*$numview);\n");				               
 /**********************************************************************************************/
              if($inter > 30*60)    
-                {$title = $titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
-                $title1 = $titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
+                {$title = $nameStation.': '.$titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
+                $title1 = $nameStation.': '.$titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
                 }
             else
-                {$title = $titre .  ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
-                $title1 = $titre1.' ('.$beg.' -'.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
+                {$title = $nameStation.': '.$titre .  ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
+                $title1 = $nameStation.': '.$titre1.' ('.$beg.' -'.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
                 }
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
@@ -427,7 +396,7 @@ echo("
                     colorMin[col] = colorMin[col+1];                 
                 data.removeColumn(item.column);
                 chartMin.draw(data ,{title: '$title' $visupt,colors:colorMin,$param });               
-                break;
+                return;
                 }
             }
         }
@@ -446,6 +415,7 @@ echo("
                     colorMax[col] = colorMax[col+1];                 
                 data1.removeColumn(item.column); 
                 chartMax.draw(data1 ,{title: '$title1' $visupt,colors: colorMax,$param });
+                return;
                 }
             }
          }
@@ -460,7 +430,7 @@ echo("
 </head>
 <body>
 <?php
-$num = count($devicelist["devices"]);  
+//$num = $mydevices['num'];  
 drawCharts('M');
 ?>
 </body>

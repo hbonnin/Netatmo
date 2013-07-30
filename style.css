@@ -12,7 +12,7 @@ table.icone {
 	background-color: #cceeff;
 	border: 1px solid #77a;
 	font-family: Helvetica, serif;
-	padding:3px 2px 3px 2px;
+	padding:3px 2px 12px 2px;
 	margin:-1px;
 	width:220px;
 	}
@@ -243,7 +243,7 @@ td.name {
 	}
 
 .tooltip div	{color:black;
-    width:220;
+    width:220px;
   	visibility: hidden;
   	position: absolute;
   	padding-top:5px;
@@ -260,7 +260,12 @@ td.name {
 .tooltip:hover div	{
   	visibility: visible;
 	}
-
+td.tooltip {
+	height:20px;
+	padding:5px 10px 0px 2px;
+	position:absolute;
+	margin-top:-8px;
+}
 a.tooltip {
 	font-size:9px;
 }

@@ -64,25 +64,31 @@ function chkDates($date0,$date1,$interval,$inter)
     }    
 function drawLogoutBack()
 	{$stationId = $_SESSION['stationId'];
-    $menuModules = 'modules.php?stationNum=' .$stationId ;
 ?>
 <!-- drawLogoutBack -->
 <table style='margin:auto; '>
 	<tr>
 	<td>
-	<form  action="graphiques.php?extern='1'" method='post'>
-	<input type='submit' class='submit' value="Graphiques d'une station" />
+    <script  type="text/javascript">
+        document.write('<form method=\'post\' action='+'graphiques.php?'+writeSize()+'>');
+    </script>
+		<input type='submit' class='submit' value="Graphiques d'une station" />
 	</form>
 	</td>
 	
 	<td>
-	<form  action=<?php echo $menuModules; ?> method='post'>
+    <script  type="text/javascript">
+        <?php echo("stationNum = \"$stationId\";\n"); ?>
+        document.write('<form method=\'post\' action='+'modules.php?'+writeSize()+'&stationNum='+stationNum+'>');
+    </script>	
 	<input type='submit' class='submit' value="Modules d'une station"  />
 	</form>
 	</td>
 	
 	<td>
-	<form  action='iconesExt.php' method='post'>
+    <script  type="text/javascript">
+        document.write('<form method=\'post\' action='+'iconesExt.php?'+writeSize()+'>');
+    </script>
 	<input type='submit' class='submit' value="Menu principal"/>
 	</form>
 	</td>
@@ -131,12 +137,13 @@ function drawMenuStation($h = '')
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
 	$stationId = $_SESSION['stationId'];
-	$last_mesures = $_SESSION['mesures'];
-    $devicelist = $_SESSION['devicelist'];
-	$num = count($devicelist["devices"]);
-
+	$mydevices = $_SESSION['mydevices']; 
+    $num = $mydevices['num'];
 ?>	
-	<form method='post' action='graphiques.php'>
+
+    <script  type="text/javascript">
+        document.write('<form method=\'post\' action='+'graphiques.php?'+writeSize()+'>');
+    </script>
 
     <table class='G' style="height:<?php echo $h.';' ?>">
 	<tr>
@@ -181,12 +188,12 @@ function drawMenuStation($h = '')
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<td class='l'>Station</td>
+		<td class='l'></td>
         <td>			
             <?php
             echo("<table class='chk'>\n");
             for($i = 0;$i < $num;$i++)
-                {$stat = $last_mesures[$i]['station_name'];
+                {$stat = $mydevices[$i]['station_name'];
                 $arr = explode(" ",$stat);
                 $stat = $arr[0];
                 if($i == $stationId)
@@ -218,14 +225,14 @@ function drawMenuCompare($h ='')
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
 	$view = $_SESSION['viewCompare'];
-	$last_mesures = $_SESSION['mesures'];
 	$selectMesure = $_SESSION['selectMesureCompare'];
-	$devicelist = $_SESSION['devicelist'];
-	$num = count($devicelist["devices"]);
-
+	$mydevices = $_SESSION['mydevices']; 
+    $num = $mydevices['num'];
 ?>
-	<form method='post' action='compareALL.php'>	
-
+    <script  type="text/javascript">
+        document.write('<form method=\'post\' action='+'compareALL.php?'+writeSize()+'>');
+    </script>
+    
     <table class='G'  style="height:<?php echo $h.';' ?>">
 	<tr>
 	<td class='g' style='height:3px'>
@@ -264,32 +271,34 @@ function drawMenuCompare($h ='')
 
 	<tr>
 	<td class='g'>
-	<div class='fl'>Mesure</div>	
-	<div class='fr'>
-		<select name='selectMsesure'>
+	<!--<div class='fl'>Mesure</div>-->	
+	<div class='fl' style ='height:26px;'></div>	
+	<div class='fr' style ='height:26px;'>
+		
 <?php
+        $txt = "<select name='selectMsesure'>";
         if($selectMesure == 'T')
-            echo("<option value='T' selected='selected'> T° </option>
-    		    <option value='H'  > H % </option>
-            ");
+            $txt .="<option value='T' selected='selected'> T° </option>
+    		    <option value='H'  > H % </option>";
         else
-            echo("<option value='T'> T° </option>
-    		    <option value='H'  selected='selected'> H % </option>
-            ");
-        
+            $txt .="<option value='T'> T° </option>
+    		    <option value='H'  selected='selected'> H % </option>";
+    	$txt .= "</select>";
 ?>
- 		</select>		
-	</div></td></tr>
+ 			
+	</div>
+	</td></tr>
 
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<td class='l'>Station</td>
+		<!--<td class='l'>Station</td>-->
+		<td class='l'><?php echo("$txt");?></td>
         <td>			
 <?php
 		echo("<table class='chk'>\n");
 		for($i = 0;$i < $num;$i++)
-			{$stat = $last_mesures[$i]['station_name'];
+			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($view[$i])
@@ -323,7 +332,7 @@ function drawCharts($order='G')
             'M' => array ('drawMenuCompare','drawMenuModules'),
             );
     if($_SESSION['Ipad'])
-        $hh = 300; 
+        $hh = 290; 
     else
 	    $hh = 310;
     $h = $hh . 'px';
@@ -360,26 +369,20 @@ function drawCharts($order='G')
 /* drawMenuModules ************************************************************************/	
 function drawMenuModules($h ='')
 	{global $numStations,$nameStations;
-	$last_mesures = $_SESSION['mesures'];
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
     $stationNum = $_SESSION['stationId']; 
-    $devicelist = $_SESSION['devicelist'];
-    $stationName = $devicelist['devices'][$stationNum]['station_name'];
-    $num = count($devicelist["devices"]);
+    $mydevices = $_SESSION['mydevices']; 
+    $num = $mydevices['num'];
+    $stationName = $mydevices[$stationNum]['station_name'];
     $selectMesure = $_SESSION['selectMesureModule'];
-    
-    // $numStations = #modules + 1
-	if(isset($_SESSION['viewModule']))
-	    $view = $_SESSION['viewModule'];
-	else
-	    {for($i = 0 ;$i < $numStations; $i++)
-	        $view[$i] = 1;
-	    $_SESSION['viewModule'] = $view;
-        }	        
-
-?>	
-	<form method='post' action='modules.php?stationNum=<?php echo $stationNum;?>'>	
+    $viewModules = $_SESSION['viewModules'];
+    $view = $viewModules[$stationNum];
+?>	  
+    <script  type="text/javascript">
+        <?php echo("stationNum = \"$stationNum\";\n"); ?>
+        document.write('<form method=\'post\' action='+'modules.php?'+writeSize()+'&stationNum='+stationNum+'>');
+    </script>
 
   <table class='G'  style="height:<?php echo $h.';' ?>">
 	<tr>
@@ -399,7 +402,7 @@ function drawMenuModules($h ='')
 		<select name='selectStation'>            
  		<?php
 		for($i = 0;$i < $num;$i++)
-			{$stat = $last_mesures[$i]['station_name'];
+			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
 			$stat = $arr[0];
 			if($i == $_SESSION['stationId'])
@@ -437,34 +440,35 @@ function drawMenuModules($h ='')
 	</div></td></tr>
 	
 	<tr>
-	<td class='g'>
-	<div class='fl'><span>Mesure</span></div>	
-	<div class='fr'>
-		<select name='selectMsesure'>
+	<td class='g'  style ='height:5px;'>
+	<!--<div class='fl'><span>Mesure</span></div>-->	
+	<div class='fl' style ='height:5px;'></div>	
+	<div class='fr' style ='height:5px;'>
 <?php
+        $txt = "<select name='selectMsesure'>";
         if($selectMesure == 'T')
-            echo("<option value='T' selected='selected'> T° </option>
+            $txt .= "<option value='T' selected='selected'> T° </option>
     		    <option value='H'  > H % </option>
-    		    <option value='C'  > CO2 </option>
-            ");
+    		    <option value='C'  > CO2 </option>";
         else if($selectMesure == 'H')
-            echo("<option value='T'> T° </option>
+            $txt .= "<option value='T'> T° </option>
     		    <option value='H'  selected='selected'> H % </option>
-    		    <option value='C'  > CO2 </option>   
-            ");
+    		    <option value='C'  > CO2 </option>  "; 
         else
-            echo("<option value='T'> T° </option>
+            $txt .="<option value='T'> T° </option>
     		    <option value='H' > H % </option>
-    		    <option value='C'  selected='selected'  > CO2 </option>   
-            ");        
+    		    <option value='C'  selected='selected'  > CO2 </option>"; 
+    	$txt .= "</select>";	    
+                
 ?>
-		</select>		
+				
 	</div></td></tr>
 		
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<td class='l'>Station</td>
+		<!--<td class='l'>Station</td>-->
+		<td class='l'><?php echo ("$txt"); ?></td>
         <td>			
 <?php
 		echo("<table class='chk'>\n");

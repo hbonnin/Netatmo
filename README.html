@@ -15,7 +15,8 @@ The server needs to have a php version >= 5, with curl and json enabled.<br>
 If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.webatu.com/Netatmo/">Netatmo</A>.
 </p>
 <p>
-The main goal of this program is to compare different measures on the same graphic.
+The goal of this program is to display all the available measures of all the stations you have access<br>
+and interactively draw graphics.
 </p>
 <h3>Main windows:</h3>
 <ul>
@@ -28,11 +29,11 @@ The main goal of this program is to compare different measures on the same graph
 <li>	Graphics comparing the measures of selected stations: outdoor temperature or humidity, <br>
 		(1 day or 1 week), 
 </li>
-<li>	Graphics comparing measures of selected extra modules: temperature, humidity or noise,<br>
+<li>	Graphics comparing measures of all your modules: temperature, humidity or noise,<br>
 		(30 minutes, 3 hours, 1 day or 1 week), 
 </li>
 </ul>
-<h3>Using the Google map :</h3>
+<h3>Google map :</h3>
 <ul>
 <li>	Move over a <b>green marker</b>, to display the measures of a station.</li>
 <li>	Left click on a <b>green marker</b> to zoom on the marker .</li>
@@ -42,7 +43,12 @@ The main goal of this program is to compare different measures on the same graph
 <li>	Left click on <b>Hide Clouds / Show Clouds</b> to display or not the cloud layer.</li>
 <li>	Left click on <b>Hide Markers / Show Markers</b> to hide or restore the green markers.</li>
 </ul>
-<h3>Using the dates of measures  :</h3>
+<h3>Icons :</h3>
+<ul>
+<li>     Move over a measure to display the date of the measure,<br>
+		over the station name, to display the latitude and longitude of the station.</li>
+</ul>
+<h3>Dates of measures  :</h3>
 <ul>
 <li>	If you set the date of the beginning of the measures to the date of the end of the measures,<br> the program
 		computes the starting date automatically according to the frequency of measures:<br><br>
@@ -56,17 +62,17 @@ The main goal of this program is to compare different measures on the same graph
 		</table>
 		</li>
 </ul>
-<h3>Using the graphics :</h3>
+<h3>Graphics :</h3>
 <ul>
-<li>	If you click on the name of a curve (inside the drawing), the corresponding curve will be erased
+<li>	If you click on the name of a curve (the squares inside the drawing), the corresponding curve will be erased
 		and the drawing will be rescaled without reloading the datas.</li>
 <li>	To zoom, click on point of the curve: the frequency of measures will be augmented if possible,<br>
 		if the curve has less than 20 points and the frequency is maximal, nothing will happen.<br>
-		By default, this zoom feature is disabled on <b>Ipad</b></li>
+		By default, this zoom feature is disabled on <b>Ipad</b>.</li>
 </ul>
 <h3>Other remarks :</h3>
 <ul>
-<li>	If you use index.php, you are logged through Netatmo.</li>
+<li>	If you use index.php and your user id and password are not in Config.php, you are logged through Netatmo.</li>
 <li>	If you use indexLogin.php your user name and password are sent in a not crypted connection.</li>
 </ul>
 
