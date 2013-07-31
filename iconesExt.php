@@ -374,7 +374,7 @@ echo("</tr></table>");
     <td class='container'>
         <?php
         $num = count($devicelist["devices"]);
-        drawMenuStation('312px');
+        drawMenuStation('255px');
         ?>
     </td>
 <!-- GOOGLE MAP -->
@@ -388,7 +388,7 @@ else
     </td>
     <td class='container'>
         <?php
-        drawMenuCompare('312px');
+        drawMenuCompare('255px');
         ?>	
     </td>
 </tr>

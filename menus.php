@@ -139,6 +139,8 @@ function drawMenuStation($h = '')
 	$stationId = $_SESSION['stationId'];
 	$mydevices = $_SESSION['mydevices']; 
     $num = $mydevices['num'];
+    $selectMesures = $_SESSION['selectMesures'];
+    
 ?>	
 
     <script  type="text/javascript">
@@ -181,14 +183,26 @@ function drawMenuStation($h = '')
 	</div></td></tr>
 		
 	<tr>
-	<td class='g'>
-	<div class='f'>
+	<td class='g' style ='height:10px;'>
+	<div class='f' style ='height:10px;'>
 	</div></td></tr>
 
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<td class='l'></td>
+		<td class='l'>
+		    <?php
+		    $select = array("Temp","Hum","CO2","Pressure","Noise");
+		  	echo("<table class='chk'>\n");
+		    for($i = 0;$i < 5;$i++)
+			    {if($selectMesures[$i])
+				    echo("<tr><td><input  type='checkbox' name='smesure[]' value='$i' checked='checked'> $select[$i] </td></tr>\n");
+			    else
+			    	echo("<tr><td ><input  type='checkbox' name='smesure[]' value='$i'> $select[$i] </td></tr>\n");		
+			    }
+		    echo("</table>\n");	  
+		    ?>
+		</td>
         <td>			
             <?php
             echo("<table class='chk'>\n");
@@ -270,10 +284,9 @@ function drawMenuCompare($h ='')
 	</div></td></tr>
 
 	<tr>
-	<td class='g'>
-	<!--<div class='fl'>Mesure</div>-->	
-	<div class='fl' style ='height:26px;'></div>	
-	<div class='fr' style ='height:26px;'>
+	<td class='g' style ='height:10px;'>
+	<div class='f' style ='height:10px;'></div>	<!-- contenait selectMesure -->
+	</td></tr>
 		
 <?php
         $txt = "<select name='selectMsesure'>";
@@ -286,8 +299,6 @@ function drawMenuCompare($h ='')
     	$txt .= "</select>";
 ?>
  			
-	</div>
-	</td></tr>
 
 	<tr><td>
 	    <table style='height:100%; width:100%;'>

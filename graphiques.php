@@ -90,6 +90,73 @@ else
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];
     }
+$selectMesures = $_SESSION['selectMesures'];   
+if(isset($_POST['smesure']))
+    {for($i = 0 ;$i < 5;$i++)
+        $selectMesures[$i] = 0;
+    $selected = 0;        
+    foreach($_POST['smesure'] as $chkbx)
+        {$selectMesures[$chkbx] = 1;++$selected;}
+    if(!$selected){$selectMesures[0] = 1;++$selected;}    
+    }
+// calcul des colonnes à effacer **********************************
+function filtre($var)
+    {return($var != '0');
+    }
+    
+function compactArray($array)
+    {$keys = array_keys($array);
+    for($ii = $i = 0; $i < count($keys);$i++)
+        $narray[$ii++] = $array[$keys[$i]];
+    return $narray;    
+    }
+    
+for($i = 0 ;$i < 9;$i++)
+    $eraseInt[$i] = $eraseExt[$i] = 0;
+if($inter > 3*60*60) 
+    {$colorInt =  array('red','blue','green','orange','brown','#ff69b4');
+    $colorExt =  array('red','blue','green','#00dd00');  
+    if(!$selectMesures[0])
+         {$eraseInt[2] = $eraseInt[3] = 1;
+         $colorInt[0] = $colorInt[1] = '0';
+         }
+    for($i = 1 ;$i < 5;$i++)
+        if(!$selectMesures[$i])
+            {$eraseInt[$i+ 3] = 1;
+            $colorInt[$i+1] = '0';
+            }
+    if(!$selectMesures[1]) 
+        {$eraseExt[4] = $eraseExt[5] = 1;
+         $colorExt[2] = $colorExt[3] = '0';
+         }      
+     if($selectMesures[1] && !$selectMesures[0])  
+        {$eraseExt[2] = $eraseExt[3] = 1; 
+         $colorExt[0] = $colorExt[1] = '0';
+         }   
+    } 
+else
+    {$colorInt = array('red','green','orange','brown','#ff69b4');
+    $colorExt = array('red','green');
+    for($i = 0 ;$i < 5;$i++)
+        if(!$selectMesures[$i])
+            {$eraseInt[$i+2]  = 1;
+            $colorInt[$i] = '0';
+            }
+        if(!$selectMesures[1])
+            {$eraseExt[1+2]  = 1;
+            $colorExt[1] = '0';
+            }   
+        if($selectMesures[1] && !$selectMesures[0])  
+            {$eraseExt[2]  = 1;
+            $colorExt[0] = '0';
+            }   
+    }
+$colorInt = array_filter($colorInt,"filtre");
+$colorInt = compactArray($colorInt);
+$colorExt = array_filter($colorExt,"filtre");
+$colorExt = compactArray($colorExt);     
+// *********************************************************************
+$_SESSION['selectMesures'] = $selectMesures; 
 if($interval=="1week")
 	{$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";	
@@ -250,7 +317,9 @@ echo("
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
                 }while($break != 1);
-           	echo("dataExt.removeColumn(6);\n");				      
+           	echo("dataExt.removeColumn(6);\n");	
+            for($i = 8 ;$i >= 0;--$i)
+                if($eraseExt[$i])echo("dataExt.removeColumn($i);\n");	
 	}
 else   //5 ou 30 minutes ou 3 heures
 	{
@@ -280,7 +349,10 @@ else   //5 ou 30 minutes ou 3 heures
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
                 }while($break != 1);
-           	echo("dataExt.removeColumn(4);\n");				      
+           	echo("dataExt.removeColumn(4);\n");		
+            for($i = 8 ;$i >= 0;--$i)
+                if($eraseExt[$i])echo("dataExt.removeColumn($i);\n");	
+           	
 	}
 	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'. $tinter .' '.$num.' mesures)"';       	                    	
 	
@@ -342,7 +414,9 @@ if($inter > 3*60*60)	//1week,1day
                 $itime += $inter;
                 }while($break != 1);
             echo("dataInt.removeColumn(8);\n");				      
-     	                    	
+     	    for($i = 8 ;$i >= 0;--$i)
+                if($eraseInt[$i])echo("dataInt.removeColumn($i);\n");	
+              	
 	}
 else  // 5 minutes, 30 minutes, 3 heures
 	{if($inter >= 30*60)
@@ -403,12 +477,13 @@ else  // 5 minutes, 30 minutes, 3 heures
                 $itime += $inter;
                 }while($break != 1);
             echo("dataInt.removeColumn(7);\n");				      
- 	} 
+      	    for($i = 8 ;$i >= 0;--$i)
+                if($eraseInt[$i])echo("dataInt.removeColumn($i);\n");	
+            } 
 	$titleInt = '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures)"';       	                    	
 
     echo("var isiPad = \"{$_SESSION['Ipad']};\";\n");     
     echo("inter = $inter;\n");  
-    //echo("visupt = $visupt;\n");  echo("titleInt = $titleInt;\n");  echo("titleExt = $titleExt;\n");  
 
 ?>
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
@@ -418,23 +493,15 @@ else  // 5 minutes, 30 minutes, 3 heures
 	$param .= ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 	$param .= ",pointSize:$visupt,fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 
-    //echo("param = $param;\n");
-?>
-	//param = 'focusTarget:\"category\",tooltip: {isHtml: true}';	
-	//param += ',backgroundColor:\"#f0f0f0\",chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}';
-	//param += ',pointSize:'+visupt+',fontSize:10,titleTextStyle:{fontSize:12,color:\"#303080\",fontName:\"Times\"}';
+    echo("var colorInt = [];\n");
+    echo("var colorExt = [];\n");
+    for($i = 0; $i < count($colorInt);$i++)
+        echo("colorInt[$i] = \"$colorInt[$i]\";\n");
+    for($i = 0; $i < count($colorExt);$i++)
+        echo("colorExt[$i] = \"$colorExt[$i]\";\n");
 
-    if(inter > 3*60*60) 	    
-        {colorInt =  ['red','blue','green','orange','brown','#ff69b4'];
-        colorExt =  ['red','blue','green','#00dd00'];
-        }
-    else
-        {colorInt = ['red','green','orange','brown','#ff69b4'];
-        colorExt = ['red','green'];
-        }
-    //chartInt.draw(dataInt, {title: titleInt,colors:colorInt,param});
-    //chartExt.draw(dataExt, {title: titleExt,colors:colorExt,param});
-        
+?>
+
 <?php
 echo("chartInt.draw(dataInt, {title: $titleInt,colors:colorInt ,$param});
 chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");

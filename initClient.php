@@ -47,6 +47,9 @@ function init($numStations)
                                         )
                                 );
         $_SESSION['MenuInterval'] = $MenuInterval;  
+        for($i = 0 ;$i < 5; $i++)
+            $selectMesures[$i] = 1;
+        $_SESSION['selectMesures'] = $selectMesures;    
         for($i = 0 ;$i < $numStations; $i++)
             $viewCompare[$i] = 1;
         $viewCompare['numview'] = $numStations;
