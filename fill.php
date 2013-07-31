@@ -6,7 +6,7 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	$int_name = $devices["module_name"];
 	$ext_name = $devices["modules"][0]["module_name"];
 	$pres = intval($res[0]['Pressure']+.5);
-	$titre = "({$mydevices['latlng']['latitude']}°,{$mydevices['latlng']['longitude']}°)";
+	$titre = "({$mydevices['latlng']['latitude']}°,{$mydevices['latlng']['longitude']}°,{$mydevices['latlng']['altitude']}m)";
 	$dateInt = date('d/m/Y H:i',$res[0]['time']);
 	$dateExt = date('d/m/Y H:i',$res[1]['time']);
 	$dateMinMax = 'min:'.date('H:i',$dtmin).' max:'.date('H:i',$dtmax);

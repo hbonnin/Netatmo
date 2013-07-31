@@ -157,7 +157,7 @@ catch(NAClientException $ex)
 
 date_default_timezone_set("Europe/Paris");
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
-$visupt = '';
+$visupt = 0;
 
 function tipHTMLext2($idate,$tmax,$hum)
 	{return '<table><caption><b>' . $idate . '</b></caption>'
@@ -215,7 +215,7 @@ echo("
 			$beg = date("d/m/y", $keys[0]); 
 			$end = date("d/m/y",$keys[$num-1]); 
 			$_SESSION['begdata'] = $keys[0];
-			if($num <= 48)$visupt = ",pointSize:3";	
+			if($num <= 48)$visupt = 3;	
 
 if($inter > 3*60*60) //1week, 1day
 	{           
@@ -291,7 +291,7 @@ else   //5 ou 30 minutes ou 3 heures
 			$itime = $keys[0];  
 			$beg = date("d/m/y", $keys[0]); 
 			$end = date("d/m/y",$keys[$num-1]); 
-			if($num <= 48)$visupt = ",pointSize:3";	
+			if($num <= 48)$visupt = 3;	
 
 if($inter > 3*60*60)	//1week,1day	
 	{echo("
@@ -313,7 +313,8 @@ if($inter > 3*60*60)	//1week,1day
 				$MaxPression = max($MaxPression,$pres);
 				$MinPression = min($MinPression,$pres);
 				}	
-			$xp = 100/($MaxPression - $MinPression);		
+			if($MaxPression == $MinPression) $xp = 0;
+			else $xp = 100/($MaxPression - $MinPression);		
 		
 	        $ii = $break = 0;	
             do
@@ -328,13 +329,13 @@ if($inter > 3*60*60)	//1week,1day
             		$tmax = $meas1[$key][1];
                 	$hum = $meas1[$key][2];
                 	$co = $meas1[$key][3];
-                	$pres = $meas1[$key][4];
+                	$pres = intval($meas1[$key][4]+.5);
                 	$noise = $meas1[$key][5];                	
  //$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
              		$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);            		
                 	$tip = tipHTMLint6($iidate,$tmax,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}           
-                	$pres = ($pres-$MinPression)*$xp;
+                	if($xp)$pres = intval(($pres-$MinPression)*$xp + .5);
                 	}
                 echo("dataInt.addRow([\"$idate\",'$tip',$tmax,$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
@@ -375,10 +376,8 @@ else  // 5 minutes, 30 minutes, 3 heures
 				$MaxPression = max($MaxPression,$pres);
 				$MinPression = min($MinPression,$pres);
 				}
-			if($MaxPression - $MinPression)	
-			    $xp = 100/($MaxPression - $MinPression);
-			else
-			    $xp = 0;
+			if($MaxPression == $MinPression) $xp = 0;
+			else $xp = 100/($MaxPression - $MinPression);		
 			    
 	        $ii = $break = 0;	
             do
@@ -392,12 +391,12 @@ else  // 5 minutes, 30 minutes, 3 heures
             		$tmin = $meas1[$key][0];
                 	$hum = $meas1[$key][1];
                 	$co = $meas1[$key][2];
-                	$pres = $meas1[$key][3];
+                	$pres = intval($meas1[$key][3] + .5);
                 	$noise = $meas1[$key][4];  
            			$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);
                 	$tip = tipHTMLint5($iidate,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}             
-                	if($xp)$pres = ($pres-$MinPression)*$xp;
+                	if($xp)$pres = intval(($pres-$MinPression)*$xp + .5);
                 	}
                 echo("dataInt.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
@@ -407,17 +406,24 @@ else  // 5 minutes, 30 minutes, 3 heures
  	} 
 	$titleInt = '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures)"';       	                    	
 
-echo("
+    echo("var isiPad = \"{$_SESSION['Ipad']};\";\n");     
+    echo("inter = $inter;\n");  
+    //echo("visupt = $visupt;\n");  echo("titleInt = $titleInt;\n");  echo("titleExt = $titleExt;\n");  
+
+?>
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
     var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
-    ");
+<?php    
 	$param = "focusTarget:'category',tooltip: {isHtml: true}";
-	$param .= "$visupt,backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
-	$param .= "$visupt,fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+	$param .= ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
+	$param .= ",pointSize:$visupt,fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 
-
-    echo("inter = $inter;");  //pour le script
+    //echo("param = $param;\n");
 ?>
+	//param = 'focusTarget:\"category\",tooltip: {isHtml: true}';	
+	//param += ',backgroundColor:\"#f0f0f0\",chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}';
+	//param += ',pointSize:'+visupt+',fontSize:10,titleTextStyle:{fontSize:12,color:\"#303080\",fontName:\"Times\"}';
+
     if(inter > 3*60*60) 	    
         {colorInt =  ['red','blue','green','orange','brown','#ff69b4'];
         colorExt =  ['red','blue','green','#00dd00'];
@@ -426,17 +432,18 @@ echo("
         {colorInt = ['red','green','orange','brown','#ff69b4'];
         colorExt = ['red','green'];
         }
+    //chartInt.draw(dataInt, {title: titleInt,colors:colorInt,param});
+    //chartExt.draw(dataExt, {title: titleExt,colors:colorExt,param});
+        
 <?php
-
-echo("
-    chartInt.draw(dataInt, {title: $titleInt,colors:colorInt ,$param});
-    chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});
-    ");
-    
-$isiPad = $_SESSION['Ipad'];
-echo("var isiPad = \"$isiPad\";\n");     
+echo("chartInt.draw(dataInt, {title: $titleInt,colors:colorInt ,$param});
+chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");
 ?>
-
+/* 
+    row: time 
+    plus petite colonne 1 
+    si une seule courbe -> 3 colonnes (t, tooltip, courbe)
+*/
     google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
      function IntClickHandler()
         {var selection = chartInt.getSelection();
