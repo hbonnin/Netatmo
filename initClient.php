@@ -32,7 +32,11 @@ function init($numStations)
         {$_SESSION['emsg'] = 'Messages d\'erreur:<br>';
         $_SESSION['init'] = true;
         $_SESSION['stationId'] = 0;
+        $_SESSION['stationIdP'] = -1;
         $_SESSION['selectedInter'] = '1day';
+        $_SESSION['selectedInterP'] = 'x';
+        $_SESSION['date_begP'] = 0;
+        $_SESSION['date_endP'] = 0;        
         $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $MenuInterval = array ( "G" => 4,
@@ -47,8 +51,10 @@ function init($numStations)
                                         )
                                 );
         $_SESSION['MenuInterval'] = $MenuInterval;  
-        for($i = 0 ;$i < 5; $i++)
+        for($i = 0 ;$i < 2; $i++)
             $selectMesures[$i] = 1;
+        for($i = 2 ;$i < 5; $i++)
+            $selectMesures[$i] = 0;
         $_SESSION['selectMesures'] = $selectMesures;    
         for($i = 0 ;$i < $numStations; $i++)
             $viewCompare[$i] = 1;

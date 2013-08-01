@@ -90,6 +90,19 @@ else
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];
     }
+  
+if(abs($date_beg - $_SESSION['date_begP']) < $inter  &&  abs($date_end - $_SESSION['date_endP']) < $inter
+    && $interval == $_SESSION['selectedInterP']  &&  $stationId == $_SESSION['stationIdP'])
+    $reloadData = 0; 
+else
+    {$reloadData = 1; 
+    $_SESSION['date_begP'] = $date_beg;
+    $_SESSION['date_endP'] = $date_end;
+    $_SESSION['selectedInterP'] = $interval;
+    $_SESSION['stationIdP'] = $stationId;
+    }
+//echo("reload:$reloadData");
+
 $selectMesures = $_SESSION['selectMesures'];   
 if(isset($_POST['smesure']))
     {for($i = 0 ;$i < 5;$i++)
@@ -149,8 +162,8 @@ else
     }
 $colorInt = compactArray($colorInt);
 $colorExt = compactArray($colorExt);     
-// *********************************************************************
 $_SESSION['selectMesures'] = $selectMesures; 
+// *********************************************************************
 if($interval=="1week")
 	{$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";	
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";	
@@ -178,44 +191,50 @@ $module_id = $mydevices[$stationId]["modules"][0]["_id"];
 $int_name  = $mydevices[$stationId]["module_name"];
 $ext_name  = $mydevices[$stationId]["modules"][0]["module_name"];
 $stat_name = $mydevices[$stationId]["station_name"];
-
-date_default_timezone_set("UTC");
-	// exterieur
-$params = array("scale" => $interval
-                , "type" => $req
+if($reloadData)
+    {date_default_timezone_set("UTC");
+    // exterieur
+    $params = array("scale" => $interval
+                    , "type" => $req
+                    , "date_begin" => $date_beg
+                    , "date_end" => $date_end
+                    , "optimize" => false
+                    , "device_id" => $device_id
+                    , "module_id" => $module_id);  
+    try
+        {$meas = $client->api("getmeasure", "POST", $params);
+        }
+    catch(NAClientException $ex)
+        {echo "An error happend while trying to retrieve your last measures\n";
+        echo $ex->getMessage()."\n";
+        }
+    if(count($meas) == 0)
+        {drawCharts('G');
+        echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+        return;
+        } 	
+    
+     // interieur    
+    $params = array("scale" => $interval
+                , "type" => $req1
                 , "date_begin" => $date_beg
                 , "date_end" => $date_end
                 , "optimize" => false
-                , "device_id" => $device_id
-                , "module_id" => $module_id);  
-try
-    {$meas = $client->api("getmeasure", "POST", $params);
+                , "device_id" => $device_id); 
+    try
+        {$meas1 = $client->api("getmeasure", "POST", $params); 
+        }
+    catch(NAClientException $ex)
+        {echo "An error happend while trying to retrieve your last measures\n";
+        echo $ex->getMessage()."\n";
+        }
+    $_SESSION['GraphiqueMesureInt'] = $meas1;
+    $_SESSION['GraphiqueMesureExt'] = $meas;
     }
-catch(NAClientException $ex)
-    {echo "An error happend while trying to retrieve your last measures\n";
-    echo $ex->getMessage()."\n";
+else
+    {$meas1 = $_SESSION['GraphiqueMesureInt'];
+    $meas = $_SESSION['GraphiqueMesureExt'];
     }
-if(count($meas) == 0)
-    {drawCharts('G');
-    echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
-    return;
-    } 	
-    
- 	// interieur    
-$params = array("scale" => $interval
-            , "type" => $req1
-            , "date_begin" => $date_beg
-            , "date_end" => $date_end
-            , "optimize" => false
-            , "device_id" => $device_id); 
-try
-    {$meas1 = $client->api("getmeasure", "POST", $params); 
-    }
-catch(NAClientException $ex)
-    {echo "An error happend while trying to retrieve your last measures\n";
-    echo $ex->getMessage()."\n";
-    }
-
 date_default_timezone_set("Europe/Paris");
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = 0;

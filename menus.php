@@ -84,6 +84,14 @@ function drawLogoutBack()
 	<input type='submit' class='submit' value="Modules d'une station"  />
 	</form>
 	</td>
+ 
+    <td>
+    <script  type="text/javascript">
+        document.write('<form method=\'post\' action='+'compareALL.php?'+writeSize()+'>');
+    </script>
+		<input type='submit' class='submit' value="Comparaison de stations" />
+	</form>
+	</td>
 	
 	<td>
     <script  type="text/javascript">
@@ -99,12 +107,9 @@ function drawLogoutBack()
 	</form>	
 	</td>
 
-	<td style='font-size:12px;'>
-<?php
-	if(isset($_SESSION['width']))
-		echo("size:{$_SESSION['width']} x {$_SESSION['height']}");
-?>
-	</td>
+	<!--<td style='font-size:12px;'>
+    <?php //if(isset($_SESSION['width']))echo("size:{$_SESSION['width']} x {$_SESSION['height']}");?>
+	</td>-->
 	</tr>
 	</table>
 	    
@@ -292,10 +297,16 @@ function drawMenuCompare($h ='')
         $txt = "<select name='selectMsesure'>";
         if($selectMesure == 'T')
             $txt .="<option value='T' selected='selected'> T° </option>
-    		    <option value='H'  > H % </option>";
+    		    <option value='H'> H % </option>;
+    		    <option value='P'> P mb </option>";
+        else if($selectMesure == 'H')
+            $txt .="<option value='T'> T° </option>
+    		    <option value='H' selected='selected'> H % </option>;
+    		    <option value='P'> P mb </option>";
         else
             $txt .="<option value='T'> T° </option>
-    		    <option value='H'  selected='selected'> H % </option>";
+    		    <option value='H'> H % </option>;
+    		    <option value='P' selected='selected'> P mb </option>";
     	$txt .= "</select>";
 ?>
  			
@@ -403,7 +414,7 @@ function drawMenuModules($h ='')
     
     <tr>
     <td class='title' style='height:30px;  vertical-align:bottom;'>
-    <div class='f' style='height:30px; '>Comparaison de modules
+    <div class='f' style='height:30px; '>Modules d'une station
     </div></td></tr>	
 
 	<tr>

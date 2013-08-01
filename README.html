@@ -9,31 +9,35 @@
 <body>
 <a href='http://www.000webhost.com/' target='_blank'><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15' border='0' /></a>
 
-<P style='font-size:13px'>
+<p style='font-size:13px'>
 This program uses the Netatmo php sdk and some Google development tools for the graphics.<br>
 The server needs to have a php version >= 5, with curl and json enabled.<br>
 If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.webatu.com/Netatmo/">Netatmo</A>.
 </p>
 <p>
-The goal of this program is to display all the available measures of all the stations you have access<br>
+The goal of this program is to display all the available measures of the stations you have access<br>
 and interactively draw graphics.
 </p>
-<h3>Main windows:</h3>
+<h3>Main windows</h3>
 <ul>
 <li>	Display the last measures on a Google map of all the stations and all their modules (including extra modules).	
 </li>
 
-<li>    Graphics of the measures of one station,<br>
+<li>    Graphics of the measures of one station:<br>
 		(5 minutes, 30 minutes, 3 hours, 1 day, 1 week).
+		<p style='font-size:13px'>
+		When you change the measures that you want  display, the data are only reloaded from Netatmo<br>
+		if you modify the dates , the frequency or the station and if the last measures are older than the frequency.<br>
+		</p>
 </li>
-<li>	Graphics comparing the measures of selected stations: outdoor temperature or humidity, <br>
+<li>	Graphics comparing the outdoor measures of selected stations: temperature, humidity or pressure, <br>
 		(1 day or 1 week), 
 </li>
-<li>	Graphics comparing measures of all your modules: temperature, humidity or noise,<br>
+<li>	Graphics comparing the measures of all your modules: temperature, humidity or noise,<br>
 		(30 minutes, 3 hours, 1 day or 1 week), 
 </li>
 </ul>
-<h3>Google map :</h3>
+<h3>Google map</h3>
 <ul>
 <li>	Move over a <b>green marker</b>, to display the measures of a station.</li>
 <li>	Left click on a <b>green marker</b> to zoom on the marker .</li>
@@ -45,44 +49,53 @@ and interactively draw graphics.
 </ul>
 <h3>Icons :</h3>
 <ul>
-<li>     Move over a measure to display the date of the measure,<br>
+<li style='list-style-type:none;'>     Move over a measure to display the date of the measure,<br>
 		over the station name, to display the latitude and longitude of the station.</li>
 </ul>
-<h3>Dates of measures  :</h3>
+<h3>All graphics</h3>
 <ul>
-<li>	If you set the date of the beginning of the measures to the date of the end of the measures,<br> the program
-		computes the starting date automatically according to the frequency of measures:<br><br>
-		<table>
-		<th>Frequency</th><th>Period of measures</th>
-		<tr><td>1 week</td><td>6 months</td></tr>
-		<tr><td>1 day</td><td>1 month</td></tr>
-		<tr><td>3 hours</td><td>2 weeks</td></tr>
-		<tr><td>30 minutes</td><td>2 days</td></tr>
-		<tr><td>5 minutes</td><td>12 hours</td></tr>
-		</table>
-		</li>
-</ul>
-<h3>Graphics :</h3>
-<ul>
-<li>	If you click on the name of a curve (the squares inside the drawing), the corresponding curve will be erased
-		and the drawing will be rescaled without reloading the datas.</li>
-<li>	To zoom, click on point of the curve: the frequency of measures will be augmented if possible,<br>
-		if the curve has less than 20 points and the frequency is maximal, nothing will happen.<br>
-		By default, this zoom feature is disabled on <b>Ipad</b>.</li>
-</ul>
-<h3>Other remarks :</h3>
+<li style='list-style-type:none;'>
+	<h4>Dates of measures </h4>
+	<ul>
+	<li style='list-style-type:none;'>	
+			If you set the date of the beginning of the measures to the date of the end of the measures,<br> the program
+			computes the starting date automatically according to the frequency of measures:<br><br>
+			<table>
+			<th>Frequency</th><th>Period of measures</th>
+			<tr><td>1 week</td><td>6 months</td></tr>
+			<tr><td>1 day</td><td>1 month</td></tr>
+			<tr><td>3 hours</td><td>2 weeks</td></tr>
+			<tr><td>30 minutes</td><td>2 days</td></tr>
+			<tr><td>5 minutes</td><td>12 hours</td></tr>
+			</table>
+			</li>
+	</ul>
+</li><li style='list-style-type:none;'>
+	<h4>Zooming and erasing curves</h4>
+	<ul>
+	<li style='list-style-type:disc;'>	
+			If you click on the name of a curve (the squares inside the drawing), the corresponding curve will be erased
+			and the drawing will be rescaled without reloading the datas.</li>
+	<li style='list-style-type:disc;'>	
+			To zoom, click on point of the curve: the frequency of measures will be augmented if possible,<br>
+			if the curve has less than 20 points and the frequency is maximal, nothing will happen.<br>
+			By default, this zoom feature is disabled on <b>Ipad</b>.</li>
+	</ul>
+</li>	
+</ul>	
+<h3>Other remarks</h3>
 <ul>
 <li>	If you use index.php and your user id and password are not in Config.php, you are logged through Netatmo.</li>
 <li>	If you use indexLogin.php your user name and password are sent in a not crypted connection.</li>
 </ul>
 
-<h3>Install:</h3>
+<h3>Install</h3>
 <ul>
 <li>	Unzip the archive</li>
 <li>	Put your personal information in Config.php.EXAMPLE and renamed it Config.php</li>
 <li>	open index.php in your web browser</li>
 </ul>  
-<h3>Screenshots:</h3>
+<h3>Screenshots</h3>
 <h4>Main screen</h4>
 <IMG SRC="image/google.png" ALT="google.png" TITLE="Last Measures">
 <h4>Graphics</h4>

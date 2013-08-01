@@ -120,6 +120,10 @@ else if($selectMesure == 'H')
     {$type = 'min_hum,max_hum,date_min_hum,date_max_hum';
     $titre = 'Humidité ';
     }   
+else if($selectMesure == 'P')
+    {$type = 'min_pressure,max_pressure,date_min_pressure,date_max_pressure';
+    $titre = 'Pression';
+    }   
 
  
 $mesure = array($numStations);
@@ -135,14 +139,25 @@ for($i = 0;$i < $numStations;$i++)
 	{if($view[$i] == 0)continue;
 	$device_id = $mydevices[$i]["_id"];
 	$module_id = $mydevices[$i]["modules"][0]["_id"];
-    $params = array("scale" => $interval
-    , "type" => $type
-    , "date_begin" => $date_beg
-    , "date_end" => $date_end
-    , "optimize" => false
-    , "device_id" => $device_id
-    , "module_id" => $module_id);  
-    $mesure[$i] = $client->api("getmeasure", "POST", $params);
+	if($selectMesure == 'P')
+	    {$params = array("scale" => $interval
+        , "type" => $type
+        , "date_begin" => $date_beg
+        , "date_end" => $date_end
+        , "optimize" => false
+        , "device_id" => $device_id);
+        $mesure[$i] = $client->api("getmeasure", "POST", $params);
+	    }
+	else
+        {$params = array("scale" => $interval
+        , "type" => $type
+        , "date_begin" => $date_beg
+        , "date_end" => $date_end
+        , "optimize" => false
+        , "device_id" => $device_id
+        , "module_id" => $module_id);  
+        $mesure[$i] = $client->api("getmeasure", "POST", $params);
+        }
     if(count($mesure[$i]) == 0)
         {$view[$i] = 0; --$numview;continue;}
     $nameStations[$i] = $mydevices[$i]["station_name"];
