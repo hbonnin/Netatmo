@@ -276,7 +276,7 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
              chartMin.draw(data ,{title:'$title'$visupt,colors:colorMin,$param });
 			");
 $isiPad = $_SESSION['Ipad'];
-echo("var isiPad = \"$isiPad\";\n");  
+echo("var isiPad = $isiPad;\n");  
 ?> 
     google.visualization.events.addListener(chartMin, 'select', MinClickHandler);        
      function MinClickHandler()

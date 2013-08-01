@@ -375,7 +375,7 @@ echo("
 $menuModules = 'modules.php?stationNum=' .$_SESSION['stationId'];
 $isiPad = $_SESSION['Ipad'];
 echo("var menuModules = \"$menuModules\";\n");  
-echo("var isiPad = \"$isiPad\";\n");  
+echo("var isiPad = $isiPad;\n");  
 ?>
 
 

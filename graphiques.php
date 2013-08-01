@@ -228,12 +228,17 @@ if($reloadData)
         {echo "An error happend while trying to retrieve your last measures\n";
         echo $ex->getMessage()."\n";
         }
-    $_SESSION['GraphiqueMesureInt'] = $meas1;
-    $_SESSION['GraphiqueMesureExt'] = $meas;
+    
+    $_SESSION['GraphiqueMesureInt'] = gzcompress(json_encode($meas1),2);
+    $_SESSION['GraphiqueMesureExt'] = gzcompress(json_encode($meas),2);
     }
 else
-    {$meas1 = $_SESSION['GraphiqueMesureInt'];
-    $meas = $_SESSION['GraphiqueMesureExt'];
+    {
+    $meas1 = json_decode(gzuncompress($_SESSION['GraphiqueMesureInt']),true);
+    $meas =  json_decode(gzuncompress($_SESSION['GraphiqueMesureExt']),true);
+    //$meas1 = $_SESSION['GraphiqueMesureInt'];
+    //$meas = $_SESSION['GraphiqueMesureExt'];
+
     }
 date_default_timezone_set("Europe/Paris");
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
@@ -505,14 +510,16 @@ else  // 5 minutes, 30 minutes, 3 heures
 	$param = "focusTarget:'category',tooltip: {isHtml: true}";
 	$param .= ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 	$param .= ",pointSize:$visupt,fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
-
+/*
     echo("var colorInt = [];\n");
     echo("var colorExt = [];\n");
     for($i = 0; $i < count($colorInt);$i++)
         echo("colorInt[$i] = \"$colorInt[$i]\";\n");
     for($i = 0; $i < count($colorExt);$i++)
         echo("colorExt[$i] = \"$colorExt[$i]\";\n");
-
+*/
+echo 'var colorInt ='.json_encode($colorInt,true).";\n";
+echo 'var colorExt ='.json_encode($colorExt,true).";\n";
 ?>
 
 <?php
