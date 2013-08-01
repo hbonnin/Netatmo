@@ -22,7 +22,7 @@ function refreshToken()
 	$refresh_token = $params['refresh_token'];
 	$expires = $params['expires_in'];
 	$_SESSION['refresh_token'] = $refresh_token;		
-	$_SESSION['time'] = time();
+	$_SESSION['Load'] = time();
 	$_SESSION['expires'] = $expires;
 	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 	$_SESSION['client'] = $client;		
@@ -31,6 +31,7 @@ function init($numStations)
     {if(!isset($_SESSION['init']))
         {$_SESSION['emsg'] = 'Messages d\'erreur:<br>';
         $_SESSION['init'] = true;
+        $_SESSION['timeLoad'] = time();
         $_SESSION['stationId'] = 0;
         $_SESSION['stationIdP'] = -1;
         $_SESSION['selectedInter'] = '1day';
@@ -75,14 +76,16 @@ function initClient()
 	date_default_timezone_set("Europe/Paris");
 	
 	$debug = 0;
-	if($debug)echo("initclient / ");	
-	if(isset($_SESSION['time']))
-		{$time_left = $_SESSION['time'] + $_SESSION['expires'] - time();
+	if($debug)echo("initclient / ");
+	
+	if(isset($_SESSION['timeToken']))
+		{$time_left = $_SESSION['timeToken'] + $_SESSION['expires'] - time();
 		if($time_left < 0) 
 			{if($debug)echo("Refresh token / ");
 			refreshToken();
 			}
 		}
+
 	if(isset($_GET["error"]))
 		{if($_GET["error"] == "access_denied")
 			{echo "You refused the application's access\n";exit(-1);}
@@ -111,9 +114,11 @@ function initClient()
 			$access_token = $params['access_token'];
 			$refresh_token = $params['refresh_token'];
 			$expires = $params['expires_in'];
+			$expire = $params['expire_in'];
 			$_SESSION['refresh_token'] = $refresh_token;		
-			$_SESSION['time'] = time();
-			$_SESSION['expires'] = $expires;
+			$_SESSION['timeToken'] = time();
+			$_SESSION['expires'] = $expires;// celui que j'utilise
+			$_SESSION['expire'] = $expire;
 			$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 			$_SESSION['client'] = $client;	
 			if($debug)echo("client from token / ");				
@@ -142,7 +147,8 @@ function initClient()
 					<br> ou secret:$client_secret incorrect<br>*****<br>".$ex->getMessage();
 				else 
 				    $_SESSION['emsg'] .= $ex->getMessage();
-
+        		echo "<pre>";print_r($ex);echo "</pre>";
+        		echo "<script>alert('Quitter');</script>";
 			    echo("<script> top.location.href='logout.php'</script>");				
 			    }    
 		$_SESSION['client'] = $client;	
@@ -160,7 +166,9 @@ function initClient()
 		catch(NAClientException $ex) {
 			//$ex = stristr(stristr($ex,"Stack trace:",true),"message");
 			$_SESSION['emsg'] .= "erreur:$ex->getMessage();";
-				echo " {$_SESSION['emsg']}";
+			echo " {$_SESSION['emsg']}";
+        	echo "<pre>";print_r($ex);echo "</pre>";
+        	echo "<script>alert('Quitter');</script>";
 			echo("<script> top.location.href='logout.php'</script>");	
 			}	
 

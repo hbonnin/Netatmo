@@ -206,6 +206,8 @@ if($reloadData)
         }
     catch(NAClientException $ex)
         {echo "An error happend while trying to retrieve your last measures\n";
+        echo "<pre>";print_r($ex);echo "</pre>";
+        echo "<script>alert('Quitter');</script>";
         echo $ex->getMessage()."\n";
         }
     if(count($meas) == 0)
@@ -226,21 +228,22 @@ if($reloadData)
         }
     catch(NAClientException $ex)
         {echo "An error happend while trying to retrieve your last measures\n";
+        echo "<pre>";print_r($ex);echo "</pre>";
+        echo "<script>alert('Quitter');</script>";
         echo $ex->getMessage()."\n";
         }
-    
+    date_default_timezone_set("Europe/Paris");
     $_SESSION['GraphiqueMesureInt'] = gzcompress(json_encode($meas1),2);
     $_SESSION['GraphiqueMesureExt'] = gzcompress(json_encode($meas),2);
+    $_SESSION['timeLoad'] = time();
     }
 else
-    {
-    $meas1 = json_decode(gzuncompress($_SESSION['GraphiqueMesureInt']),true);
+    {$meas1 = json_decode(gzuncompress($_SESSION['GraphiqueMesureInt']),true);
     $meas =  json_decode(gzuncompress($_SESSION['GraphiqueMesureExt']),true);
-    //$meas1 = $_SESSION['GraphiqueMesureInt'];
-    //$meas = $_SESSION['GraphiqueMesureExt'];
-
+    date_default_timezone_set("Europe/Paris");  
     }
-date_default_timezone_set("Europe/Paris");
+$timeLoadData = $_SESSION['timeLoad'];
+$dateLoadData = date("H:i:s ",$timeLoadData);
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = 0;
 
@@ -498,7 +501,8 @@ else  // 5 minutes, 30 minutes, 3 heures
       	    for($i = 8 ;$i >= 0;--$i)
                 if($eraseInt[$i])echo("dataInt.removeColumn($i);\n");	
             } 
-	$titleInt = '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures)"';       	                    	
+	//$titleInt =  '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures)"';       	                    	
+	$titleInt =  '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures @ '.$dateLoadData.')"';       	                    	
     $isiPad = $_SESSION['Ipad'];
     echo("var isiPad = $isiPad;\n");     
     echo("inter = $inter;\n");  
