@@ -494,8 +494,8 @@ else  // 5 minutes, 30 minutes, 3 heures
                 if($eraseInt[$i])echo("dataInt.removeColumn($i);\n");	
             } 
 	$titleInt = '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures)"';       	                    	
-
-    echo("var isiPad = \"{$_SESSION['Ipad']};\";\n");     
+    $isiPad = $_SESSION['Ipad'];
+    echo("var isiPad = $isiPad;\n");     
     echo("inter = $inter;\n");  
 
 ?>
@@ -530,8 +530,8 @@ chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");
         var num = colorInt.length;
         for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.row != null  && dataInt.getNumberOfRows() > 20  && isiPad == 0 ) 
-                top.location.href='graphiques.php?row='+item.row; 
+            if(item.row != null  && (dataInt.getNumberOfRows() > 20) && isiPad == 0) 
+                top.location.href='graphiques.php?row='+item.row;
             if(item.column != null && dataInt.getNumberOfColumns() > 3) 
                 {dataInt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
