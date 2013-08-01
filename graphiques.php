@@ -100,17 +100,13 @@ if(isset($_POST['smesure']))
     if(!$selected){$selectMesures[0] = 1;++$selected;}    
     }
 // calcul des colonnes à effacer **********************************
-function filtre($var)
-    {return($var != '0');
-    }
-    
-function compactArray($array)
-    {$keys = array_keys($array);
-    for($ii = $i = 0; $i < count($keys);$i++)
-        $narray[$ii++] = $array[$keys[$i]];
+ function compactArray($array)
+    {for($ii = $i = 0; $i < count($array);$i++)
+        if($array[$i] != '0')
+            $narray[$ii++] = $array[$i];
     return $narray;    
     }
-    
+
 for($i = 0 ;$i < 9;$i++)
     $eraseInt[$i] = $eraseExt[$i] = 0;
 if($inter > 3*60*60) 
@@ -151,9 +147,7 @@ else
             $colorExt[0] = '0';
             }   
     }
-$colorInt = array_filter($colorInt,"filtre");
 $colorInt = compactArray($colorInt);
-$colorExt = array_filter($colorExt,"filtre");
 $colorExt = compactArray($colorExt);     
 // *********************************************************************
 $_SESSION['selectMesures'] = $selectMesures; 
