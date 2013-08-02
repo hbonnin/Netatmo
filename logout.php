@@ -10,9 +10,15 @@
 <h2> You are logged off </h2>
 
 <?php 
-if(isset($_SESSION['emsg']))
-    echo "{$_SESSION['emsg']} <br>";
-//echo "<pre>";print_r($_SESSION);echo("</pre");
+require_once 'NAApiClient.php';
+echo "<pre>";
+if(!$_SESSION['Ipad'])
+    {if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
+        print_r($_SESSION);
+    else if(isset($_SESSION['ex']))
+        print_r($_SESSION['ex']);
+    }
+echo "</pre>";
 echo("</body></html>");
 $_SESSION=array();
 session_destroy();

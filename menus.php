@@ -107,19 +107,18 @@ function drawLogoutBack()
 	</form>	
 	</td>
 
-	<!--<td style='font-size:12px;'>
+	<td style='font-size:12px;'>
     <?php //if(isset($_SESSION['width']))echo("size:{$_SESSION['width']} x {$_SESSION['height']}");?>
-	</td>-->
+	</td>
 	</tr>
 	</table>
 	    
-<?php if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')return; ?>
+<?php if($_SERVER['SERVER_NAME'] != 'turlututu')return; ?>
         <table style='margin:auto; font-size:11px;'>
         <tr><td>	
 	    <a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15'/></a>
 	    </td></tr>
-	    </table>
-<!--	    
+	    </table>    
         <table style='margin:auto; font-size:11px; display:none;'>	    
         <tr><td>
         <script src='http://www.counter160.com/js.js?img=15'></script>
@@ -132,8 +131,7 @@ function drawLogoutBack()
         </a>
         </td>
 	    </tr>
-	    </table>
--->	    
+	    </table>   
 <?php
 	}
 /* -- DrawMenuStation ************************************************************************* */

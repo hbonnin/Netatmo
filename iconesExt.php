@@ -20,6 +20,7 @@ require_once 'menus.php';
 date_default_timezone_set("Europe/Paris");
 
 /* Slow on Webatu */
+/*
 if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')
     {if(!isset($_GET['width'])  & isset($_GET['code']))
         {$code = $_GET['code'];
@@ -28,7 +29,7 @@ if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')
         echo("<script> top.location.href='size.php?$txt'</script>");   	
         }
     }
-	
+*/	
 initClient();
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 

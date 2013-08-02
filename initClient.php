@@ -20,17 +20,26 @@ function refreshToken()
     $params = json_decode($response, true);
 	$access_token = $params['access_token'];
 	$refresh_token = $params['refresh_token'];
-	$expires = $params['expires_in'];
+	$expires_in = $params['expires_in'];
 	$_SESSION['refresh_token'] = $refresh_token;		
-	$_SESSION['Load'] = time();
-	$_SESSION['expires'] = $expires;
+	$_SESSION['timeToken'] = time();
+	$_SESSION['expires_in'] = $expires_in;
 	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
+    try {
+        $tokens = $client->getAccessToken();       
+        } catch(NAClientException $ex) 
+            {$_SESSION['LogMsg'] .= $ex->getMessage();
+            $_SESSION['ex'] = $ex;
+            echo "<script>alert('NAClientException:refreshtoken');</script>";
+            echo("<script> top.location.href='logout.php'</script>");				
+            } 
+    $date = date("d/m H:i:s",time());        
+	$_SESSION['LogMsg'] .= "$date:refresh token success<br>";	
 	$_SESSION['client'] = $client;		
 	}
 function init($numStations)
     {if(!isset($_SESSION['init']))
-        {$_SESSION['emsg'] = 'Messages d\'erreur:<br>';
-        $_SESSION['init'] = true;
+        {$_SESSION['init'] = 1;
         $_SESSION['timeLoad'] = time();
         $_SESSION['stationId'] = 0;
         $_SESSION['stationIdP'] = -1;
@@ -64,33 +73,32 @@ function init($numStations)
         createViewmodules();
         $_SESSION['selectMesureCompare'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
-        if(strpos($_SERVER['HTTP_USER_AGENT'],'iPad'))
-            $_SESSION['Ipad'] = 1;
-        else            
-            $_SESSION['Ipad'] = 0;
+        $_SESSION['Ipad'] =  strpos($_SERVER['HTTP_USER_AGENT'],'iPad') ? 1 : 0;  
         }
-
+        
+    }
+function checkToken()
+    {if(!isset($_SESSION['LogMsg']))
+	    {$date = date("d/m H:i:s",time());
+	    $_SESSION['LogMsg'] = "Log start :$date<br>";
+	    }
     }
 function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password;
 	date_default_timezone_set("Europe/Paris");
-	
-	$debug = 0;
-	if($debug)echo("initclient / ");
-	
-	if(isset($_SESSION['timeToken']))
-		{$time_left = $_SESSION['timeToken'] + $_SESSION['expires'] - time();
-		if($time_left < 0) 
-			{if($debug)echo("Refresh token / ");
-			refreshToken();
-			}
-		}
+
+	if(!isset($_SESSION['LogMsg']))
+	    {$date = date("d/m H:i:s",time());
+	    $_SESSION['LogMsg'] = "Log start :$date<br>";
+	    }
+	    
+	checkToken();
 
 	if(isset($_GET["error"]))
 		{if($_GET["error"] == "access_denied")
 			{echo "You refused the application's access\n";exit(-1);}
 		}
-	if(isset($_GET["code"]) && !isset($_SESSION['client'])) // login on Netatmo (do not work on free)
+	if(isset($_GET["code"]) && !isset($_SESSION['client'])) 
 		{$code = $_GET["code"];
 		$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
  		if($_SESSION['state'] && ($_SESSION['state'] == $_GET['state'])) 
@@ -113,15 +121,15 @@ function initClient()
 			$params = json_decode($response, true);
 			$access_token = $params['access_token'];
 			$refresh_token = $params['refresh_token'];
-			$expires = $params['expires_in'];
-			$expire = $params['expire_in'];
+			$expires_in = $params['expires_in'];
+			$expire_in = $params['expire_in'];
 			$_SESSION['refresh_token'] = $refresh_token;		
 			$_SESSION['timeToken'] = time();
-			$_SESSION['expires'] = $expires;// celui que j'utilise
-			$_SESSION['expire'] = $expire;
+			$_SESSION['expires_in'] = $expires_in;// celui que j'utilise
+			$_SESSION['expire_in'] = $expire_in;
 			$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 			$_SESSION['client'] = $client;	
-			if($debug)echo("client from token / ");				
+			$_SESSION['LogMsg'] .= 'client from token <br>';			
 			}
 		else
 			{echo("The state does not match.");exit(-1);}
@@ -141,20 +149,25 @@ function initClient()
 			$tokens = $client->getAccessToken();       
 			} catch(NAClientException $ex) 
 			    {if(!isset($_SESSION['state']))
-					$_SESSION['emsg'] = "User:$test_username
+					$_SESSION['LogMsg'] = "User:$test_username
 					<br>ou mot de passe:$test_password
 					<br> ou id:$client_id
 					<br> ou secret:$client_secret incorrect<br>*****<br>".$ex->getMessage();
 				else 
-				    $_SESSION['emsg'] .= $ex->getMessage();
-        		echo "<pre>";print_r($ex);echo "</pre>";
-        		echo "<script>alert('Quitter');</script>";
+				    {$_SESSION['LogMsg'] .= 'client from password: '.$ex->getMessage();
+				    $_SESSION['ex'] = $ex;
+				    }
+        		echo "<script>alert('NAClientException:client from password');</script>";
 			    echo("<script> top.location.href='logout.php'</script>");				
-			    }    
+			    }   
+	    $_SESSION['timeToken'] = time();	
+	    $_SESSION['refresh_token'] = $tokens['refresh_token'];
+	    $_SESSION['expires_in'] = $tokens['expires_in'];
+	    //$_SESSION['tokens'] = $tokens;
 		$_SESSION['client'] = $client;	
-		if($debug)echo("client from password / ");		
-		}  	
-	
+		$_SESSION['LogMsg'] .= 'client from password <br>';
+	    }
+	    
 	$helper = new NAApiHelper();
 	
 	if(isset($_SESSION['devicelist']))
@@ -165,18 +178,17 @@ function initClient()
 			}
 		catch(NAClientException $ex) {
 			//$ex = stristr(stristr($ex,"Stack trace:",true),"message");
-			$_SESSION['emsg'] .= "erreur:$ex->getMessage();";
-			echo " {$_SESSION['emsg']}";
-        	echo "<pre>";print_r($ex);echo "</pre>";
-        	echo "<script>alert('Quitter');</script>";
+			$_SESSION['LogMsg'] .= "erreur:$ex->getMessage();";
+			$_SESSION['ex'] = $ex;
+			echo "erreur:$ex->getMessage();";
+        	echo "<script>alert('NAClientException:devicelist');</script>";
 			echo("<script> top.location.href='logout.php'</script>");	
 			}	
 
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
-		//$_SESSION['devicelist'] = $devicelist;
 		$mydevices = createDevicelist($devicelist);
 		$_SESSION['mydevices'] = $mydevices;
-		if($debug)echo("device liste / ");			
+		$_SESSION['LogMsg'] .= 'devicelist<br>';			
 		}
 			
 	$numStations = count($devicelist["devices"]);		
@@ -224,8 +236,8 @@ function getDevicelist() // si je le supprime de SESSION
 		$devicelist = $client->api("devicelist", "POST");
 		}
 	catch(NAClientException $ex) {
-		$_SESSION['emsg'] .= "erreur:$ex->getMessage();";
-		echo " {$_SESSION['emsg']}";
+		$_SESSION['LogMsg'] .= "erreur:$ex->getMessage();";
+		echo " {$_SESSION['LogMsg']}";
 		echo("<script> top.location.href='logout.php'</script>");	
 		}	
     return $helper->SimplifyDeviceList($devicelist);
