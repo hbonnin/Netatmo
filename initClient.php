@@ -53,7 +53,7 @@ function refreshToken()
             {$_SESSION['ex'] = $ex;
             echo("<script> top.location.href='logout.php'</script>");				
             }            
-	//logMsg("refresh token success:$refresh_token");	
+	logMsg("refresh token success:$refresh_token");	
 	//echo("YES\n");
 	$_SESSION['client'] = $client;		
 	}
@@ -64,7 +64,7 @@ function checkToken()
 		//{$time_left = $_SESSION['timeToken'] + 31*60 - time();
 		if($time_left < 30*60) 
 			refreshToken();
-		logMsg("checkToken $time_left");	
+		//logMsg("checkToken $time_left");	
 		}
     }	
 function getTimeLeft()

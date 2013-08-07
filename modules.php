@@ -1,6 +1,7 @@
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
 	<title>Stations Netatmo</title>
+  	<meta http-equiv="Refresh" content="30*60">		
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
