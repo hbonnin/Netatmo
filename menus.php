@@ -190,7 +190,7 @@ function HandleResponseLog(response)
 	</td>
 	<td id='ajax' style='font-size:12px; text-align=center;'>
     <script>
-        var myVar = setInterval(function(){MakeRequest()},1000);
+        var Id = setInterval(function(){MakeRequest()},1000);
     </script>    
 	</td>
 

@@ -431,7 +431,6 @@ echo("
 </head>
 <body>
 <?php
-//$num = $mydevices['num'];  
 drawCharts('M');
 ?>
 </body>

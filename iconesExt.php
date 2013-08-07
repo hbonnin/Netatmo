@@ -384,9 +384,6 @@ else
     </td>
 </tr>
 </table>
-
-<?php  drawLogoutBack(); ?>
-	<iframe src="refresh.php" seamless height=2px; width=5px; style='display: none;'></iframe>
 </body>
 </html>
 
