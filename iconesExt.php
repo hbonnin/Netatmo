@@ -384,6 +384,9 @@ else
     </td>
 </tr>
 </table>
+
+<?php  drawLogoutBack(); ?>
+
 </body>
 </html>
 
