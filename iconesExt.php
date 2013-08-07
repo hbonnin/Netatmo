@@ -6,6 +6,7 @@ session_start();
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
+<meta http-equiv="Refresh" content="30*60">
 <link rel='icon' href='favicon.ico'>
 <link type='text/css' rel='stylesheet'  href='style.css'>
 <link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
@@ -19,17 +20,6 @@ require_once 'fill.php';
 require_once 'menus.php';
 date_default_timezone_set("Europe/Paris");
 
-/* Slow on Webatu */
-/*
-if($_SERVER['SERVER_NAME'] != 'fraysseix.webatu.com')
-    {if(!isset($_GET['width'])  & isset($_GET['code']))
-        {$code = $_GET['code'];
-        $state = $_GET['state'];
-        $txt = 'code='.$code.'&state='.$state;
-        echo("<script> top.location.href='size.php?$txt'</script>");   	
-        }
-    }
-*/	
 initClient();
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 
@@ -396,6 +386,7 @@ else
 </table>
 
 <?php  drawLogoutBack(); ?>
+	<iframe src="refresh.php" seamless height=2px; width=5px; style='display: none;'></iframe>
 </body>
 </html>
 

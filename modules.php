@@ -208,9 +208,9 @@ for($i = 1;$i < $numStations;$i++)
         }
     catch(NAClientException $ex)
     	{echo "An error happend while trying to retrieve your last measures\n";
-    	$_SESSION['LogMsg'] .= "An error happend while trying to retrieve your last measures <br>
-    	    type:$type scale:$interval device_id:$device_id module_id:$moduleId <br>";
-    	$_SESSION['LogMsg'] .= $ex->getMessage().'<br>';
+    	 logMsg ("An error happend while trying to retrieve your last measures <br>
+    	    type:$type scale:$interval device_id:$device_id module_id:$moduleId");
+    	$_SESSION['ex'] = $ex;
         echo $ex->getMessage()."\n";
     	}
     if(count($mesure[$i]) == 0){$view[$i] = 0;--$numview;continue;}    

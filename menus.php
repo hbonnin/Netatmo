@@ -65,8 +65,45 @@ function chkDates($date0,$date1,$interval,$inter)
 function drawLogoutBack()
 	{$stationId = $_SESSION['stationId'];
 ?>
+<script>
+function getXMLHttp()
+    {var xmlHttp
+    try
+        {xmlHttp = new XMLHttpRequest();//Firefox, Opera 8.0+, Safari
+        }
+    catch(e)
+        {try //Internet Explorer
+            {xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+            }
+        catch(e)
+            {try
+                {xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+            catch(e)
+                {alert("Your browser does not support AJAX!")
+                return false;
+                }
+            }
+        }
+      return xmlHttp;
+    }
+function MakeRequest()
+	{var xmlHttp = getXMLHttp();
+	xmlHttp.onreadystatechange = function()
+  		{if(xmlHttp.readyState == 4)
+    		{HandleResponse(xmlHttp.responseText);
+    		}
+  		}
+	xmlHttp.open("GET","refresh.php", true); 
+	xmlHttp.send(null);
+	}
+function HandleResponse(response)
+	{document.getElementById('ajax').innerHTML = response;
+	}
+
+</script>
 <!-- drawLogoutBack -->
-<table style='margin:auto; '>
+<table style='margin:auto;'>
 	<tr>
 	<td>
     <script  type="text/javascript">
@@ -106,32 +143,38 @@ function drawLogoutBack()
 	<input type='submit' class='submit' value='Logout' style='color:#700; ' />	
 	</form>	
 	</td>
-
-	<td style='font-size:12px;'>
-    <?php //if(isset($_SESSION['width']))echo("size:{$_SESSION['width']} x {$_SESSION['height']}");?>
+	</tr>
+</table>
+<table style='margin:auto;'>	
+	<tr>
+	<td id='timer' style='font-size:12px; text-align=center;'>    
+        <script>
+        var myVar = setInterval(function(){Timer()},1000);
+        function Timer()
+            {var d=new Date();
+            var t=d.toLocaleTimeString();
+            var w = window,
+            d = document,
+            e = d.documentElement,
+            g = d.getElementsByTagName('body')[0],
+            x = w.innerWidth || e.clientWidth || g.clientWidth,
+            y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+            size = x+' x '+y;
+            document.getElementById("timer").innerHTML='Time:'+t+'&nbsp;&nbsp;Window:'+size;
+            }
+        </script>
 	</td>
+	<td id='ajax' style='font-size:12px; text-align=center;'>
+    <script>
+        var myVar = setInterval(function(){MakeRequest()},1000);
+    </script>    
+	</td>
+
 	</tr>
 	</table>
+	<!--<iframe src="refresh-if.php" seamless height=2px; width=5px; style='display: none;'></iframe>-->
+	<!--<iframe src="refresh-if.php" seamless height=130px; width=850px;'>-->
 	    
-<?php if($_SERVER['SERVER_NAME'] != 'turlututu')return; ?>
-        <table style='margin:auto; font-size:11px;'>
-        <tr><td>	
-	    <a href='http://www.000webhost.com/' target='_blank' ><img src='http://www.000webhost.com/images/80x15_powered.gif' alt='Web Hosting' width='80' height='15'/></a>
-	    </td></tr>
-	    </table>    
-        <table style='margin:auto; font-size:11px; display:none;'>	    
-        <tr><td>
-        <script src='http://www.counter160.com/js.js?img=15'></script>
-        <br>
-        <a href='http://www.000webhost.com'>
-        <img src='http://www.counter160.com/images/15/left.png' alt='Free web hosting' style='border:0px;'>
-        </a>
-        <a href='http://www.hosting24.com'>
-        <img alt='Web hosting' src='http://www.counter160.com/images/15/right.png' style='border:0px;' >
-        </a>
-        </td>
-	    </tr>
-	    </table>   
 <?php
 	}
 /* -- DrawMenuStation ************************************************************************* */
@@ -150,15 +193,15 @@ function drawMenuStation($h = '')
         document.write('<form method=\'post\' action='+'graphiques.php?'+writeSize()+'>');
     </script>
 
-    <table class='G' style="height:<?php echo $h.';' ?>">
+    <table class='G' style="height:<?php echo $h;?>;">
 	<tr>
-	<td class='g' style='height:3px'>
-	<div class='f' style='height:3px'>
+	<td class='g' style='height:3px;'>
+	<div class='f' style='height:3px;'>
 	</div></td></tr>
     
     <tr>
     <td class='title' style='height:30px;  vertical-align:bottom;'>
-    <div class='f' style='height:30px; '>Graphiques d&#39;une station
+    <div class='f' style='height:30px;'>Graphiques d&#39;une station
     </div></td></tr>	
 
 	<tr>
@@ -195,7 +238,7 @@ function drawMenuStation($h = '')
 	    <tr>
 		<td class='l'>
 		    <?php
-		    $select = array("Temp","Hum","CO2","Pressure","Noise");
+		    $select = array("Temp","Humidity","CO2","Pressure","Noise");
 		  	echo("<table class='chk'>\n");
 		    for($i = 0;$i < 5;$i++)
 			    {if($selectMesures[$i])
@@ -250,15 +293,15 @@ function drawMenuCompare($h ='')
         document.write('<form method=\'post\' action='+'compareALL.php?'+writeSize()+'>');
     </script>
     
-    <table class='G'  style="height:<?php echo $h.';' ?>">
+    <table class='G'  style="height:<?php echo $h; ?>;">
 	<tr>
-	<td class='g' style='height:3px'>
-	<div class='f' style='height:3px'>
+	<td class='g' style='height:3px;'>
+	<div class='f' style='height:3px;'>
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:30px;  vertical-align:bottom;'>
-    <div class='f' style='height:30px; '>Comparaison de stations
+    <td class='title' style='height:30px; vertical-align:bottom;'>
+    <div class='f' style='height:30px;'>Comparaison de stations
     </div></td></tr>	
 
 	<tr>
@@ -312,7 +355,6 @@ function drawMenuCompare($h ='')
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
 	    <tr>
-		<!--<td class='l'>Station</td>-->
 		<td class='l'><?php echo("$txt");?></td>
         <td>			
 <?php
@@ -356,35 +398,37 @@ function drawCharts($order='G')
     else
 	    $hh = 310;
     $h = $hh . 'px';
-    $h1 = $hh+2 .'px';            
- 	echo("
-		<table class='ds_box'  id='ds_conclass' style='display: none;' >
-		<caption id='id_caption' class='ds_caption'>xxxx</caption>
-		<tr><td id='ds_calclass'>aaa</td></tr>
-		</table>
-		");
-	echo("<table style='padding:0px; width:100%; margin-bottom:-5px;'>
+    $h1 = $hh+2 .'px';  
+?>    
+ 	<!-- Invisible table -->
+    <table class='ds_box'  id='ds_conclass' style='display: none;' >
+    <caption id='id_caption' class='ds_caption'>xxxx</caption>
+    <tr><td id='ds_calclass'>aaa</td></tr>
+    </table>
+	
+	<table style='padding:0px; width:100%; margin-bottom:-5px;'>
 	<tr>
 	<td style='padding:0px; vertical-align:bottom;'>
-	");
-    $menu[$order][0]($h1);
-	echo("
+	
+    <?php $menu[$order][0]($h1);?>
+	
 	</td>
 		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
-		<div id='chart0' class='chart' style='height:$h'></div></td>
+		<div id='chart0' class='chart' style="height:<?php echo$h;?>;"></div></td>
 	 </tr>
 	 <tr>
 	 <td style='padding:0px; vertical-align:bottom;'>
-	 ");
-	$menu[$order][1]($h1);
-	echo("
+	
+	<?php $menu[$order][1]($h1);?>
+
 	 </td>
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
-		<div id='chart1' class='chart' style='height:$h'></div></td>
+		<div id='chart1' class='chart' style='height:<?php echo $h;?>;'></div></td>
 	</tr>
 	</table>
-	");
-	drawLogoutBack(); 
+	
+	<?php drawLogoutBack(); ?>
+<?php	
 	}
 /* drawMenuModules ************************************************************************/	
 function drawMenuModules($h ='')
@@ -404,15 +448,15 @@ function drawMenuModules($h ='')
         document.write('<form method=\'post\' action='+'modules.php?'+writeSize()+'&stationNum='+stationNum+'>');
     </script>
 
-  <table class='G'  style="height:<?php echo $h.';' ?>">
+  <table class='G'  style="height:<?php echo $h;?>;">
 	<tr>
-	<td class='g' style='height:3px'>
-	<div class='f' style='height:3px'>
+	<td class='g' style='height:3px;'>
+	<div class='f' style='height:3px;'>
 	</div></td></tr>
     
     <tr>
-    <td class='title' style='height:30px;  vertical-align:bottom;'>
-    <div class='f' style='height:30px; '>Modules d'une station
+    <td class='title' style='height:30px; vertical-align:bottom;'>
+    <div class='f' style='height:30px;'>Modules d&#39;une station
     </div></td></tr>	
 
 	<tr>

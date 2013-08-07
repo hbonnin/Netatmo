@@ -211,9 +211,10 @@ table.bulle {
 	width:214px;
 	padding:2px;
 	border:0;
-	background-color:#ffffff;}
+	background-color:white;
+	}
 .bulle caption {
-	background-color:#ffffff;
+	background-color:white;
 }
 .bulle th {
 	font-size:11px;
@@ -270,11 +271,10 @@ a.tooltip {
 	font-size:9px;
 }
 table.info	{
-
 	width:100%;
 	margin:auto;
 	text-align:left;
-	//background-color:white; 
+	background-color:white; 
 }
 .info td {
     font-size:10px;

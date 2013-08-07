@@ -8,11 +8,13 @@ session_start();
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
   	<title>Stations Netatmo</title>
+  	<meta http-equiv="Refresh" content="30*60">
   	<meta charset='utf-8'>
     <link rel='icon' href='favicon.ico' >
     <script type='text/javascript' src='https://www.google.com/jsapi'></script>
     <script type='text/javascript' src='size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
+    <link rel='stylesheet' type='text/css'  href='calendrierBleu.css' >
 
 <?php
 date_default_timezone_set("Europe/Paris");
@@ -530,6 +532,7 @@ echo 'var colorExt ='.json_encode($colorExt,true).";\n";
 echo("chartInt.draw(dataInt, {title: $titleInt,colors:colorInt ,$param});
 chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");
 ?>
+
 /* 
     row: time 
     plus petite colonne 1 
@@ -573,8 +576,6 @@ chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");
 } // endDraw 
            
 </script>
-<!--<script type='text/javascript' src='calendrier.js'></script>-->
-<link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css' >
 </head>
 <body>
  <?php

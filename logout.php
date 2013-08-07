@@ -1,4 +1,10 @@
-<?php session_start();?>
+<?php 
+require_once 'AppliCommonPublic.php';
+require_once 'NAApiClient.php';
+session_start();
+date_default_timezone_set("Europe/Paris");
+$date = date("d:m:Y H:i",time());
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <title>Stations Netatmo</title>
@@ -8,7 +14,7 @@
 <body >
 
 <h2> You are logged off </h2>
-
+<?php echo $date;?>
 <?php 
 require_once 'NAApiClient.php';
 echo "<pre>";
