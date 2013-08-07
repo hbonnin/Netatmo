@@ -100,7 +100,27 @@ function MakeRequest()
 function HandleResponse(response)
 	{document.getElementById('ajax').innerHTML = response;
 	}
-
+function MakeRequestLog()
+	{var xmlHttp = getXMLHttp();
+	xmlHttp.onreadystatechange = function()
+  		{if(xmlHttp.readyState == 4)
+    		{HandleResponseLog(xmlHttp.responseText);
+    		}
+  		}
+	xmlHttp.open("GET","logsession.php", true); 
+	xmlHttp.send(null);
+	}	
+function HandleResponseLog(response)
+	{
+	popup = window.open('','Log','titlebar=yes,menubar=no,status=no,scrollbars=yes,location=no,toolbar=no,height=900,width=1000');
+    //popup = open();
+	var tmp = popup.document;
+	tmp.write('<html><head><title>Log</title>');
+	tmp.write('</head><body>');
+	tmp.write('<p>'+response+'</p>');
+	tmp.write('</body></html>');
+	tmp.close();
+	}	
 </script>
 <!-- drawLogoutBack -->
 <table style='margin:auto;'>
@@ -143,9 +163,13 @@ function HandleResponse(response)
 	<input type='submit' class='submit' value='Logout' style='color:#700; ' />	
 	</form>	
 	</td>
+
+	<td>
+	<input type='submit' class='submit' value='Show Log' style='color:#700;' onClick='MakeRequestLog();' />    
+	</td>	
 	</tr>
 </table>
-<table style='margin:auto;'>	
+<table style='margin:auto;'>
 	<tr>
 	<td id='timer' style='font-size:12px; text-align=center;'>    
         <script>

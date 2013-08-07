@@ -32,7 +32,7 @@ function refreshToken()
     if(!$params || empty($params['access_token']) || empty($params['access_token']))
         {logMsg("refresh token: NO success");
         //echo("NO\n");
-        return;}
+        return 0;}
 	$access_token = $params['access_token'];
 	$refresh_token = $params['refresh_token'];
 	$expires_in = $params['expires_in'];
@@ -55,16 +55,18 @@ function refreshToken()
             }            
 	logMsg("refresh token success:$refresh_token");	
 	//echo("YES\n");
-	$_SESSION['client'] = $client;		
+	$_SESSION['client'] = $client;
+	return 1;
 	}
 	
 function checkToken()
     {if(isset($_SESSION['timeToken']))
 		{$time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time();
 		//{$time_left = $_SESSION['timeToken'] + 31*60 - time();
+		$ret = 0;
 		if($time_left < 30*60) 
-			refreshToken();
-		//logMsg("checkToken $time_left");	
+			$ret = refreshToken();
+		logMsg("checkToken $time_left $ret");	
 		}
     }	
 function getTimeLeft()
