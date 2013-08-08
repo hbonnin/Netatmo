@@ -6,7 +6,6 @@ session_start();
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
-<meta http-equiv="Refresh" content="1800">
 <link rel='icon' href='favicon.ico'>
 <link type='text/css' rel='stylesheet'  href='style.css'>
 <link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
@@ -364,7 +363,6 @@ echo("</tr></table>");
 <tr>
     <td class='container'>
         <?php
-        $num = count($devicelist["devices"]);
         drawMenuStation('255px');
         ?>
     </td>

@@ -65,64 +65,50 @@ function chkDates($date0,$date1,$interval,$inter)
 function drawLogoutBack()
 	{$stationId = $_SESSION['stationId'];
 ?>
-<script>
-function getXMLHttp()
-    {var xmlHttp
-    try
-        {xmlHttp = new XMLHttpRequest();//Firefox, Opera 8.0+, Safari
-        }
-    catch(e)
-        {try //Internet Explorer
-            {xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+    <script>
+    function getXMLHttp()
+        {var xmlHttp
+        try
+            {xmlHttp = new XMLHttpRequest();//Firefox, Opera 8.0+, Safari
             }
         catch(e)
-            {try
-                {xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+            {try //Internet Explorer
+                {xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
                 }
             catch(e)
-                {alert("Your browser does not support AJAX!")
-                return false;
+                {try
+                    {xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                catch(e)
+                    {alert("Your browser does not support AJAX!")
+                    return false;
+                    }
                 }
             }
+          return xmlHttp;
         }
-      return xmlHttp;
-    }
-function MakeRequest()
-	{var xmlHttp = getXMLHttp();
-	xmlHttp.onreadystatechange = function()
-  		{if(xmlHttp.readyState == 4)
-    		{HandleResponse(xmlHttp.responseText);
-    		}
-  		}
-	xmlHttp.open("GET","refresh.php", true); 
-	xmlHttp.send(null);
-	}
-function HandleResponse(response)
-	{document.getElementById('ajax').innerHTML = response;
-	}
-function MakeRequestLog()
-	{var xmlHttp = getXMLHttp();
-	xmlHttp.onreadystatechange = function()
-  		{if(xmlHttp.readyState == 4)
-    		{HandleResponseLog(xmlHttp.responseText);
-    		}
-  		}
-	xmlHttp.open("GET","logsession.php", true); 
-	xmlHttp.send(null);
-	}	
-function HandleResponseLog(response)
-	{
-	popup = window.open('','Log','titlebar=yes,menubar=no,status=no,scrollbars=yes,location=no,toolbar=no,height=900,width=1000');
-    //popup = open();
-	var tmp = popup.document;
-	tmp.write('<html><head><title>Log</title>');
-	tmp.write('</head><body>');
-	tmp.write('<p>'+response+'</p>');
-	tmp.write('</body></html>');
-	tmp.close();
-	}	
-</script>
-<!-- drawLogoutBack -->
+    function MakeRequestLog()
+        {var xmlHttp = getXMLHttp();
+        xmlHttp.onreadystatechange = function()
+            {if(xmlHttp.readyState == 4)
+                {HandleResponseLog(xmlHttp.responseText);
+                }
+            }
+        xmlHttp.open("GET","logsession.php", true); 
+        xmlHttp.send(null);
+        }	
+    function HandleResponseLog(response)
+        {popup = window.open('','Log','titlebar=yes,menubar=no,status=no,scrollbars=yes,location=no,toolbar=no,height=900,width=1000');
+        //popup = open(); // nouveau tab
+        var tmp = popup.document;
+        tmp.write('<html><head><title>Log</title>');
+        tmp.write('</head><body>');
+        tmp.write('<p>'+response+'</p>');
+        tmp.write('</body></html>');
+        tmp.close();
+        }	
+    </script>
+
 <table style='margin:auto;'>
 	<tr>
 	<td>
@@ -132,7 +118,6 @@ function HandleResponseLog(response)
 		<input type='submit' class='submit' value="Graphiques d'une station" />
 	</form>
 	</td>
-	
 	<td>
     <script  type="text/javascript">
         <?php echo("stationNum = \"$stationId\";\n"); ?>
@@ -141,7 +126,6 @@ function HandleResponseLog(response)
 	<input type='submit' class='submit' value="Modules d'une station"  />
 	</form>
 	</td>
- 
     <td>
     <script  type="text/javascript">
         document.write('<form method=\'post\' action='+'compareALL.php?'+writeSize()+'>');
@@ -149,7 +133,6 @@ function HandleResponseLog(response)
 		<input type='submit' class='submit' value="Comparaison de stations" />
 	</form>
 	</td>
-	
 	<td>
     <script  type="text/javascript">
         document.write('<form method=\'post\' action='+'iconesExt.php?'+writeSize()+'>');
@@ -157,23 +140,22 @@ function HandleResponseLog(response)
 	<input type='submit' class='submit' value="Menu principal"/>
 	</form>
 	</td>
-	
+	<td>
+	<input type='submit' class='submit' value='Show Log' style='color:#080;' onClick='MakeRequestLog();' />    
+	</td>	
 	<td>
 	<form action='logout.php' method='post'>
-	<input type='submit' class='submit' value='Logout' style='color:#700; ' />	
+	<input type='submit' class='submit' value='Logout' style='color:#900; ' />	
 	</form>	
 	</td>
-
-	<td>
-	<input type='submit' class='submit' value='Show Log' style='color:#700;' onClick='MakeRequestLog();' />    
-	</td>	
 	</tr>
 </table>
 <table style='margin:auto;'>
 	<tr>
 	<td id='timer' style='font-size:12px; text-align=center;'>    
         <script>
-        var myVar = setInterval(function(){Timer()},1000);
+        var Id0 = setInterval(function(){Timer()},1000);
+        var Id1 = setInterval(function(){reload()},30*60*1000);
         function Timer()
             {var d=new Date();
             var t=d.toLocaleTimeString();
@@ -186,21 +168,19 @@ function HandleResponseLog(response)
             size = x+' x '+y;
             document.getElementById("timer").innerHTML='Time:'+t+'&nbsp;&nbsp;Window:'+size;
             }
+        function reload()
+            {url = window.location;
+            window.open(url,'_self');
+            }
         </script>
 	</td>
-	<td id='ajax' style='font-size:12px; text-align=center;'>
-    <script>
-        var Id = setInterval(function(){MakeRequest()},1000);
-    </script>    
-	</td>
-
 	</tr>
 	</table>
 	<!--<iframe src="refresh-if.php" seamless height=2px; width=5px; style='display: none;'></iframe>-->
-	<!--<iframe src="refresh-if.php" seamless height=130px; width=850px;'>-->
 	    
 <?php
 	}
+
 /* -- DrawMenuStation ************************************************************************* */
 function drawMenuStation($h = '')
 	{
@@ -456,12 +436,16 @@ function drawCharts($order='G')
 	}
 /* drawMenuModules ************************************************************************/	
 function drawMenuModules($h ='')
-	{global $numStations,$nameStations;
+	{
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
     $stationNum = $_SESSION['stationId']; 
     $mydevices = $_SESSION['mydevices']; 
+    $numStations = $mydevices[$stationNum]['modules']['num'] + 1;
     $num = $mydevices['num'];
+    $nameStations[0] = $mydevices[$stationNum]["module_name"]; 
+    for($i = 1;$i < $numStations;$i++) // station et modules
+        $nameStations[$i] = $mydevices[$stationNum]["modules"][$i-1]["module_name"];   
     $stationName = $mydevices[$stationNum]['station_name'];
     $selectMesure = $_SESSION['selectMesureModule'];
     $viewModules = $_SESSION['viewModules'];
