@@ -39,13 +39,17 @@ if($mydevices['address'] == 0)
 		}
 	$_SESSION['mydevices'] = $mydevices;	
 	}
-
 //Creation des InfoWindow
 for($i = 0;$i < $numStations;$i++)
 	{$altitude = $mydevices[$i]['latlng']['altitude'];
     $place = $mydevices[$i]['address'];
     $int_name = $mydevices[$i]["module_name"];
 	$ext_name = $mydevices[$i]["modules"][0]["module_name"];
+	$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
+	$QA[$i] = $Q[0] . " ".$Q[1] ;
+	if(count($Q) >= 5 && isset($Q[3]))
+	    $QA[$i] .= " / ".$Q[3]." ".$Q[4];
+	    
 	if($place == "BAD")		
     	$p = '<b>' . $mydevices[$i]['station_name'] . ' (' . $altitude . 'm)' . '</b><br>';
 	else
@@ -82,7 +86,8 @@ for($i = 0;$i < $numStations;$i++)
             $tabMOD = "<tr><td class='name'>$name</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td></tr>";
             $label[$i] = $label[$i] . '<tr>' . $tabMOD .'</tr>';        
             }
-    $label[$i] = $label[$i] . '</table>';       
+    $label[$i] = $label[$i] . '</table>'; 
+    $label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";
     $slabel[$i] = $res[1]['Temperature'] . '°';	  // usilise pour les marker    	  
 	}	
 
@@ -154,8 +159,8 @@ for($i = 0;$i < $numStations;$i++)
         center: center.getCenter(),
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
-        scaleControl: true,
-            scaleControlOptions: {position: google.maps.ControlPosition.TOP_LEFT},
+        scaleControl: false,
+        scaleControlOptions: {position: google.maps.ControlPosition.TOP_RIGHT},
         mapTypeId: google.maps.MapTypeId.HYBRID
         };
         
@@ -169,7 +174,7 @@ for($i = 0;$i < $numStations;$i++)
 	var homeControlDiv = document.createElement('div');
   	var homeControl = new HomeControl(homeControlDiv, map);
   	homeControlDiv.index = 1;
-  	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+  	map.controls[google.maps.ControlPosition.TOP_LEFT].push(homeControlDiv);
 
 	// add cloud layer
 	cloudLayer = new google.maps.weather.CloudLayer();
@@ -179,13 +184,13 @@ for($i = 0;$i < $numStations;$i++)
 	var cloudControlDiv = document.createElement('div');
   	var cloudControl = new CloudControl(cloudControlDiv, map);
   	cloudControlDiv.index = 1;
-  	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(cloudControlDiv);
+  	map.controls[google.maps.ControlPosition.TOP_LEFT].push(cloudControlDiv);
 
 	// add marker control
 	markerControlDiv = document.createElement('div');
   	var markerControl = new MarkerControl(markerControlDiv, map);
   	markerControlDiv.index = 1;
-  	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerControlDiv);
+  	map.controls[google.maps.ControlPosition.TOP_LEFT].push(markerControlDiv);
 
   	// add weather layer
 	var weatherLayer = new google.maps.weather.WeatherLayer({
@@ -369,9 +374,9 @@ echo("</tr></table>");
 <!-- GOOGLE MAP -->
 <?php
 if($_SESSION['Ipad'])
-    $h = '490px'; 
+    $h = '470px'; 
 else
-    $h = '510px';
+    $h = '490px';
     echo("<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:$h; border:solid 2px gray;'> </div>");
 ?>
     </td>

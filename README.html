@@ -1,10 +1,7 @@
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
-
-<html xmlns='http://www.w3.org/1999/xhtml'>
-
+<!DOCTYPE html>
 <head>
 <title>Netatmo php program</title>
-<meta http-equiv='Content-Type' content='text/html; charset=utf8' />
+<meta charset='utf-8'>
 </head>
 <body>
 
@@ -14,18 +11,18 @@ The server needs to have a php version >= 5, with curl and json enabled.<br>
 If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.fr/Netatmo/">Netatmo</A>.
 </p>
 <p>
-The goal of this program is to display all the available measures of the stations you have access<br>
+The goal of this program is to display all the available measures and data of the stations<br>
 and interactively draw graphics.
 </p>
 <h3>Main windows</h3>
 <ul>
-<li>	Display the last measures on a Google map of all the stations and all their modules (including extra modules).	
+<li>	Display the last measures on a Google map of all the stations and all their modules.	
 </li>
 
-<li>    Graphics of the measures of one station:<br>
+<li>    Graphics of the measures of each station:<br>
 		(5 minutes, 30 minutes, 3 hours, 1 day, 1 week).
 		<p style='font-size:13px'>
-		When you change the measures that you want  display, the data are only reloaded from Netatmo<br>
+		When you change the measures that you want to display, the data are only reloaded from Netatmo<br>
 		if you modify the dates , the frequency or the station and if the last measures are older than the frequency.<br>
 		</p>
 </li>
@@ -60,7 +57,7 @@ and interactively draw graphics.
 			If you set the date of the beginning of the measures to the date of the end of the measures,<br> the program
 			computes the starting date automatically according to the frequency of measures:<br><br>
 			<table>
-			<th>Frequency</th><th>Period of measures</th>
+			<tr><th>Frequency</th><th>Period of measures</th></tr>
 			<tr><td>1 week</td><td>6 months</td></tr>
 			<tr><td>1 day</td><td>1 month</td></tr>
 			<tr><td>3 hours</td><td>2 weeks</td></tr>
@@ -74,9 +71,9 @@ and interactively draw graphics.
 	<ul>
 	<li style='list-style-type:disc;'>	
 			If you click on the name of a curve (the squares inside the drawing), the corresponding curve will be erased
-			and the drawing will be rescaled without reloading the datas.</li>
+			and the drawing will be rescaled without reloading the data.</li>
 	<li style='list-style-type:disc;'>	
-			To zoom, click on point of the curve: the frequency of measures will be augmented if possible,<br>
+			To zoom, click on a point of the curve: the frequency of measures will be increased (if possible),<br>
 			if the curve has less than 20 points and the frequency is maximal, nothing will happen.<br>
 			By default, this zoom feature is disabled on <b>Ipad</b>.</li>
 	</ul>
@@ -93,16 +90,26 @@ and interactively draw graphics.
 <li>	Unzip the archive</li>
 <li>	Put your personal information in Config.php.EXAMPLE and renamed it Config.php</li>
 <li>	open index.php in your web browser</li>
+<li>	You can also start the progamm, opening graphiques.php or compareALL.php</li>
 </ul>  
 <h3>Screenshots</h3>
 <h4>Main screen</h4>
 <IMG SRC="image/google.png" ALT="google.png" TITLE="Last Measures">
 <h4>Graphics</h4>
 <table>
-<tr><td>Graphics of one station</td><td>Comparing the humidity among modules of one station<td></tr>
 <tr>
-<td><IMG SRC="image/graphiques.png" width="650" ALT="graphiques.png" TITLE="Graphics of one station "></td>
-<td><IMG SRC="image/modules.png" width="650" ALT="modules.png" TITLE="Temperatures of 4 stations"></td>
+	<td>Graphics of one station</td>
+	<td>Comparing the temperature among modules of one station</td>
+	</tr>
+<tr>
+	<td><IMG SRC="image/graphiques.png" width="600" ALT="graphiques.png" TITLE="Graphics of one station "></td>
+	<td><IMG SRC="image/modules.png" width="600" ALT="modules.png" TITLE="Modules of one station"></td>
+</tr>
+<tr>
+	<td>Comparing the humidity among stations</td><td></td>
+</tr>
+<tr>
+	<td><IMG SRC="image/compare.png" width="600" ALT="compare.png" TITLE="Humidity of 5 stations"></td><td></td>
 </tr>
 </table>
 </body>

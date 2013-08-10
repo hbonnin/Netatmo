@@ -571,5 +571,8 @@ function drawMenuModules($h ='')
 	
 <!-- End DrawMenu Module -->
 	
-<?php } ?>	
+<?php } 
+
+
+?>	
 

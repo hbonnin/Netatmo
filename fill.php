@@ -1,6 +1,18 @@
 <?php
 require_once 'AppliCommonPublic.php';
-
+function drawGauge($width,$val)
+    {$txt = "<div style='height:5px;'>";
+    $txt .= "<div><img src='icone/gauge_full.png' alt='full' width=\"$width\" style=\"position:absolute;\"/>\n";
+    $txt .= "</div>\n";
+    $pos = $width * ($val/100);
+    $sty = "float:left; position:relative; background-size:${width}px;";
+    $sty .= " background-image:url(icone/gauge_empty.png); background-repeat:no-repeat;";
+    $sty .= " background-position: ${pos}px 0px;width: ${width}px; height:5px;";
+    $txt .="<div style=\"$sty\">\n";
+    $txt .="</div>\n";
+    $txt .= "<div style=\”clear:both; width:1px; height:1px;\”>&nbsp;</div></div>\n";
+    return $txt;
+    }
 function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	{$station = $devices["station_name"];
 	$int_name = $devices["module_name"];
@@ -10,10 +22,14 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	$dateInt = date('d/m/Y H:i',$res[0]['time']);
 	$dateExt = date('d/m/Y H:i',$res[1]['time']);
 	$dateMinMax = 'min:'.date('H:i',$dtmin).' max:'.date('H:i',$dtmax);
+    // Qualité air
+    $qa = $devices['extra']['air_quality']['data'][0]['value'][0][0];
+	$gauge = drawGauge(95,$qa);
+	
 	echo("		
 	<table class='icone'>
 	<tr>
-	<td colspan='7' class='th' title=\"$titre\">$station</td>
+	<td colspan='6' class='th' title=\"$titre\">$station</td>
 	</tr>
 	<tr>
 	<td><img src='icone/sun.png' ALT='outside' height='40'/></td> 
@@ -43,7 +59,15 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	<td class='nl'>Noise</td>
 	<td class='n' title=\"$dateInt\">{$res[0]['Noise']}</td><td class='nunit'> db</td>
 	</tr>
+	<tr>
+	<td class='pl'>Q. air</td>
+	<td class='p'>$qa</td>
+	<td></td>
+	<td class='e'></td>		
+	<td colspan= '3'>$gauge</td>
+	</tr>
     ");
+
     // WiFi
 	$wifi = $devices["wifi_status"];
 	$wifiTime = $devices["last_status_store"];
