@@ -6,10 +6,10 @@ session_start();
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
+<script type='text/javascript' src='size.js'></script>
 <link rel='icon' href='favicon.ico'>
 <link type='text/css' rel='stylesheet'  href='style.css'>
 <link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
-<script type='text/javascript' src='size.js'></script>
 
 <?php
 require_once 'Config.php';
@@ -45,11 +45,14 @@ for($i = 0;$i < $numStations;$i++)
     $place = $mydevices[$i]['address'];
     $int_name = $mydevices[$i]["module_name"];
 	$ext_name = $mydevices[$i]["modules"][0]["module_name"];
-	$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
-	$QA[$i] = $Q[0] . " ".$Q[1] ;
-	if(count($Q) >= 5 && isset($Q[3]))
-	    $QA[$i] .= " / ".$Q[3]." ".$Q[4];
-	    
+	if(isset($devicelist["devices"][$i]['extra']))
+        {$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
+        $QA[$i] = $Q[0] . " ".$Q[1] ;
+        if(count($Q) >= 5 && isset($Q[3]))
+            $QA[$i] .= " / ".$Q[3]." ".$Q[4];
+        }
+    else 
+	    $QA[$i] ='';
 	if($place == "BAD")		
     	$p = '<b>' . $mydevices[$i]['station_name'] . ' (' . $altitude . 'm)' . '</b><br>';
 	else
@@ -86,8 +89,9 @@ for($i = 0;$i < $numStations;$i++)
             $tabMOD = "<tr><td class='name'>$name</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td></tr>";
             $label[$i] = $label[$i] . '<tr>' . $tabMOD .'</tr>';        
             }
-    $label[$i] = $label[$i] . '</table>'; 
-    $label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";
+    $label[$i] = $label[$i] . '</table>';
+    if(!empty($QA[$i]))
+        $label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";
     $slabel[$i] = $res[1]['Temperature'] . '°';	  // usilise pour les marker    	  
 	}	
 
@@ -349,7 +353,7 @@ for($i = 0;$i < $numStations;$i++)
        $tmins[$i] = $tmaxs[$i] = '-'; 
     }
 
-echo("<table style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
+echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
 		<tr>");
 
 // Tracé des icones    
@@ -368,21 +372,44 @@ echo("</tr></table>");
 <tr>
     <td class='container'>
         <?php
-        drawMenuStation('255px');
+        drawMenuStation('260px');
         ?>
     </td>
 <!-- GOOGLE MAP -->
+
 <?php
 if($_SESSION['Ipad'])
-    $h = '470px'; 
+    $h = '470'; 
+else if(isset($_SESSION['height']))
+    $h = $_SESSION['height'] - 205;
 else
-    $h = '490px';
-    echo("<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:$h; border:solid 2px gray;'> </div>");
+    $h = '485';
+    //echo("<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:${h}px; border:solid 2px gray;'> </div>");
 ?>
+
+    <script type='text/javascript'>    
+    <?php echo ("var numStation = \"$numStations\";"); ?>
+    var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight,
+    x = w.innerWidth || e.clientWidth || g.clientWidth;
+    ico = d.getElementById("icones");
+    hico = ico.offsetHeight;
+    y -= (hico + 45);
+    var larMin = numStation*220 - 2*180;
+    var larMax = x - 2*180;
+    var lar = Math.max(680,larMin);
+    lar = Math.min(lar,larMax); 
+    var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:"+lar+"px; height:"
+    t += y+"px; border:solid 2px gray;'> </div>";
+    document.write(t);
+ </script>
     </td>
     <td class='container'>
         <?php
-        drawMenuCompare('255px');
+        drawMenuCompare('260px');
         ?>	
     </td>
 </tr>

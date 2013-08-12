@@ -43,17 +43,11 @@ function refreshToken()
 function checkToken()
     {if(isset($_SESSION['timeToken']))
 		{$time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time();
-		//{$time_left = $_SESSION['timeToken'] + 35*60 - time();
 		$ret = 0;
-		if($time_left < 31*60) 
+		if($time_left < 5*60) 
 			$ret = refreshToken();
-		//logMsg("checkToken $time_left $ret");
 		return $time_left;
 		}
-    }	
-function getTimeLeft()
-    {return $_SESSION['timeToken'] + $_SESSION['expires_in'] - time(); 
-    //return $_SESSION['timeToken'] + 31*60 - time();
     }	
 function init($numStations)
     {if(!isset($_SESSION['init']))
@@ -190,7 +184,7 @@ function initClient()
 		$_SESSION['mydevices'] = $mydevices;	
 		init($numStations);	
 		}	 	
-    getScreenSize();
+    //getScreenSize();
 	}
 function createViewmodules()
     {$mydevices = $_SESSION['mydevices']; 
@@ -240,6 +234,7 @@ function getDevicelist()
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     return $devicelist;
     }
+/*    
 function getScreenSize()
     {// width and height of the navigator window
     if(isset($_GET['width']))
@@ -247,6 +242,7 @@ function getScreenSize()
     if(isset($_GET['height']))
         $_SESSION['height'] = $_GET['height'];
     }
+*/    
 function logMsg($txt)
     {if(!isset($_SESSION['LogMsg']))
 	    {$date = date("d/m H:i:s",time());

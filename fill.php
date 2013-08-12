@@ -1,18 +1,20 @@
 <?php
 require_once 'AppliCommonPublic.php';
-function drawGauge($width,$val)
-    {$txt = "<div style='height:5px;'>";
-    $txt .= "<div><img src='icone/gauge_full.png' alt='full' width=\"$width\" style=\"position:absolute;\"/>\n";
-    $txt .= "</div>\n";
-    $pos = $width * ($val/100);
-    $sty = "float:left; position:relative; background-size:${width}px;";
+
+ function drawGauge($width,$val,$zh = '1')
+    // image 490x32
+    {$h = intval($zh*32*$width/490+.5);
+    $pos = intval($width * ($val/100));
+    $txt = "<div style='height:"."$h"."px;'>";
+    $txt .= "<div><img src='icone/gauge_full.png' alt='full' width=\"$width\" height=\"$h\" style=\"position:absolute;\"/>\n";
+    $txt .= "</div>\n"; 
+    $sty = " position:relative; background-size:${width}px ${h}px ;";
     $sty .= " background-image:url(icone/gauge_empty.png); background-repeat:no-repeat;";
-    $sty .= " background-position: ${pos}px 0px;width: ${width}px; height:5px;";
-    $txt .="<div style=\"$sty\">\n";
-    $txt .="</div>\n";
-    $txt .= "<div style=\”clear:both; width:1px; height:1px;\”>&nbsp;</div></div>\n";
+    $sty .= " background-position: ${pos}px 0px; width:${width}px; height:${h}px;";
+    $txt .="<div style='"."$sty"."'>\n";
+    $txt .="</div></div>\n";
     return $txt;
-    }
+    }   
 function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	{$station = $devices["station_name"];
 	$int_name = $devices["module_name"];
@@ -23,8 +25,11 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	$dateExt = date('d/m/Y H:i',$res[1]['time']);
 	$dateMinMax = 'min:'.date('H:i',$dtmin).' max:'.date('H:i',$dtmax);
     // Qualité air
-    $qa = $devices['extra']['air_quality']['data'][0]['value'][0][0];
-	$gauge = drawGauge(95,$qa);
+    if(isset($devices['extra']))
+        {$qa = $devices['extra']['air_quality']['data'][0]['value'][0][0];
+        $polluant = $devices['extra']['air_quality']['data'][0]['value'][0][1];
+        $gauge = drawGauge(95,$qa,1.5);
+        }
 	
 	echo("		
 	<table class='icone'>
@@ -59,10 +64,12 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	<td class='nl'>Noise</td>
 	<td class='n' title=\"$dateInt\">{$res[0]['Noise']}</td><td class='nunit'> db</td>
 	</tr>
-	<tr>
-	<td class='pl'>Q. air</td>
-	<td class='p'>$qa</td>
-	<td></td>
+	");
+	if(isset($devices['extra']))
+	echo("<tr>
+	<td class='cl'>Pollution</td>
+	<td class='c'>$qa</td>
+	<td class='cunit'> $polluant</td>
 	<td class='e'></td>		
 	<td colspan= '3'>$gauge</td>
 	</tr>

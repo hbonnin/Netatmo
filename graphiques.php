@@ -80,6 +80,7 @@ if(isset($_GET['row']))// faire un zoom sur la date
         $rowEnd = min($numrows - 1,$row + $numrows/10);
         $date_beg += $rowBeg * $inter;
         $date_end = $date_beg + $rowEnd * $inter;
+        $date_end = min($date_end,time());
         $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
         $_SESSION['dateend'] = date("d/m/Y",$date_end); 
         $_SESSION['date_beg'] = $date_beg;

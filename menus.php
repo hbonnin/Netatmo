@@ -65,7 +65,7 @@ function chkDates($date0,$date1,$interval,$inter)
 function drawLogoutBack()
 	{$stationId = $_SESSION['stationId'];
 ?>
-    <script>
+    <script type='text/javascript'>
     function getXMLHttp()
         {var xmlHttp
         try
@@ -111,34 +111,25 @@ function drawLogoutBack()
 
 <table style='margin:auto;'>
 	<tr>
-	<td>
-    <script  type="text/javascript">
-        document.write('<form method=\'post\' action='+'graphiques.php?'+writeSize()+'>');
-    </script>
+	<td>  
+        <form method='post' action='graphiques.php'>
 		<input type='submit' class='submit' value="Graphiques d'une station" />
 	</form>
 	</td>
 	<td>
-    <script  type="text/javascript">
-        <?php echo("stationNum = \"$stationId\";\n"); ?>
-        document.write('<form method=\'post\' action='+'modules.php?'+writeSize()+'&stationNum='+stationNum+'>');
-    </script>	
-	<input type='submit' class='submit' value="Modules d'une station"  />
-	</form>
+	    <form method='post' action="modules.php?stationNum=<?php echo $stationId; ?>">
+	    <input type='submit' class='submit' value="Modules d'une station"  />
+	    </form>
 	</td>
     <td>
-    <script  type="text/javascript">
-        document.write('<form method=\'post\' action='+'compareALL.php?'+writeSize()+'>');
-    </script>
+        <form method='post' action='compareALL.php'>
 		<input type='submit' class='submit' value="Comparaison de stations" />
 	</form>
 	</td>
 	<td>
-    <script  type="text/javascript">
-        document.write('<form method=\'post\' action='+'iconesExt.php?'+writeSize()+'>');
-    </script>
-	<input type='submit' class='submit' value="Menu principal"/>
-	</form>
+	    <form method='post' action='iconesExt.php'>
+    	<input type='submit' class='submit' value="Menu principal"/>
+    	</form>
 	</td>
 	<td>
 	<input type='submit' class='submit' value='Show Log' style='color:#080;' onClick='MakeRequestLog();' />    
@@ -152,13 +143,20 @@ function drawLogoutBack()
 </table>
 <table style='margin:auto;'>
 	<tr>
-	<td id='timer' style='font-size:12px; text-align=center;'>    
-        <script>
+	<td id='timer' style='font-size:12px; text-align=center;'> 
+	<?php $time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time() -5*60;
+	$time_left = max($time_left,5);
+	?>
+        <script type='text/javascript'>
+        <?php echo("var refresh = \"$time_left\";\n");?>
         var Id0 = setInterval(function(){Timer()},1000);
-        var Id1 = setInterval(function(){reload()},30*60*1000);
+        var Id1 = setInterval(function(){reload()},refresh*1000);
+        var d0 = new Date();
+        var t0 = d0.getTime();
         function Timer()
-            {var d=new Date();
-            var t=d.toLocaleTimeString();
+            {var d1 = new Date();
+            var t = d1.toLocaleTimeString();
+            var t1 = d1.getTime();
             var w = window,
             d = document,
             e = d.documentElement,
@@ -166,7 +164,8 @@ function drawLogoutBack()
             x = w.innerWidth || e.clientWidth || g.clientWidth,
             y = w.innerHeight|| e.clientHeight|| g.clientHeight;
             size = x+' x '+y;
-            document.getElementById("timer").innerHTML='Time:'+t+'&nbsp;&nbsp;Window:'+size;
+            var dt = Math.round(refresh - (t1-t0)/1000);
+            document.getElementById("timer").innerHTML='Time:'+t+'&nbsp;&nbsp;Window:'+size+'&nbsp;&nbsp;Reload in: '+dt+'s';
             }
         function reload()
             {url = window.location;
@@ -176,13 +175,12 @@ function drawLogoutBack()
 	</td>
 	</tr>
 	</table>
-	<!--<iframe src="refresh-if.php" seamless height=2px; width=5px; style='display: none;'></iframe>-->
 	    
 <?php
 	}
 
 /* -- DrawMenuStation ************************************************************************* */
-function drawMenuStation($h = '')
+function drawMenuStation($h = '',$charts = 0)
 	{
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
@@ -192,12 +190,20 @@ function drawMenuStation($h = '')
     $selectMesures = $_SESSION['selectMesures'];
     
 ?>	
-
-    <script  type="text/javascript">
-        document.write('<form method=\'post\' action='+'graphiques.php?'+writeSize()+'>');
-    </script>
-
-    <table class='G' style="height:<?php echo $h;?>;">
+     <form method='post' action='graphiques.php'>
+<?php
+    if($charts == 0)
+        echo("<table class='G' style=\"height:$h;\">");
+ else
+        {
+        echo("<script>
+        var h = height() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
+        document.write(txt);
+        </script>
+        ");
+        }
+?>        
 	<tr>
 	<td class='g' style='height:3px;'>
 	<div class='f' style='height:3px;'>
@@ -284,7 +290,7 @@ function drawMenuStation($h = '')
 <?php	
 	}
 /* drawMenuCompare ******************************************************************************/
-function drawMenuCompare($h ='')
+function drawMenuCompare($h ='',$charts = 0)
 	{
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
@@ -293,11 +299,21 @@ function drawMenuCompare($h ='')
 	$mydevices = $_SESSION['mydevices']; 
     $num = $mydevices['num'];
 ?>
-    <script  type="text/javascript">
-        document.write('<form method=\'post\' action='+'compareALL.php?'+writeSize()+'>');
-    </script>
-    
-    <table class='G'  style="height:<?php echo $h; ?>;">
+    <form method='post' action='compareALL.php'>
+ <?php
+    if($charts == 0)
+        echo("<table class='G' style=\"height:$h;\">");
+ else
+        {
+        echo("<script>
+        var h = height() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
+        document.write(txt);
+        </script>
+        ");
+        }
+?>        
+   
 	<tr>
 	<td class='g' style='height:3px;'>
 	<div class='f' style='height:3px;'>
@@ -397,13 +413,8 @@ function drawCharts($order='G')
             'C' => array ('drawMenuStation','drawMenuCompare'),
             'M' => array ('drawMenuCompare','drawMenuModules'),
             );
-    if($_SESSION['Ipad'])
-        $hh = 290; 
-    else
-	    $hh = 310;
-    $h = $hh . 'px';
-    $h1 = $hh+2 .'px';  
 ?>    
+
  	<!-- Invisible table -->
     <table class='ds_box'  id='ds_conclass' style='display: none;' >
     <caption id='id_caption' class='ds_caption'>xxxx</caption>
@@ -414,20 +425,30 @@ function drawCharts($order='G')
 	<tr>
 	<td style='padding:0px; vertical-align:bottom;'>
 	
-    <?php $menu[$order][0]($h1);?>
+    <?php $menu[$order][0](0,1);?>
 	
 	</td>
 		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
-		<div id='chart0' class='chart' style="height:<?php echo$h;?>;"></div></td>
+		<script>
+		    h = height();	
+		    var txt = "<div id='chart0' class='chart' style='height:"+h;
+		    txt += "px;'></div></td>";
+		    document.write(txt);
+		</script>
+		
 	 </tr>
 	 <tr>
 	 <td style='padding:0px; vertical-align:bottom;'>
 	
-	<?php $menu[$order][1]($h1);?>
+	<?php $menu[$order][1](0,1);?>
 
 	 </td>
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
-		<div id='chart1' class='chart' style='height:<?php echo $h;?>;'></div></td>
+		<script>
+		    var txt = "<div id='chart1' class='chart' style='height:"+height();
+		    txt += "px;'></div></td>";
+		    document.write(txt);
+		</script>
 	</tr>
 	</table>
 	
@@ -435,7 +456,7 @@ function drawCharts($order='G')
 <?php	
 	}
 /* drawMenuModules ************************************************************************/	
-function drawMenuModules($h ='')
+function drawMenuModules($h ='',$charts = 0)
 	{
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
@@ -450,13 +471,22 @@ function drawMenuModules($h ='')
     $selectMesure = $_SESSION['selectMesureModule'];
     $viewModules = $_SESSION['viewModules'];
     $view = $viewModules[$stationNum];
-?>	  
-    <script  type="text/javascript">
-        <?php echo("stationNum = \"$stationNum\";\n"); ?>
-        document.write('<form method=\'post\' action='+'modules.php?'+writeSize()+'&stationNum='+stationNum+'>');
-    </script>
+?>	
 
-  <table class='G'  style="height:<?php echo $h;?>;">
+    <form method='post' action="modules.php?stationNum=<?php echo $stationNum; ?>">
+<?php
+    if($charts == 0)
+        echo("<table class='G' style=\"height:$h;\">");
+ else
+        {
+        echo("<script>
+        var h = height() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
+        document.write(txt);
+        </script>
+        ");
+        }
+?>        
 	<tr>
 	<td class='g' style='height:3px;'>
 	<div class='f' style='height:3px;'>
