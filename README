@@ -8,20 +8,11 @@ and a readme  with pictures at http://fraysseix.fr/Netatmo/README.html.
 PLEASE READ THE README.html
 
 Main windows:
-	- Display on a Google map all the last measures of all stations and extra modules
-	  (The Google map provides weather forecast and cloud cover),
- 	- Graphics of the measures of one station 
-          (5 minutes, 30 minutes, 3 hours, 1 day or 1 week interval for a given period),
-	- Graphics of the temperatures of selected stations (1 day or 1 week), 
-	  five stations seems a limit for visibility,
-	- Graphics of the measures of selected extra modules (1 day or 1 week).
-
-
-Remark:
-	- If the measure interval is 30 minutes, the period of measures is 14 days 
-	  before the end of measures.
-	- If the measure interval is 5 minutes, the period of measures is 2 days.
-	- The weekly measures always end on Thursdays.
+	- Display on a Google map all the last data of all stations and their modules
+	  (The Google map provides weather forecast and cloud cover).
+ 	- Graphics of the measures of one station. 
+	- Graphics of of selected stations.
+	- Graphics of the modules of one station.
 
 Install:
 	- Unzip the archive,
