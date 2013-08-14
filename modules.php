@@ -3,8 +3,8 @@
 	<title>Stations Netatmo</title>
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
-    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-    <script type='text/javascript' src='size.js'></script>
+    <script src='https://www.google.com/jsapi'></script>
+    <script src='size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
@@ -254,7 +254,7 @@ function tip($temp,$tempDate)
 	}    
 
 echo("
-    <script type='text/javascript'>
+    <script>
       google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);
 
@@ -359,7 +359,7 @@ echo("
                 }
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
-            $param .= ',tooltip: {isHtml: true}';
+            $param .= ',tooltip: {isHtml: true},curveType:"function"';
             
 ?>
             colorMin = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
@@ -374,9 +374,8 @@ echo("
 			
 
 $menuModules = 'modules.php?stationNum=' .$_SESSION['stationId'];
-$isiPad = $_SESSION['Ipad'];
 echo("var menuModules = \"$menuModules\";\n");  
-echo("var isiPad = $isiPad;\n");  
+  
 ?>
 
 
@@ -388,7 +387,7 @@ echo("
           var num = colorMin.length;
           for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.row != null && data.getNumberOfRows() > 20   && isiPad == 0)
+            if(item.row != null && data.getNumberOfRows() > 20   && !isMobile())
                 top.location.href=menuModules+'&row='+item.row;                        
             if(item.column != null && data.getNumberOfColumns() > 3) 
                 {data.removeColumn(item.column); 
@@ -407,7 +406,7 @@ echo("
           var num = colorMax.length;
           for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            if(item.row != null  && data1.getNumberOfRows() > 20   && isiPad == 0)
+            if(item.row != null  && data1.getNumberOfRows() > 20   && !isMobile())
                 top.location.href=menuModules+'&row='+item.row;                        
             if(item.column != null && data1.getNumberOfColumns() > 3)
                 {data1.removeColumn(item.column);
@@ -426,7 +425,6 @@ echo("
              } // draw chart 
             
           </script>
-<!--<script type='text/javascript' src='calendrier.js'></script> -->
 <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>
 </head>
 <body>

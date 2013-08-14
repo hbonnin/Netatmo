@@ -6,6 +6,8 @@ require_once 'Config.php';
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <meta charset='utf-8'>
+<link rel="apple-touch-icon" href="icone/meteo.png" >
+<link rel="apple-touch-startup-image" href="icone/startup.png">
 </head>
 <body>
 <?php
@@ -27,7 +29,10 @@ try {
 	}
 $_SESSION['username'] = $username;
 $_SESSION['password'] = $password;
-$_SESSION['client'] = $client;
+$_SESSION['client'] = $client;   
+$_SESSION['timeToken'] = time();	
+$_SESSION['refresh_token'] = $tokens['refresh_token'];
+$_SESSION['expires_in'] = $tokens['expires_in'];
 
 ?>
    	<script>

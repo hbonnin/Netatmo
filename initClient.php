@@ -52,6 +52,8 @@ function checkToken()
 function init($numStations)
     {if(!isset($_SESSION['init']))
         {$_SESSION['init'] = 1;
+        //$_SESSION['timeToken'] = time();
+        //$_SESSION['expires_in'] = 10800;
         $_SESSION['timeLoad'] = time();
         $_SESSION['stationId'] = 0;
         $_SESSION['stationIdP'] = -1;
@@ -84,7 +86,6 @@ function init($numStations)
         createViewmodules();
         $_SESSION['selectMesureCompare'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
-        $_SESSION['Ipad'] =  strpos($_SERVER['HTTP_USER_AGENT'],'iPad') ? 1 : 0; 
         }   
     }
 

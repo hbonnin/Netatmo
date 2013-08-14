@@ -37,7 +37,7 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	<td colspan='6' class='th' title=\"$titre\">$station</td>
 	</tr>
 	<tr>
-	<td><img src='icone/sun.png' ALT='outside' height='40'/></td> 
+	<td style='height=40px;'><img src='icone/sun.png' ALT='outside' height='40'/></td> 
 	<td  class='c1' colspan='2' title=\"$dateExt\">{$res[1]['Temperature']}°</td>
 	<td></td>
 	<td><img src='icone/maison.png' ALT='insideside' height='40'/></td> 

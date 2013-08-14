@@ -9,21 +9,26 @@ $date = date("d:m:Y H:i",time());
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
+<script src='size.js'></script>
+
 <link rel='icon' href='favicon.ico' />
 </head>
 <body >
-
+<script>
+if(isMobile())
+    {closewebapp();
+    exit();
+    }
+</script>
 <h2> You are logged off </h2>
 <?php echo $date;?>
 <?php 
 require_once 'NAApiClient.php';
 echo "<pre>";
-if(!$_SESSION['Ipad'])
-    {if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
-        print_r($_SESSION);
-    else if(isset($_SESSION['ex']))
-        print_r($_SESSION['ex']);
-    }
+if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
+    print_r($_SESSION);
+else if(isset($_SESSION['ex']))
+    print_r($_SESSION['ex']);
 echo "</pre>";
 echo("</body></html>");
 $_SESSION=array();

@@ -36,10 +36,13 @@ You should have received a copy of the GNU General Public License
 along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="icone/meteo.png" >
+<link rel="apple-touch-startup-image" href="icone/startup.png">
 <link rel='icon' href='favicon.ico' />
 </head>
 <body style='text-align:center;'>

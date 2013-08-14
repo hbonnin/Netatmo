@@ -6,6 +6,10 @@ $_SESSION=array();
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <meta charset='utf-8'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="icone/meteo.png" >
+<link rel="apple-touch-startup-image" href="icone/startup.png">
 </head>
 <body>
 

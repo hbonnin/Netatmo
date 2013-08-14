@@ -65,7 +65,7 @@ function chkDates($date0,$date1,$interval,$inter)
 function drawLogoutBack()
 	{$stationId = $_SESSION['stationId'];
 ?>
-    <script type='text/javascript'>
+    <script>
     function getXMLHttp()
         {var xmlHttp
         try
@@ -147,7 +147,7 @@ function drawLogoutBack()
 	<?php $time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time() -5*60;
 	$time_left = max($time_left,5);
 	?>
-        <script type='text/javascript'>
+        <script>
         <?php echo("var refresh = \"$time_left\";\n");?>
         var Id0 = setInterval(function(){Timer()},1000);
         var Id1 = setInterval(function(){reload()},refresh*1000);
@@ -197,7 +197,7 @@ function drawMenuStation($h = '',$charts = 0)
  else
         {
         echo("<script>
-        var h = height() + 2;
+        var h = heightChart() + 2;
         var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
         document.write(txt);
         </script>
@@ -306,7 +306,7 @@ function drawMenuCompare($h ='',$charts = 0)
  else
         {
         echo("<script>
-        var h = height() + 2;
+        var h = heightChart() + 2;
         var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
         document.write(txt);
         </script>
@@ -430,8 +430,9 @@ function drawCharts($order='G')
 	</td>
 		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
 		<script>
-		    h = height();	
-		    var txt = "<div id='chart0' class='chart' style='height:"+h;
+		    h = heightChart();
+		    w = widthChart();
+		    var txt = "<div id='chart0' class='chart' style='width:"+w+"px; height:"+h;
 		    txt += "px;'></div></td>";
 		    document.write(txt);
 		</script>
@@ -445,10 +446,13 @@ function drawCharts($order='G')
 	 </td>
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
 		<script>
-		    var txt = "<div id='chart1' class='chart' style='height:"+height();
+		    h = heightChart();
+		    w = widthChart();
+		    var txt = "<div id='chart1' class='chart' style='width:"+w+"px; height:"+h;
 		    txt += "px;'></div></td>";
 		    document.write(txt);
 		</script>
+
 	</tr>
 	</table>
 	
@@ -480,7 +484,7 @@ function drawMenuModules($h ='',$charts = 0)
  else
         {
         echo("<script>
-        var h = height() + 2;
+        var h = heightChart() + 2;
         var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
         document.write(txt);
         </script>

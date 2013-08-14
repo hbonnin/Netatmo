@@ -6,8 +6,12 @@ session_start();
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
-<script type='text/javascript' src='size.js'></script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<script src='size.js'></script>
 <link rel='icon' href='favicon.ico'>
+<link rel="apple-touch-icon" href="icone/meteo.png" >
+<link rel="apple-touch-startup-image" href="icone/startup.png">
 <link type='text/css' rel='stylesheet'  href='style.css'>
 <link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
 
@@ -96,7 +100,7 @@ for($i = 0;$i < $numStations;$i++)
 	}	
 
 ?>
-<script type='text/javascript'
+<script
 <?php   
 	if($use_google_key == 1)
 		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key&amp;sensor=false'>");
@@ -104,8 +108,8 @@ for($i = 0;$i < $numStations;$i++)
 		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places&amp;sensor=false'>");
 ?>
 </script>
-<script type='text/javascript' src='StyledMarker.js'></script>
-<script type='text/javascript'>
+<script src='StyledMarker.js'></script>
+<script>
     var cloudLayer;
     var map;
     var show = 1;
@@ -377,17 +381,7 @@ echo("</tr></table>");
     </td>
 <!-- GOOGLE MAP -->
 
-<?php
-if($_SESSION['Ipad'])
-    $h = '470'; 
-else if(isset($_SESSION['height']))
-    $h = $_SESSION['height'] - 205;
-else
-    $h = '485';
-    //echo("<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:680px; height:${h}px; border:solid 2px gray;'> </div>");
-?>
-
-    <script type='text/javascript'>    
+    <script>    
     <?php echo ("var numStation = \"$numStations\";"); ?>
     var w = window,
     d = document,
@@ -397,6 +391,9 @@ else
     x = w.innerWidth || e.clientWidth || g.clientWidth;
     ico = d.getElementById("icones");
     hico = ico.offsetHeight;
+    hico = Math.max(hico,144);
+    //var iPhone = /iPhone/i.test(navigator.userAgent);
+    //if(iPhone)y = 544;
     y -= (hico + 45);
     var larMin = numStation*220 - 2*180;
     var larMax = x - 2*180;
@@ -405,6 +402,7 @@ else
     var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:"+lar+"px; height:"
     t += y+"px; border:solid 2px gray;'> </div>";
     document.write(t);
+   // /mobile/i.test(navigator.userAgent) && setTimeout(function() {   window.scrollTo(0, 1); }, 1000); 
  </script>
     </td>
     <td class='container'>
