@@ -81,8 +81,11 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	$wifiT = $wifi. '  '.date("d/m/y H:i",$devices["last_status_store"]);
 	if( $wifiTime < time() - 30*60)$wifi = 100;
 	$wifiImage = getWiFiImage($wifi);
-	$firmware = $devices["firmware"];   
-    $firmwareDate = date("d/m/Y",$devices['last_upgrade']); 
+	$firmware = $devices["firmware"];	
+	if(isset($devices['last_upgrade']))
+        $firmwareDate = date("d/m/Y",$devices['last_upgrade']); 
+    else 
+        $firmwareDate = 'unknown';
 	// RADIO
     $numStations = count($res) ; 
     for($i = 0;$i < $numStations;$i++)

@@ -11,7 +11,7 @@ session_start();
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
     <script src='https://www.google.com/jsapi'></script>
-    <script src='size.js'></script>
+    <script src='js/size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php

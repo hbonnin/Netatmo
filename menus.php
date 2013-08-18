@@ -188,7 +188,6 @@ function drawMenuStation($h = '',$charts = 0)
 	$mydevices = $_SESSION['mydevices']; 
     $num = $mydevices['num'];
     $selectMesures = $_SESSION['selectMesures'];
-    
 ?>	
      <form method='post' action='graphiques.php'>
 <?php
@@ -606,7 +605,10 @@ function drawMenuModules($h ='',$charts = 0)
 <!-- End DrawMenu Module -->
 	
 <?php } 
-
+function alert($txt)
+    {$txt = "'".$txt."'";
+    echo("<script>alert($txt);\n</script>");
+    }
 
 ?>	
 

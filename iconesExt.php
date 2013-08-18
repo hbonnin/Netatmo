@@ -8,10 +8,41 @@ session_start();
 <meta charset='utf-8'>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<script src='size.js'></script>
+<script src='js/size.js'></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="js/jcookies.js"></script>
+<script src="js/login.js"></script>
 <link rel='icon' href='favicon.ico'>
 <link rel="apple-touch-icon" href="icone/meteo.png" >
-<link rel="apple-touch-startup-image" href="icone/startup.png">
+<!-- iPhone 5 Retina -->
+<link  href="image/startup-image-640x1096.png" rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+<link href="image/startup-image-320x460.png" media="(device-width: 320px)" rel="apple-touch-startup-image">
+<!-- iPad (non-Retina) (Portrait) -->
+<link href="image/startup-image-768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" rel="apple-touch-startup-image" />
+<!-- iPad (non-Retina) (Landscape) -->
+<link href="image/startup-image-1024x748.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" rel="apple-touch-startup-image" />
+
+<!--
+For third-generation iPad with high-resolution Retina display:
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png">
+For iPhone with high-resolution Retina display: 
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png">
+For first- and second-generation iPad:
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
+For non-Retina iPhone, iPod Touch, and Android 2.1+ devices:
+<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+iPhone SPLASHSCREEN
+<link href="apple-touch-startup-image-320x460.png" media="(device-width: 320px)" rel="apple-touch-startup-image">
+iPhone (Retina) SPLASHSCREEN
+<link href="apple-touch-startup-image-640x920.png" media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+iPad (Retina) (Portrait)
+<link href="apple-touch-startup-image-1536x2008.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) and (-webkit-min-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+iPad (Retina) (Landscape)
+<link href="apple-touch-startup-image-2048x1496.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) and (-webkit-min-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+
+
+-->
 <link type='text/css' rel='stylesheet'  href='style.css'>
 <link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
 
@@ -28,6 +59,9 @@ $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 
 $numStations = $mydevices["num"];
 $devicelist = getDevicelist();
+//echo "<pre>";
+//print_r($devicelist);
+//echo "</pre>";
 $last_mesures = getLastMeasures($devicelist);
 $slabel = array($numStations);
 $label = array($numStations);
@@ -108,7 +142,7 @@ for($i = 0;$i < $numStations;$i++)
 		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places&amp;sensor=false'>");
 ?>
 </script>
-<script src='StyledMarker.js'></script>
+
 <script>
     var cloudLayer;
     var map;
@@ -317,6 +351,7 @@ for($i = 0;$i < $numStations;$i++)
 	}//initialize
 </script>
 <!-- cannot be moved before -->
+<script src='js/StyledMarker.js'></script>
 
 </head>
   <body  onload='initialize()'>

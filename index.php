@@ -1,6 +1,7 @@
 <?php 
 require_once 'NAApiClient.php';
-require_once 'NAApiClient.php';session_start(); 
+require_once 'NAApiClient.php';
+session_start(); 
 $_SESSION=array();
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
@@ -9,9 +10,28 @@ $_SESSION=array();
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icone/meteo.png" >
-<link rel="apple-touch-startup-image" href="icone/startup.png">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="js/jcookies.js"></script>
+
 </head>
 <body>
+<script>
+    var rutabaga = $.jCookies({get:'Netatmo Login'}); 
+    if(rutabaga)
+        {
+        username = rutabaga.Username;
+        password  = rutabaga.Password;
+        //$.post('login.php',{username:username,password:password});
+        /*
+        $.ajax({type : 'POST', 
+                url : 'login.php',
+                data : {username:username,password:password},
+                success : function(data){alert('success'+data);}
+                });
+        */    
+        top.location.href = 'login.php?username='+username+'&password='+password;
+        }    
+</script>
 
 <?php 
 /*
@@ -33,7 +53,7 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 require_once 'Config.php';
-    //session_start();
+
     if(!empty($test_username) && !empty($test_password))
    			echo("
     	   	<script>

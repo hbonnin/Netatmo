@@ -86,14 +86,30 @@ function init($numStations)
         createViewmodules();
         $_SESSION['selectMesureCompare'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
-        }   
+        } 
+    if(isset($_SESSION['saveCookie']))
+        {$username = $_SESSION['username']; 
+        $password = $_SESSION['password'];
+        echo "<script>";
+        echo("var username = \"$username\";\n");
+        echo("var password = \"$password\";\n");
+        echo("$.jCookies({name:'Netatmo Login',value:{Username:username,Password:password},days:10});");
+        echo "</script>";
+        }
     }
 
 function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password;
 	date_default_timezone_set("Europe/Paris");
+	
+	if(isset($_SESSION['client']))  
+	    checkToken(); // seule action effectuer chaque fois
 	    
-	checkToken(); // seule action effectuer chaque fois
+	if(!isset($_SESSION['LogMsg']))
+	    {$date = date("d/m H:i:s",time());
+	    $server = $_SERVER['SERVER_NAME'];
+	    $_SESSION['LogMsg'] = "Log start :$date<br>Serveur:$server<br>";
+	    }
 
 	if(isset($_GET["code"]) && !isset($_SESSION['client'])) 
 		{if(isset($_GET["error"]))
@@ -135,7 +151,14 @@ function initClient()
         $_SESSION['timeToken'] = time();
         $_SESSION['expires_in'] = $expires_in;// celui que j'utilise
         $_SESSION['expire_in'] = $expire_in;
-        $client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
+        try
+            {
+            $client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
+            }catch(NAClientException $ex) 
+        		{$_SESSION['ex'] = $ex;
+        		logMsg('NAClientException:client from token');
+			    //logout();				
+			    }       
         $_SESSION['client'] = $client;	
         logMsg('client from token');			
 		}	
@@ -145,10 +168,12 @@ function initClient()
             {$test_username = $_SESSION['username'];  //login with indexLogin.php
             $test_password = $_SESSION['password']; 
             }
+         else if(!isset($_SESSION['client'])) 
+            echo " <script>top.location.href='indexLogin.php' </script> ";
         }     
 	if(isset($_SESSION['client']))
 		$client = $_SESSION['client'];
-	else  // si identifiant et mot de passe dans config.php
+	else  // si identifiant et mot de passe
 		{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
 		try {
 			$tokens = $client->getAccessToken();       
@@ -235,22 +260,9 @@ function getDevicelist()
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     return $devicelist;
     }
-/*    
-function getScreenSize()
-    {// width and height of the navigator window
-    if(isset($_GET['width']))
-        $_SESSION['width'] = $_GET['width'];
-    if(isset($_GET['height']))
-        $_SESSION['height'] = $_GET['height'];
-    }
-*/    
+
 function logMsg($txt)
-    {if(!isset($_SESSION['LogMsg']))
-	    {$date = date("d/m H:i:s",time());
-	    $server = $_SERVER['SERVER_NAME'];
-	    $_SESSION['LogMsg'] = "Log start :$date<br>Serveur:$server<br>";
-	    }
-    $date = date("D H:i s",time());
+    {$date = date("D H:i s",time());
     $_SESSION['LogMsg'] .= $date.': '.$txt.'<br>';
     } 
 function logout()

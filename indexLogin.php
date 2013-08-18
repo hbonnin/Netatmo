@@ -10,11 +10,7 @@ require_once 'Config.php';
 	session_destroy();
 	
     if(!empty($test_username) && !empty($test_password))
-    	echo("
-    	   	<script>
-    		top.location.href = 'iconesExt.php';
-			</script>
-			");
+    	echo("<script>top.location.href = 'iconesExt.php';</script>");
 
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
@@ -35,7 +31,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
@@ -43,10 +38,28 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icone/meteo.png" >
 <link rel="apple-touch-startup-image" href="icone/startup.png">
-<link rel='icon' href='favicon.ico' />
+<link rel='icon' href='favicon.ico'>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="js/jcookies.js"></script>
 </head>
 <body style='text-align:center;'>
-
+<script>
+    var rutabaga = $.jCookies({get:'Netatmo Login'}); 
+    if(rutabaga)
+        {
+        username = rutabaga.Username;
+        password  = rutabaga.Password;
+        //$.post('login.php',{username:username,password:password});
+        /*
+        $.ajax({type : 'POST', 
+                url : 'login.php',
+                data : {username:username,password:password},
+                success : function(data){alert('success'+data);}
+                });
+        */    
+        top.location.href = 'login.php?username='+username+'&password='+password;
+        }    
+</script>
 <h2> Entrez vos identifiants Netatmo </h2>
 
 <h3 style='color:red;'><?php $msg ?></h3>
@@ -55,11 +68,15 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <table style='margin-left:auto; margin-right:auto;'>
 <tr> 
 <td>UserName:</td>
-<td><input type='text' name='username' id='username'  maxlength='50' /></td>
+<td><input type='text' name='username'   maxlength='50' /></td>
 </tr><tr>
 <td>Password:</td>
-<td><input type='password' name='password' id='password' maxlength='50' /></td>
+<td><input type='password' name='password' maxlength='50' /></td>
+</tr><tr>
+<td>Save:</td>
+<td style='text-align:left'><input type='checkbox' name='saveCookie'  /></td>
 </tr>
+
 </table> 
 <input type='submit' name='Submit' value='Submit' />
  

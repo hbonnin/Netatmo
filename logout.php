@@ -9,8 +9,8 @@ $date = date("d:m:Y H:i",time());
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
-<script src='size.js'></script>
-
+<script src='js/close.js'></script>
+<script src='js/size.js'></script>
 <link rel='icon' href='favicon.ico' />
 </head>
 <body >
@@ -26,8 +26,11 @@ if(isMobile())
 require_once 'NAApiClient.php';
 echo "<pre>";
 if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
-    print_r($_SESSION);
-else if(isset($_SESSION['ex']))
+    {print_r($_SESSION['LogMsg']);
+    print_r($_SESSION['client']);
+    print_r($_SESSION['mydevices']);
+    }
+if(isset($_SESSION['ex']))
     print_r($_SESSION['ex']);
 echo "</pre>";
 echo("</body></html>");

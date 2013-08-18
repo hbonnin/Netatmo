@@ -11,7 +11,7 @@ session_start();
   	<meta charset='utf-8'>
     <link rel='icon' href='favicon.ico' >
     <script src='https://www.google.com/jsapi'></script>
-    <script src='size.js'></script>
+    <script src='js/size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
     <link rel='stylesheet' type='text/css'  href='calendrierBleu.css' >
 
@@ -59,7 +59,6 @@ if(isset($_GET['row']))// faire un zoom sur la date
         {$beg = $_SESSION['begdata'];
         $dateRow = $beg + $row*$inter;
         $interval = $opt[$sel + 1][0]; 
-        //$interval = checkSelect($interval,'G');
         $sel = selectIndex($opt,$interval);
         $inter = $opt[$sel][2];
         $tinter = $opt[$sel][1];	
@@ -103,7 +102,6 @@ else
     $_SESSION['selectedInterP'] = $interval;
     $_SESSION['stationIdP'] = $stationId;
     }
-//echo("reload:$reloadData");
 
 $selectMesures = $_SESSION['selectMesures'];   
 if(isset($_POST['smesure']))
@@ -504,7 +502,6 @@ else  // 5 minutes, 30 minutes, 3 heures
                 if($eraseInt[$i])echo("dataInt.removeColumn($i);\n");	
             } 
 	$titleInt =  '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures @ '.$dateLoadData.')"';       	                    	
-//var isiPad = navigator.userAgent.match(/iPad/i) != null;
 
     echo("inter = $inter;\n");  
     echo("visupt = $visupt;\n");      
@@ -515,6 +512,7 @@ else  // 5 minutes, 30 minutes, 3 heures
 ?>
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
     var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
+/*    
     options = {focusTarget:"category",tooltip: {isHtml: true},curveType:"function"
                ,chartArea:{left:"5%",top:25,width:"85%",height:"75%"}
                ,pointSize:visupt,fontSize:10,titleTextStyle:{fontSize:12,color:"#303080",fontName:"Times"}
@@ -529,22 +527,16 @@ else  // 5 minutes, 30 minutes, 3 heures
     optionsExt.title = titleExt;
     optionsExt.colors = colorExt;
     chartExt.draw(dataExt,optionsExt);  
-    
-    param = 'focusTarget:"category",tooltip: {isHtml: true},curveType:"function"'
+*/    
+    param = 'opt={focusTarget:"category",tooltip: {isHtml: true},curveType:"function"'
             +',chartArea:{left:"5%",top:25,width:"85%",height:"75%"}'
             +',pointSize:visupt,fontSize:10,titleTextStyle:{fontSize:12,color:"#303080",fontName:"Times"}';
 
-    //chartInt.draw(dataInt,{title:titleInt,colors:colorInt,param});
+    paramInt = param+',title:titleInt,colors:colorInt}';
+    chartInt.draw(dataInt,eval(paramInt));
+    paramExt = param+',title:titleExt,colors:colorExt}';
+    chartExt.draw(dataExt,eval(paramExt));
 
-<?php
-/*
-	$param = "focusTarget:'category',tooltip: {isHtml: true},curveType:\"function\"";
-	$param .= ",backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
-	$param .= ",pointSize:$visupt,fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
-echo("chartInt.draw(dataInt, {title: $titleInt,colors:colorInt ,$param});
-chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");
-*/
-?>
 /* 
     row: time 
     plus petite colonne 1 
@@ -563,8 +555,9 @@ chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");
                 {dataInt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
                     colorInt[col] = colorInt[col+1]; 
-                optionsInt.colors = colorInt;  
-                chartInt.draw(dataInt,optionsInt)
+                //optionsInt.colors = colorInt;  
+                //chartInt.draw(dataInt,optionsInt)
+                chartInt.draw(dataInt,eval(paramInt));
                 return;
                 }
             }
@@ -581,8 +574,9 @@ chartExt.draw(dataExt, {title: $titleExt,colors:colorExt,$param});");
                 {dataExt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
                     colorExt[col] = colorExt[col+1];  
-                optionsExt.colors = colorExt;
-                chartExt.draw(dataExt,optionsExt); 
+                chartExt.draw(dataExt,optionsExt);  
+                //optionsExt.colors = colorExt;
+                //chartExt.draw(dataExt,optionsExt); 
                 return;
                 }
             }
