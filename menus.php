@@ -144,7 +144,8 @@ function drawLogoutBack()
 <table style='margin:auto;'>
 	<tr>
 	<td id='timer' style='font-size:12px; text-align=center;'> 
-	<?php $time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time() -5*60;
+	<?php 
+	$time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time() -5*60;
 	$time_left = max($time_left,5);
 	?>
         <script>
@@ -605,10 +606,5 @@ function drawMenuModules($h ='',$charts = 0)
 <!-- End DrawMenu Module -->
 	
 <?php } 
-function alert($txt)
-    {$txt = "'".$txt."'";
-    echo("<script>alert($txt);\n</script>");
-    }
-
 ?>	
 

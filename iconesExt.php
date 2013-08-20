@@ -389,7 +389,9 @@ for($i = 0;$i < $numStations;$i++)
     	$dtmax[$i] = $tmesure[0]['value'][0][3];
     	}
     else
-       $tmins[$i] = $tmaxs[$i] = '-'; 
+       {$tmin[$i] = $tmax[$i] = '-'; 
+       $dtmin[$i] = $dtmax[$i] = time(); 
+       }
     }
 
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
@@ -399,6 +401,10 @@ echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-to
 for($i = 0;$i < $numStations;$i++)
 	{$res = $last_mesures[$i]["modules"];
 	echo("<td>");
+	$t0 = $tmin[$i];
+	$t1 = $tmax[$i];
+	$dt0 = $dtmin[$i];
+	$dt1 = $dtmax[$i];
 	fill($i,$devicelist["devices"][$i],$mydevices[$i],$res,$tmin[$i],$tmax[$i],$dtmin[$i],$dtmax[$i]);
 	echo("</td>");
 	}

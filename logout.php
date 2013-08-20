@@ -1,6 +1,7 @@
 <?php 
 require_once 'AppliCommonPublic.php';
 require_once 'NAApiClient.php';
+require_once 'initClient.php';
 session_start();
 date_default_timezone_set("Europe/Paris");
 $date = date("d:m:Y H:i",time());
@@ -23,7 +24,6 @@ if(isMobile())
 <h2> You are logged off </h2>
 <?php echo $date;?>
 <?php 
-require_once 'NAApiClient.php';
 echo "<pre>";
 if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
     {print_r($_SESSION['LogMsg']);
@@ -36,4 +36,5 @@ echo "</pre>";
 echo("</body></html>");
 $_SESSION=array();
 session_destroy();
+exit();
 ?>

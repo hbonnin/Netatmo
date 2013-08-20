@@ -65,16 +65,16 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <h3 style='color:red;'><?php $msg ?></h3>
 <form id='login' action='login.php' method='post' accept-charset='UTF-8'>
 
-<table style='margin-left:auto; margin-right:auto;'>
+<table style='margin-left:auto; margin-right:auto; text-align:right'>
 <tr> 
 <td>UserName:</td>
-<td><input type='text' name='username'   maxlength='50' /></td>
+<td style='text-align:left'><input type='text' name='username'   maxlength='50' /></td>
 </tr><tr>
 <td>Password:</td>
-<td><input type='password' name='password' maxlength='50' /></td>
+<td style='text-align:left'><input type='password' name='password' maxlength='50' /></td>
 </tr><tr>
 <td>Save:</td>
-<td style='text-align:left'><input type='checkbox' name='saveCookie'  /></td>
+<td style='text-align:left'><input type='checkbox' name='saveCookie' checked = 'checked'Ò /></td>
 </tr>
 
 </table> 

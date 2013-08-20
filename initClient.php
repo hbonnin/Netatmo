@@ -1,6 +1,10 @@
 <?php
 function refreshToken()
     {global $client_id,$client_secret;
+    if(!isset($_SESSION['refresh_token']))
+        {logMsg('NO refreshtoken');
+        logout();
+        }
     date_default_timezone_set("Europe/Paris");
     $token_url = "https://api.netatmo.net/oauth2/token";
     $postdata = http_build_query(array(
@@ -48,12 +52,11 @@ function checkToken()
 			$ret = refreshToken();
 		return $time_left;
 		}
+	else retun -1;
     }	
 function init($numStations)
     {if(!isset($_SESSION['init']))
         {$_SESSION['init'] = 1;
-        //$_SESSION['timeToken'] = time();
-        //$_SESSION['expires_in'] = 10800;
         $_SESSION['timeLoad'] = time();
         $_SESSION['stationId'] = 0;
         $_SESSION['stationIdP'] = -1;
@@ -101,8 +104,7 @@ function init($numStations)
 function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password;
 	date_default_timezone_set("Europe/Paris");
-	
-	if(isset($_SESSION['client']))  
+	if(isset($_SESSION['expires_in']))  
 	    checkToken(); // seule action effectuer chaque fois
 	    
 	if(!isset($_SESSION['LogMsg']))
@@ -157,7 +159,8 @@ function initClient()
             }catch(NAClientException $ex) 
         		{$_SESSION['ex'] = $ex;
         		logMsg('NAClientException:client from token');
-			    //logout();				
+        		alert("NAClientException:client from token");
+			    logout();				
 			    }       
         $_SESSION['client'] = $client;	
         logMsg('client from token');			
@@ -169,7 +172,10 @@ function initClient()
             $test_password = $_SESSION['password']; 
             }
          else if(!isset($_SESSION['client'])) 
-            echo " <script>top.location.href='indexLogin.php' </script> ";
+            {//alert("no password");
+            logMsg("No password inConfig.php");
+            echo " <script>top.location.href='../indexLogin.php' </script> ";
+            }
         }     
 	if(isset($_SESSION['client']))
 		$client = $_SESSION['client'];
@@ -185,6 +191,7 @@ function initClient()
 					<br> ou secret:$client_secret incorrect");
 				$_SESSION['ex'] = $ex;
         		logMsg('NAClientException:client from password');
+        		alert("wrong password");
 			    logout();				
 			    }   
 	    $_SESSION['timeToken'] = time();	
@@ -202,6 +209,7 @@ function initClient()
 		catch(NAClientException $ex) {
 			$_SESSION['ex'] = $ex;
 		    logMsg("NAClientException:devicelist");
+		    alert("NAClientException:devicelist");
 		    logout();	
 			}	
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
@@ -210,7 +218,6 @@ function initClient()
 		$_SESSION['mydevices'] = $mydevices;	
 		init($numStations);	
 		}	 	
-    //getScreenSize();
 	}
 function createViewmodules()
     {$mydevices = $_SESSION['mydevices']; 
@@ -266,6 +273,11 @@ function logMsg($txt)
     $_SESSION['LogMsg'] .= $date.': '.$txt.'<br>';
     } 
 function logout()
-    {echo("<script> top.location.href='logout.php'</script>");	
+    {echo("<script> top.location.href='../logout.php'</script>");	
     }
+function alert($txt)
+    {$txt = "'".$txt."'";
+    echo("<script>alert($txt);\n</script>");
+    }
+    
 ?>
