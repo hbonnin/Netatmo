@@ -262,10 +262,10 @@ td.name {
   	visibility: visible;
 	}
 td.tooltip {
-	height:20px;
-	padding:5px 10px 0px 2px;
+	height:15px;
+	padding:0px 0px 0px 0px;
 	position:absolute;
-	margin-top:-9px;
+	margin-top:-3px;
 }
 a.tooltip {
 	font-size:9px;

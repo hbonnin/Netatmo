@@ -26,9 +26,10 @@ if(isMobile())
 <?php 
 echo "<pre>";
 if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
-    {print_r($_SESSION['LogMsg']);
-    print_r($_SESSION['client']);
-    print_r($_SESSION['mydevices']);
+    {print_r($_SESSION['LogMsg']);echo "<br>";
+    print_r($_SESSION['path']);echo "<br>";    
+    print_r($_SESSION['client']);echo "<br>";
+    print_r($_SESSION['mydevices']);echo "<br>";
     }
 if(isset($_SESSION['ex']))
     print_r($_SESSION['ex']);

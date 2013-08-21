@@ -15,6 +15,7 @@ $_SESSION=array();
 
 </head>
 <body>
+
 <script>
     var rutabaga = $.jCookies({get:'Netatmo Login'}); 
     if(rutabaga)
@@ -53,7 +54,8 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 require_once 'Config.php';
-
+    $path = dirname($_SERVER['PHP_SELF']).'/';
+    $_SESSION['path'] = $path;  
     if(!empty($test_username) && !empty($test_password))
    			echo("
     	   	<script>
@@ -61,7 +63,8 @@ require_once 'Config.php';
 			</script>
 			");    	
     else
-     	{$my_url = "http://" . $_SERVER['SERVER_NAME'] . "/Netatmo/iconesExt.php";
+     	//{$my_url = "http://" . $_SERVER['SERVER_NAME'] . "/Netatmo/iconesExt.php";
+     	{$my_url = "http://" . $_SERVER['SERVER_NAME'] .$path. "iconesExt.php";
     	$_SESSION['state'] = md5(uniqid(rand(), TRUE));
     	$dialog_url="https://api.netatmo.net/oauth2/authorize?client_id=" 
     		. $client_id . "&redirect_uri=" . urlencode($my_url) . "&state="
