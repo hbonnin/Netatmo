@@ -433,17 +433,15 @@ echo("</tr></table>");
     ico = d.getElementById("icones");
     hico = ico.offsetHeight;
     hico = Math.max(hico,144);
-    //var iPhone = /iPhone/i.test(navigator.userAgent);
-    //if(iPhone)y = 544;
+    lico = ico.offsetWidth;
     y -= (hico + 45);
-    var larMin = numStation*220 - 2*180;
-    var larMax = x - 2*180;
+    var larMin = lico - 2*186;
+    var larMax = x - 2*186;
     var lar = Math.max(680,larMin);
     lar = Math.min(lar,larMax); 
     var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:"+lar+"px; height:"
     t += y+"px; border:solid 2px gray;'> </div>";
     document.write(t);
-   // /mobile/i.test(navigator.userAgent) && setTimeout(function() {   window.scrollTo(0, 1); }, 1000); 
  </script>
     </td>
     <td class='container'>

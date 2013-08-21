@@ -174,7 +174,7 @@ function initClient()
          else if(!isset($_SESSION['client'])) 
             {//alert("no password");
             logMsg("No password inConfig.php");
-            echo " <script>top.location.href='../indexLogin.php' </script> ";
+            echo " <script>top.location.href='indexLogin.php' </script> ";
             }
         }     
 	if(isset($_SESSION['client']))
