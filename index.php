@@ -3,6 +3,8 @@ require_once 'NAApiClient.php';
 require_once 'NAApiClient.php';
 session_start(); 
 $_SESSION=array();
+$path = dirname($_SERVER['PHP_SELF']).'/';
+$_SESSION['path'] = $path;   
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
@@ -54,8 +56,6 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 require_once 'Config.php';
-    $path = dirname($_SERVER['PHP_SELF']).'/';
-    $_SESSION['path'] = $path;  
     if(!empty($test_username) && !empty($test_password))
    			echo("
     	   	<script>

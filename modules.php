@@ -330,7 +330,7 @@ echo("
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
             		$tmin0 = $tip = '';   
-            		$key = $keys[$j][$ii[$j]];         		
+            		$key = $keys[$j][$ii[$j]];  
             		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
             			    {$tmin0 = $mesure[$j][$key][1];

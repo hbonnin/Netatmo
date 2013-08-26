@@ -8,6 +8,8 @@ require_once 'Config.php';
 		$msg = $_SESSION['msg'];
 	$_SESSION=array();
 	session_destroy();
+    $path = dirname($_SERVER['PHP_SELF']).'/';
+    $_SESSION['path'] = $path;  
 	
     if(!empty($test_username) && !empty($test_password))
     	echo("<script>top.location.href = 'iconesExt.php';</script>");

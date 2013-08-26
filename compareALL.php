@@ -209,8 +209,8 @@ echo("
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
             		$tmin0 = $tip = '';   
-            		$key = $keys[$j][$ii[$j]];         		
-            		if(abs($key - $itime) < 2*60*60) //changement d'horaire
+            		$key = $keys[$j][$ii[$j]];  
+            		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
             			$tmin0 = $mesure[$j][$key][0];
             			$tip = tip($tmin0,$mesure[$j][$key][2]);
@@ -249,7 +249,7 @@ echo("
             		{if($view[$j] == 0)continue;
             		$tmin0 = $tip = '';        		
             		$key = $keys[$j][$ii[$j]]; 
-            		if(abs($key - $itime) < 2*60*60)
+            		if(abs($key - $itime) < 2*$inter)
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];            			
             			$tmin0 = $mesure[$j][$key][1];
               			$tip = tip($tmin0,$mesure[$j][$key][3]);

@@ -173,7 +173,7 @@ function initClient()
             }
          else if(!isset($_SESSION['client'])) 
             {//alert("no password");
-            logMsg("No password inConfig.php");
+            logMsg("No password in Config.php");
             echo " <script>top.location.href='indexLogin.php' </script> ";
             }
         }     
@@ -250,7 +250,7 @@ function createDevicelist($devicelist)
     }
 function getLastMeasures($devicelist)
     {$helper = new NAApiHelper();
-	$client =  $_SESSION['client'];
+	$client =  $_SESSION['client'];       
 	return $helper->GetLastMeasures($client,$devicelist);
     }
 function getDevicelist() 
@@ -267,13 +267,22 @@ function getDevicelist()
 	$devicelist = $helper->SimplifyDeviceList($devicelist);
     return $devicelist;
     }
-
+function emptyLog()
+    {$_SESSION['LogMsg'] = '';
+    }
 function logMsg($txt)
     {$date = date("D H:i s",time());
     $_SESSION['LogMsg'] .= $date.': '.$txt.'<br>';
     } 
 function logout()
-    {echo("<script> top.location.href='../logout.php'</script>");	
+    {$path = dirname($_SERVER['PHP_SELF']).'/logout.php';
+    ?>
+    <script>
+    <?php echo("path = \"$path\";\n");?>
+    top.location.href=path;
+    </script>
+    <?php
+    //echo("<script> top.location.href=../logout.php</script>");
     }
 function alert($txt)
     {$txt = "'".$txt."'";

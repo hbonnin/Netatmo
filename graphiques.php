@@ -322,16 +322,16 @@ echo("
             	{$day = idate('w',$itime);
            		$idate = date("d/m/y",$itime); 
             	$tmin = $tmax = $min_hum = $max_hum = $tip = $d = '';
-            	$key = $keys[$ii];         		
+            	$key = $keys[$ii];         	
             	if(abs($key - $itime) < 2*$inter) //changement d'horaire
-            		{if($ii < $num -1)++$ii;
-            		else $break = 1;      
-	//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
+            		{if($ii < $num -1)++$ii; 
+                	else $break = 1;
+            		//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
             		$tmin = $meas[$key][0];
             		$tmax = $meas[$key][1];
              		$min_hum = $meas[$key][2]; 
              		$max_hum = $meas[$key][3]; 
-           			$iidate = $jour[$day] . date(" d/m/y ",$itime);
+           			$iidate = $jour[$day] . date(" d/m/y ",$key);
 					$tip = tipHTMLext($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
             		}
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
@@ -357,15 +357,20 @@ else   //5 ou 30 minutes ou 3 heures
             	{$day = idate('w',$itime);
             	$idate = date("d/m H:i",$itime); 
             	$tmin =  $hum = $tip = '';
-            	$key = $keys[$ii];         		
-            	if(abs($key - $itime) < $inter*2) // mesures décalées
+            	$key = $keys[$ii];            	
+            	if(abs($key - $itime) < $inter*3) // mesures décalées
             		{if($ii < $num -1)++$ii;
-            		else $break = 1;           			
+                	else $break = 1;           			
             		$tmin = $meas[$key][0];
             		$hum = $meas[$key][1];  
             		$iidate = $jour[$day] . date(" d/m/y H:i",$key);         		           		
 					$tip = tipHTMLext2($iidate,$tmin,$hum);
             		}
+                else if(($key - $itime) < 0)
+                    {while($ii < $num -1 &&  ($keys[++$ii] - $itime) < 0)
+                        $key = $keys[$ii]; 
+                    }
+            		
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
@@ -414,10 +419,10 @@ if($inter > 3*60*60)	//1week,1day
             	{$day = idate('w',$itime);
            		$idate = date("d/m/y",$itime);  
             	$tmin = $tmax = $hum = $co = $pres = $noise = $tip = '';
-            	$key = $keys[$ii];         		
+            	$key = $keys[$ii];            	    			          			
             	if(abs($key - $itime) < 2*$inter) //changement d'horaire
             		{if($ii < $num -1)++$ii; 
-            		else $break = 1;           			          			
+                	else $break = 1;       
             		$tmin = $meas1[$key][0];
             		$tmax = $meas1[$key][1];
                 	$hum = $meas1[$key][2];
@@ -425,7 +430,7 @@ if($inter > 3*60*60)	//1week,1day
                 	$pres = intval($meas1[$key][4]+.5);
                 	$noise = $meas1[$key][5];                	
  //$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
-             		$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);            		
+             		$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);            		
                 	$tip = tipHTMLint6($iidate,$tmax,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}           
                 	if($xp)$pres = intval(($pres-$MinPression)*$xp + .5);
@@ -474,25 +479,34 @@ else  // 5 minutes, 30 minutes, 3 heures
 			if($MaxPression == $MinPression) $xp = 0;
 			else $xp = 100/($MaxPression - $MinPression);		
 			    
-	        $ii = $break = 0;	
+	        $ii = $break = 0;
             do
             	{$day = idate('w',$itime);
             	$idate = date("d/m H:i",$itime); 
             	$tmin = $hum = $co = $pres = $noise = $tip = '';
-            	$key = $keys[$ii];         		
+            	$key = $keys[$ii]; 
             	if(abs($key - $itime) < 2*$inter) 
             		{if($ii < $num -1)++$ii; 
-            		else $break = 1;           			          			
+            	    else $break = 1;
             		$tmin = $meas1[$key][0];
                 	$hum = $meas1[$key][1];
                 	$co = $meas1[$key][2];
                 	$pres = intval($meas1[$key][3] + .5);
                 	$noise = $meas1[$key][4];  
-           			$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$itime);
+           			$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);
                 	$tip = tipHTMLint5($iidate,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}             
                 	if($xp)$pres = intval(($pres-$MinPression)*$xp + .5);
-                	}
+                	}              	
+                else if(($key - $itime) < 0)
+                    {while($ii < $num -1 &&  ($keys[++$ii] - $itime) < 0)
+                        {$key = $keys[$ii]; 
+                        //$a = date("H:i",$key);$b = date("H:i",$itime);
+                        //$txt = 'ii:'.$ii.' key:'.$a.' itime:'.$b.' dt:'.($key - $itime)/60;
+                        //logMsg($txt);
+                        }
+                    }
+                    
                 echo("dataInt.addRow([\"$idate\",'$tip',$tmin,$hum,$co,$pres,$noise,1]);\n");                
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
@@ -548,15 +562,12 @@ else  // 5 minutes, 30 minutes, 3 heures
         var num = colorInt.length;
         for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
-            //if(item.row != null  && (dataInt.getNumberOfRows() > 20) && isiPad == 0) 
             if(item.row != null  && (dataInt.getNumberOfRows() > 20) && !isMobile()) 
                 top.location.href='graphiques.php?row='+item.row;
             if(item.column != null && dataInt.getNumberOfColumns() > 3) 
                 {dataInt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
                     colorInt[col] = colorInt[col+1]; 
-                //optionsInt.colors = colorInt;  
-                //chartInt.draw(dataInt,optionsInt)
                 chartInt.draw(dataInt,eval(paramInt));
                 return;
                 }
@@ -574,9 +585,7 @@ else  // 5 minutes, 30 minutes, 3 heures
                 {dataExt.removeColumn(item.column); 
                 for(var col = item.column-2;col < num-1;col++)
                     colorExt[col] = colorExt[col+1];  
-                chartExt.draw(dataExt,optionsExt);  
-                //optionsExt.colors = colorExt;
-                //chartExt.draw(dataExt,optionsExt); 
+                chartExt.draw(dataExt,eval(paramExt));  
                 return;
                 }
             }
