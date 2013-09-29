@@ -1,10 +1,3 @@
-<?php 
-require_once 'NAApiClient.php';
-require_once 'Config.php';
-require_once 'initClient.php';
-require_once 'menus.php';
-session_start(); 
-?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
   	<title>Stations Netatmo</title>
@@ -16,8 +9,12 @@ session_start();
     <link rel='stylesheet' type='text/css'  href='calendrierBleu.css' >
 
 <?php
-date_default_timezone_set("Europe/Paris");
-
+require_once 'NAApiClient.php';
+require_once 'Config.php';
+require_once 'initClient.php';
+require_once 'menus.php';
+session_start(); date_default_timezone_set($timezone);
+$cu = $Temperature_unit ? '°':' F';
 if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
 initClient();
 $client = $_SESSION['client'];
@@ -232,7 +229,7 @@ if($reloadData)
         echo "<script>alert('Quitter');</script>";
         echo $ex->getMessage()."\n";
         }
-    date_default_timezone_set("Europe/Paris");
+    date_default_timezone_set($timezone);
     $_SESSION['GraphiqueMesureInt'] = gzcompress(json_encode($meas1),2);
     $_SESSION['GraphiqueMesureExt'] = gzcompress(json_encode($meas),2);
     $_SESSION['timeLoad'] = time();
@@ -240,7 +237,7 @@ if($reloadData)
 else
     {$meas1 = json_decode(gzuncompress($_SESSION['GraphiqueMesureInt']),true);
     $meas =  json_decode(gzuncompress($_SESSION['GraphiqueMesureExt']),true);
-    date_default_timezone_set("Europe/Paris");  
+    date_default_timezone_set($timezone);  
     }
 $timeLoadData = $_SESSION['timeLoad'];
 $dateLoadData = date("H:i:s ",$timeLoadData);
@@ -248,17 +245,19 @@ $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam");
 $visupt = 0;
 
 function tipHTMLext2($idate,$tmax,$hum)
-	{return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	{global $cu;
+	return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '</table>';
 	}
 
 function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$dateminh,$datemaxh)
-	{return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td>'
+	{global $cu;
+	return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td>"
 	. '<td style=\"font-size: 12px;\">' . date('d/m/y H:i',$datemax) .'</tr>'
-	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td>'
+	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . "$cu</b></td>"
 	. '<td style=\"font-size: 12px; \">' . date('d/m/y H:i',$datemin) .'</tr>'
 	. '<tr><td><i>H_max</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$max_hum) . '%</b></td>'
 	. '<td style=\"font-size: 12px;\">' . date('d/m/y H:i',$datemaxh) .'</tr>'	
@@ -267,9 +266,10 @@ function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$date
 	. '</table>';
 	}
 function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
-	{return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
-	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . '°</b></td></tr>'
+	{global $cu;
+	return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
+	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . "$cu</b></td></tr>"
 	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
 	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
@@ -277,8 +277,9 @@ function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
 	. '</table>';
 	}
 function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise)
-	{return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . '°</b></td></tr>'
+	{global $cu;
+	return '<table><caption><b>' . $idate . '</b></caption>'
+	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
 	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
@@ -327,8 +328,8 @@ echo("
             		{if($ii < $num -1)++$ii; 
                 	else $break = 1;
             		//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
-            		$tmin = $meas[$key][0];
-            		$tmax = $meas[$key][1];
+            		$tmin = degree2($meas[$key][0]);
+            		$tmax = degree2($meas[$key][1]);
              		$min_hum = $meas[$key][2]; 
              		$max_hum = $meas[$key][3]; 
            			$iidate = $jour[$day] . date(" d/m/y ",$key);
@@ -361,7 +362,7 @@ else   //5 ou 30 minutes ou 3 heures
             	if(abs($key - $itime) < $inter*3) // mesures décalées
             		{if($ii < $num -1)++$ii;
                 	else $break = 1;           			
-            		$tmin = $meas[$key][0];
+            		$tmin = degree2($meas[$key][0]);
             		$hum = $meas[$key][1];  
             		$iidate = $jour[$day] . date(" d/m/y H:i",$key);         		           		
 					$tip = tipHTMLext2($iidate,$tmin,$hum);
@@ -423,8 +424,8 @@ if($inter > 3*60*60)	//1week,1day
             	if(abs($key - $itime) < 2*$inter) //changement d'horaire
             		{if($ii < $num -1)++$ii; 
                 	else $break = 1;       
-            		$tmin = $meas1[$key][0];
-            		$tmax = $meas1[$key][1];
+            		$tmin = degree2($meas1[$key][0]);
+            		$tmax = degree2($meas1[$key][1]);
                 	$hum = $meas1[$key][2];
                 	$co = $meas1[$key][3];
                 	$pres = intval($meas1[$key][4]+.5);
@@ -488,7 +489,7 @@ else  // 5 minutes, 30 minutes, 3 heures
             	if(abs($key - $itime) < 2*$inter) 
             		{if($ii < $num -1)++$ii; 
             	    else $break = 1;
-            		$tmin = $meas1[$key][0];
+            		$tmin = degree2($meas1[$key][0]);
                 	$hum = $meas1[$key][1];
                 	$co = $meas1[$key][2];
                 	$pres = intval($meas1[$key][3] + .5);

@@ -16,7 +16,9 @@ require_once 'AppliCommonPublic.php';
     return $txt;
     }   
 function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
-	{$station = $devices["station_name"];
+	{global $Temperature_unit;
+	$cu = $Temperature_unit ? '°':'F';
+	$station = $devices["station_name"];
 	$int_name = $devices["module_name"];
 	$ext_name = $devices["modules"][0]["module_name"];
 	$pres = intval($res[0]['Pressure']+.5);
@@ -25,12 +27,15 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	$dateExt = date('d/m/Y H:i',$res[1]['time']);
 	$dateMinMax = 'min:'.date('H:i',$dtmin).' max:'.date('H:i',$dtmax);
     // Qualité air
+/*    
     if(isset($devices['extra']))
         {$qa = $devices['extra']['air_quality']['data'][0]['value'][0][0];
         $polluant = $devices['extra']['air_quality']['data'][0]['value'][0][1];
         $gauge = drawGauge(95,$qa,1.5);
         }
-	
+*/	
+    $tint = degree2($res[0]['Temperature']);
+    $text = degree2($res[1]['Temperature']);    
 	echo("		
 	<table class='icone'>
 	<tr>
@@ -38,14 +43,14 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	</tr>
 	<tr>
 	<td style='height=40px;'><img src='icone/sun.png' ALT='outside' height='40'/></td> 
-	<td  class='c1' colspan='2' title=\"$dateExt\">{$res[1]['Temperature']}°</td>
+	<td  class='c1' colspan='2' title=\"$dateExt\">$text $cu</td>
 	<td></td>
 	<td><img src='icone/maison.png' ALT='insideside' height='40'/></td> 
-	<td class='c1' colspan='2' title=\"$dateInt\">{$res[0]['Temperature']}°</td>
+	<td class='c1' colspan='2' title=\"$dateInt\">$tint $cu</td>
 	</tr><tr>
 	
 	<td class='pl'>MinMax</td><td class='minimax' colspan='2' title=\"$dateMinMax\">
-	        ${tmin}°&nbsp;<span style='color:#bb0000;'>${tmax}°</span></td>
+	        ${tmin}$cu&nbsp;<span style='color:#bb0000;'>${tmax}$cu</span></td>
 	<td class='e'></td>
 	<td class='cl'>CO2</td>
 	<td class='c' title=\"$dateInt\">{$res[0]['CO2']} </td><td class='cunit'>ppm</td>

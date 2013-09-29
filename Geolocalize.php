@@ -1,7 +1,9 @@
 <?php
+
 function geolocalize($lat,$lng)
-	{
-    $url="http://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&sensor=false";    
+	{global $use_google_key,$google_key;   
+    if(!$use_google_key){$_SESSION['LogMsg'] .= $date.':geolocalize: No Google key <br>';return "BAD";}
+    $url="https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&sensor=false";    
     $ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "$url");
     curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -10,7 +12,9 @@ function geolocalize($lat,$lng)
 	$result = curl_exec($ch);
     curl_close($ch);
     $decode = json_decode($result, TRUE);
-    if($decode['status'] != "OK")return "BAD";
+    $txt = $decode['status'];
+    $date = date("D H:i s",time());
+    if($decode['status'] != "OK"){$_SESSION['LogMsg'] .= $date.':geolocalize: '.$txt.'<br>';return "BAD";}
     return explode(",", $decode['results'][0]['formatted_address']);
 	} 
 ?>	

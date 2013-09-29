@@ -1,10 +1,3 @@
-<?php
-require_once 'NAApiClient.php';
-require_once 'Config.php';
-require_once 'initClient.php';
-require_once 'menus.php';
-session_start();
-?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
 	<title>Stations Netatmo</title>
@@ -15,7 +8,12 @@ session_start();
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
-date_default_timezone_set("Europe/Paris");
+require_once 'NAApiClient.php';
+require_once 'Config.php';
+require_once 'initClient.php';
+require_once 'menus.php';
+session_start();date_default_timezone_set($timezone);
+$cu = $Temperature_unit ? '°':' F';
 initClient();
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices'];
@@ -175,7 +173,7 @@ if($maxMesures == 0)
     } 
 $visupt = "";
 if($maxMesures <= 48)$visupt = ",pointSize:3";	   
-date_default_timezone_set("Europe/Paris");
+date_default_timezone_set($timezone);
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
 	}    
@@ -211,8 +209,11 @@ echo("
             		$tmin0 = $tip = '';   
             		$key = $keys[$j][$ii[$j]];  
             		if(abs($key - $itime) < 2*$inter) //changement d'horaire
-            			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
-            			$tmin0 = $mesure[$j][$key][0];
+            			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
+            			if($selectMesure == 'T')
+            			    $tmin0 = degree2($mesure[$j][$key][0]);
+                        else
+            			    $tmin0 = $mesure[$j][$key][0];
             			$tip = tip($tmin0,$mesure[$j][$key][2]);
             			}        		
             		echo(",$tmin0,'$tip'"); 
@@ -250,8 +251,11 @@ echo("
             		$tmin0 = $tip = '';        		
             		$key = $keys[$j][$ii[$j]]; 
             		if(abs($key - $itime) < 2*$inter)
-            			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];            			
-            			$tmin0 = $mesure[$j][$key][1];
+            			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
+            			if($selectMesure == 'T')
+            			    $tmin0 = degree2($mesure[$j][$key][1]);
+                        else
+            			    $tmin0 = $mesure[$j][$key][1];
               			$tip = tip($tmin0,$mesure[$j][$key][3]);
           			}
             		echo(",$tmin0,'$tip'"); 
@@ -267,8 +271,8 @@ $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\
 $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
 $param .= ',tooltip: {isHtml: true},curveType:"function"';
 ?>
-colorMin =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
-colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
+colorMin =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
+colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
 <?php
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));

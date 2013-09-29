@@ -5,7 +5,7 @@ function refreshToken()
         {logMsg('NO refreshtoken');
         logout();
         }
-    date_default_timezone_set("Europe/Paris");
+    date_default_timezone_set($timezone);
     $token_url = "https://api.netatmo.net/oauth2/token";
     $postdata = http_build_query(array(
          							'grant_type' => "refresh_token",
@@ -102,8 +102,8 @@ function init($numStations)
     }
 
 function initClient()
-	{global $client_id,$client_secret,$test_username,$test_password;
-	date_default_timezone_set("Europe/Paris");
+	{global $client_id,$client_secret,$test_username,$test_password,$timezone;
+	date_default_timezone_set($timezone);
 	if(isset($_SESSION['expires_in']))  
 	    checkToken(); // seule action effectuer chaque fois
 	    
@@ -276,6 +276,7 @@ function logMsg($txt)
     } 
 function logout()
     {$path = dirname($_SERVER['PHP_SELF']).'/logout.php';
+    $_SESSION['path'] = $path;
     ?>
     <script>
     <?php echo("path = \"$path\";\n");?>
@@ -288,5 +289,15 @@ function alert($txt)
     {$txt = "'".$txt."'";
     echo("<script>alert($txt);\n</script>");
     }
-    
+function degree2($temperature)
+// conver celsius to fahrenheit if necessary
+    {global $Temperature_unit;
+    if(!isset($Temperature_unit) || $Temperature_unit)
+        $t = $temperature;
+    else
+        {$t =  intval($temperature*18+320.5);
+        $t /= 10;
+        }
+    return $t;
+    }
 ?>

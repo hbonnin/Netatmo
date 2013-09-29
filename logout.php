@@ -1,9 +1,10 @@
 <?php 
+require_once 'Config.php';
 require_once 'AppliCommonPublic.php';
 require_once 'NAApiClient.php';
 require_once 'initClient.php';
 session_start();
-date_default_timezone_set("Europe/Paris");
+date_default_timezone_set($timezone);
 $date = date("d:m:Y H:i",time());
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
@@ -27,7 +28,8 @@ if(isMobile())
 echo "<pre>";
 if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
     {print_r($_SESSION['LogMsg']);
-    echo("path={$_SESSION['path']} <br>");    
+    echo("path={$_SESSION['path']} <br>");   
+    echo("Temperature_unit=$Temperature_unit <br>");
     print_r($_SESSION['client']);echo "<br>";
     print_r($_SESSION['mydevices']);echo "<br>";
     }

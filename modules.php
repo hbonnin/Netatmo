@@ -14,7 +14,7 @@ require_once 'initClient.php';
 require_once 'menus.php';
 
 session_start();
-date_default_timezone_set("Europe/Paris");
+date_default_timezone_set($timezone);
 initClient();
 $client = $_SESSION['client'];
 // $stationNum station utilise
@@ -122,9 +122,11 @@ else
 
 $CO2 = 0;	
 $HTime = 1;
+$T =$T1 = 0;
 if($selectMesure == 'T')
     {$titre = 'Température ';
     $titre1 = 'Température ';
+    $T = $T1 = 1;
     if($inter >= 24*60*60)
         $type = 'min_temp,max_temp,date_min_temp,date_max_temp';
     else if($inter == 3*60*60)
@@ -156,6 +158,7 @@ else if($selectMesure == 'C')
     else 
         {$type = 'CO2,Temperature';$HTime = 0;
         $titre1 = 'Température ';
+        $T1 = 1;
         }
     $CO2 = 1;
     }    
@@ -288,7 +291,10 @@ echo("
             		$key = $keys[$j][$ii[$j]]; 
             		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
-            			    {$tmin0 = $mesure[$j][$key][0];
+            			    {if($T)
+            			        $tmin0 = degree2($mesure[$j][$key][0]);
+                            else
+            			        $tmin0 = $mesure[$j][$key][0];
             			    if($HTime)
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    else
@@ -333,7 +339,10 @@ echo("
             		$key = $keys[$j][$ii[$j]];  
             		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
-            			    {$tmin0 = $mesure[$j][$key][1];
+            			    {if($T1)
+                			    $tmin0 = degree2($mesure[$j][$key][1]);
+                			else
+                			    $tmin0 = $mesure[$j][$key][1];
               			    if($HTime)          			    
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    else

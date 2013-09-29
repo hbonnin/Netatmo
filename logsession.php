@@ -1,10 +1,12 @@
 <?php 
+require_once 'Config.php';
 require_once 'AppliCommonPublic.php';
 require_once 'NAApiClient.php';
 require_once 'initClient.php';
 session_start();
-date_default_timezone_set("Europe/Paris");
+date_default_timezone_set($timezone);
 echo "<pre>";
+echo("Temperature_unit = $Temperature_unit <br>");
 print_r($_SESSION['LogMsg']);
 echo("-------------------------------\n");
 $t = $_SESSION['timeToken'] + $_SESSION['expires_in'];

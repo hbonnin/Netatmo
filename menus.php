@@ -291,7 +291,7 @@ function drawMenuStation($h = '',$charts = 0)
 	}
 /* drawMenuCompare ******************************************************************************/
 function drawMenuCompare($h ='',$charts = 0)
-	{
+	{global $Temperature_unit;
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
 	$view = $_SESSION['viewCompare'];
@@ -355,17 +355,18 @@ function drawMenuCompare($h ='',$charts = 0)
 	</td></tr>
 		
 <?php
+        $cu = $Temperature_unit ? '°':' F';
         $txt = "<select name='selectMsesure'>";
         if($selectMesure == 'T')
-            $txt .="<option value='T' selected='selected'> T° </option>
+            $txt .="<option value='T' selected='selected'> T$cu </option>
     		    <option value='H'> H % </option>;
     		    <option value='P'> P mb </option>";
         else if($selectMesure == 'H')
-            $txt .="<option value='T'> T° </option>
+            $txt .="<option value='T'> T$cu </option>
     		    <option value='H' selected='selected'> H % </option>;
     		    <option value='P'> P mb </option>";
         else
-            $txt .="<option value='T'> T° </option>
+            $txt .="<option value='T'> T$cu </option>
     		    <option value='H'> H % </option>;
     		    <option value='P' selected='selected'> P mb </option>";
     	$txt .= "</select>";
@@ -461,7 +462,7 @@ function drawCharts($order='G')
 	}
 /* drawMenuModules ************************************************************************/	
 function drawMenuModules($h ='',$charts = 0)
-	{
+	{global $Temperature_unit;
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
     $stationNum = $_SESSION['stationId']; 
@@ -551,17 +552,18 @@ function drawMenuModules($h ='',$charts = 0)
 	<div class='fl' style ='height:5px;'></div>	
 	<div class='fr' style ='height:5px;'>
 <?php
+        $cu = $Temperature_unit ? '°':' F';
         $txt = "<select name='selectMsesure'>";
         if($selectMesure == 'T')
-            $txt .= "<option value='T' selected='selected'> T° </option>
+            $txt .= "<option value='T' selected='selected'> T$cu </option>
     		    <option value='H'  > H % </option>
     		    <option value='C'  > CO2 </option>";
         else if($selectMesure == 'H')
-            $txt .= "<option value='T'> T° </option>
+            $txt .= "<option value='T'> T$cu </option>
     		    <option value='H'  selected='selected'> H % </option>
     		    <option value='C'  > CO2 </option>  "; 
         else
-            $txt .="<option value='T'> T° </option>
+            $txt .="<option value='T'> T$cu </option>
     		    <option value='H' > H % </option>
     		    <option value='C'  selected='selected'  > CO2 </option>"; 
     	$txt .= "</select>";	    

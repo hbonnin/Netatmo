@@ -76,7 +76,7 @@ along with Netatmo PHP Graphics.  If not, see <http://www.gnu.org/licenses/>.
 <td style='text-align:left'><input type='password' name='password' maxlength='50' /></td>
 </tr><tr>
 <td>Save:</td>
-<td style='text-align:left'><input type='checkbox' name='saveCookie' checked = 'checked'Ò /></td>
+<td style='text-align:left'><input type='checkbox' name='saveCookie' checked = 'checked' /></td>
 </tr>
 
 </table> 

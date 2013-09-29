@@ -52,7 +52,7 @@ require_once 'initClient.php';
 require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
-date_default_timezone_set("Europe/Paris");
+date_default_timezone_set($timezone);
 
 initClient();
 $client = $_SESSION['client'];
@@ -83,6 +83,12 @@ for($i = 0;$i < $numStations;$i++)
     $place = $mydevices[$i]['address'];
     $int_name = $mydevices[$i]["module_name"];
 	$ext_name = $mydevices[$i]["modules"][0]["module_name"];
+	// Lever/Coucher du soleil
+	$Zenith = 90 + (50/60);
+	$lat = $mydevices[$i]['latlng']['latitude'];
+	$long = $mydevices[$i]['latlng']['longitude'];	
+	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2)." - ".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2);
+/*	
 	if(isset($devicelist["devices"][$i]['extra']))
         {$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
         $QA[$i] = $Q[0] . " ".$Q[1] ;
@@ -91,13 +97,16 @@ for($i = 0;$i < $numStations;$i++)
         }
     else 
 	    $QA[$i] ='';
-	if($place == "BAD")		
+*/	    
+	if($place == "BAD")	
     	$p = '<b>' . $mydevices[$i]['station_name'] . ' (' . $altitude . 'm)' . '</b><br>';
 	else
-    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm</font>)'; 
+    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm)'; 
+    $p .= "<br> <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;' /> $soleil </font>"; 
+
 
     $res = $last_mesures[$i]["modules"];
-	$temp = $res[0]['Temperature'];
+	$temp = degree2($res[0]['Temperature']);
 	$hum = $res[0]['Humidity'];
 	$co2 = $res[0]['CO2'];
 	$db  = $res[0]['Noise'];
@@ -107,30 +116,32 @@ for($i = 0;$i < $numStations;$i++)
 	$violet = "style='color:#007'";
 	
 	$tabINT = "<td class='name'>$int_name</td> <td $red>$temp</td> <td $green>$hum</td>  <td $orange>$co2</td> <td></td> <td $violet>$db</td>";	
-	$temp = $res[1]['Temperature'];
+	$temp = degree2($res[1]['Temperature']);
 	$hum = $res[1]['Humidity'];
 	$pres = intval($res[0]['Pressure'] + .5);
 	$tabEXT = "<td class='name'>$ext_name</td> <td $red>$temp</td> <td $green>$hum</td> <td></td> <td>$pres</td>";	
-
+    $cu = $Temperature_unit ? '°':'F';
     $label[$i]  = "<table class='bulle'>"
         .'<caption >'. $p .'</caption>'
-        ."<tr><th style='width:60px;''></th> <th>T°</th> <th>H%</th> <th>Co2</th> <th>P mb</th> <th>Db</th></tr>"
+        ."<tr><th style='width:60px;''></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>P mb</th> <th>Db</th></tr>"
         .'<tr>' . $tabINT .'</tr>'
         .'<tr>' . $tabEXT .'</tr>';
         
         $nModule = count($res);
         for($j = 2; $j < $nModule ; $j++)
             {$name = $res[$j]["module_name"];
-            $temp = $res[$j]["Temperature"];
+            $temp = degree2($res[$j]["Temperature"]);
             $hum = $res[$j]["Humidity"];
             $co2 = $res[$j]["CO2"];		
             $tabMOD = "<tr><td class='name'>$name</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td></tr>";
             $label[$i] = $label[$i] . '<tr>' . $tabMOD .'</tr>';        
             }
     $label[$i] = $label[$i] . '</table>';
-    if(!empty($QA[$i]))
-        $label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";
-    $slabel[$i] = $res[1]['Temperature'] . '°';	  // usilise pour les marker    	  
+    //if(!empty($QA[$i]))$label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";
+    if($Temperature_unit)
+        $slabel[$i] = degree2($res[1]['Temperature']) . '°';	  // usilise pour les marker    	  
+    else
+        $slabel[$i] = degree2($res[1]['Temperature']) . ' F';	  // usilise pour les marker    	  
 	}	
 
 ?>
@@ -195,7 +206,7 @@ for($i = 0;$i < $numStations;$i++)
     var center = new google.maps.LatLngBounds(LatLng[0]);
   	for(i=1;i < num;i++)
     	center.extend(LatLng[i]);
-    	       		
+//temperatureUnits:FAHRENHEIT    	       		
 	var mapOptions = {
         zoom: 4,
         center: center.getCenter(),
@@ -235,9 +246,16 @@ for($i = 0;$i < $numStations;$i++)
   	map.controls[google.maps.ControlPosition.TOP_LEFT].push(markerControlDiv);
 
   	// add weather layer
-	var weatherLayer = new google.maps.weather.WeatherLayer({
- 	 temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS
-	});
+<?php
+    if($Temperature_unit)
+        echo("var weatherLayer = new google.maps.weather.WeatherLayer({
+         temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS
+        });");
+	else
+        echo("var weatherLayer = new google.maps.weather.WeatherLayer({
+         temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
+        });");	
+?>	
 	weatherLayer.setMap(map);	  			
 
 	function HomeControl(controlDiv, map) {
@@ -383,8 +401,8 @@ for($i = 0;$i < $numStations;$i++)
     	, "module_id" => $module_id);
     $tmesure = $client->api("getmeasure", "POST", $params);	
     if(count($tmesure))
-    	{$tmin[$i] = $tmesure[0]['value'][0][0];   
-    	$tmax[$i] = $tmesure[0]['value'][0][1];
+    	{$tmin[$i] = degree2($tmesure[0]['value'][0][0]);   
+    	$tmax[$i] = degree2($tmesure[0]['value'][0][1]);
     	$dtmin[$i] = $tmesure[0]['value'][0][2];
     	$dtmax[$i] = $tmesure[0]['value'][0][3];
     	}
