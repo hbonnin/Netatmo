@@ -66,6 +66,7 @@ function init($numStations)
         $_SESSION['date_endP'] = 0;        
         $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
+        $_SESSION['path'] = dirname($_SERVER['PHP_SELF']);
         $MenuInterval = array ( "G" => 4,
                             "C"  => 1,
                             "M"  => 3, 
@@ -276,7 +277,6 @@ function logMsg($txt)
     } 
 function logout()
     {$path = dirname($_SERVER['PHP_SELF']).'/logout.php';
-    $_SESSION['path'] = $path;
     ?>
     <script>
     <?php echo("path = \"$path\";\n");?>
