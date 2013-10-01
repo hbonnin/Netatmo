@@ -16,7 +16,7 @@ require_once 'AppliCommonPublic.php';
     return $txt;
     }   
 function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
-	{global $Temperature_unit;
+	{$Temperature_unit = $_SESSION['Temperature_unit'];
 	$cu = $Temperature_unit ? '°':'F';
 	$station = $devices["station_name"];
 	$int_name = $devices["module_name"];

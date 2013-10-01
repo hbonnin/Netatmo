@@ -14,11 +14,12 @@ require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 session_start(); date_default_timezone_set($timezone);
-$cu = $Temperature_unit ? '°':' F';
+
 if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
 initClient();
 $client = $_SESSION['client'];
-
+$Temperature_unit = $_SESSION['Temperature_unit'];
+$cu = $Temperature_unit ? '°':' F';
 if(isset($_POST['station'])) 
     $stationId = $_POST['station'];
 else if(isset($_SESSION['stationId']))

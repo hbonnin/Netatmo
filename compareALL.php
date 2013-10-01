@@ -13,11 +13,12 @@ require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 session_start();date_default_timezone_set($timezone);
-$cu = $Temperature_unit ? '°':' F';
+
 initClient();
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices'];
-
+$Temperature_unit = $_SESSION['Temperature_unit'];
+$cu = $Temperature_unit ? '°':' F';
 date_default_timezone_set("UTC");
 
 if(isset($_POST["date0"]))  

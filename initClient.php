@@ -67,6 +67,7 @@ function init($numStations)
         $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $_SESSION['path'] = dirname($_SERVER['PHP_SELF']);
+        $client = $_SESSION['client'];     
         $MenuInterval = array ( "G" => 4,
                             "C"  => 1,
                             "M"  => 3, 
@@ -218,7 +219,10 @@ function initClient()
 		$mydevices = createDevicelist($devicelist);
 		$_SESSION['mydevices'] = $mydevices;	
 		init($numStations);	
-		}	 	
+		}	 
+	$user = $client->api("getuser", "POST");
+    $Temperature_unit = 1 - $user['administrative']['unit'];
+    $_SESSION['Temperature_unit'] = $Temperature_unit;	
 	}
 function createViewmodules()
     {$mydevices = $_SESSION['mydevices']; 
@@ -291,8 +295,9 @@ function alert($txt)
     }
 function degree2($temperature)
 // conver celsius to fahrenheit if necessary
-    {global $Temperature_unit;
-    if(!isset($Temperature_unit) || $Temperature_unit)
+    {//global $Temperature_unit;
+    $Temperature_unit = $_SESSION['Temperature_unit'];
+    if($Temperature_unit)
         $t = $temperature;
     else
         {$t =  intval($temperature*18+320.5);

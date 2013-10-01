@@ -59,6 +59,7 @@ $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 
 $numStations = $mydevices["num"];
 $devicelist = getDevicelist();
+$Temperature_unit = $_SESSION['Temperature_unit'];
 //echo "<pre>";
 //print_r($devicelist);
 //echo "</pre>";

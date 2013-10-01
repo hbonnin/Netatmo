@@ -6,5 +6,4 @@ $test_password= ""; // Netatmo password
 $google_key = "GOOGLE_KEY";
 $use_google_key = 0;  //1 to use the google key
 $timezone = "Europe/Paris"; // change to your timeznone
-$Temperature_unit = 1; // 0-FAHRENHEIT 1-CELSIUS
 ?>

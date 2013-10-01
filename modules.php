@@ -17,6 +17,7 @@ session_start();
 date_default_timezone_set($timezone);
 initClient();
 $client = $_SESSION['client'];
+$Temperature_unit = $_SESSION['Temperature_unit'];
 // $stationNum station utilise
 $stationNum = $_GET['stationNum']; // toujours défini
 $changedSation = false;
