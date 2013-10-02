@@ -52,7 +52,6 @@ require_once 'initClient.php';
 require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
-require_once 'moonphase.php';
 require_once 'moontime.php';
 
 date_default_timezone_set($timezone);
@@ -63,9 +62,6 @@ $mydevices = $_SESSION['mydevices'];
 $numStations = $mydevices["num"];
 $devicelist = getDevicelist();
 $Temperature_unit = $_SESSION['Temperature_unit'];
-//echo "<pre>";
-//print_r($devicelist);
-//echo "</pre>";
 $last_mesures = getLastMeasures($devicelist);
 $slabel = array($numStations);
 $label = array($numStations);
@@ -83,9 +79,11 @@ if($mydevices['address'] == 0)
 	}
 //Creation des InfoWindow
 // moon phase
-$moon = new moon();
-$moon->set("date", date("Y-m-d"));
-$moonPhase = 100 - $moon->get_phase_percent();
+$date = strtotime(date("Y-m-d"));
+$moonPhase = ($date - 603240) / 2551392;
+$moonPhase -= (int) $moonPhase;
+$moonPhase = 100 - round($moonPhase * 100);
+
 $day = idate('d');
 $month = idate('m');
 $year = idate('Y');
