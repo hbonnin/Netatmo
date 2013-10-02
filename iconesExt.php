@@ -52,6 +52,9 @@ require_once 'initClient.php';
 require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
+require_once 'moonphase.php';
+require_once 'moontime.php';
+
 date_default_timezone_set($timezone);
 
 initClient();
@@ -79,6 +82,14 @@ if($mydevices['address'] == 0)
 	$_SESSION['mydevices'] = $mydevices;	
 	}
 //Creation des InfoWindow
+// moon phase
+$moon = new moon();
+$moon->set("date", date("Y-m-d"));
+$moonPhase = 100 - $moon->get_phase_percent();
+$day = idate('d');
+$month = idate('m');
+$year = idate('Y');
+
 for($i = 0;$i < $numStations;$i++)
 	{$altitude = $mydevices[$i]['latlng']['altitude'];
     $place = $mydevices[$i]['address'];
@@ -88,7 +99,11 @@ for($i = 0;$i < $numStations;$i++)
 	$Zenith = 90 + (50/60);
 	$lat = $mydevices[$i]['latlng']['latitude'];
 	$long = $mydevices[$i]['latlng']['longitude'];	
-	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2)." - ".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2);
+	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2)."-".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2);
+    // Lever/Coucher lune
+    $moon = new moontime();
+    $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long); 
+    $moon = date("H:i",$ret->moonrise) . '-'. date("H:i",$ret->moonset);
 /*	
 	if(isset($devicelist["devices"][$i]['extra']))
         {$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
@@ -103,8 +118,9 @@ for($i = 0;$i < $numStations;$i++)
     	$p = '<b>' . $mydevices[$i]['station_name'] . ' (' . $altitude . 'm)' . '</b><br>';
 	else
     	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm)'; 
-    $p .= "<br> <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;' /> $soleil </font>"; 
-
+// sun and moon
+    $p .= "<br> <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;' /> $soleil "; 
+    $p .= "<br><img src='icone/cmoon.png' ALT='moon' style='height:15px;vertical-align:middle;'/> $moonPhase% $moon</font>";
 
     $res = $last_mesures[$i]["modules"];
 	$temp = degree2($res[0]['Temperature']);
