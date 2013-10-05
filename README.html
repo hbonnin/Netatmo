@@ -7,6 +7,7 @@
 
 <p style='font-size:13px'>
 This program uses the Netatmo php sdk and some Google development tools for the graphics.<br>
+It also use some other programs to compute data about the moon.<br>
 The server needs to have a php version >= 5, with curl and json enabled.<br>
 If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.fr/Netatmo/">Netatmo</A>.
 </p>
@@ -33,9 +34,13 @@ and interactively draw graphics.
 		(30 minutes, 3 hours, 1 day or 1 week), 
 </li>
 </ul>
-<h3>Google map</h3>
+<h3>Google map mouse actions</h3>
 <ul>
-<li>	Move over a <b>green marker</b>, to display the measures of a station.</li>
+<li>	Move over a <b>green marker</b>, to display the measures of a station and all its modules and:</li>
+		<ul>
+			<li> The sunrise and sunset are computed with a zenith of 90.8333 (astronomical time).</li>
+			<li> The phase of the moon (0-new moon 25-first quarter 50-full moon  100-new moon).</li>
+		</ul>
 <li>	Left click on a <b>green marker</b> to zoom on the marker .</li>
 <li>    Right click on a <b>green marker</b> to hide the marker .</li>
 <li>	Left click on a <b>meteo marker</b> to get weather forecast.</li>
@@ -83,7 +88,8 @@ and interactively draw graphics.
 <ul>
 <li>	If you use index.php and your user id and password are not in Config.php, you are logged through Netatmo.</li>
 <li>	If you use indexLogin.php your user name and password are sent in a not crypted connection.</li>
-<li>	The temperatures are displayed using the unit that you defined on Netatmo site.</li>
+<li>	The temperatures are displayed using your Netatmo settings .</li>
+<li>	The language is defined by your Netatmo settings (french/english).</li>
 </ul>
 
 <h3>Install</h3>

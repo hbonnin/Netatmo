@@ -13,6 +13,7 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
+require_once 'translate.php';
 session_start(); date_default_timezone_set($timezone);
 
 if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
@@ -248,8 +249,8 @@ $visupt = 0;
 function tipHTMLext2($idate,$tmax,$hum)
 	{global $cu;
 	return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
-	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '<tr><td><i>'.tr("Température").'</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
+	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '</table>';
 	}
 
@@ -271,20 +272,20 @@ function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
 	return '<table><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . "$cu</b></td></tr>"
-	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
-	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
-	. '<tr><td><i>Noise max</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
+	. '<tr><td><i>'.tr("Pression").'</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
+	. '<tr><td><i>'.tr("Bruit").' max</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
 	. '</table>';
 	}
 function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise)
 	{global $cu;
 	return '<table><caption><b>' . $idate . '</b></caption>'
-	. '<tr><td><i>Température</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
-	. '<tr><td><i>Humidité</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
+	. '<tr><td><i>'.tr("Température").'</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
+	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
-	. '<tr><td><i>Pression</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
-	. '<tr><td><i>Noise</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
+	. '<tr><td><i>'.tr("Pression").'</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
+	. '<tr><td><i>'.tr("Bruit").'</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
 	. '</table>';
 	}
 /*********************************************************************************************************/
@@ -314,8 +315,8 @@ echo("
         	dataExt.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
         	dataExt.addColumn('number', 'Tmax'); 
         	dataExt.addColumn('number', 'Tmin');     	  
-        	dataExt.addColumn('number', 'Humidity min');  
-        	dataExt.addColumn('number', 'Humidity max');  
+        	dataExt.addColumn('number', 'Hum min');  
+        	dataExt.addColumn('number', 'Hum max');  
          	dataExt.addColumn('number', '');   	  
 ");
 			
@@ -333,7 +334,7 @@ echo("
             		$tmax = degree2($meas[$key][1]);
              		$min_hum = $meas[$key][2]; 
              		$max_hum = $meas[$key][3]; 
-           			$iidate = $jour[$day] . date(" d/m/y ",$key);
+           			$iidate = tr($jour[$day]) . date(" d/m/y ",$key);
 					$tip = tipHTMLext($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
             		}
                 echo("dataExt.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
@@ -350,7 +351,7 @@ else   //5 ou 30 minutes ou 3 heures
 	          dataExt.addColumn('string', 'Date');
         	  dataExt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  	          
         	  dataExt.addColumn('number', 'Temp.'); 
-        	  dataExt.addColumn('number', 'Humidity');  
+        	  dataExt.addColumn('number', 'Hum');  
          	  dataExt.addColumn('number', '');   	  
 	");
 
@@ -365,7 +366,7 @@ else   //5 ou 30 minutes ou 3 heures
                 	else $break = 1;           			
             		$tmin = degree2($meas[$key][0]);
             		$hum = $meas[$key][1];  
-            		$iidate = $jour[$day] . date(" d/m/y H:i",$key);         		           		
+            		$iidate = tr($jour[$day]) . date(" d/m/y H:i",$key);         		           		
 					$tip = tipHTMLext2($iidate,$tmin,$hum);
             		}
                 else if(($key - $itime) < 0)
@@ -382,10 +383,11 @@ else   //5 ou 30 minutes ou 3 heures
                 if($eraseExt[$i])echo("dataExt.removeColumn($i);\n");	
            	
 	}
-	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'. $tinter .' '.$num.' mesures)"';       	                    	
+	$tmesure = tr("mesure").'s';
+	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'. tr($tinter) .' '.$num." $tmesure".')"';       	                    	
 	
 /*********************************************************************************************************/
-
+$tnoise = tr("Bruit");
  			$keys= array_keys($meas1);
 			$num = count($keys);
 			$itime = $keys[0];  
@@ -399,10 +401,10 @@ if($inter > 3*60*60)	//1week,1day
         	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  dataInt.addColumn('number', 'Tmax');
         	  dataInt.addColumn('number', 'Tmin');
-        	  dataInt.addColumn('number', 'Humidity min');
+        	  dataInt.addColumn('number', 'Hum min');
         	  dataInt.addColumn('number', 'CO2 max');
-        	  dataInt.addColumn('number', 'Pressure min');
-        	  dataInt.addColumn('number', 'Noise max');  
+        	  dataInt.addColumn('number', 'Pres min');
+        	  dataInt.addColumn('number', '$tnoise max');  
           	  dataInt.addColumn('number', '');   	         	    
 	");
 			// Compute Max et Min pression	
@@ -432,7 +434,7 @@ if($inter > 3*60*60)	//1week,1day
                 	$pres = intval($meas1[$key][4]+.5);
                 	$noise = $meas1[$key][5];                	
  //$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
-             		$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);            		
+             		$iidate = tr($jour[$day]) . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);            		
                 	$tip = tipHTMLint6($iidate,$tmax,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}           
                 	if($xp)$pres = intval(($pres-$MinPression)*$xp + .5);
@@ -452,10 +454,10 @@ else  // 5 minutes, 30 minutes, 3 heures
 	          dataInt.addColumn('string', 'Date');
         	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  dataInt.addColumn('number', 'Temp.');
-        	  dataInt.addColumn('number', 'Humidity');
+        	  dataInt.addColumn('number', 'Hum');
         	  dataInt.addColumn('number', 'CO2 max');
-        	  dataInt.addColumn('number', 'Pressure min');
-        	  dataInt.addColumn('number', 'Noise max');  
+        	  dataInt.addColumn('number', 'Pres min');
+        	  dataInt.addColumn('number', '$tnoise max');  
           	  dataInt.addColumn('number', '');   	         	    
 	    ");	
 	else
@@ -463,10 +465,10 @@ else  // 5 minutes, 30 minutes, 3 heures
 	          dataInt.addColumn('string', 'Date');
         	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
         	  dataInt.addColumn('number', 'Temp.');
-        	  dataInt.addColumn('number', 'Humidity');
+        	  dataInt.addColumn('number', 'Hum');
         	  dataInt.addColumn('number', 'CO2');
-        	  dataInt.addColumn('number', 'Pressure');
-        	  dataInt.addColumn('number', 'Noise');  
+        	  dataInt.addColumn('number', 'Pres');
+        	  dataInt.addColumn('number', '$tnoise');  
           	  dataInt.addColumn('number', '');   	         	    
 	    ");
 
@@ -495,7 +497,7 @@ else  // 5 minutes, 30 minutes, 3 heures
                 	$co = $meas1[$key][2];
                 	$pres = intval($meas1[$key][3] + .5);
                 	$noise = $meas1[$key][4];  
-           			$iidate = $jour[$day] . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);
+           			$iidate = tr($jour[$day]) . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);
                 	$tip = tipHTMLint5($iidate,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}             
                 	if($xp)$pres = intval(($pres-$MinPression)*$xp + .5);
@@ -517,7 +519,8 @@ else  // 5 minutes, 30 minutes, 3 heures
       	    for($i = 8 ;$i >= 0;--$i)
                 if($eraseInt[$i])echo("dataInt.removeColumn($i);\n");	
             } 
-	$titleInt =  '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. $tinter.' '.$num.' mesures @ '.$dateLoadData.')"';       	                    	
+    $tmesure = tr("mesure").'s';
+	$titleInt =  '"' .$stat_name. '-' .$int_name. '   (' .$beg. ' - '.$end.' @'. tr($tinter).' '.$num." $tmesure @ ".$dateLoadData.')"';       	                    	
 
     echo("inter = $inter;\n");  
     echo("visupt = $visupt;\n");      

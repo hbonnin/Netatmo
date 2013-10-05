@@ -12,7 +12,7 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
-
+require_once 'translate.php';
 session_start();
 date_default_timezone_set($timezone);
 initClient();
@@ -359,13 +359,14 @@ echo("
                 }while($itime <= $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				               
 /**********************************************************************************************/
+            $tmesure = tr("mesure").'s';
              if($inter > 30*60)    
-                {$title = $nameStation.': '.$titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
-                $title1 = $nameStation.': '.$titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
+                {$title = $nameStation.': '.$titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                $title1 = $nameStation.': '.$titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
                 }
             else
-                {$title = $nameStation.': '.$titre .  ' ('.$beg. ' - ' .$end.' @'. $tinter . ' '.$numKeys.' mesures)'; 
-                $title1 = $nameStation.': '.$titre1.' ('.$beg.' -'.$end. ' @' . $tinter . ' '.$numKeys.' mesures)'; 
+                {$title = $nameStation.': '.$titre .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                $title1 = $nameStation.': '.$titre1.' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
                 }
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";

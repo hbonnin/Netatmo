@@ -223,6 +223,7 @@ function initClient()
 	$user = $client->api("getuser", "POST");
     $Temperature_unit = 1 - $user['administrative']['unit'];
     $_SESSION['Temperature_unit'] = $Temperature_unit;	
+    $_SESSION['lang'] = $user['administrative']['lang'];
 	}
 function createViewmodules()
     {$mydevices = $_SESSION['mydevices']; 
@@ -305,4 +306,16 @@ function degree2($temperature)
         }
     return $t;
     }
+function tr($txt)
+    {global $trans;
+    if(!isset($trans[$txt]))return $txt;
+    switch($_SESSION['lang'])
+        {case 'fr-FR': return $txt;
+                        break;
+        case 'en-US':  return $trans[$txt][0];
+                        break;
+        default:        return $txt;
+                        break;
+        }    
+    }    
 ?>

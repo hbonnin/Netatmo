@@ -23,7 +23,7 @@ function drawSelectInter($menu)
     $selected = min($iselect,$interval[$menu]);
     for($i = 0; $i <= $interval[$menu];$i++)
         {$val = $interval['opt'][$i][0];
-        $txt = $interval['opt'][$i][1];
+        $txt = tr($interval['opt'][$i][1]);
         $sel ='';
         if($i == $selected)$sel = "selected='selected'";
         echo "<option value="."'" .$val."' ". $sel.">". $txt.' </option>'."\n";       
@@ -113,22 +113,22 @@ function drawLogoutBack()
 	<tr>
 	<td>  
         <form method='post' action='graphiques.php'>
-		<input type='submit' class='submit' value="Graphiques d'une station" />
+		<input type='submit' class='submit' value='<?php echo tr("Graphiques d'une station");?>' />
 	</form>
 	</td>
 	<td>
 	    <form method='post' action="modules.php?stationNum=<?php echo $stationId; ?>">
-	    <input type='submit' class='submit' value="Modules d'une station"  />
+	    <input type='submit' class='submit' value='<?php echo tr("Modules d'une station");?>'  />
 	    </form>
 	</td>
     <td>
         <form method='post' action='compareALL.php'>
-		<input type='submit' class='submit' value="Comparaison de stations" />
+		<input type='submit' class='submit' value='<?php echo tr("Comparaison de stations");?>' />
 	</form>
 	</td>
 	<td>
 	    <form method='post' action='iconesExt.php'>
-    	<input type='submit' class='submit' value="Menu principal"/>
+    	<input type='submit' class='submit' value='<?php echo tr("Menu principal");?>'/>
     	</form>
 	</td>
 	<td>
@@ -136,7 +136,7 @@ function drawLogoutBack()
 	</td>	
 	<td>
 	<form action='logout.php' method='post'>
-	<input type='submit' class='submit' value='Logout' style='color:#900; ' />	
+	<input type='submit' class='submit' value='<?php echo tr("Quitter");?>' style='color:#900; ' />	
 	</form>	
 	</td>
 	</tr>
@@ -211,25 +211,25 @@ function drawMenuStation($h = '',$charts = 0)
     
     <tr>
     <td class='title' style='height:30px;  vertical-align:bottom;'>
-    <div class='f' style='height:30px;'>Graphiques d&#39;une station
+    <div class='f' style='height:30px;'><?php echo tr("Graphiques d'une station");?>
     </div></td></tr>	
 
 	<tr>
 	<td class='g'>
-	<div class='fl'>Début</div>
+	<div class='fl'><?php echo tr("Début");?></div>
 	<div class='fr'>
     <input class="date" id="id_date0" type="text" name="date0" value='<?php echo($datebeg); ?>'  onclick="ds_sh(this,0);">
     </div></td></tr>
       
 	<tr>
 	<td class='g'>
-	<div class='fl'>Fin</div>	
+	<div class='fl'><?php echo tr("Fin");?></div>	
 	<div class='fr'>
 	<input class='date' id='id_date1'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
 	</div></td></tr>
 	<tr>
 	<td class='g'>
-	<div class='fl'>Fréquence</div>	
+	<div class='fl'><?php echo tr("Fréquence");?></div>	
 	<div class='fr'>
 	<select name='select'>
 <?php	
@@ -248,7 +248,7 @@ function drawMenuStation($h = '',$charts = 0)
 	    <tr>
 		<td class='l'>
 		    <?php
-		    $select = array("Temp","Humidity","CO2","Pressure","Noise");
+		    $select = array("Temp",tr("Humidité"),"CO2",tr("Pression"),tr("Bruit"));
 		  	echo("<table class='chk'>\n");
 		    for($i = 0;$i < 5;$i++)
 			    {if($selectMesures[$i])
@@ -280,7 +280,7 @@ function drawMenuStation($h = '',$charts = 0)
 	<tr>
 	<td class='g'  style='height:20px;'>
 	<div class='f'  style='height:20px;'>	
-	<input type='submit' class='g'>	
+	<input type='submit' value='<?php echo tr("Envoyer");?>' class='g'>	
 	</div>
 	<!--<div.clear></div>-->
 	</td></tr>
@@ -321,26 +321,26 @@ function drawMenuCompare($h ='',$charts = 0)
     
     <tr>
     <td class='title' style='height:30px; vertical-align:bottom;'>
-    <div class='f' style='height:30px;'>Comparaison de stations
+    <div class='f' style='height:30px;'><?php echo tr("Comparaison de stations");?>
     </div></td></tr>	
 
 	<tr>
 	<td class='g'>
-	<div class='fl'>Début</div>
+	<div class='fl'><?php echo tr("Début");?></div>
 	<div class='fr'>
 	<input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'>
     </div></td></tr>
       
 	<tr>
 	<td class='g'>
-	<div class='fl'>Fin</div>	
+	<div class='fl'><?php echo tr("Fin");?></div>	
 	<div class='fr'>
 	<input class='date' type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
 	</div></td></tr>
 
 	<tr>
 	<td class='g'>
-	<div class='fl'><span>Fréquence</span></div>	
+	<div class='fl'><span><?php echo tr("Fréquence");?></span></div>	
 	<div class='fr'>
 	<select name='select'>
 <?php	
@@ -397,7 +397,7 @@ function drawMenuCompare($h ='',$charts = 0)
 	<tr>
 	<td class='g'  style='height:20px;'>
 	<div class='f' style='height:20px;'>	
-	<input type='submit' class='g'>	
+	<input type='submit' value='<?php echo tr("Envoyer");?>' class='g'>	
 	<!--<span.clear></span>	-->
 	</div>
 	</td></tr>
@@ -499,7 +499,7 @@ function drawMenuModules($h ='',$charts = 0)
     
     <tr>
     <td class='title' style='height:30px; vertical-align:bottom;'>
-    <div class='f' style='height:30px;'>Modules d&#39;une station
+    <div class='f' style='height:30px;'><?php echo tr("Modules d'une station");?>
     </div></td></tr>	
 
 	<tr>
@@ -523,21 +523,21 @@ function drawMenuModules($h ='',$charts = 0)
 
 	<tr>
 	<td class='g'>
-	<div class='fl'>Début</div>
+	<div class='fl'><?php echo tr("Début");?></div>
 	<div class='fr'>
 	<input class='date' type='text' name='date0' value='<?php echo($datebeg); ?>' onclick='ds_sh(this,0);'>
     </div></td></tr>
       
 	<tr>
 	<td class='g'>
-	<div class='fl'>Fin</div>	
+	<div class='fl'><?php echo tr("Fin");?></div>	
 	<div class='fr'>
 	<input class='date' type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
 	</div></td></tr>
 
 	<tr>
 	<td class='g'>
-	<div class='fl'><span>Fréquence</span></div>	
+	<div class='fl'><span><?php echo tr("Fréquence");?></span></div>	
 	<div class='fr'>
 	<select name='select'>
 <?php	
@@ -597,7 +597,7 @@ function drawMenuModules($h ='',$charts = 0)
 	<tr>
 	<td class='g' style='height:20px;'>
 	<div class='f' style='height:20px;'>	
-	<input type='submit' class='g'>	
+	<input type='submit'  value='<?php echo tr("Envoyer");?>' class='g'>	
 	<!--<span.clear></span>	-->
 	</div>
 	</td></tr>

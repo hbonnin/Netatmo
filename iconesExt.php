@@ -53,6 +53,8 @@ require_once 'Geolocalize.php';
 require_once 'fill.php';
 require_once 'menus.php';
 require_once 'moontime.php';
+require_once 'MoonPhase.php';
+require_once 'translate.php';
 
 date_default_timezone_set($timezone);
 
@@ -79,11 +81,17 @@ if($mydevices['address'] == 0)
 	}
 //Creation des InfoWindow
 // moon phase
+/*
 $date = strtotime(date("Y-m-d"));
 $moonPhase = ($date - 603240) / 2551392;
 $moonPhase -= (int) $moonPhase;
 $moonPhase = 100 - round($moonPhase * 100);
-
+*/
+$moonphase = new MoonPhase();
+$phase = intval($moonphase->phase()*27 +.5);
+$imgnum = sprintf('%1$02d',$phase);
+$moonimg = "'".'icone/Moon/MoonDay'.$imgnum.'.png'."'";
+$moonpercent = intval($moonphase->phase()*1000)/10;
 $day = idate('d');
 $month = idate('m');
 $year = idate('Y');
@@ -118,7 +126,7 @@ for($i = 0;$i < $numStations;$i++)
     	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm)'; 
 // sun and moon
     $p .= "<br> <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;' /> $soleil "; 
-    $p .= "<br><img src='icone/cmoon.png' ALT='moon' style='height:15px;vertical-align:middle;'/> $moonPhase% $moon</font>";
+    $p .= "<br><img src=$moonimg ALT='moon' style='height:25px;vertical-align:middle;'/> $moon $moonpercent%</font>";
 
     $res = $last_mesures[$i]["modules"];
 	$temp = degree2($res[0]['Temperature']);
@@ -447,6 +455,7 @@ echo("</tr></table>");
 <!-- trace des menus et de la Google map -->
 
 <table class='container'>
+
 <tr>
     <td class='container'>
         <?php
@@ -483,6 +492,7 @@ echo("</tr></table>");
         ?>	
     </td>
 </tr>
+
 </table>
 
 <?php  drawLogoutBack(); ?>

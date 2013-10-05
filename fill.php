@@ -35,7 +35,10 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
         }
 */	
     $tint = degree2($res[0]['Temperature']);
-    $text = degree2($res[1]['Temperature']);    
+    $text = degree2($res[1]['Temperature']); 
+    $thum = tr('Humidité');
+    $tson = tr('Son');
+    $tpression = tr('Pression');
 	echo("		
 	<table class='icone'>
 	<tr>
@@ -56,17 +59,17 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	<td class='c' title=\"$dateInt\">{$res[0]['CO2']} </td><td class='cunit'>ppm</td>
 	</tr><tr>
 
-	<td class='hl'>Humidité</td>
+	<td class='hl'>$thum</td>
 	<td class='h' title=\"$dateExt\">{$res[1]['Humidity']} </td><td class='hunit'>%</td>
 	<td class='e'></td>	
-	<td class='hl'>Humidité</td>
+	<td class='hl'>$thum</td>
 	<td class='h' title=\"$dateInt\">{$res[0]['Humidity']} </td><td class='hunit'> %</td>
 	</tr><tr>
 	
-	<td class='pl'>Pression</td>
+	<td class='pl'>$tpression</td>
 	<td class='p' title=\"$dateInt\">{$pres} </td><td class='punit'>mb</td>
 	<td class='e'></td>
-	<td class='nl'>Noise</td>
+	<td class='nl'>$tson</td>
 	<td class='n' title=\"$dateInt\">{$res[0]['Noise']}</td><td class='nunit'> db</td>
 	</tr>
 	");
@@ -95,11 +98,11 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
     $numStations = count($res) ; 
     for($i = 0;$i < $numStations;$i++)
         $nameStations[$i] = $res[$i]['module_name'];
-
+$tinfo = tr("Autres informations");
 echo("
 	<tr><td class='tooltip' colspan='7'>
 		<a href='#' class='tooltip'>
-  		Autres informations:		
+  		$tinfo:		
         <div >
         <table class='info'>
         <tr><td style='width:90px;'>$nameStations[0]</td>

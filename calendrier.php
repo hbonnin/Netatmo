@@ -1,6 +1,8 @@
 <?php  ?>
 <script>
 <?php  
+require_once 'translate.php';
+
 $dateend  = $_SESSION['dateend'];
 echo("var dateend = \"$dateend\";");
 $today = date("d/m/Y",time());
@@ -61,25 +63,37 @@ function ds_echo(t) {
 }
 
 var ds_element; // Text Element...
-
+/*
 var ds_monthnames = [
 'Janvier', 'F&eacutevrier', 'Mars', 'Avril', 'Mai', 'Juin',
 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre'
 ]; // You can translate it for your language.
-
 var ds_daynames = [
 'Dim', 'Lun', 'Mar', 'Me', 'Jeu', 'Ven', 'Sam'
 ]; // You can translate it for your language.
+*/
+<?php
+    switch($_SESSION['lang'])
+        {case 'fr-FR': echo("var ds_daynames = ['Dim', 'Lun', 'Mar', 'Me', 'Jeu', 'Ven', 'Sam']; ");
+                        echo("var ds_monthnames = ['Janvier', 'F&eacutevrier', 'Mars', 'Avril', 'Mai', 'Juin','Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre'];");
+                        break;
+        case 'en-US':  echo("var ds_daynames = ['Sun', 'Mon', 'Tue', 'Wer', 'Thu', 'Fry', 'Sat']; ");
+                        echo("var ds_monthnames = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];");
+                        break;
+        default:        return $txt;
+                        break;
+        }    
+?>
 
 // Calendar template
 function ds_template_main_above(t) {
-    if(date1)txt = "Aujourd'hui";
-    else txt = 'D&eacute;but = Fin'; 
+    if(date1)txt = "<?php echo tr("Aujourd'hui");?>";
+    else txt = "<?php echo tr('D&eacute;but = Fin');?>"; 
 	return '<table cellpadding="3" cellspacing="1" class="ds_tbl">'
 		 + '<tr>'
 		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_py();">&lt;&lt;</td>'
 		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_pm();">&lt;</td>'
-		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_hi();" colspan="3">[Fermer]</td>'
+		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_hi();" colspan="3">[<?php echo tr("Fermer");?>]</td>'
 		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_nm();">&gt;</td>'
 		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_ny();">&gt;&gt;</td>'
 		 + '</tr>'

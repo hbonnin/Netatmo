@@ -12,7 +12,9 @@ require_once 'NAApiClient.php';
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
-session_start();date_default_timezone_set($timezone);
+require_once 'translate.php';
+session_start();
+date_default_timezone_set($timezone);
 
 initClient();
 $client = $_SESSION['client'];
@@ -122,7 +124,7 @@ else if($selectMesure == 'H')
     }   
 else if($selectMesure == 'P')
     {$type = 'min_pressure,max_pressure,date_min_pressure,date_max_pressure';
-    $titre = 'Pression';
+    $titre = 'Pression ';
     }   
 
  
@@ -224,7 +226,8 @@ echo("
             	++$i;
                 }while($itime < $date_end);
 				echo("data.removeColumn(1+2*$numview);\n");	
-				$title = $titre . 'minimale extérieure' . '  ('.$beg.' - '.$end.' @'. $tinter.' '.$maxMesures.' mesures)';                
+				$tmesure = tr("mesure").'s';
+				$title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$maxMesures." $tmesure)";                
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -266,7 +269,8 @@ echo("
             	++$i;
                 }while($itime < $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
-				$title1 = $titre . 'maximale extérieure' . '  ('.$beg.' - '.$end.' @'. $tinter.' '.$maxMesures.' mesures)';                
+				$tmesure = tr("mesure").'s';
+				$title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$maxMesures." $tmesure)";                
 
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";

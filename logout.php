@@ -25,12 +25,13 @@ if(isMobile())
 <h2> You are logged off </h2>
 <?php echo $date;?>
 <?php 
+echo("path={$_SESSION['path']} <br>"); 
+echo("Temperature_unit (Netatmo) = {$_SESSION['Temperature_unit']} <br>");
+echo("Language (Netatmo) = {$_SESSION['lang']} <br>");
 echo "<pre>";
+print_r($_SESSION['LogMsg']);
 if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
-    {print_r($_SESSION['LogMsg']);
-    echo("path={$_SESSION['path']} <br>");   
-    echo("Temperature_unit=$Temperature_unit <br>");
-    print_r($_SESSION['client']);echo "<br>";
+    {print_r($_SESSION['client']);echo "<br>";
     print_r($_SESSION['mydevices']);echo "<br>";
     }
 if(isset($_SESSION['ex']))

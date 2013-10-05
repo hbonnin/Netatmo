@@ -7,6 +7,8 @@ session_start();
 date_default_timezone_set($timezone);
 echo "<pre>";
 echo("Temperature_unit (Netatmo) = {$_SESSION['Temperature_unit']} <br>");
+echo("Language (Netatmo) = {$_SESSION['lang']} <br>");
+echo("Path = {$_SESSION['path']} <br>");
 print_r($_SESSION['LogMsg']);
 echo("-------------------------------\n");
 $t = $_SESSION['timeToken'] + $_SESSION['expires_in'];

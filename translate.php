@@ -1,0 +1,38 @@
+<?php
+$trans = array (
+                'Température' => array ('Temperature'),
+                'Température maximale extérieure' => array ('Maximal exterior temperature'),
+                'Température minimale extérieure' => array ('Minimal exterior temperature'),
+                'Humidité maximale extérieure' => array ('Maximal exterior humidity'),
+                'Humidité minimale extérieure' => array ('Minimal exterior humidity'),
+                'Pression maximale extérieure' => array ('Maximal exterior pressure'),
+                'Pression minimale extérieure' => array ('Minimal exterior pressure'),
+                'Humidité' => array ('Humidity'),
+                'Pression' => array ('Pressure'),
+                'Bruit' => array ('Noise'),
+                'Début' => array ('Start'),
+                'Fin' => array ('End'),
+                'D&eacute;but = Fin' => array ('Start = End'),
+                'Fermer' => array ('Close'),
+                'Fréquence' => array ('Frequency'),
+                '1 journée' => array ('1 day'),
+                '1 semaine' => array ('1 week'),
+                'Dim' => array ('Sun'),
+                'Lun' => array ('Mon'),
+                'Mar' => array ('Tue'),
+                'Mer' => array ('Wed'),
+                'Jeu' => array ('Thu'),
+                'Ven' => array ('Fri'),
+                'Sam' => array ('Sat'),
+                "Aujourd'hui"  => array ('Today'),
+                'mesure' => array ('measure'),
+                'Autres informations' => array ('More data'),
+                'Comparaison de stations' => array ('Compare stations'),
+                "Graphiques d'une station" => array ('Station graphics'),
+                "Modules d'une station" => array ('Modules'),
+                "Menu principal" => array ('Main menu'),
+                "Quitter" => array ('Logout'),
+                "Envoyer" => array ('Go')
+                );
+
+?>                
