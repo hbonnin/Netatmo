@@ -126,6 +126,11 @@ function drawLogoutBack()
 		<input type='submit' class='submit' value='<?php echo tr("Comparaison de stations");?>' />
 	</form>
 	</td>
+    <td>
+        <form method='post' action='compareHIST.php'>
+		<input type='submit' class='submit' value='<?php echo tr("Comparaison année");?>' />
+	</form>
+	</td>
 	<td>
 	    <form method='post' action='iconesExt.php'>
     	<input type='submit' class='submit' value='<?php echo tr("Menu principal");?>'/>
@@ -180,6 +185,126 @@ function drawLogoutBack()
 <?php
 	}
 
+/* -- DrawMenuHist ************************************************************************* */
+function drawMenuHist($h = '',$charts = 0)
+	{
+	$datebeg = $_SESSION['datebeg'];
+	$dateend = $_SESSION['dateend'];
+	$stationId = $_SESSION['stationId'];
+	$mydevices = $_SESSION['mydevices']; 
+    $num = $mydevices['num'];
+    $selectMesures = $_SESSION['selectMesures'];
+?>	
+     <form method='post' action='compareHIST.php'>
+<?php
+    if($charts == 0)
+        echo("<table class='G' style=\"height:$h;\">");
+ else
+        {
+        echo("<script>
+        var h = heightChart() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
+        document.write(txt);
+        </script>
+        ");
+        }
+?>        
+	<tr>
+	<td class='g' style='height:3px;'>
+	<div class='f' style='height:3px;'>
+	</div></td></tr>
+    
+    <tr>
+    <td class='title' style='height:30px;  vertical-align:bottom;'>
+    <div class='f' style='height:30px;'><?php echo tr("Comparaison année");?>
+    </div></td></tr>	
+
+	<tr>
+	<td class='g'>
+	<div class='fl'><?php echo tr("Début");?></div>
+	<div class='fr'>
+    <input class="date" id="id_date0" type="text" name="date0" value='<?php echo($datebeg); ?>'  onclick="ds_sh(this,0);">
+    </div></td></tr>
+      
+	<tr>
+	<td class='g'>
+	<div class='fl'><?php echo tr("Fin");?></div>	
+	<div class='fr'>
+	<input class='date' id='id_date1'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
+	</div></td></tr>
+	
+	<tr>
+	<td class='g'>
+	<div class='fl'><?php echo tr("Fréquence");?></div>	
+	<div class='fr'>
+	<select name='select'>
+<?php	
+     drawSelectInter("H"); 
+     $hist = $_SESSION['hist']; 
+?>
+	</select>		
+	</div></td></tr>
+
+	<tr>
+	<td class='g'>
+	<div class='fl'><?php echo tr("Décalage");?></div>	
+	<div class='fr'>
+	<select name='hist'>
+<?php
+    $t6 = '6 '.tr('mois');
+    $t12 = '12 '.tr('mois');
+    if($hist == 6)
+        echo("<option value='6' selected='selected'>$t6</option>
+        <option value='12' >$t12</option>");
+    else
+        echo("<option value='6'>$t6</option>
+        <option value='12' selected='selected'>$t12</option>");
+    
+?>
+	</select>		
+	</div></td></tr>
+	
+		
+	<tr>
+	<td class='g' style ='height:10px;'>
+	<div class='f' style ='height:10px;'>
+	</div></td></tr>
+
+	<tr><td>
+	    <table style='height:100%; width:100%;'>
+	    <tr>
+	    <td></td>
+
+        <td>			
+            <?php
+            echo("<table class='chk'>\n");
+            for($i = 0;$i < $num;$i++)
+                {$stat = $mydevices[$i]['station_name'];
+                $arr = explode(" ",$stat);
+                $stat = $arr[0];
+                if($i == $stationId)
+                    echo("<tr><td><input type='radio' name='station' value='$i' checked='checked'> $stat </td></tr>\n");
+                else
+                    echo("<tr><td><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
+                }
+            echo("</table>\n");
+            ?>
+        </td></tr></table>
+        
+	</td></tr>
+
+	<tr>
+	<td class='g'  style='height:20px;'>
+	<div class='f'  style='height:20px;'>	
+	<input type='submit' value='<?php echo tr("Envoyer");?>' class='g'>	
+	</div>
+	<!--<div.clear></div>-->
+	</td></tr>
+	</table>
+	</form>	
+	
+<?php	
+	}
 /* -- DrawMenuStation ************************************************************************* */
 function drawMenuStation($h = '',$charts = 0)
 	{
@@ -411,8 +536,9 @@ function drawCharts($order='G')
     require_once 'calendrier.php';    
 	$menu = array (
             'G' => array ('drawMenuCompare','drawMenuStation'),
-            'C' => array ('drawMenuStation','drawMenuCompare'),
+            'C' => array ('drawMenuHist','drawMenuCompare'),
             'M' => array ('drawMenuCompare','drawMenuModules'),
+            'H' => array ('drawMenuCompare','drawMenuHist'),
             );
 ?>    
 

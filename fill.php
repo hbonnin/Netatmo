@@ -37,7 +37,7 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
     $tint = degree2($res[0]['Temperature']);
     $text = degree2($res[1]['Temperature']); 
     $thum = tr('Humidité');
-    $tson = tr('Son');
+    $tson = tr('Bruit');
     $tpression = tr('Pression');
 	echo("		
 	<table class='icone'>

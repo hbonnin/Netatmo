@@ -71,6 +71,7 @@ function init($numStations)
         $MenuInterval = array ( "G" => 4,
                             "C"  => 1,
                             "M"  => 3, 
+                            "H"  => 1,                             
                             "opt" => array (
                                         0 => array ('1week','1 semaine',7*24*60*60),
                                         1 => array ('1day','1 journée',24*60*60),
@@ -91,6 +92,7 @@ function init($numStations)
         createViewmodules();
         $_SESSION['selectMesureCompare'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
+        $_SESSION['hist'] = 6;
         } 
     if(isset($_SESSION['saveCookie']))
         {$username = $_SESSION['username']; 
