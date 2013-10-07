@@ -155,6 +155,7 @@ for($i = 0; $i < 2; $i++)
     }
 
 $visupt = "";
+if($nmesures[0] <= 48)$visupt = ",pointSize:3";	
 date_default_timezone_set($timezone);
 
 
@@ -181,7 +182,7 @@ echo("
 	          	}
 	          	
 	        echo("data.addColumn('number', '');\n"); 
-	        $itime = $date_beg; 
+	        $itime = $keys[0][0];
 	        $_SESSION['begdata'] = $date_beg;
 			$beg = date("d/m/y", $date_beg); 
 			$end = date("d/m/y",$date_end); 	        	        
@@ -232,7 +233,8 @@ echo("
 	          	}
 	          	
 	        echo("data1.addColumn('number', '');\n"); 
-	        $itime = $date_beg; 
+	        $itime = $keys[0][0];	        
+	        //$itime = $date_beg; 
 	        $i = 0;	
             	do {
             	$idate = date("d/m/y",$itime);
