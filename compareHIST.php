@@ -200,10 +200,10 @@ echo("
             			$tmin0 = degree2($mesure[$j][$key][0]);
             			if($j == 0)
             			    {$t0 = $tmin0;
-            			    $tip = sprintf('%4.1f',$tmin0).date(' d/m/y',$key);
+            			    $tip = date('d/m/y  ',$key).sprintf('%4.1f',$tmin0);
             			    }
             			else
-            			   $tip = sprintf('%4.1f %4.1f',$tmin0,$tmin0-$t0).date(' d/m/y',$key);
+            			   $tip = date('d/m/y  ',$key).sprintf('%4.1f %4.1f  ',$tmin0,$tmin0-$t0);
             			}        	
             		echo(",$tmin0,'$tip'"); 
             		}          		
@@ -249,10 +249,10 @@ echo("
             			$tmin0 = degree2($mesure[$j][$key][1]);
             			if($j == 0)
             			    {$t0 = $tmin0;
-            			    $tip = sprintf('%4.1f',$tmin0).date(' d/m/y',$key);
+            			    $tip = date('d/m/y  ',$key).sprintf('%4.1f',$tmin0);
             			    }
             			else
-            			   $tip = sprintf('%4.1f %4.1f',$tmin0,$tmin0-$t0).date(' d/m/y',$key);
+            			   $tip = date('d/m/y  ',$key).sprintf('%4.1f %4.1f',$tmin0,$tmin0-$t0);
             			}        		
             		echo(",$tmin0,'$tip'"); 
             		}          		

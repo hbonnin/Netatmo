@@ -113,12 +113,12 @@ function drawLogoutBack()
 	<tr>
 	<td>  
         <form method='post' action='graphiques.php'>
-		<input type='submit' class='submit' value='<?php echo tr("Graphiques d'une station");?>' />
+		<input type='submit' class='submit' value='<?php echo tr("Graphiques d&#39;une station");?>' />
 	</form>
 	</td>
 	<td>
 	    <form method='post' action="modules.php?stationNum=<?php echo $stationId; ?>">
-	    <input type='submit' class='submit' value='<?php echo tr("Modules d'une station");?>'  />
+	    <input type='submit' class='submit' value='<?php echo tr("Modules d&#39;une station");?>'  />
 	    </form>
 	</td>
     <td>
