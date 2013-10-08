@@ -248,7 +248,7 @@ $visupt = 0;
 
 function tipHTMLext2($idate,$tmax,$hum)
 	{global $cu;
-	return '<table><caption><b>' . $idate . '</b></caption>'
+	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>'.tr("Température").'</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '</table>';
@@ -256,7 +256,7 @@ function tipHTMLext2($idate,$tmax,$hum)
 
 function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$dateminh,$datemaxh)
 	{global $cu;
-	return '<table><caption><b>' . $idate . '</b></caption>'
+	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td>"
 	. '<td style=\"font-size: 12px;\">' . date('d/m/y H:i',$datemax) .'</tr>'
 	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . "$cu</b></td>"
@@ -269,7 +269,7 @@ function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$date
 	}
 function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
 	{global $cu;
-	return '<table><caption><b>' . $idate . '</b></caption>'
+	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . "$cu</b></td></tr>"
 	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
@@ -280,7 +280,7 @@ function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
 	}
 function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise)
 	{global $cu;
-	return '<table><caption><b>' . $idate . '</b></caption>'
+	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>'.tr("Température").'</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'

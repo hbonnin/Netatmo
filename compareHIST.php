@@ -130,7 +130,7 @@ $mesure[0] = $client->api("getmeasure", "POST", $params);
 if($hist == 6)
     $delta = 184*24*60*60;
 else
-    $delta = 365*24*60*60;
+    $delta = 366*24*60*60;
 $date_beg1 = $date_beg -$delta;
 $date_end1 = $date_end -$delta;
 $params = array("scale" => $interval
@@ -158,6 +158,18 @@ $visupt = "";
 if($nmesures[0] <= 48)$visupt = ",pointSize:3";	
 date_default_timezone_set($timezone);
 
+function tipHTML($stat_name,$t0,$t1,$date0,$date1)
+	{global $cu;
+	$tt0 = $tt1 = $tt = '';
+	if(!empty($t0)) $tt0 = sprintf('  %4.1f%s',$t0,$cu);
+	if(!empty($t1)) $tt1 = sprintf('  %4.1f%s',$t1,$cu);
+	if(!empty($t0) && !empty($t1)) $tt = sprintf('  %4.1f%s',$t1 - $t0,$cu);
+	return '<table style="width:130px; height:85px; padding:5px; margin:2px"><caption><b>' . $stat_name . '</b></caption><tr><td></td><td></td></tr>'
+	. '<tr><td><i>'.$date0.'</i></td><td style="color: red; text-align:right;"><b>'.$tt0. "</b></td></tr>"
+	. '<tr><td><i>'.$date1.'</i></td><td style="color: blue; text-align:right;"><b>'.$tt1. "</b></td></tr>"
+	. '<tr><td><i>Diff</i></td><td style="color: green; text-align:right;"><b>' .$tt. "</b></td></tr>"
+	. '</table>';
+	}
 
 echo("
     <script>
@@ -167,21 +179,14 @@ echo("
       function drawChart() {
               var data = new google.visualization.DataTable();              
 	          data.addColumn('string', 'Date');
+			  data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });  
 ");
-	        for($i = 0;$i < 2;$i++)
-	          	{$ii[$i] = 0; 
-	          	//if($i == 0)
-	          	    echo("data.addColumn('number', \"$stat_name\");\n");
-/*	          	    
-	          	else
-	          	    {$txt = '-'.$hist.' '.tr('mois');
-	          	    echo("data.addColumn('number', \"$txt\");\n");
-	          	    }
-*/	          	    
-				echo("data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
-	          	}
-	          	
+            echo("data.addColumn('number', \"$stat_name\");\n");
+            $txt = $stat_name.' -'.$hist.' '.tr('mois');
+            echo("data.addColumn('number', \"$txt\");\n");
 	        echo("data.addColumn('number', '');\n"); 
+	        
+	        $ii[0] = $ii[1] = 0; 	          	
 	        $itime = $keys[0][0];
 	        $_SESSION['begdata'] = $date_beg;
 			$beg = date("d/m/y", $date_beg); 
@@ -189,9 +194,10 @@ echo("
 	        $i = 0;	
             	do {
             	$idate = date("d/m/y",$itime);
-				echo("data.addRow([\"$idate\"");          
+				echo("data.addRow([\"$idate\""); 
+				$t0 = $t1 = $tip = '';
             	for($j = 0; $j < 2;$j++)
-            		{$tmin0 = $tip = '';   
+            		{$tmin0 = '';   
             		$key = $keys[$j][$ii[$j]]; 
             		$key1 = $key;
             		if($j == 1)$key1 += $delta;
@@ -200,47 +206,42 @@ echo("
             			$tmin0 = degree2($mesure[$j][$key][0]);
             			if($j == 0)
             			    {$t0 = $tmin0;
-            			    $tip = date('d/m/y  ',$key).sprintf('%4.1f',$tmin0);
+            			    $date0 = date('d/m/y',$key);
             			    }
             			else
-            			   $tip = date('d/m/y  ',$key).sprintf('%4.1f %4.1f  ',$tmin0,$tmin0-$t0);
+            			    {$t1 = $tmin0;
+            			    $date1 = date('d/m/y',$key);
+            			    }
             			}        	
-            		echo(",$tmin0,'$tip'"); 
             		}          		
-            	echo(",0]);\n"); 	
+            	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
+            	echo(",'$tip',$t0,$t1,0]);\n"); 	
             	$itime += $inter;
             	++$i;
                 }while($itime < $date_end);
-				echo("data.removeColumn(5);\n");	
+				echo("data.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
 				$title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
 
 echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');
+			  data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });  
 ");
-	        for($i = 0;$i < 2;$i++)
-	          	{$ii[$i] = 0; 
-	          	//if($i == 0)
-	          	    echo("data1.addColumn('number', \"$stat_name\");\n");
-/*	          	    
-	          	else
-	          	    {$txt = '-'.$hist.' '.tr('mois');
-	          	    echo("data1.addColumn('number', \"$txt\");\n");
-	          	    }
-*/	          	    
-				echo("data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
-	          	}
-	          	
+            echo("data1.addColumn('number', \"$stat_name\");\n");
+            $txt = $stat_name.' -'.$hist.' '.tr('mois');
+            echo("data1.addColumn('number', \"$txt\");\n");
 	        echo("data1.addColumn('number', '');\n"); 
+	        
+	        $ii[0] = $ii[1] = 0; 	          	
 	        $itime = $keys[0][0];	        
-	        //$itime = $date_beg; 
 	        $i = 0;	
             	do {
             	$idate = date("d/m/y",$itime);
-				echo("data1.addRow([\"$idate\"");          
+				echo("data1.addRow([\"$idate\"");  
+				$t0 = $t1 = $tip = '';
             	for($j = 0; $j < 2;$j++)
-            		{$tmin0 = $tip = '';   
+            		{$tmin0 = '';   
             		$key = $keys[$j][$ii[$j]]; 
             		$key1 = $key;
             		if($j == 1)$key1 += $delta;
@@ -249,18 +250,20 @@ echo("
             			$tmin0 = degree2($mesure[$j][$key][1]);
             			if($j == 0)
             			    {$t0 = $tmin0;
-            			    $tip = date('d/m/y  ',$key).sprintf('%4.1f',$tmin0);
+            			    $date0 = date('d/m/y',$key);
             			    }
             			else
-            			   $tip = date('d/m/y  ',$key).sprintf('%4.1f %4.1f',$tmin0,$tmin0-$t0);
-            			}        		
-            		echo(",$tmin0,'$tip'"); 
+            			    {$t1 = $tmin0;
+            			    $date1 = date('d/m/y',$key);
+            			    }
+            			}
             		}          		
-            	echo(",0]);\n"); 	
-            	$itime += $inter;
+             	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
+            	echo(",'$tip',$t0,$t1,0]);\n"); 	
+                $itime += $inter;
             	++$i;
                 }while($itime < $date_end);
-				echo("data1.removeColumn(5);\n");	
+				echo("data1.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
 				$title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
 
