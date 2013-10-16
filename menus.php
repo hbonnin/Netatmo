@@ -111,6 +111,7 @@ function drawLogoutBack()
 
 <table style='margin:auto;'>
 	<tr>
+<!--	
 	<td>  
         <form method='post' action='graphiques.php'>
 		<input type='submit' class='submit' value='<?php echo tr("Graphiques d&#39;une station");?>' />
@@ -131,6 +132,7 @@ function drawLogoutBack()
 		<input type='submit' class='submit' value='<?php echo tr("Comparaison année");?>' />
 	</form>
 	</td>
+-->	
 	<td>
 	    <form method='post' action='iconesExt.php'>
     	<input type='submit' class='submit' value='<?php echo tr("Menu principal");?>'/>
@@ -187,19 +189,22 @@ function drawLogoutBack()
 
 /* -- DrawMenuHist ************************************************************************* */
 function drawMenuHist($h = '',$charts = 0)
-	{
+	{global $Temperature_unit;
+	
 	$datebeg = $_SESSION['datebeg'];
 	$dateend = $_SESSION['dateend'];
 	$stationId = $_SESSION['stationId'];
 	$mydevices = $_SESSION['mydevices']; 
     $num = $mydevices['num'];
-    $selectMesures = $_SESSION['selectMesures'];
+    //$selectMesures = $_SESSION['selectMesures'];
+    $selectMesure = $_SESSION['selectMesureCompare'];
+    $hist = $_SESSION['hist']; 
 ?>	
      <form method='post' action='compareHIST.php'>
 <?php
     if($charts == 0)
         echo("<table class='G' style=\"height:$h;\">");
- else
+    else if($charts == 1)
         {
         echo("<script>
         var h = heightChart() + 2;
@@ -207,8 +212,18 @@ function drawMenuHist($h = '',$charts = 0)
         document.write(txt);
         </script>
         ");
+        }    
+    else
+        {
+        echo("<script>
+        var h = heightChart() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px; background-color:#eee;\">';
+        document.write(txt);
+        </script>
+        ");
         }
 ?>        
+             
 	<tr>
 	<td class='g' style='height:3px;'>
 	<div class='f' style='height:3px;'>
@@ -218,6 +233,79 @@ function drawMenuHist($h = '',$charts = 0)
     <td class='title' style='height:30px;  vertical-align:bottom;'>
     <div class='f' style='height:30px;'><?php echo tr("Comparaison année");?>
     </div></td></tr>	
+
+	<tr>
+	<td class='g'>
+	<div class='fl'><span>Station</span></div>	
+	<div class='fr'>
+		           
+ 		<?php
+/**/
+ 		echo "<select name='selectStation'> ";
+		for($i = 0;$i < $num;$i++)
+			{$stat = $mydevices[$i]['station_name'];
+			$arr = explode(" ",$stat);
+			$stat = $arr[0];
+			if($i == $_SESSION['stationId'])
+			    echo("<option value='$i' selected='selected'>$stat</option>");
+            else
+			    echo("<option value='$i'>$stat</option>");            
+			}
+		echo "</select>";
+	
+/**/		
+    	?>
+            
+	</div></td></tr>
+
+	<tr>
+	<td class='g'>
+	<div class='fl'><?php echo tr("Mesure");?></div>	
+	<div class='fr'>
+<?php
+        $cu = $Temperature_unit ? '°':' F';
+        $txt = "<select name='selectMsesure'>";
+        if($selectMesure == 'T')
+            $txt .="<option value='T' selected='selected'> T$cu </option>
+    		    <option value='H'> H % </option>
+    		    <option value='h'> H int % </option>";
+        else if($selectMesure == 'H')
+            $txt .="<option value='T'> T$cu </option>
+    		    <option value='H' selected='selected'> H % </option>
+    		    <option value='h'> H int % </option>";
+        else if($selectMesure == 'h')
+            $txt .="<option value='T'> T$cu </option>
+    		    <option value='H'> H % </option>
+    		    <option value='h'  selected='selected'> H int % </option>";
+    		    
+ 
+    	echo $txt;
+?>
+ 	</select>		
+	</div></td></tr>
+
+
+	<tr>
+	<td class='g'>
+	<div class='fl'><?php echo tr("Décalage");?></div>	
+	<div class='fr'>
+	<select name='hist'>
+<?php
+    $t6 = '6 '.tr('mois');
+    $t12 = '12 '.tr('mois');
+    if($hist == 6)
+        echo("<option value='6' selected='selected'>$t6</option>
+        <option value='12' >$t12</option>");
+    else
+        echo("<option value='6'>$t6</option>
+        <option value='12' selected='selected'>$t12</option>");
+    
+?>
+	</select>		
+	</div></td></tr>
+	
+	<tr><td class='g'><div class='f'></div></td></tr>
+	
 
 	<tr>
 	<td class='g'>
@@ -240,31 +328,17 @@ function drawMenuHist($h = '',$charts = 0)
 	<select name='select'>
 <?php	
      drawSelectInter("H"); 
-     $hist = $_SESSION['hist']; 
+     
 ?>
 	</select>		
 	</div></td></tr>
 
-	<tr>
-	<td class='g'>
-	<div class='fl'><?php echo tr("Décalage");?></div>	
-	<div class='fr'>
-	<select name='hist'>
-<?php
-    $t6 = '6 '.tr('mois');
-    $t12 = '12 '.tr('mois');
-    if($hist == 6)
-        echo("<option value='6' selected='selected'>$t6</option>
-        <option value='12' >$t12</option>");
-    else
-        echo("<option value='6'>$t6</option>
-        <option value='12' selected='selected'>$t12</option>");
-    
-?>
-	</select>		
-	</div></td></tr>
-	
-		
+
+
+
+
+			
+
 	<tr>
 	<td class='g' style ='height:10px;'>
 	<div class='f' style ='height:10px;'>
@@ -277,6 +351,7 @@ function drawMenuHist($h = '',$charts = 0)
 
         <td>			
             <?php
+/*            
             echo("<table class='chk'>\n");
             for($i = 0;$i < $num;$i++)
                 {$stat = $mydevices[$i]['station_name'];
@@ -288,6 +363,7 @@ function drawMenuHist($h = '',$charts = 0)
                     echo("<tr><td><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
                 }
             echo("</table>\n");
+*/            
             ?>
         </td></tr></table>
         
@@ -319,11 +395,20 @@ function drawMenuStation($h = '',$charts = 0)
 <?php
     if($charts == 0)
         echo("<table class='G' style=\"height:$h;\">");
- else
+    else if($charts == 1)
         {
         echo("<script>
         var h = heightChart() + 2;
         var txt = '<table class=\"G\" style=\"height:'+h+'px;\">';
+        document.write(txt);
+        </script>
+        ");
+        }    
+    else
+        {
+        echo("<script>
+        var h = heightChart() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px; background-color:#eee;\">';
         document.write(txt);
         </script>
         ");
@@ -336,9 +421,43 @@ function drawMenuStation($h = '',$charts = 0)
     
     <tr>
     <td class='title' style='height:30px;  vertical-align:bottom;'>
-    <div class='f' style='height:30px;'><?php echo tr("Graphiques d'une station");?>
+    <div class='f' style='height:30px;'><?php echo tr("Graphiques d&#39;une station");?>
     </div></td></tr>	
 
+	<tr>
+	<td class='g'>
+	<div class='fl'><span>Station</span></div>	
+	<div class='fr'>
+		<select name='selectStation'>            
+ 		<?php
+		for($i = 0;$i < $num;$i++)
+			{$stat = $mydevices[$i]['station_name'];
+			$arr = explode(" ",$stat);
+			$stat = $arr[0];
+			if($i == $_SESSION['stationId'])
+			    echo("<option value='$i' selected='selected'>$stat</option>");
+            else
+			    echo("<option value='$i'>$stat</option>");            
+			}
+    	?>
+            </select>
+	</div></td></tr>
+<?php
+/*
+    $txt = tr("Mesure");
+    echo "<tr><td class='g'><div class='fl'>$txt</div><div class='fr'>";
+    $select = array("Temp",tr("Humidité"),"CO2",tr("Pression"),tr("Bruit"));
+    echo "<select name='selectM'>";
+    for($i = 0;$i < 5;$i++)
+        {if($selectMesures[$i])
+            echo("<option value='$i' selected='selected' > $select[$i] </option>\n");
+        else
+            echo("<option value='$i' > $select[$i] </option>\n");
+        }
+    echo "</select></div></td></tr>";
+    echo "<tr><td class='g'><div class='f'></div></td></tr>";
+*/    
+?>
 	<tr>
 	<td class='g'>
 	<div class='fl'><?php echo tr("Début");?></div>
@@ -362,7 +481,7 @@ function drawMenuStation($h = '',$charts = 0)
 ?>
 	</select>		
 	</div></td></tr>
-		
+
 	<tr>
 	<td class='g' style ='height:10px;'>
 	<div class='f' style ='height:10px;'>
@@ -373,6 +492,8 @@ function drawMenuStation($h = '',$charts = 0)
 	    <tr>
 		<td class='l'>
 		    <?php
+/* a commenter */	    
+
 		    $select = array("Temp",tr("Humidité"),"CO2",tr("Pression"),tr("Bruit"));
 		  	echo("<table class='chk'>\n");
 		    for($i = 0;$i < 5;$i++)
@@ -382,10 +503,15 @@ function drawMenuStation($h = '',$charts = 0)
 			    	echo("<tr><td ><input  type='checkbox' name='smesure[]' value='$i'> $select[$i] </td></tr>\n");		
 			    }
 		    echo("</table>\n");	  
-		    ?>
+
+/* fin comment */		    
+
+?>
+
 		</td>
         <td>			
             <?php
+/*            
             echo("<table class='chk'>\n");
             for($i = 0;$i < $num;$i++)
                 {$stat = $mydevices[$i]['station_name'];
@@ -397,6 +523,7 @@ function drawMenuStation($h = '',$charts = 0)
                     echo("<tr><td><input  type='radio' name='station' value='$i'> $stat </td></tr>\n");		
                 }
             echo("</table>\n");
+*/            
             ?>
         </td></tr></table>
         
@@ -425,10 +552,10 @@ function drawMenuCompare($h ='',$charts = 0)
     $num = $mydevices['num'];
 ?>
     <form method='post' action='compareALL.php'>
- <?php
+<?php
     if($charts == 0)
         echo("<table class='G' style=\"height:$h;\">");
- else
+    else if($charts == 1)
         {
         echo("<script>
         var h = heightChart() + 2;
@@ -436,9 +563,18 @@ function drawMenuCompare($h ='',$charts = 0)
         document.write(txt);
         </script>
         ");
+        }    
+    else
+        {
+        echo("<script>
+        var h = heightChart() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px; background-color:#eee;\">';
+        document.write(txt);
+        </script>
+        ");
         }
 ?>        
-   
+    
 	<tr>
 	<td class='g' style='height:3px;'>
 	<div class='f' style='height:3px;'>
@@ -534,12 +670,7 @@ function drawMenuCompare($h ='',$charts = 0)
 function drawCharts($order='G')
 	{
     require_once 'calendrier.php';    
-	$menu = array (
-            'G' => array ('drawMenuCompare','drawMenuStation'),
-            'C' => array ('drawMenuHist','drawMenuCompare'),
-            'M' => array ('drawMenuCompare','drawMenuModules'),
-            'H' => array ('drawMenuCompare','drawMenuHist'),
-            );
+
 ?>    
 
  	<!-- Invisible table -->
@@ -551,9 +682,7 @@ function drawCharts($order='G')
 	<table style='padding:0px; width:100%; margin-bottom:-5px;'>
 	<tr>
 	<td style='padding:0px; vertical-align:bottom;'>
-	
-    <?php $menu[$order][0](0,1);?>
-	
+    <?php $visu = ($order == 'M') ? 1:0; drawMenuModules(0,1 + $visu);?>
 	</td>
 		<td  style='padding:0px; vertical-align:bottom; width:100%;'>
 		<script>
@@ -563,14 +692,18 @@ function drawCharts($order='G')
 		    txt += "px;'></div></td>";
 		    document.write(txt);
 		</script>
+
+	<td style='padding:0px; vertical-align:bottom;'>
+    <?php $visu = ($order == 'C') ? 1:0; drawMenuCompare(0,1 + $visu);?>
+	</td>
+
 		
 	 </tr>
 	 <tr>
 	 <td style='padding:0px; vertical-align:bottom;'>
-	
-	<?php $menu[$order][1](0,1);?>
-
+    <?php $visu = ($order == 'G') ? 1:0; drawMenuStation(0,1 + $visu);?>
 	 </td>
+	 
 		<td style='padding:0px; vertical-align:bottom; width:100%;'>
 		<script>
 		    h = heightChart();
@@ -580,6 +713,9 @@ function drawCharts($order='G')
 		    document.write(txt);
 		</script>
 
+	<td style='padding:0px; vertical-align:bottom;'>
+    <?php $visu = ($order == 'H') ? 1:0; drawMenuHist(0,1 + $visu);?>
+	</td>
 	</tr>
 	</table>
 	
@@ -605,10 +741,11 @@ function drawMenuModules($h ='',$charts = 0)
 ?>	
 
     <form method='post' action="modules.php?stationNum=<?php echo $stationNum; ?>">
+
 <?php
     if($charts == 0)
         echo("<table class='G' style=\"height:$h;\">");
- else
+    else if($charts == 1)
         {
         echo("<script>
         var h = heightChart() + 2;
@@ -616,8 +753,18 @@ function drawMenuModules($h ='',$charts = 0)
         document.write(txt);
         </script>
         ");
+        }    
+    else
+        {
+        echo("<script>
+        var h = heightChart() + 2;
+        var txt = '<table class=\"G\" style=\"height:'+h+'px; background-color:#eee;\">';
+        document.write(txt);
+        </script>
+        ");
         }
 ?>        
+
 	<tr>
 	<td class='g' style='height:3px;'>
 	<div class='f' style='height:3px;'>
@@ -625,7 +772,7 @@ function drawMenuModules($h ='',$charts = 0)
     
     <tr>
     <td class='title' style='height:30px; vertical-align:bottom;'>
-    <div class='f' style='height:30px;'><?php echo tr("Modules d'une station");?>
+    <div class='f' style='height:30px;'><?php echo tr("Modules d&#39;une station");?>
     </div></td></tr>	
 
 	<tr>
@@ -646,7 +793,9 @@ function drawMenuModules($h ='',$charts = 0)
     	?>
             </select>
 	</div></td></tr>
-
+	
+	<!--<tr><td class='g'><div class='f'></div></td></tr>-->
+	
 	<tr>
 	<td class='g'>
 	<div class='fl'><?php echo tr("Début");?></div>

@@ -1,6 +1,6 @@
 <?php
 function refreshToken()
-    {global $client_id,$client_secret;
+    {global $client_id,$client_secret,$timezone;
     if(!isset($_SESSION['refresh_token']))
         {logMsg('NO refreshtoken');
         logout();

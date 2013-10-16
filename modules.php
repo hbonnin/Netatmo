@@ -125,8 +125,8 @@ $CO2 = 0;
 $HTime = 1;
 $T =$T1 = 0;
 if($selectMesure == 'T')
-    {$titre = 'Température ';
-    $titre1 = 'Température ';
+    {$titre = 'Température';
+    $titre1 = 'Température';
     $T = $T1 = 1;
     if($inter >= 24*60*60)
         $type = 'min_temp,max_temp,date_min_temp,date_max_temp';
@@ -134,12 +134,12 @@ if($selectMesure == 'T')
         {$type = 'min_temp,max_temp';$HTime = 0;}
     else
         {$type = 'Temperature,Humidity';$HTime = 0;
-        $titre1 = 'Humidité '; 
+        $titre1 = 'Humidité'; 
         }
     }
 else if($selectMesure == 'H')
-    {$titre = 'Humidité ';
-    $titre1 = 'Humidité ';    
+    {$titre = 'Humidité';
+    $titre1 = 'Humidité';    
     if($inter >= 24*60*60)
          $type = 'min_hum,max_hum,date_min_hum,date_max_hum';
     else if($inter == 3*60*60)
@@ -150,15 +150,15 @@ else if($selectMesure == 'H')
         }
     }    
 else if($selectMesure == 'C') 
-    {$titre = 'CO2 ';
-    $titre1 = 'CO2 ';    
+    {$titre = 'CO2';
+    $titre1 = 'CO2';    
     if($inter >= 24*60*60)
         $type = 'min_co2,max_co2,date_min_co2,date_max_co2';  
     else if($inter == 3*60*60)
         {$type = 'min_co2,max_co2';$HTime = 0;}
     else 
         {$type = 'CO2,Temperature';$HTime = 0;
-        $titre1 = 'Température ';
+        $titre1 = 'Température';
         $T1 = 1;
         }
     $CO2 = 1;
@@ -359,14 +359,16 @@ echo("
                 }while($itime <= $date_end);
 				echo("data1.removeColumn(1+2*$numview);\n");				               
 /**********************************************************************************************/
+            $mini = ($titre == 'CO2') ? ' minimum': ' minimale';
+            $maxi = ($titre1 == 'CO2') ? ' maximum': ' maximale';
             $tmesure = tr("mesure").'s';
              if($inter > 30*60)    
-                {$title = $nameStation.': '.$titre . 'minimale'. ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"; 
-                $title1 = $nameStation.': '.$titre1 . 'maximale'. ' ('.$beg.' - '.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                {$title = $nameStation.': '.tr($titre .$mini). ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                $title1 = $nameStation.': '.tr($titre1 .$maxi). ' ('.$beg.' - '.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
                 }
             else
-                {$title = $nameStation.': '.$titre .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"; 
-                $title1 = $nameStation.': '.$titre1.' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                {$title = $nameStation.': '.tr($titre) .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                $title1 = $nameStation.': '.tr($titre1).' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
                 }
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";

@@ -23,7 +23,7 @@ if(isMobile())
     }
 </script>
 <h2> You are logged off </h2>
-<?php echo $date;?>
+<?php echo "$date; <br>"?>
 <?php 
 echo("path={$_SESSION['path']} <br>"); 
 echo("Temperature_unit (Netatmo) = {$_SESSION['Temperature_unit']} <br>");

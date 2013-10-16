@@ -1,10 +1,16 @@
 <?php
-$trans = array (
+$trans = array ('Phase lunaire'  => array ('Moon phase'), 
                 'Température' => array ('Temperature'),
                 'Température maximale extérieure' => array ('Maximal exterior temperature'),
                 'Température minimale extérieure' => array ('Minimal exterior temperature'),
+                'Température maximale' => array ('Maximal temperature'),
+                'Température minimale' => array ('Minimal temperature'),
                 'Humidité maximale extérieure' => array ('Maximal exterior humidity'),
                 'Humidité minimale extérieure' => array ('Minimal exterior humidity'),
+                'Humidité maximale intérieure' => array ('Maximal interior humidity'),
+                'Humidité minimale intérieure' => array ('Minimal interior humidity'),
+                'Humidité maximale' => array ('Maximal humidity'),
+                'Humidité minimale' => array ('Minimal humidity'),
                 'Pression maximale extérieure' => array ('Maximal exterior pressure'),
                 'Pression minimale extérieure' => array ('Minimal exterior pressure'),
                 'Humidité' => array ('Humidity'),

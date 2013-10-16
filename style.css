@@ -170,7 +170,7 @@ div.fl {
 	float:left;
 }
 div.fr {
-	width:110px;
+	width:118px;
 	height:26px;
 	float:left;
 }
@@ -178,7 +178,7 @@ td.l {
 	width:75px;
 }
 div.f {
-	width:175px;
+	width:183px;
 	height:26px;
 }
 table.chk{
@@ -208,13 +208,14 @@ div.clear {
 table.bulle {
 	font-size:16px;
 	text-align:center;
-	width:214px;
+	line-height:0.95em;
+	width:220px;
 	padding:2px;
 	border:0;
-	background-color:white;
+	background-color:#fff;
 	}
 .bulle caption {
-	background-color:white;
+	background-color:#fff;
 }
 .bulle th {
 	font-size:11px;
@@ -224,7 +225,7 @@ table.bulle {
 }
 td.name {
 	font-size:12px;
-	font-weight:normal;
+	font-weight:500;
 	text-align:left;
 	height:11px;
 	margin:0;
@@ -233,7 +234,15 @@ td.name {
 .bulle td {
 	font-size:12px;
 	text-align:left;
-	font-weight:bold;
+	//font-weight:bold;
+	height:13px;
+	margin:0;
+	padding:0;	
+}
+.bulle th {
+	font-size:12px;
+	text-align:left;
+	font-weight:500;
 	height:13px;
 	margin:0;
 	padding:0;	

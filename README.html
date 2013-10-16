@@ -7,7 +7,12 @@
 
 <p style='font-size:13px'>
 This program uses the Netatmo php sdk and some Google development tools for the graphics.<br>
-It also use some other programs to compute data about the moon.<br>
+It also uses some other programs to compute data about the moon:</p>
+<ul style='font-size:13px'>
+<li>MoonPhase.php is under an MIT license</li>
+<li>Moonime.php is under an GPL license</li>
+</ul>
+<p style='font-size:13px'>
 The server needs to have a php version >= 5, with curl and json enabled.<br>
 If you have a Netatmo account, you can  see a demo at  <A href="http://fraysseix.fr/Netatmo/">Netatmo</A>.
 </p>
@@ -33,7 +38,7 @@ and interactively draw graphics.
 <li>	Graphics comparing the measures of all your modules: temperature, humidity or noise,<br>
 		(30 minutes, 3 hours, 1 day or 1 week), 
 </li>
-<li>	Graphics comparing the exterior temperatures with the previous year or semester,<br>
+<li>	Graphics comparing the exterior temperatures or humidity with the previous year or semester,<br>
 		(1 day or 1 week), 
 </li>
 </ul>
@@ -91,8 +96,8 @@ and interactively draw graphics.
 <ul>
 <li>	If you use index.php and your user id and password are not in Config.php, you are logged through Netatmo.</li>
 <li>	If you use indexLogin.php your user name and password are sent in a not crypted connection.</li>
-<li>	The temperatures are displayed using your Netatmo settings .</li>
-<li>	The language is defined by your Netatmo settings (french/english).</li>
+<li>	The Netatmo settings define the language used (french/english) and the temperature unit.</li>
+<li>	The timezone is defined in Config.php. </i>
 </ul>
 
 <h3>Install</h3>
@@ -109,18 +114,19 @@ and interactively draw graphics.
 <h4>Graphics</h4>
 <table>
 <tr>
-	<td>Graphics of one station</td>
-	<td>Comparing the temperature among modules of one station</td>
+	<td>Graphics of one station.</td>
+	<td>Comparing the temperature among modules of one station.</td>
 	</tr>
 <tr>
 	<td><IMG SRC="image/graphiques.png" width="600" ALT="graphiques.png" TITLE="Graphics of one station "></td>
 	<td><IMG SRC="image/modules.png" width="600" ALT="modules.png" TITLE="Modules of one station"></td>
 </tr>
 <tr>
-	<td>Comparing the humidity among stations</td><td></td>
+	<td>Comparing the humidity among stations.</td><td>Comparing temperatures with previous year.</td>
 </tr>
 <tr>
-	<td><IMG SRC="image/compare.png" width="600" ALT="compare.png" TITLE="Humidity of 5 stations"></td><td></td>
+	<td><IMG SRC="image/compare.png" width="600" ALT="compare" TITLE="Humidity of 5 stations"></td>
+	<td><IMG SRC="image/compareH.png" width="600" ALT="history" TITLE="Temperatures now and 1 year ago"></td>
 </tr>
 </table>
 </body>

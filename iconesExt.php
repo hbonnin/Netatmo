@@ -105,11 +105,11 @@ for($i = 0;$i < $numStations;$i++)
 	$Zenith = 90 + (50/60);
 	$lat = $mydevices[$i]['latlng']['latitude'];
 	$long = $mydevices[$i]['latlng']['longitude'];	
-	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2)."-".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2);
+	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2)."&nbsp;&nbsp;".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2);
     // Lever/Coucher lune
     $moon = new moontime();
     $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long); 
-    $moon = date("H:i",$ret->moonrise) . '-'. date("H:i",$ret->moonset);
+    $moon = date("H:i",$ret->moonrise) . '&nbsp;&nbsp;'. date("H:i",$ret->moonset);
 /*	
 	if(isset($devicelist["devices"][$i]['extra']))
         {$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
@@ -121,13 +121,16 @@ for($i = 0;$i < $numStations;$i++)
 	    $QA[$i] ='';
 */	    
 	if($place == "BAD")	
-    	$p = '<b>' . $mydevices[$i]['station_name'] . ' (' . $altitude . 'm)' . '</b><br>';
+    	$p = '<b>' . $mydevices[$i]['station_name'] . ' <br>(' . $altitude . 'm)' . '</b></font>';
 	else
-    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm)'; 
+    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm)</font>'; 
 // sun and moon
-    $p .= "<br> <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;' /> $soleil "; 
-    $p .= "<br><img src=$moonimg ALT='moon' style='height:25px;vertical-align:middle;'/> $moon $moonpercent%</font>";
-
+    $p .= "<br><div style='font-size:12px; font-weight:400; '>";
+    $p .= "<table style='margin:auto;'><tr><td>";
+    $p .= " <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;'/></td><td>&nbsp; $soleil </td>"; 
+    $p .= "<td>&nbsp;&nbsp;&nbsp;";
+    $p .= "<img src=$moonimg ALT='moon' style='height:25px;vertical-align:middle;'/></td><td>&nbsp; $moon</td>";
+    $p .= '</tr></table></div>';
     $res = $last_mesures[$i]["modules"];
 	$temp = degree2($res[0]['Temperature']);
 	$hum = $res[0]['Humidity'];
@@ -146,7 +149,7 @@ for($i = 0;$i < $numStations;$i++)
     $cu = $Temperature_unit ? '°':'F';
     $label[$i]  = "<table class='bulle'>"
         .'<caption >'. $p .'</caption>'
-        ."<tr><th style='width:60px;''></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>P mb</th> <th>Db</th></tr>"
+        ."<tr><th style='width:60px;''></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th></tr>"
         .'<tr>' . $tabINT .'</tr>'
         .'<tr>' . $tabEXT .'</tr>';
         
@@ -196,7 +199,7 @@ for($i = 0;$i < $numStations;$i++)
        		controlText.innerHTML = 'Show Markers';showMarker =0;
        		});  
        google.maps.event.addListener(marker, 'mouseover', function(){infowindow.open(map, marker);});
-       google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
+       //google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
        google.maps.event.addListener(marker, 'click', function()
        		{position = marker.getPosition();
        		pos= new google.maps.LatLng(position.lat() + .3,position.lng());//.03
@@ -229,9 +232,9 @@ for($i = 0;$i < $numStations;$i++)
     var center = new google.maps.LatLngBounds(LatLng[0]);
   	for(i=1;i < num;i++)
     	center.extend(LatLng[i]);
-//temperatureUnits:FAHRENHEIT    	       		
+  	       		
 	var mapOptions = {
-        zoom: 4,
+        zoom: 5,
         center: center.getCenter(),
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
@@ -435,9 +438,15 @@ for($i = 0;$i < $numStations;$i++)
        }
     }
 
+$arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
+$txt = tr('Phase lunaire');
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
 		<tr>");
-
+echo "<td><table class='icone'>";	
+echo "<tr><td colspan='2' class='th'>$txt</td></tr>";
+echo("<tr><td   style='text-align:center;'><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>");
+echo "<td>$moonpercent% &nbsp; $arrow</td>";
+echo "</tr></table></td>"; 
 // Tracé des icones    
 for($i = 0;$i < $numStations;$i++)
 	{$res = $last_mesures[$i]["modules"];
@@ -459,7 +468,8 @@ echo("</tr></table>");
 <tr>
     <td class='container'>
         <?php
-        drawMenuStation('260px');
+        drawMenuModules('280px');
+        drawMenuStation('280px');
         ?>
     </td>
 <!-- GOOGLE MAP -->
@@ -477,10 +487,12 @@ echo("</tr></table>");
     hico = Math.max(hico,144);
     lico = ico.offsetWidth;
     y -= (hico + 45);
-    var larMin = lico - 2*186;
-    var larMax = x - 2*186;
+    // 3 + 2 + 183
+    var larMin = lico - 2*190 -8;
+    var larMax = x - 2*190;
     var lar = Math.max(680,larMin);
     lar = Math.min(lar,larMax); 
+    //alert('lico'+lico+' lar:'+lar);
     var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:"+lar+"px; height:"
     t += y+"px; border:solid 2px gray;'> </div>";
     document.write(t);
@@ -488,7 +500,8 @@ echo("</tr></table>");
     </td>
     <td class='container'>
         <?php
-        drawMenuCompare('260px');
+        drawMenuHist('280px');
+        drawMenuCompare('280px');
         ?>	
     </td>
 </tr>

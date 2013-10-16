@@ -23,6 +23,8 @@ $Temperature_unit = $_SESSION['Temperature_unit'];
 $cu = $Temperature_unit ? '°':' F';
 if(isset($_POST['station'])) 
     $stationId = $_POST['station'];
+else if(isset($_POST['selectStation']))
+    $stationId = $_POST['selectStation'];    
 else if(isset($_SESSION['stationId']))
     $stationId = $_SESSION['stationId'];
 $_SESSION['stationId'] = $stationId;
@@ -103,6 +105,15 @@ else
     }
 
 $selectMesures = $_SESSION['selectMesures'];   
+
+if(isset($_POST['selectM']))
+    {for($i = 0 ;$i < 5;$i++)
+        $selectMesures[$i] = 0;
+    $selected = 1;
+    $selectM = $_POST['selectM'];
+    $selectMesures[$selectM] = 1;
+    }
+
 if(isset($_POST['smesure']))
     {for($i = 0 ;$i < 5;$i++)
         $selectMesures[$i] = 0;

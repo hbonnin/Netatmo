@@ -21,8 +21,11 @@ $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices'];
 $Temperature_unit = $_SESSION['Temperature_unit'];
 $cu = $Temperature_unit ? '°':' F';
+
 if(isset($_POST['station'])) 
     $stationId = $_POST['station'];
+else if(isset($_POST['selectStation']))
+    $stationId = $_POST['selectStation'];        
 else if(isset($_SESSION['stationId']))
     $stationId = $_SESSION['stationId'];
 $_SESSION['stationId'] = $stationId;
@@ -56,6 +59,24 @@ if(isset($_POST["hist"]))
     }
 else
     $hist = $_SESSION['hist'];
+    
+if(isset($_POST['selectMsesure']))
+    {$selectMesure = $_POST['selectMsesure'];
+    $_SESSION['selectMesureCompare'] = $selectMesure; 
+    }
+else 
+    $selectMesure = $_SESSION['selectMesureCompare'];
+   
+if($selectMesure == 'P')$selectMesure == 'T';   
+if($selectMesure == 'T')
+    {$type = 'min_temp,max_temp';
+    $titre = 'Température ';
+    }
+else if($selectMesure == 'H' || $selectMesure == 'h')
+    {$type = 'min_hum,max_hum';
+    $titre = 'Humidité ';
+    }   
+    
 
 $inter = $opt[$sel][2];
 $tinter = $opt[$sel][1];    
@@ -109,22 +130,29 @@ $device_id = $mydevices[$stationId]["_id"];
 $module_id = $mydevices[$stationId]["modules"][0]["_id"];
 $ext_name  = $mydevices[$stationId]["modules"][0]["module_name"];
 $stat_name = $mydevices[$stationId]["station_name"];
-$type = 'min_temp,max_temp';
-$titre = 'Température ';
+
 $mesure = array(2);
 $dateBeg = array(2);
 $ii = array(2);
 $keys = array(2);
 $nmesures = array(2);
 
-$params = array("scale" => $interval
-                , "type" => $type
-                , "date_begin" => $date_beg
-                , "date_end" => $date_end
-                , "optimize" => false
-                , "device_id" => $device_id
-                , "module_id" => $module_id);  
-                
+if($selectMesure == 'h')
+    $params = array("scale" => $interval
+                    , "type" => $type
+                    , "date_begin" => $date_beg
+                    , "date_end" => $date_end
+                    , "optimize" => false
+                    , "device_id" => $device_id);  
+else
+    $params = array("scale" => $interval
+                    , "type" => $type
+                    , "date_begin" => $date_beg
+                    , "date_end" => $date_end
+                    , "optimize" => false
+                    , "device_id" => $device_id
+                    , "module_id" => $module_id);  
+
 $mesure[0] = $client->api("getmeasure", "POST", $params);
 
 if($hist == 6)
@@ -133,13 +161,21 @@ else
     $delta = 366*24*60*60;
 $date_beg1 = $date_beg -$delta;
 $date_end1 = $date_end -$delta;
-$params = array("scale" => $interval
-                , "type" => $type
-                , "date_begin" => $date_beg1
-                , "date_end" => $date_end1
-                , "optimize" => false
-                , "device_id" => $device_id
-                , "module_id" => $module_id);  
+if($selectMesure == 'h')
+    $params = array("scale" => $interval
+                    , "type" => $type
+                    , "date_begin" => $date_beg1
+                    , "date_end" => $date_end1
+                    , "optimize" => false
+                    , "device_id" => $device_id);
+else
+    $params = array("scale" => $interval
+                    , "type" => $type
+                    , "date_begin" => $date_beg1
+                    , "date_end" => $date_end1
+                    , "optimize" => false
+                    , "device_id" => $device_id
+                    , "module_id" => $module_id);  
 $mesure[1] = $client->api("getmeasure", "POST", $params);
 if(count($mesure[1]) == 0)
     {drawCharts('H');
@@ -159,7 +195,8 @@ if($nmesures[0] <= 48)$visupt = ",pointSize:3";
 date_default_timezone_set($timezone);
 
 function tipHTML($stat_name,$t0,$t1,$date0,$date1)
-	{global $cu;
+	{global $cu,$type;
+	if($type != 'min_temp,max_temp')$cu = '%';
 	$tt0 = $tt1 = $tt = '';
 	if(!empty($t0)) $tt0 = sprintf('  %4.1f%s',$t0,$cu);
 	if(!empty($t1)) $tt1 = sprintf('  %4.1f%s',$t1,$cu);
@@ -221,7 +258,10 @@ echo("
                 }while($itime < $date_end);
 				echo("data.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
-				$title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
+				if($selectMesure == 'h')
+				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
+                else
+				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -265,7 +305,10 @@ echo("
                 }while($itime < $date_end);
 				echo("data1.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
-				$title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
+				if($selectMesure == 'h')				
+				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";  
+				else
+				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
 
 
 

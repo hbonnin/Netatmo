@@ -27,7 +27,7 @@ function heightChart()
     e = d.documentElement,
     g = d.getElementsByTagName('body')[0],
 	x = w.innerWidth || e.clientWidth || g.clientWidth,
-	lar = x - 190;
+	lar = x - 392;
     return lar; 
     }  
 function isMobile()
