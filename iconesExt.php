@@ -199,7 +199,7 @@ for($i = 0;$i < $numStations;$i++)
        		controlText.innerHTML = 'Show Markers';showMarker =0;
        		});  
        google.maps.event.addListener(marker, 'mouseover', function(){infowindow.open(map, marker);});
-       //google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
+       google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
        google.maps.event.addListener(marker, 'click', function()
        		{position = marker.getPosition();
        		pos= new google.maps.LatLng(position.lat() + .3,position.lng());//.03
