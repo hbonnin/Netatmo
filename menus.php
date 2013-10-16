@@ -311,14 +311,14 @@ function drawMenuHist($h = '',$charts = 0)
 	<td class='g'>
 	<div class='fl'><?php echo tr("Début");?></div>
 	<div class='fr'>
-    <input class="date" id="id_date0" type="text" name="date0" value='<?php echo($datebeg); ?>'  onclick="ds_sh(this,0);">
+    <input class="date"  type="text" name="date0" value='<?php echo($datebeg); ?>'  onclick="ds_sh(this,0);">
     </div></td></tr>
       
 	<tr>
 	<td class='g'>
 	<div class='fl'><?php echo tr("Fin");?></div>	
 	<div class='fr'>
-	<input class='date' id='id_date1'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
+	<input class='date'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
 	</div></td></tr>
 	
 	<tr>
@@ -462,14 +462,14 @@ function drawMenuStation($h = '',$charts = 0)
 	<td class='g'>
 	<div class='fl'><?php echo tr("Début");?></div>
 	<div class='fr'>
-    <input class="date" id="id_date0" type="text" name="date0" value='<?php echo($datebeg); ?>'  onclick="ds_sh(this,0);">
+    <input class="date"  type="text" name="date0" value='<?php echo($datebeg); ?>'  onclick="ds_sh(this,0);">
     </div></td></tr>
       
 	<tr>
 	<td class='g'>
 	<div class='fl'><?php echo tr("Fin");?></div>	
 	<div class='fr'>
-	<input class='date' id='id_date1'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
+	<input class='date'  type='text' name='date1' value='<?php echo($dateend); ?>' onclick='ds_sh(this,1);' >
 	</div></td></tr>
 	<tr>
 	<td class='g'>

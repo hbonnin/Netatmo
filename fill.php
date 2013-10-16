@@ -42,7 +42,7 @@ function fill($stationId,$devices,$mydevices,$res,$tmin,$tmax,$dtmin,$dtmax)
 	echo("		
 	<table class='icone'>
 	<tr>
-	<td colspan='6' class='th' title=\"$titre\">$station</td>
+	<td colspan='7' class='th' title=\"$titre\">$station</td>
 	</tr>
 	<tr>
 	<td style='height=40px;'><img src='icone/sun.png' ALT='outside' height='40'/></td> 

@@ -92,6 +92,7 @@ $phase = intval($moonphase->phase()*27 +.5);
 $imgnum = sprintf('%1$02d',$phase);
 $moonimg = "'".'icone/Moon/MoonDay'.$imgnum.'.png'."'";
 $moonpercent = intval($moonphase->phase()*1000)/10;
+$lumen = intval($moonphase->illumination()*1000)/10;
 $day = idate('d');
 $month = idate('m');
 $year = idate('Y');
@@ -441,12 +442,24 @@ for($i = 0;$i < $numStations;$i++)
 $arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
 $txt = tr('Phase lunaire');
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
-		<tr>");
-echo "<td><table class='icone'>";	
-echo "<tr><td colspan='2' class='th'>$txt</td></tr>";
-echo("<tr><td   style='text-align:center;'><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>");
-echo "<td>$moonpercent% &nbsp; $arrow</td>";
-echo "</tr></table></td>"; 
+		<tr>\n");
+echo "<td>\n";	
+/*
+echo "<table class='icone'>\n";	
+echo "<tr><td colspan='2' class='th'>$txt</td>\n";
+echo("</tr><tr><td rowspan='2' ><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>\n");
+echo "<td class='pl'>phase:$moonpercent% &nbsp; $arrow</td>\n";
+echo "</tr><tr><td class='pl'>lum:$lumen%</td>\n";
+echo "</tr></table>\n"; 
+*/
+echo "<table class='icone'>\n";	
+echo "<tr><td colspan='2' class='th'>$txt</td>\n";
+echo("</tr><tr><td ><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>\n");
+echo "<td style='font-size:13px;'>phase:$moonpercent% <br> $arrow <br>lumen:$lumen%</td>\n";
+echo "</tr></table>\n"; 
+
+
+echo "</td>\n";	
 // Tracé des icones    
 for($i = 0;$i < $numStations;$i++)
 	{$res = $last_mesures[$i]["modules"];
