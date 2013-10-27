@@ -26,13 +26,13 @@ class Moontime {
 	/**
 	 * Calculates the moon rise/set for a given location and day of year
 	 */
-	public static function calculateMoonTimes($month, $day, $year, $lat, $lon) {
+	public static function calculateMoonTimes($month, $day, $year, $lat, $lon,$timezone) {
 	
 		$utrise = $utset = 0;
 		
 		//$timezone = (int)($lon / 15);		
-        $dat = new DateTime(date('Y-m-d',time()));
-        $timezone = $dat->getOffset()/3600;
+        //$dat = new DateTime(date('Y-m-d',time()));
+        //$timezone = $dat->getOffset()/3600;
 		$date = self::modifiedJulianDate($month, $day, $year);
 		$date -= $timezone / 24;
 		$latRad = deg2rad($lat);

@@ -4,6 +4,7 @@
 	<meta charset='utf-8'>
 	<link rel='icon' href='favicon.ico'>
     <script src='https://www.google.com/jsapi'></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>    
     <script src='js/size.js'></script>
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
@@ -158,7 +159,7 @@ $mesure[0] = $client->api("getmeasure", "POST", $params);
 if($hist == 6)
     $delta = 184*24*60*60;
 else
-    $delta = 366*24*60*60;
+    $delta = 365*24*60*60;
 $date_beg1 = $date_beg -$delta;
 $date_end1 = $date_end -$delta;
 if($selectMesure == 'h')

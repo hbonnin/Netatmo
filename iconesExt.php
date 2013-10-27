@@ -8,6 +8,8 @@ session_start();
 <meta charset='utf-8'>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="viewport" content="width=device-width, initial-scale=.9, minimum-scale=.9,  user-scalable=yes">
+<!--<meta name="viewport" content="width=1000, initial-scale=.9, minimum-scale=.9,  user-scalable=yes">-->
 <script src='js/size.js'></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="js/jcookies.js"></script>
@@ -97,6 +99,9 @@ $day = idate('d');
 $month = idate('m');
 $year = idate('Y');
 
+$timeOffset =  getTimeOffset($timezone); 
+
+
 for($i = 0;$i < $numStations;$i++)
 	{$altitude = $mydevices[$i]['latlng']['altitude'];
     $place = $mydevices[$i]['address'];
@@ -106,10 +111,10 @@ for($i = 0;$i < $numStations;$i++)
 	$Zenith = 90 + (50/60);
 	$lat = $mydevices[$i]['latlng']['latitude'];
 	$long = $mydevices[$i]['latlng']['longitude'];	
-	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2)."&nbsp;&nbsp;".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,2);
+	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset)."&nbsp;&nbsp;".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset);
     // Lever/Coucher lune
     $moon = new moontime();
-    $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long); 
+    $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long, $timeOffset); 
     $moon = date("H:i",$ret->moonrise) . '&nbsp;&nbsp;'. date("H:i",$ret->moonset);
 /*	
 	if(isset($devicelist["devices"][$i]['extra']))
@@ -122,12 +127,13 @@ for($i = 0;$i < $numStations;$i++)
 	    $QA[$i] ='';
 */	    
 	if($place == "BAD")	
-    	$p = '<b>' . $mydevices[$i]['station_name'] . ' <br>(' . $altitude . 'm)' . '</b></font>';
+    	$p = "<b>".$mydevices[$i]['station_name']."</b><span style='font-size=14px;'><br>($altitude m)</span>";   
 	else
-    	$p = '<b>' . $place[1] . '</b><br><font size=2>' . $place[0] .  '<br> (' . $altitude . 'm)</font>'; 
+    	$p = "<b>$place[1]</b><span style='font-size=14px;'><br>$place[0]<br> ($altitude m)</span>"; 
+    
 // sun and moon
     $p .= "<br><div style='font-size:12px; font-weight:400; '>";
-    $p .= "<table style='margin:auto;'><tr><td>";
+    $p .= "<table style='margin-right:auto; margin-left:auto; margin-top:10px; margin-bottom:0px;'><tr><td>";
     $p .= " <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;'/></td><td>&nbsp; $soleil </td>"; 
     $p .= "<td>&nbsp;&nbsp;&nbsp;";
     $p .= "<img src=$moonimg ALT='moon' style='height:25px;vertical-align:middle;'/></td><td>&nbsp; $moon</td>";
@@ -237,9 +243,11 @@ for($i = 0;$i < $numStations;$i++)
 	var mapOptions = {
         zoom: 5,
         center: center.getCenter(),
-        disableDefaultUI: true,
+        disableDefaultUI: false,
         disableDoubleClickZoom: true,
-        scaleControl: false,
+        scaleControl: true,
+        panControl: false,
+        streetViewControl: false,
         scaleControlOptions: {position: google.maps.ControlPosition.TOP_RIGHT},
         mapTypeId: google.maps.MapTypeId.HYBRID
         };
@@ -399,8 +407,10 @@ for($i = 0;$i < $numStations;$i++)
 <script src='js/StyledMarker.js'></script>
 
 </head>
-  <body  onload='initialize()'>
-
+  <!--<body  onload='initialize()' style='transform: scale(.8,.85);'>-->
+  <body  onload='initialize()'>  
+  <!--<div style='transform: scale(.8;.9);  -moz-transform-origin: top left;'>-->
+  <div>
 <!-- Invisible table for calendar --> 
 
 <table class="ds_box"  id="ds_conclass" style="display: none;" >
@@ -444,18 +454,11 @@ $txt = tr('Phase lunaire');
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
 		<tr>\n");
 echo "<td>\n";	
-/*
-echo "<table class='icone'>\n";	
-echo "<tr><td colspan='2' class='th'>$txt</td>\n";
-echo("</tr><tr><td rowspan='2' ><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>\n");
-echo "<td class='pl'>phase:$moonpercent% &nbsp; $arrow</td>\n";
-echo "</tr><tr><td class='pl'>lum:$lumen%</td>\n";
-echo "</tr></table>\n"; 
-*/
+
 echo "<table class='icone'>\n";	
 echo "<tr><td colspan='2' class='th'>$txt</td>\n";
 echo("</tr><tr><td ><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>\n");
-echo "<td style='font-size:13px;'>phase:$moonpercent% <br> $arrow <br>lumen:$lumen%</td>\n";
+echo "<td style='font-size:13px;'>phase:$moonpercent% &nbsp; <span style='font-size:18px;'> $arrow </span><br>lumen:$lumen%</td>\n";
 echo "</tr></table>\n"; 
 
 
@@ -481,31 +484,30 @@ echo("</tr></table>");
 <tr>
     <td class='container'>
         <?php
-        drawMenuModules('280px');
-        drawMenuStation('280px');
+        drawMenuModules('292px');
+        drawMenuStation('292px');
         ?>
     </td>
 <!-- GOOGLE MAP -->
 
     <script>    
-    <?php echo ("var numStation = \"$numStations\";"); ?>
-    var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-    y = w.innerHeight|| e.clientHeight|| g.clientHeight,
-    x = w.innerWidth || e.clientWidth || g.clientWidth;
-    ico = d.getElementById("icones");
-    hico = ico.offsetHeight;
-    hico = Math.max(hico,144);
-    lico = ico.offsetWidth;
-    y -= (hico + 45);
-    // 3 + 2 + 183
-    var larMin = lico - 2*190 -8;
-    var larMax = x - 2*190;
+    var x = $(document).width();
+    var y = $(document).height();
+    var xx = $(window).width();
+    var ico = document.getElementById("icones");
+    var hico = ico.offsetHeight;
+    //hico = Math.max(hico,144);
+    var lico = ico.offsetWidth;
+    //var lico = $("#icones").width();
+    var gr = document.getElementById("modules");
+    //var larg = 2*$("#modules").outerWidth() + 12;
+    var larg = 2*gr.offsetWidth + 12;
+    if(!isMobile())y -= (hico + 45);
+    else y -= (hico + 25);
+    var larMin = lico - larg;
+    var larMax = x - larg;
     var lar = Math.max(680,larMin);
     lar = Math.min(lar,larMax); 
-    //alert('lico'+lico+' lar:'+lar);
     var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:"+lar+"px; height:"
     t += y+"px; border:solid 2px gray;'> </div>";
     document.write(t);
@@ -513,8 +515,8 @@ echo("</tr></table>");
     </td>
     <td class='container'>
         <?php
-        drawMenuHist('280px');
-        drawMenuCompare('280px');
+        drawMenuCompare('292px');//304
+        drawMenuHist('292px');
         ?>	
     </td>
 </tr>
@@ -522,7 +524,7 @@ echo("</tr></table>");
 </table>
 
 <?php  drawLogoutBack(); ?>
-
+</div>
 </body>
 </html>
 

@@ -319,5 +319,14 @@ function tr($txt)
         default:        return $txt;
                         break;
         }    
+    }  
+function getTimeOffset($localZone)
+    {
+    $dateTimeZoneLocal = new DateTimeZone("$localZone");
+    $dateTimeZoneGmt = new DateTimeZone("UTC");//UTC
+    $dateTimeLocal = new DateTime('now', $dateTimeZoneLocal);
+    $dateTimeGmt = new DateTime('now', $dateTimeZoneGmt);
+    $offset = ($dateTimeZoneLocal->getOffset($dateTimeGmt))/3600;
+    return $offset; 
     }    
 ?>
