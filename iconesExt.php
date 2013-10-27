@@ -90,7 +90,7 @@ $moonPhase -= (int) $moonPhase;
 $moonPhase = 100 - round($moonPhase * 100);
 */
 $moonphase = new MoonPhase();
-$phase = intval($moonphase->phase()*27 +.5);
+$phase = intval($moonphase->phase()*28 +.5)%28;
 $imgnum = sprintf('%1$02d',$phase);
 $moonimg = "'".'icone/Moon/MoonDay'.$imgnum.'.png'."'";
 $moonpercent = intval($moonphase->phase()*1000)/10;
@@ -138,6 +138,7 @@ for($i = 0;$i < $numStations;$i++)
     $p .= "<td>&nbsp;&nbsp;&nbsp;";
     $p .= "<img src=$moonimg ALT='moon' style='height:25px;vertical-align:middle;'/></td><td>&nbsp; $moon</td>";
     $p .= '</tr></table></div>';
+    
     $res = $last_mesures[$i]["modules"];
 	$temp = degree2($res[0]['Temperature']);
 	$hum = $res[0]['Humidity'];
@@ -459,7 +460,37 @@ echo "<table class='icone'>\n";
 echo "<tr><td colspan='2' class='th'>$txt</td>\n";
 echo("</tr><tr><td ><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>\n");
 echo "<td style='font-size:13px;'>phase:$moonpercent% &nbsp; <span style='font-size:18px;'> $arrow </span><br>lumen:$lumen%</td>\n";
-echo "</tr></table>\n"; 
+echo "</tr>\n"; 
+
+/* Moon info */
+$tinfo = tr("Autres informations");
+$moonphase = new MoonPhase();
+$txt0 = tr('Nouvelle lune');
+$txt1 = tr('Premier quartier');
+$txt2 = tr('Pleine lune');
+$txt3 = tr('Dernier quartier');
+$txt0 = tr('Nouvelle lune');
+$date0 = date("d/m/Y H:i",$moonphase->new_moon());
+$date1 = date("d/m/Y H:i",$moonphase->first_quarter());
+$date2 = date("d/m/Y H:i",$moonphase->full_moon());
+$date3 = date("d/m/Y H:i",$moonphase->last_quarter());
+$date4 = date("d/m/Y H:i",$moonphase->next_new_moon());
+
+echo("
+	<tr><td class='tooltip' colspan='7'>
+		<a href='#' class='tooltip'>
+  		$tinfo:		
+        <div >
+        <table class='info'>
+        <tr><td style='width:90px;'>$txt0</td><td style='text-align:center;'>$date0</td></tr>
+        <tr><td style='width:90px;'>$txt1</td><td style='text-align:center;'>$date1</td></tr>
+        <tr><td style='width:90px;'>$txt2</td><td style='text-align:center;'>$date2</td></tr>
+        <tr><td style='width:90px;'>$txt3</td><td style='text-align:center;'>$date3</td></tr>
+        <tr><td style='width:90px;'>$txt0</td><td style='text-align:center;'>$date4</td></tr>
+</table>
+</div></a>
+</td></tr></table>
+"); 
 
 
 echo "</td>\n";	
