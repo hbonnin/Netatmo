@@ -30,7 +30,7 @@ echo("Temperature_unit (Netatmo) = {$_SESSION['Temperature_unit']} <br>");
 echo("Language (Netatmo) = {$_SESSION['lang']} <br>");
 echo "<pre>";
 print_r($_SESSION['LogMsg']);
-if($_SERVER['SERVER_NAME'] != 'fraysseix.fr')
+if($_SERVER['SERVER_NAME'] != 'fraysseix.fr' || isset($_SESSION['ex']))
     {print_r($_SESSION['client']);echo "<br>";
     print_r($_SESSION['mydevices']);echo "<br>";
     }

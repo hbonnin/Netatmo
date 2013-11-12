@@ -156,10 +156,18 @@ else
 
 $mesure[0] = $client->api("getmeasure", "POST", $params);
 
-if($hist == 6)
+if($hist == 1)
+    {$month = idate('m');
+    if($momth == 1)$num = 31;
+    else
+        $num = cal_days_in_month(CAL_GREGORIAN, $month-1, idate('Y')); 
+    $delta = $num*24*60*60;
+    }
+else if($hist == 6)
     $delta = 184*24*60*60;
 else
     $delta = 365*24*60*60;
+    
 $date_beg1 = $date_beg -$delta;
 $date_end1 = $date_end -$delta;
 if($selectMesure == 'h')
@@ -201,7 +209,7 @@ function tipHTML($stat_name,$t0,$t1,$date0,$date1)
 	$tt0 = $tt1 = $tt = '';
 	if(!empty($t0)) $tt0 = sprintf('  %4.1f%s',$t0,$cu);
 	if(!empty($t1)) $tt1 = sprintf('  %4.1f%s',$t1,$cu);
-	if(!empty($t0) && !empty($t1)) $tt = sprintf('  %4.1f%s',$t1 - $t0,$cu);
+	if(!empty($t0) && !empty($t1)) $tt = sprintf('  %4.1f%s',$t0 - $t1,$cu);
 	return '<table style="width:130px; height:85px; padding:5px; margin:2px"><caption><b>' . $stat_name . '</b></caption><tr><td></td><td></td></tr>'
 	. '<tr><td><i>'.$date0.'</i></td><td style="color: red; text-align:right;"><b>'.$tt0. "</b></td></tr>"
 	. '<tr><td><i>'.$date1.'</i></td><td style="color: blue; text-align:right;"><b>'.$tt1. "</b></td></tr>"

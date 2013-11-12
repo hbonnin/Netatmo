@@ -297,13 +297,21 @@ function drawMenuHist($h = '',$charts = 0)
 	<div class='fr'>
 	<select name='hist'>
 <?php
+    $t1 = '1 '.tr('mois');
     $t6 = '6 '.tr('mois');
     $t12 = '12 '.tr('mois');
-    if($hist == 6)
-        echo("<option value='6' selected='selected'>$t6</option>
+    
+    if($hist == 1)
+        echo("<option value='1' selected='selected' >$t1</option>
+        <option value='6' '>$t6</option>
+        <option value='12' >$t12</option>");
+    else if($hist == 6)
+        echo("<option value='1'>$t1</option>
+        <option value='6' selected='selected'>$t6</option>
         <option value='12' >$t12</option>");
     else
-        echo("<option value='6'>$t6</option>
+        echo("<option value='1'>$t1</option>
+        <option value='6'>$t6</option>
         <option value='12' selected='selected'>$t12</option>");
     
 ?>

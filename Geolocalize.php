@@ -1,8 +1,8 @@
 <?php
 
 function geolocalize($lat,$lng)
-	{global $use_google_key,$google_key;   
-    if(!$use_google_key){$_SESSION['LogMsg'] .= $date.':geolocalize: No Google key <br>';return "BAD";}
+	{//global $use_google_key,$google_key;   
+    //if(!$use_google_key){$_SESSION['LogMsg'] .= $date.':geolocalize: No Google key <br>';return "BAD";}
     $url="https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&sensor=false";    
     $ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, "$url");

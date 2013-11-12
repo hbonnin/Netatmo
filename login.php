@@ -40,8 +40,8 @@ $_SESSION['expires_in'] = $tokens['expires_in'];
 
 if(isset($_POST['saveCookie']))
     $_SESSION['saveCookie'] = 1;
-//echo("<script>	top.location.href = 'iconesExt.php';</script>");
-header('location:iconesExt.php');
+echo("<script>	top.location.href = 'iconesExt.php';</script>");
+//header('location:iconesExt.php');
 // avant header('location:xxx'); util si appel ajax ?	
 ?>
 

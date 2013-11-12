@@ -77,18 +77,15 @@ if($mydevices['address'] == 0)
 		{$mydevices[$i]['latlng']['latitude'] = $devicelist["devices"][$i]["place"]["location"][1];
 		$mydevices[$i]['latlng']['longitude'] = $devicelist["devices"][$i]["place"]["location"][0];
 		$mydevices[$i]['latlng']['altitude'] = $devicelist["devices"][$i]["place"]["altitude"];
-		$mydevices[$i]['address'] = geolocalize($mydevices[$i]['latlng']['latitude'],$mydevices[$i]['latlng']['longitude']);
+		if(isset($geocode) && $geocode)
+		    $mydevices[$i]['address'] = geolocalize($mydevices[$i]['latlng']['latitude'],$mydevices[$i]['latlng']['longitude']);
+        else
+            $mydevices[$i]['address'] = 'BAD';
 		}
 	$_SESSION['mydevices'] = $mydevices;	
 	}
 //Creation des InfoWindow
 // moon phase
-/*
-$date = strtotime(date("Y-m-d"));
-$moonPhase = ($date - 603240) / 2551392;
-$moonPhase -= (int) $moonPhase;
-$moonPhase = 100 - round($moonPhase * 100);
-*/
 $moonphase = new MoonPhase();
 $phase = intval($moonphase->phase()*28 +.5)%28;
 $imgnum = sprintf('%1$02d',$phase);
@@ -101,7 +98,22 @@ $year = idate('Y');
 
 $timeOffset =  getTimeOffset($timezone); 
 
-
+function daydiff($lat,$long)
+    {$t = time();
+    $tp = $t - 24*60*60;
+    $sun = date_sun_info($t,$lat,$long);
+    $sunp = date_sun_info($tp,$lat,$long);
+    return $sun['sunset'] - $sun['sunrise'] - ($sunp['sunset'] - $sunp['sunrise']);
+    }
+function daylength($lat,$long)
+    {$sun = date_sun_info(time(),$lat,$long);
+    $daylength = $sun['sunset'] - $sun['sunrise'];
+	$dayH = intval($daylength/3600);
+	$day = $daylength - 3600*$dayH;
+	$dayM = intval($day/60); 
+	$dayS = $day - 60*$dayM;   
+	return sprintf("%d:%d:%d",$dayH,$dayM,$dayS);
+    }    
 for($i = 0;$i < $numStations;$i++)
 	{$altitude = $mydevices[$i]['latlng']['altitude'];
     $place = $mydevices[$i]['address'];
@@ -111,7 +123,14 @@ for($i = 0;$i < $numStations;$i++)
 	$Zenith = 90 + (50/60);
 	$lat = $mydevices[$i]['latlng']['latitude'];
 	$long = $mydevices[$i]['latlng']['longitude'];	
-	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset)."&nbsp;&nbsp;".date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset);
+	$diff = daydiff($lat,$long);
+	$arrow = ($diff > 0) ? '&#10138;':'&#10136;'; 
+	if(abs($diff) < 1)$arrow = '&#8596;';
+	$diff = abs($diff);
+	$diffm = intval($diff/60); $diffs = abs($diff%60); $tdiff =  sprintf("%2dm %2ds", $diffm,$diffs);
+	$tdaylength = daylength($lat,$long);
+	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset)."&nbsp;&nbsp;"
+	        .date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset);
     // Lever/Coucher lune
     $moon = new moontime();
     $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long, $timeOffset); 
@@ -130,15 +149,22 @@ for($i = 0;$i < $numStations;$i++)
     	$p = "<b>".$mydevices[$i]['station_name']."</b><span style='font-size=14px;'><br>($altitude m)</span>";   
 	else
     	$p = "<b>$place[1]</b><span style='font-size=14px;'><br>$place[0]<br> ($altitude m)</span>"; 
-    
+ 
+ 
+ 
+ 
 // sun and moon
     $p .= "<br><div style='font-size:12px; font-weight:400; '>";
-    $p .= "<table style='margin-right:auto; margin-left:auto; margin-top:10px; margin-bottom:0px;'><tr><td>";
-    $p .= " <img src='icone/csun.png' ALT='sun' style='height:25px;vertical-align:middle;'/></td><td>&nbsp; $soleil </td>"; 
-    $p .= "<td>&nbsp;&nbsp;&nbsp;";
-    $p .= "<img src=$moonimg ALT='moon' style='height:25px;vertical-align:middle;'/></td><td>&nbsp; $moon</td>";
-    $p .= '</tr></table></div>';
-    
+    $p .= "<table border='0' style='width:260px; margin-right:auto; margin-left:auto; margin-top:10px; margin-bottom:5px; line-height: 0.8em;'><tr>";
+    $p .= " <td><img src='icone/csun.png' ALT='sun' style='height:25px;'/></td>";
+    $p .= "<td style='vertical-align:middle;'> &nbsp; $soleil</td>"; 
+    $p .= "<td style='width:30px;'>&nbsp;</td>";
+    $p .= "<td><img src=$moonimg ALT='moon' style='height:25px; '/></td>";
+    $p .= "<td>&nbsp;  $moon</td></tr>";
+    $p .= "<tr><td style='font-size:20px; text-align:center; '>$arrow</td>";
+    $p .= "<td colspan='2'>&nbsp; $tdiff &nbsp; $tdaylength</td></tr>";
+    $p .= "</table></div>";
+
     $res = $last_mesures[$i]["modules"];
 	$temp = degree2($res[0]['Temperature']);
 	$hum = $res[0]['Humidity'];
@@ -149,17 +175,17 @@ for($i = 0;$i < $numStations;$i++)
 	$orange = "style='color: brown'";
 	$violet = "style='color:#007'";
 	
-	$tabINT = "<td class='name'>$int_name</td> <td $red>$temp</td> <td $green>$hum</td>  <td $orange>$co2</td> <td></td> <td $violet>$db</td>";	
+	$tabINT = "<tr><td class='name'>$int_name</td> <td></td><td $red>$temp</td> <td $green>$hum</td>  <td $orange>$co2</td> <td></td> <td $violet>$db</td></tr>";	
 	$temp = degree2($res[1]['Temperature']);
 	$hum = $res[1]['Humidity'];
 	$pres = intval($res[0]['Pressure'] + .5);
-	$tabEXT = "<td class='name'>$ext_name</td> <td $red>$temp</td> <td $green>$hum</td> <td></td> <td>$pres</td>";	
+	$tabEXT = "<tr><td class='name'>$ext_name</td> <td></td><td $red>$temp</td> <td $green>$hum</td> <td></td> <td>$pres</td></tr>";	
     $cu = $Temperature_unit ? '°':'F';
-    $label[$i]  = "<table class='bulle'>"
-        .'<caption >'. $p .'</caption>'
-        ."<tr><th style='width:60px;''></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th></tr>"
-        .'<tr>' . $tabINT .'</tr>'
-        .'<tr>' . $tabEXT .'</tr>';
+    // Infos
+    $label[$i]  = "<table class='bulle' style='width:260px;'>";
+    $label[$i] .=  "<caption > $p </caption>";
+    $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th></tr>";
+    $label[$i] .=   "$tabINT  $tabEXT";
         
         $nModule = count($res);
         for($j = 2; $j < $nModule ; $j++)
@@ -167,10 +193,9 @@ for($i = 0;$i < $numStations;$i++)
             $temp = degree2($res[$j]["Temperature"]);
             $hum = $res[$j]["Humidity"];
             $co2 = $res[$j]["CO2"];		
-            $tabMOD = "<tr><td class='name'>$name</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td></tr>";
-            $label[$i] = $label[$i] . '<tr>' . $tabMOD .'</tr>';        
+            $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td></tr>";        
             }
-    $label[$i] = $label[$i] . '</table>';
+    $label[$i] .= '</table>';
     //if(!empty($QA[$i]))$label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";
     if($Temperature_unit)
         $slabel[$i] = degree2($res[1]['Temperature']) . '°';	  // usilise pour les marker    	  
@@ -190,14 +215,16 @@ for($i = 0;$i < $numStations;$i++)
 
 <script>
     var cloudLayer;
+    var trafficlayer;
     var map;
     var show = 1;
+    var showTraffic = 0;
     var showMarker = 1;
     var controlText;
+    var zoomInit = 5;
     
 	function createMarker(pos,label,slabel,map) 
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
-		//marker.setZIndex(1);
 		var infowindow = new google.maps.InfoWindow(
 		    {'content'  : label,
 		    'disableAutoPan' : true
@@ -210,11 +237,10 @@ for($i = 0;$i < $numStations;$i++)
        google.maps.event.addListener(marker, 'mouseout', function(){infowindow.close(map, marker);}); 
        google.maps.event.addListener(marker, 'click', function()
        		{position = marker.getPosition();
-       		pos= new google.maps.LatLng(position.lat() + .3,position.lng());//.03
+       		pos= new google.maps.LatLng(position.lat() ,position.lng());//.03
        		map.setCenter(pos);
-  			map.setZoom(9);
+  			map.setZoom(10);
        		}); 
- 
     	return marker;  
 		}
 
@@ -242,19 +268,24 @@ for($i = 0;$i < $numStations;$i++)
     	center.extend(LatLng[i]);
   	       		
 	var mapOptions = {
-        zoom: 5,
+        zoom: zoomInit,
         center: center.getCenter(),
         disableDefaultUI: false,
+        mapTypeId: google.maps.MapTypeId.HYBRID,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+                mapTypeIds: [google.maps.MapTypeId.HYBRID,google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]                                },
+        zoomControl: true,
+        zoomControlOptions: {
+                            style: google.maps.ZoomControlStyle.LARGE,
+                            position: google.maps.ControlPosition.LEFT_CENTER
+                            },
         disableDoubleClickZoom: true,
-        scaleControl: true,
         panControl: false,
         streetViewControl: false,
-        scaleControlOptions: {position: google.maps.ControlPosition.TOP_RIGHT},
-        mapTypeId: google.maps.MapTypeId.HYBRID
         };
         
-    map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
-  	//map.fitBounds(center);		  		
+    map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);		  		
     	 	
 	for(i=0 ; i < num;i++)
 		markers[i] = createMarker(LatLng[i],label[i],slabel[i],map);
@@ -274,6 +305,17 @@ for($i = 0;$i < $numStations;$i++)
   	var cloudControl = new CloudControl(cloudControlDiv, map);
   	cloudControlDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_LEFT].push(cloudControlDiv);
+  	
+    // add traffic layer
+    trafficLayer = new google.maps.TrafficLayer();
+    trafficLayer.setMap(null);
+
+	// add traffic control
+	var trafficControlDiv = document.createElement('div');
+  	var trafficControl = new TrafficControl(trafficControlDiv, map);
+  	trafficControlDiv.index = 1;
+  	map.controls[google.maps.ControlPosition.TOP_LEFT].push(trafficControlDiv);
+  	
 
 	// add marker control
 	markerControlDiv = document.createElement('div');
@@ -320,10 +362,9 @@ for($i = 0;$i < $numStations;$i++)
 	  // Setup the click event listeners
   	  google.maps.event.addDomListener(controlUI, 'click', function() 
   		{map.setCenter(center.getCenter());
-  		map.setZoom(4);
+  		map.setZoom(zoomInit);
   		});
-	  }
-	 
+	  } 
 	function CloudControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
  	 // Setting padding to 5 px will offset the control
@@ -353,14 +394,51 @@ for($i = 0;$i < $numStations;$i++)
   	  google.maps.event.addDomListener(controlUI, 'click', function() 
   	  	{if(show)
 			{cloudLayer.setMap(null);show = 0;
-			controlText.innerHTML = 'Show Clouds';
+			controlText.innerHTML = 'Show Clouds';		
 			}
 		else
 			{cloudLayer.setMap(map);show = 1;
-  			controlText.innerHTML = 'Hide Clouds';
+  			controlText.innerHTML = 'Hide Clouds';			
 			}	
 		});
 		}
+	function TrafficControl(controlDiv, map) {
+	  // Set CSS styles for the DIV containing the control
+ 	 // Setting padding to 5 px will offset the control
+	  // from the edge of the map.
+	  controlDiv.style.padding = '5px 0px 0px 0px'; //5 1 0 0
+
+	  // Set CSS for the control border.
+	  var controlUI = document.createElement('div');
+	  controlUI.style.backgroundColor = 'white';
+	  controlUI.style.borderStyle = 'solid';
+	  controlUI.style.borderColor = 'gray';	  
+	  controlUI.style.borderWidth = '1px';
+	  controlUI.style.cursor = 'pointer';
+ 	  controlUI.style.textAlign = 'center';
+	  controlUI.title = 'Click hide/display the traffic';
+	  controlDiv.appendChild(controlUI);
+
+	  // Set CSS for the control interior.
+	  var controlText = document.createElement('div');
+	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontSize = '12px';
+	  controlText.style.paddingLeft = '4px';
+	  controlText.style.paddingRight = '4px';
+	  controlText.innerHTML = 'Show Traffic';
+	  controlUI.appendChild(controlText);	
+  	  // Setup the click event listeners
+  	  google.maps.event.addDomListener(controlUI, 'click', function() 
+  	  	{if(showTraffic)
+			{trafficLayer.setMap(null);showTraffic = 0;
+			controlText.innerHTML = 'Show Traffic';		
+			}
+		else
+			{trafficLayer.setMap(map);showTraffic = 1;
+  			controlText.innerHTML = 'Hide Traffic';  			
+			}	
+		});
+		}		
 	function MarkerControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
  	 // Setting padding to 5 px will offset the control
@@ -540,10 +618,10 @@ echo("</tr></table>");
     var lar = Math.max(680,larMin);
     lar = Math.min(lar,larMax); 
     var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:"+lar+"px; height:"
-    t += y+"px; border:solid 2px gray;'> </div>";
+    t += y+"px; border:solid 2px gray;'> </div></td>";
     document.write(t);
  </script>
-    </td>
+    
     <td class='container'>
         <?php
         drawMenuCompare('292px');//304
