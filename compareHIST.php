@@ -187,8 +187,14 @@ else
                     , "module_id" => $module_id);  
 $mesure[1] = $client->api("getmeasure", "POST", $params);
 if(count($mesure[1]) == 0)
-    {drawCharts('H');
+    {echo("</script>
+        <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
+        </head>
+        <body> 
+        ");
+    drawCharts('H');
     echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+    echo("</body></html>");
     return;
     } 
 	    

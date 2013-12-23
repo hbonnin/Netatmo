@@ -63,24 +63,27 @@ function init($numStations)
         $_SESSION['selectedInter'] = '1day';
         $_SESSION['selectedInterP'] = 'x';
         $_SESSION['date_begP'] = 0;
-        $_SESSION['date_endP'] = 0;        
+        $_SESSION['date_endP'] = 0;  
         $_SESSION['dateend'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $_SESSION['path'] = dirname($_SERVER['PHP_SELF']);
         $client = $_SESSION['client'];     
         $MenuInterval = array ( "G" => 4,
                             "C"  => 1,
-                            "M"  => 3, 
+                            "M"  => 4,
                             "H"  => 1,                             
                             "opt" => array (
-                                        0 => array ('1week','1 semaine',7*24*60*60),
-                                        1 => array ('1day','1 journée',24*60*60),
-                                        2 => array ('3hours','3 heures',3*60*60),
-                                        3 => array ('30min','30 minutes',30*60),
-                                        4 => array ('max','5 minutes',5*60)
+                                        0 => array ('1week','1 semaine',7*24*60*60,26*7*24*60*60),
+                                        1 => array ('1day','1 journée',24*60*60,30*24*60*60),
+                                        2 => array ('3hours','3 heures',3*60*60,15*24*60*60),
+                                        3 => array ('30min','30 minutes',30*60,2*24*60*60),
+                                        4 => array ('max','5 minutes',5*60,24*60*60)
                                         )
                                 );
         $_SESSION['MenuInterval'] = $MenuInterval;  
+        $_SESSION['date_end'] = time();
+        $_SESSION['date_beg'] = time() - $MenuInterval['opt'][1][3];
+        
         $selectMesures[0] = 1;
         for($i = 1 ;$i < 5; $i++)
             $selectMesures[$i] = 0;

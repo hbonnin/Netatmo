@@ -152,7 +152,7 @@ table.G {
 td.g	{
 	height:26px;
 	text-align:left;
-    padding:0px 0px 0px 5px;	
+    padding:0px 2px 0px 2px;	
 }
 
 div.fl {
@@ -197,6 +197,12 @@ input.g {
 	margin-left:-4px;
 	margin-bottom:25px;
 }
+#el00 option {
+	color:#009;
+	max-width:110px;
+	overflow-x:hidden; 
+}
+
 span.clear {
 	clear:both;
 }

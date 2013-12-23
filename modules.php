@@ -20,7 +20,11 @@ initClient();
 $client = $_SESSION['client'];
 $Temperature_unit = $_SESSION['Temperature_unit'];
 // $stationNum station utilise
-$stationNum = $_GET['stationNum']; // toujours défini
+if(isset($_GET['stationNum']))
+    $stationNum = $_GET['stationNum']; 
+else if(isset($_GET['hist']))
+    $stationNum = $_SESSION['stationId'];
+
 $changedSation = false;
 if(isset($_POST['selectStation']))
     {$changedSation = ($_POST['selectStation'] != $stationNum); 
@@ -65,7 +69,7 @@ $opt = $_SESSION['MenuInterval']['opt'];
 $sel = selectIndex($opt,$interval);
 $inter = $opt[$sel][2];
 $tinter = $opt[$sel][1];
-
+$len = $opt[$sel][3];
     
 if(isset($_POST["date0"]))  
     $date0 = $_POST["date0"]; 
@@ -77,7 +81,38 @@ if(isset($_POST["date1"]))
 else
     $date1 = $_SESSION['dateend'];   
 
-
+if(isset($_GET['hist']) && $_GET['hist'] == -1)// recule d'une page
+    {$date_beg = $_SESSION['date_beg'] - $len;
+    $date_end = $_SESSION['date_end'] - $len;
+    $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+    $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+    $_SESSION['date_beg'] = $date_beg;
+    $_SESSION['date_end'] = $date_end;  
+    }
+else if(isset($_GET['hist']) && $_GET['hist'] == 1)// avance d'une page
+    {$len = min($len,(time() - $_SESSION['date_end']));
+    $date_beg = $_SESSION['date_beg'] + $len;
+    $date_end = $_SESSION['date_end'] + $len;
+    $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+    $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+    $_SESSION['date_beg'] = $date_beg;
+    $_SESSION['date_end'] = $date_end;  
+    }    
+else if(isset($_GET['hist']) && $_GET['hist'] == -2)// restaure defaut
+    {chkDates(time(),time(),$interval,$inter);	
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];
+    $date0 = date("d/m/Y",$date_beg); 
+    $date1 = date("d/m/Y",$date_end); 
+    $_SESSION['datebeg'] = $date0;
+    $_SESSION['dateend'] = $date1; 
+    }    
+else if(isset($_GET['hist']) && $_GET['hist'] == -2)// restaure defaut
+    {$date0 = $date1 = time();
+    chkDates($date0,$date1,$interval,$inter);	
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];
+    }    
 if(isset($_GET['row']))// faire un zoom sur la date
     {$row = $_GET['row'];
     $date_beg = $_SESSION['date_beg'];
@@ -115,7 +150,7 @@ if(isset($_GET['row']))// faire un zoom sur la date
         $_SESSION['date_end'] = $date_end;  
         }
     }
-else
+else  if(!isset($_GET['hist']))
     {chkDates($date0,$date1,$interval,$inter);	
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];
@@ -234,11 +269,18 @@ if($view[0])
     , "optimize" => false
     , "device_id" => $device_id); 
     $mesure[0] = $client->api("getmeasure", "POST", $params);
+
     if(count($mesure[0]) == 0)
-        {drawCharts('M');
+        {echo("</script>
+            <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
+            </head>
+            <body> 
+            ");
+        drawCharts('M');
         echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+        echo("</body></html>");
         return;
-        } 	  
+        }         
     $keys[0] = array_keys($mesure[0]);
     $numKeys = max($numKeys,count($keys[0]));
     $dateBeg[0] = $keys[0][0];

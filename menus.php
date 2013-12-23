@@ -30,22 +30,32 @@ function drawSelectInter($menu)
     } 
 function chkDates($date0,$date1,$interval,$inter)
     {$txt = explode("/",$date1);
-    $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+    $n = count($txt);
+    if(count($txt) > 1)
+        $date_end = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]);
+    else
+        $date_end = $date1;
     $date_end = min($date_end,time());
+    
     $txt = explode("/",$date0);
-    $date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]); 
+    $n = count($txt);
+    if(count($txt) > 1)
+        $date_beg = mktime(date('H'),date('i'),0,$txt[1],$txt[0],$txt[2]); 
+    else
+        $date_beg = $date0;
     $date_beg =	min($date_beg,$date_end);
-
+    $opt = $_SESSION['MenuInterval']['opt']; 
+    
     switch($interval)
-        {case '1week': $date_beg = min($date_beg,$date_end - 26*7*24*60*60);
+        {case '1week': $date_beg = min($date_beg,$date_end - $opt[0][3]);
                         break;
-         case '1day': $date_beg = min($date_beg,$date_end - 30*24*60*60);
+         case '1day': $date_beg = min($date_beg,$date_end - $opt[1][3]);
                         break;
-         case '3hours': $date_beg = min($date_beg,$date_end - 15*24*60*60);
+         case '3hours': $date_beg = min($date_beg,$date_end - $opt[2][3]);
                         break;
-         case '30min': $date_beg = min($date_beg,$date_end - 49*60*60);
+         case '30min': $date_beg = min($date_beg,$date_end - $opt[3][3]);
                         break;
-         case  'max':  $date_beg = min($date_beg,$date_end - 12*60*60);
+         case  'max':  $date_beg = min($date_beg,$date_end - $opt[4][3]);
                         break;
         }
         
@@ -57,8 +67,8 @@ function chkDates($date0,$date1,$interval,$inter)
     if($interval == '1week')$date_beg -= idate('w',$date_beg)*24*60*60;  // -> dimanche    
     if($interval == '1day')$date_beg -= 24*60*60;  
     $_SESSION['date_beg'] = $date_beg;
-    $_SESSION['date_end'] = $date_end;    
-    }    
+    $_SESSION['date_end'] = $date_end;  
+ }    
 function drawLogoutBack()
 	{$stationId = $_SESSION['stationId'];
 ?>
@@ -175,48 +185,36 @@ function drawMenuHist($h = '',$charts = 0)
 ?>	
      <form method='post' action='compareHIST.php'>
 <?php
-/*
-    if($charts < 2)
-        echo("<table class='G' style=\"height:$h;\">");
-    else
-        echo("<table class='G' style=\"height:$h; background-color:#f0f0f0;\">");
-*/
+    $titre = tr("Comparaison année");
     if($charts == 0)
         {echo("<table class='G' id='hist' style=\"height:$h;\">");
         echo("<tr><td class='title'><div class='f'>");
+        echo "$titre </div></td></tr>";
         }
-    else if($charts == 1)
+    else 
         {
-        echo("<script>
+?>   
+        <table class="G"  id="hist">
+        <tr><td class="title">
+        <div class="f" id = "dhist">
+        <?php echo $titre;?>
+        </div></td></tr>
+        <script>
         var h = heightChart() + 2;
-        var txt = '<table class=\"G\"  id=\"hist\" style=\"height:'+h+'px;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');        
-        </script>
+        $("#hist").css("height", h);
+        var h2 = (heightChart()-300)/4 + 20;
+        $("#dhist").css("height",h2);
+        </script>   
+<?php            
+         }                
+    if($charts > 1)
+        echo("
+            <script>
+            $(\"#hist\").css( \"background-color\", \"#f0f0f0\" );
+            </script>        
         ");
-        }    
-    else
-        {
-        echo("<script>
-        var h = heightChart() + 2;
-        var txt = '<table class=\"G\" id=\"hist\" style=\"height:'+h+'px; background-color:#f0f0f0;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');                
-        </script>
-        ");
-        } 
 ?>              
-      
 
-    <!--<tr>
-    <td class='title'>
-    <div class='f'>-->
-    <?php echo tr("Comparaison année");?>
-    </div></td></tr>	
 
 	<tr>
 	<td class='g'>
@@ -224,11 +222,11 @@ function drawMenuHist($h = '',$charts = 0)
 	<div class='fr'>
 		           
  		<?php
- 		echo "<select name='selectStation'> ";
+ 		echo "<select id=\"el00\" name='selectStation'> ";
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = $arr[0];
+			$stat = substr($arr[0],0,11);
 			if($i == $_SESSION['stationId'])
 			    echo("<option value='$i' selected='selected'>$stat</option>");
             else
@@ -325,7 +323,7 @@ function drawMenuHist($h = '',$charts = 0)
 	<tr>
 	<td class='g'  style='height:20px;'>
 	<div class='f'  style='height:20px;'>	
-	<input type='submit' value='<?php echo tr("Envoyer");?>' class='g'>	
+	<input type='submit' value='<?php echo tr("Go");?>' class='g'>	
 	</div></td></tr>
 	
 	</table>
@@ -345,60 +343,46 @@ function drawMenuStation($h = '',$charts = 0)
 ?>	
      <form method='post' action='graphiques.php'>
 <?php
-    /*
-    if($charts < 2)
-        echo("<table class='G' style=\"height:$h;\">");
-    else
-        echo("<table class='G' style=\"height:$h; background-color:#f0f0f0;\">");
-    */      
-    if($charts == 0)
+    $titre = tr("Graphiques d&#39;une station");
+    if($charts == 0) // iconesExt
         {echo("<table class='G' id='graphics' style=\"height:$h;\">");
         echo("<tr><td class='title'><div class='f'>");
+        echo " $titre</div></td></tr>";
         }
-    else if($charts == 1)
+    else 
         {
-        echo("<script>
+?>   
+        <table class="G"  id="graphics">
+        <tr><td class="title">
+        <div class="f" id = "dgraphics">
+        <?php echo $titre;?>
+        </div></td></tr>
+        <script>
         var h = heightChart() + 2;
-        var txt = '<table class=\"G\"  id=\"graphics\" style=\"height:'+h+'px;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');        
-        </script>
+        $("#graphics").css("height", h);
+        var h2 = (heightChart()-300)/4 + 20;
+        $("#dgraphics").css("height",h2);
+        </script>   
+<?php            
+         }                  
+    if($charts > 1)
+        echo("
+            <script>
+            $(\"#graphics\").css( \"background-color\", \"#f0f0f0\" );
+            </script>        
         ");
-        }    
-    else
-        {
-        echo("<script>
-        var h = heightChart() + 2;
-        var txt = '<table class=\"G\" id=\"graphics\" style=\"height:'+h+'px; background-color:#f0f0f0;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');                
-        </script>
-        ");
-        } 
-?>        
-
-<!--    <tr>
-    <td class='title'>
-    <!--<div class='f'>-->
-
-    
-    <?php echo tr("Graphiques d&#39;une station");?>
-    </div></td></tr>	
+?>              
 
 	<tr>
 	<td class='g'>
 	<div class='fl'><span>Station</span></div>	
 	<div class='fr'>
-		<select name='selectStation'>            
+		<select id="el00" name='selectStation'>            
  		<?php
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = $arr[0];
+			$stat = substr($arr[0],0,11);
 			if($i == $_SESSION['stationId'])
 			    echo("<option value='$i' selected='selected'>$stat</option>");
             else
@@ -457,7 +441,11 @@ function drawMenuStation($h = '',$charts = 0)
 	<tr>
 	<td class='g'  style='height:20px;'>
 	<div class='f'  style='height:20px;'>	
-	<input type='submit' value='<?php echo tr("Envoyer");?>' class='g'>	
+	<input type='submit' value='<?php echo tr("Go");?>' class='g'>	
+	<input type='button' value='&#8592;' class='g' onclick="top.location.href='graphiques.php?hist=-1'">	
+	<input type='button' value='x' class='g' onclick="top.location.href='graphiques.php?hist=0'">	
+	<input type='button' value='&#8594;' class='g' onclick="top.location.href='graphiques.php?hist=1'">	
+	<input type='button' value='o' class='g' onclick="top.location.href='graphiques.php?hist=-2'">	
 	</div></td></tr>
 	
 	</table>
@@ -477,50 +465,36 @@ function drawMenuCompare($h ='',$charts = 0)
 ?>
     <form method='post' action='compareALL.php'>
 <?php
-/*
-    if($charts < 2)
-        echo("<table class='G' style=\"height:$h;\">");
-    else
-        echo("<table class='G' style=\"height:$h; background-color:#f0f0f0;\">");
-*/        
+    $titre = tr("Comparaison de stations");
     if($charts == 0)
         {echo("<table class='G' id='compare' style=\"height:$h;\">");
         echo("<tr><td class='title'><div class='f'>");
+        echo " $titre</div></td></tr>";
         }
-    else if($charts == 1)
-        {
-        echo("<script>
-        var h = heightChart() + 2;
-        var txt = '<table class=\"G\"  id=\"compare\" style=\"height:'+h+'px;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');        
-        </script>
-        ");
-        }    
     else
         {
-        echo("<script>
+?>   
+        <table class="G"  id="compare">
+        <tr><td class="title">
+        <div class="f" id = "dcompare">
+        <?php echo $titre;?>
+        </div></td></tr>
+        <script>
         var h = heightChart() + 2;
-        var txt = '<table class=\"G\" id=\"compare\" style=\"height:'+h+'px; background-color:#f0f0f0;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');                
-        </script>
+        $("#compare").css("height", h);
+        var h2 = (heightChart()-300)/4 + 20;
+        $("#dcompare").css("height",h2);
+        </script>   
+<?php            
+         }                
+    if($charts > 1)
+        echo("
+            <script>
+            $(\"#compare\").css( \"background-color\", \"#f0f0f0\" );
+            </script>        
         ");
-        } 
 ?>              
-    
-
-   <!-- <tr>
-    <td class='title'>
-    <div class='f'-->
-    
-    <?php echo tr("Comparaison de stations");?>
-    </div></td></tr>	
-
+          
 	<tr>
 	<td class='g'>
 	<div class='fl'><?php echo tr("Début");?></div>
@@ -575,7 +549,7 @@ function drawMenuCompare($h ='',$charts = 0)
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = $arr[0];
+			$stat = substr($arr[0],0,12);
 			if($view[$i])
 				echo("<tr><td><input  type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
@@ -589,7 +563,7 @@ function drawMenuCompare($h ='',$charts = 0)
 	<tr>
 	<td class='g'  style='height:20px;'>
 	<div class='f' style='height:20px;'>	
-	<input type='submit' value='<?php echo tr("Envoyer");?>' class='g'>	
+	<input type='submit' value='<?php echo tr("Go");?>' class='g'>	
 	<!--<span.clear></span>	-->
 	</div></td></tr>
 	
@@ -622,9 +596,10 @@ function drawCharts($order='G')
 		    h = heightChart();
             w = widthChart();
 		    var txt = "<div id='chart0' class='chart' style='width:"+w+"px; height:"+h;
-		    txt += "px;'></div></td>";
+		    txt += "px;'></div>";
 		    document.write(txt);
 		</script>
+		</td>
 
 	<td style='padding:0px; vertical-align:bottom;'>
     <?php $visu = ($order == 'C') ? 1:0; drawMenuCompare($h,1 + $visu);?>
@@ -641,10 +616,10 @@ function drawCharts($order='G')
 		    h = heightChart();
             w = widthChart();
 		    var txt = "<div id='chart1' class='chart' style='width:"+w+"px; height:"+h;
-		    txt += "px;'></div></td>";
+		    txt += "px;'></div>";
 		    document.write(txt);
 		</script>
-
+        </td>
 	<td style='padding:0px; vertical-align:bottom;'>
     <?php $visu = ($order == 'H') ? 1:0; drawMenuHist($h,1 + $visu);?>
 	</td>
@@ -675,58 +650,48 @@ function drawMenuModules($h ='',$charts = 0)
     <form method='post' action="modules.php?stationNum=<?php echo $stationNum; ?>">
 
 <?php
-/*
-    if($charts < 2)
-        echo("<table class='G' id=\"modules\"  style=\"height:$h;\">");
-    else
-        echo("<table class='G' id=\"modules\"  style=\"height:$h; background-color:#f0f0f0;\">");
-*/
+
+    $titre =  tr("Modules d&#39;une station"); 
     if($charts == 0)
         {echo("<table class='G' id='modules' style=\"height:$h;\">");
         echo("<tr><td class='title'><div class='f'>");
+        echo " $titre</div></td></tr>";
         }
-    else if($charts == 1)
-        {
-        echo("<script>
-        var h = heightChart() + 2;
-        var txt = '<table class=\"G\"  id=\"modules\" style=\"height:'+h+'px;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');        
-        </script>
-        ");
-        }    
     else
-        {
-        echo("<script>
+        {;
+?>   
+        <table class="G"  id="modules">
+        <tr><td class="title">
+        <div class="f" id = "dmodules">
+        <?php echo $titre;?>
+        </div></td></tr>
+        <script>
         var h = heightChart() + 2;
-        var txt = '<table class=\"G\" id=\"modules\" style=\"height:'+h+'px; background-color:#f0f0f0;\">';
-        document.write(txt);
-        document.write('<tr><td class=\"title\">');
-        h = (heightChart()-300)/4 + 20;
-        document.write('<div class=\"f\" style=\"height:'+h+'px;\">');                
-        </script>
+        $("#modules").css("height", h);
+        var h2 = (heightChart()-300)/4 + 20;
+        $("#dmodules").css("height",h2);
+        </script>   
+<?php            
+         }                  
+    if($charts > 1)
+        echo("
+            <script>
+            $(\"#modules\").css( \"background-color\", \"#f0f0f0\" );
+            </script>        
         ");
-        } 
 ?>              
-
-<!--    <tr>
-    <td class='title'>
-    <div class='f'>-->
-    <?php echo tr("Modules d&#39;une station");?>
-    </div></td></tr>	
+         
 
 	<tr>
 	<td class='g'>
 	<div class='fl'><span>Station</span></div>	
 	<div class='fr'>
-		<select name='selectStation'>            
+		<select id="el00" name='selectStation'>            
  		<?php
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = $arr[0];
+			$stat = substr($arr[0],0,11);
 			if($i == $_SESSION['stationId'])
 			    echo("<option value='$i' selected='selected'>$stat</option>");
             else
@@ -798,7 +763,7 @@ function drawMenuModules($h ='',$charts = 0)
 		for($i = 0;$i < $numStations;$i++)
 			{$stat = $nameStations[$i];
 			$arr = explode(" ",$stat);
-			$stat = $arr[0];
+			$stat = substr($arr[0],0,11);
 			if($view[$i])
 				echo("<tr><td><input type='checkbox' name='selectedModules[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
@@ -813,7 +778,12 @@ function drawMenuModules($h ='',$charts = 0)
 	<tr>
 	<td class='g' style='height:20px;'>
 	<div class='f' style='height:20px;'>	
-	<input type='submit'  value='<?php echo tr("Envoyer");?>' class='g'>	
+	<input type='submit'  value='<?php echo tr("Go");?>' class='g'>	
+	<input type='button' value='&#8592;' class='g' onclick="top.location.href='modules.php?hist=-1'">	
+	<input type='button' value='x' class='g' onclick="top.location.href='modules.php?hist=0'">	
+	<input type='button' value='&#8594;' class='g' onclick="top.location.href='modules.php?hist=1'">	
+	<input type='button' value='o' class='g' onclick="top.location.href='modules.php?hist=-2'">	
+	
 	<!--<span.clear></span>	-->
 	</div></td></tr>
 	

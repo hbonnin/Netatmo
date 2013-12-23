@@ -42,16 +42,51 @@ $opt = $_SESSION['MenuInterval']['opt'];
 $sel = selectIndex($opt,$interval);
 $inter = $opt[$sel][2];
 $tinter = $opt[$sel][1];	
+$len = $opt[$sel][3];
 
 if(isset($_POST['date0']))
     $date0 = $_POST['date0'];
 else
-    $date0 =$_SESSION['datebeg'];  
+    $date0 = $_SESSION['datebeg'];  
 if(isset($_POST['date1']))
     $date1 = $_POST['date1'];
 else
     $date1 = $_SESSION['dateend']; 
-
+ 
+if(isset($_GET['hist']) && $_GET['hist'] == -1)// recule d'une page
+    {$date_beg = $_SESSION['date_beg'] - $len;
+    $date_end = $_SESSION['date_end'] - $len;
+    $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+    $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+    $_SESSION['date_beg'] = $date_beg;
+    $_SESSION['date_end'] = $date_end;  
+    }
+else if(isset($_GET['hist']) && $_GET['hist'] == 1)// avance d'une page
+    {$len = min($len,(time() - $_SESSION['date_end']));
+    $date_beg = $_SESSION['date_beg'] + $len;
+    $date_end = $_SESSION['date_end'] + $len;
+    $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+    $_SESSION['dateend'] = date("d/m/Y",$date_end); 
+    $_SESSION['date_beg'] = $date_beg;
+    $_SESSION['date_end'] = $date_end;  
+    }    
+else if(isset($_GET['hist']) && $_GET['hist'] == 0)// plus de mesures
+    {$date_beg = $_SESSION['date_beg'] - $len;
+    $n_mesure = min(1024,($date_end-$date_beg)/($inter));
+    $date_beg = max($date_beg,($date_end - $n_mesure*$inter));    
+    $date_end = $_SESSION['date_end'];
+    $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+    $_SESSION['date_beg'] = $date_beg;
+    }    
+else if(isset($_GET['hist']) && $_GET['hist'] == -2)// restaure defaut
+    {chkDates(time(),time(),$interval,$inter);	
+    $date_beg = $_SESSION['date_beg'];
+    $date_end = $_SESSION['date_end'];
+    $date0 = date("d/m/Y",$date_beg); 
+    $date1 = date("d/m/Y",$date_end); 
+    $_SESSION['datebeg'] = $date0;
+    $_SESSION['dateend'] = $date1; 
+    }
 if(isset($_GET['row']))// faire un zoom sur la date
     {$row = $_GET['row'];
     $date_beg = $_SESSION['date_beg'];
@@ -88,14 +123,14 @@ if(isset($_GET['row']))// faire un zoom sur la date
         $_SESSION['date_end'] = $date_end;  
         }
     }
-else
+else if(!isset($_GET['hist']))
     {chkDates($date0,$date1,$interval,$inter);	
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];
     }
   
 if(abs($date_beg - $_SESSION['date_begP']) < $inter  &&  abs($date_end - $_SESSION['date_endP']) < $inter
-    && $interval == $_SESSION['selectedInterP']  &&  $stationId == $_SESSION['stationIdP'])
+    && $interval == $_SESSION['selectedInterP']  &&  $stationId == $_SESSION['stationIdP'] &&  !isset($_GET['hist']))
     $reloadData = 0; 
 else
     {$reloadData = 1; 
@@ -221,11 +256,18 @@ if($reloadData)
         echo "<script>alert('Quitter');</script>";
         echo $ex->getMessage()."\n";
         }
+
     if(count($meas) == 0)
-        {drawCharts('G');
+        {echo("</script>
+            <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
+            </head>
+            <body> 
+            ");
+        drawCharts('G');
         echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+        echo("</body></html>");
         return;
-        } 	
+        } 
     
      // interieur    
     $params = array("scale" => $interval
@@ -258,7 +300,7 @@ $dateLoadData = date("H:i:s ",$timeLoadData);
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = 0;
 
-function tipHTMLext2($idate,$tmax,$hum)
+function tipHTMLext2($idate,$tmax,$hum) //5-30 minutes, 3 hours
 	{global $cu;
 	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>'.tr("Température").'</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
@@ -266,7 +308,7 @@ function tipHTMLext2($idate,$tmax,$hum)
 	. '</table>';
 	}
 
-function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$dateminh,$datemaxh)
+function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$dateminh,$datemaxh) //1week, 1day
 	{global $cu;
 	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td>"
@@ -279,7 +321,7 @@ function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$date
 	. '<td style=\"font-size: 12px;\">' . date('d/m/y H:i',$dateminh) .'</tr>'
 	. '</table>';
 	}
-function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
+function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise) // 1day/1week
 	{global $cu;
 	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
@@ -290,7 +332,7 @@ function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise)
 	. '<tr><td><i>'.tr("Bruit").' max</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
 	. '</table>';
 	}
-function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise)
+function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise) // 5 minutes, 30 minutes, 3 heures
 	{global $cu;
 	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>'.tr("Température").'</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
@@ -446,7 +488,8 @@ if($inter > 3*60*60)	//1week,1day
                 	$pres = intval($meas1[$key][4]+.5);
                 	$noise = $meas1[$key][5];                	
  //$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
-             		$iidate = tr($jour[$day]) . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);            		
+ //            		$iidate = tr($jour[$day]) . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);            		
+             		$iidate = tr($jour[$day]) . date(" d/m/y",$key);            		
                 	$tip = tipHTMLint6($iidate,$tmax,$tmin,$hum,$co,$pres,$noise);
                 	if($co){$co = min($co,1000);$co /= 10;}           
                 	if($xp)$pres = intval(($pres-$MinPression)*$xp + .5);
@@ -572,6 +615,14 @@ else  // 5 minutes, 30 minutes, 3 heures
     row: time 
     plus petite colonne 1 
     si une seule courbe -> 3 colonnes (t, tooltip, courbe)
+*/
+/*
+	google.visualization.events.addListener(chartInt, 'rightclick', function() 
+       		{top.location.href='graphiques.php?hist=1';
+       		});  
+	google.visualization.events.addListener(chartExt, 'rightclick', function() 
+       		{top.location.href='graphiques.php?hist=-1';
+       		});  
 */
     google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
      function IntClickHandler()

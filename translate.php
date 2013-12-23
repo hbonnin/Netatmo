@@ -45,7 +45,7 @@ $trans = array ('Phase lunaire'  => array ('Moon phase'),
                 "Comparaison année" => array ('Year comparison'),                
                 "Menu principal" => array ('Main menu'),
                 "Quitter" => array ('Logout'),
-                "Envoyer" => array ('Go')
+                "Go" => array ('Go')
                 );
 
 ?>                

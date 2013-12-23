@@ -170,11 +170,18 @@ for($i = 0;$i < $numStations;$i++)
     $nmesures[$i] = count($keys[$i]);
     $maxMesures = max($maxMesures,$nmesures[$i]);
     }
+
 if($maxMesures == 0)
-    {drawCharts('C');
+    {echo("</script>
+        <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
+        </head>
+        <body> 
+        ");
+    drawCharts('C');
     echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+    echo("</body></html>");
     return;
-    } 
+    }     
 $visupt = "";
 if($maxMesures <= 48)$visupt = ",pointSize:3";	   
 date_default_timezone_set($timezone);

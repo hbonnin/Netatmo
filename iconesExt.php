@@ -45,6 +45,7 @@ iPad (Retina) (Landscape)
 
 
 -->
+<!--<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Clearface">-->
 <link type='text/css' rel='stylesheet'  href='style.css'>
 <link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
 
@@ -129,12 +130,28 @@ for($i = 0;$i < $numStations;$i++)
 	$diff = abs($diff);
 	$diffm = intval($diff/60); $diffs = abs($diff%60); $tdiff =  sprintf("%2dm %2ds", $diffm,$diffs);
 	$tdaylength = daylength($lat,$long);
-	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset)."&nbsp;&nbsp;"
-	        .date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset);
+	$soleil = date("H:i:s",date_sunrise(time(),SUNFUNCS_RET_TIMESTAMP,$lat,$long, $Zenith,$timeOffset))."&nbsp;&nbsp;"
+	        .date("H:i:s",date_sunset(time(),SUNFUNCS_RET_TIMESTAMP,$lat,$long, $Zenith,$timeOffset));
+//	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset)."&nbsp;&nbsp;"
+//	        .date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset);
     // Lever/Coucher lune
     $moon = new moontime();
     $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long, $timeOffset); 
-    $moon = date("H:i",$ret->moonrise) . '&nbsp;&nbsp;'. date("H:i",$ret->moonset);
+    $moonrise = date("H:i",$ret->moonrise);
+    $moonset = date("H:i",$ret->moonrise);
+    $moon = $moonrise . '&nbsp;&nbsp;'. $moonset;
+  
+    if($ret->moonset < $ret->moonrise)
+        {$time1 = time() + 24*60*60;
+        $day = idate('d',$time1);
+        $month = idate('m',$time1);
+        $year = idate('Y',$time1);
+        $moon1 = new moontime();
+        $ret = $moon1->calculateMoonTimes($month, $day, $year, $lat, $long, $timeOffset); 
+        $moonset = date("H:i",$ret->moonset);
+        $moon = $moonrise . '&nbsp;&nbsp;'. $moonset.'+';
+        }
+        
 /*	
 	if(isset($devicelist["devices"][$i]['extra']))
         {$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
@@ -145,10 +162,12 @@ for($i = 0;$i < $numStations;$i++)
     else 
 	    $QA[$i] ='';
 */	    
-	if($place == "BAD")	
-    	$p = "<b>".$mydevices[$i]['station_name']."</b><span style='font-size=14px;'><br>($altitude m)</span>";   
+    $txt = '('.sprintf("%d°%05d",$lat,abs(100000*($lat-intval($lat))+.5)).', '
+            .sprintf("%d°%05d",$long,abs(100000*($long-intval($long))+.5)).', '.$altitude.'m)';
+    if($place == "BAD")	
+    	$p = "<b>".$mydevices[$i]['station_name']."</b><span style='font-size=14px;'><br>$txt</span>";   
 	else
-    	$p = "<b>$place[1]</b><span style='font-size=14px;'><br>$place[0]<br> ($altitude m)</span>"; 
+    	$p = "<b>$place[1]</b><span style='font-size=14px;'><br>$place[0]<br>$txt</span>"; 
  
  
  
@@ -353,7 +372,7 @@ for($i = 0;$i < $numStations;$i++)
 	  controlDiv.appendChild(controlUI);
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
-	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontFamily = 'Courier,sans-serif';
 	  controlText.style.fontSize = '12px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
@@ -384,7 +403,7 @@ for($i = 0;$i < $numStations;$i++)
 
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
-	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontFamily = 'Courier,sans-serif';
 	  controlText.style.fontSize = '12px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
@@ -421,7 +440,7 @@ for($i = 0;$i < $numStations;$i++)
 
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
-	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontFamily = 'Courier,sans-serif';
 	  controlText.style.fontSize = '12px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
@@ -458,7 +477,7 @@ for($i = 0;$i < $numStations;$i++)
 
 	  // Set CSS for the control interior.
 	  controlText = document.createElement('div');
-	  controlText.style.fontFamily = 'Arial,sans-serif';
+	  controlText.style.fontFamily = 'Courier,sans-serif';
 	  controlText.style.fontSize = '12px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
@@ -503,6 +522,7 @@ for($i = 0;$i < $numStations;$i++)
 // calcul des minimax
 $date_end = time();
 $date_beg = $date_end - (24 * 60 * 60);
+
 $tmins =  array($numStations);
 $tmaxs =  array($numStations);
 for($i = 0;$i < $numStations;$i++)

@@ -30,12 +30,30 @@ echo("Temperature_unit (Netatmo) = {$_SESSION['Temperature_unit']} <br>");
 echo("Language (Netatmo) = {$_SESSION['lang']} <br>");
 echo "<pre>";
 print_r($_SESSION['LogMsg']);
-if($_SERVER['SERVER_NAME'] != 'fraysseix.fr' || isset($_SESSION['ex']))
-    {print_r($_SESSION['client']);echo "<br>";
-    print_r($_SESSION['mydevices']);echo "<br>";
-    }
 if(isset($_SESSION['ex']))
-    print_r($_SESSION['ex']);
+     print_r($_SESSION['ex']);
+
+
+if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatmo')
+    {foreach ($_SESSION  as $key => $value)
+        {switch ($key)
+            {case GraphiqueMesureInt:           
+            case GraphiqueMesureExt:
+            case MenuInterval:
+            case selectMesures:
+            case viewCompare: 
+            case viewModules:
+            case LogMsg:
+                    break;
+            default:echo "<br>$key: "; 
+                    print_r($_SESSION[$key]);
+                    break;  
+            }
+        }
+    }
+
+
+
 echo "</pre>";
 echo("</body></html>");
 $_SESSION=array();

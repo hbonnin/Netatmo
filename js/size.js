@@ -1,33 +1,22 @@
 // <!-- <![CDATA[
 function writeSize()
-    {var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-    x = w.innerWidth || e.clientWidth || g.clientWidth,
-    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+    {var x = $(document).width();
+    var y = $(document).height();
     t ='width='+x+'&height='+y;
     return t;
     }
 function heightChart()
-    {var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-    //var iPhone = /iPhone/i.test(navigator.userAgent);
-    //if(iPhone)y = 544;    
-    var h = Math.round((y - 70)/2);
-    h = Math.max(h,290);
+    {var y = $(document).height();
+    var yy = 0;
+    if(!isMobile())yy = 64;
+    var h = Math.round((y - yy)/2);
     return h;
     }   
  function widthChart()
-    {var w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-	x = w.innerWidth || e.clientWidth || g.clientWidth,
-	lar = x - 392;
+    {var x = $(document).width();
+	var modules = document.getElementById("modules");
+    var larg = 2*modules.offsetWidth + 14;
+    lar = x - larg;
     return lar; 
     }  
 function isMobile()
