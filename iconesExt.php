@@ -138,9 +138,9 @@ for($i = 0;$i < $numStations;$i++)
     $moon = new moontime();
     $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long, $timeOffset); 
     $moonrise = date("H:i",$ret->moonrise);
-    $moonset = date("H:i",$ret->moonrise);
+    $moonset = date("H:i",$ret->moonset);
     $moon = $moonrise . '&nbsp;&nbsp;'. $moonset;
-  
+ 
     if($ret->moonset < $ret->moonrise)
         {$time1 = time() + 24*60*60;
         $day = idate('d',$time1);
