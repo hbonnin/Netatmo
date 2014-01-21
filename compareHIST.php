@@ -158,7 +158,9 @@ $mesure[0] = $client->api("getmeasure", "POST", $params);
 
 if($hist == 1)
     {$month = idate('m');
-    if($momth == 1)$num = 31;
+
+    if($month == 1)
+        $num = 31;
     else
         $num = cal_days_in_month(CAL_GREGORIAN, $month-1, idate('Y')); 
     $delta = $num*24*60*60;

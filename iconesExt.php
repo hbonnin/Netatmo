@@ -6,6 +6,9 @@ session_start();
 <head>
 <title>Stations Netatmo</title>
 <meta charset='utf-8'>
+<meta name="author" content="Hubert de Fraysseix">
+<meta name="description" content="Php program to display Netatmo measures">
+<meta name="keywords" content="Netatmo, Meteo, Google api">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="viewport" content="width=device-width, initial-scale=.9, minimum-scale=.9,  user-scalable=yes">
@@ -113,7 +116,7 @@ function daylength($lat,$long)
 	$day = $daylength - 3600*$dayH;
 	$dayM = intval($day/60); 
 	$dayS = $day - 60*$dayM;   
-	return sprintf("%d:%d:%d",$dayH,$dayM,$dayS);
+	return sprintf("%d:%02d:%02d",$dayH,$dayM,$dayS);
     }    
 for($i = 0;$i < $numStations;$i++)
 	{$altitude = $mydevices[$i]['latlng']['altitude'];

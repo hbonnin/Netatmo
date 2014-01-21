@@ -95,7 +95,7 @@ function init($numStations)
         createViewmodules();
         $_SESSION['selectMesureCompare'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
-        $_SESSION['hist'] = 6;
+        $_SESSION['hist'] = 12;
         } 
     if(isset($_SESSION['saveCookie']))
         {$username = $_SESSION['username']; 
