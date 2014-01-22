@@ -97,7 +97,15 @@ else if(isset($_GET['hist']) && $_GET['hist'] == 1)// avance d'une page
     $_SESSION['dateend'] = date("d/m/Y",$date_end); 
     $_SESSION['date_beg'] = $date_beg;
     $_SESSION['date_end'] = $date_end;  
-    }    
+    } 
+else if(isset($_GET['hist']) && $_GET['hist'] == 0)// plus de mesures
+    {$date_beg = $_SESSION['date_beg'] - $len;
+    $n_mesure = min(1024,($date_end-$date_beg)/($inter));
+    $date_beg = max($date_beg,($date_end - $n_mesure*$inter));    
+    $date_end = $_SESSION['date_end'];
+    $_SESSION['datebeg'] = date("d/m/Y",$date_beg); 
+    $_SESSION['date_beg'] = $date_beg;
+    }  
 else if(isset($_GET['hist']) && $_GET['hist'] == -2)// restaure defaut
     {chkDates(time(),time(),$interval,$inter);	
     $date_beg = $_SESSION['date_beg'];
