@@ -40,8 +40,8 @@ class Moontime {
 		$sglat = sin($latRad);
 		$cglat = cos($latRad);
 		
-		$rise = false;
-		$set = false;
+		$rise = 0;
+		$set = 0;
 		$above = false;
 		$hour = 1;
 		$ym = self::sinAlt($date, $hour - 1, $lon, $cglat, $sglat) - $sinho;
@@ -62,10 +62,10 @@ class Moontime {
 			if ($nz == 1) {
 				if ($ym < 0) {
 					$utrise = $hour + $z1;
-					$rise = true;
+					$rise = 1;
 				} else {
 					$utset = $hour + $z1;
-					$set = true;
+					$set = 1;
 				}
 			}
 			
@@ -89,7 +89,9 @@ class Moontime {
 		$utset = self::convertTime($utset);
 		$retVal->moonrise = $rise ? mktime($utrise['hrs'], $utrise['min'], 0, $month, $day, $year) : mktime(0, 0, 0, $month, $day + 1, $year);
 		$retVal->moonset = $set ? mktime($utset['hrs'], $utset['min'], 0, $month, $day, $year) : mktime(0, 0, 0, $month, $day + 1, $year);
-		return $retVal;
+	    $retVal->mrise = $rise;
+	    $retVal->mset = $set;
+	    return $retVal;
 	
 	}
 	

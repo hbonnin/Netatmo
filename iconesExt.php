@@ -137,21 +137,33 @@ for($i = 0;$i < $numStations;$i++)
 	        .date("H:i:s",date_sunset(time(),SUNFUNCS_RET_TIMESTAMP,$lat,$long, $Zenith,$timeOffset));
 //	$soleil = date_sunrise(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset)."&nbsp;&nbsp;"
 //	        .date_sunset(time(),SUNFUNCS_RET_STRING,$lat,$long, $Zenith,$timeOffset);
+
     // Lever/Coucher lune
+    $mrise = $mset = 1;
     $moon = new moontime();
     $ret = $moon->calculateMoonTimes($month, $day, $year, $lat, $long, $timeOffset); 
     $moonrise = date("H:i",$ret->moonrise);
     $moonset = date("H:i",$ret->moonset);
+    $mrise = $ret->mrise; 
+    $mset = $ret->mset;    
+    //echo "        rise: $mrise set: $mset <br>";
+    if($mrise == false)
+        {$time2 = time() - 24*60*60;
+        $day2 = idate('d',$time2);
+        $moon2 = new moontime();
+        $ret2 = $moon2->calculateMoonTimes($month, $day2, $year, $lat, $long, $timeOffset); 
+        $moonrise = date("H:i",$ret2->moonrise).'-';
+        }      
     $moon = $moonrise . '&nbsp;&nbsp;'. $moonset;
  
-    if($ret->moonset < $ret->moonrise)
+    if(($mrise && $ret->moonset < $ret->moonrise) ||!$mset)
+//    if(($mrise && $ret->moonset < $ret->moonrise))
         {$time1 = time() + 24*60*60;
-        $day = idate('d',$time1);
-        $month = idate('m',$time1);
-        $year = idate('Y',$time1);
+        $day1 = idate('d',$time1);
         $moon1 = new moontime();
-        $ret = $moon1->calculateMoonTimes($month, $day, $year, $lat, $long, $timeOffset); 
-        $moonset = date("H:i",$ret->moonset);
+        $ret1 = $moon1->calculateMoonTimes($month, $day1, $year, $lat, $long, $timeOffset); 
+        $moonset = date("H:i",$ret1->moonset);
+        if(!$ret1->mset) $moonset = '-';
         $moon = $moonrise . '&nbsp;&nbsp;'. $moonset.'+';
         }
         
