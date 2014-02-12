@@ -422,7 +422,7 @@ echo("
                 $title1 = $nameStation.': '.tr($titre1).' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
                 }
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
-            $param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+            $param .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
             $param .= ',tooltip: {isHtml: true},curveType:"function"';
             
 ?>

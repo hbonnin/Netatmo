@@ -180,12 +180,12 @@ if($inter > 3*60*60)
             {$eraseInt[$i+ 3] = 1;
             $colorInt[$i+1] = '0';
             }
-    if(!$selectMesures[1]) 
-        {$eraseExt[4] = $eraseExt[5] = 1;
-         $colorExt[2] = $colorExt[3] = '0';
+    if(!$selectMesures[1]) // no humidity
+        {$eraseExt[6] = $eraseExt[7] = $eraseExt[8] = $eraseExt[9] = 1;
+         $colorExt[6] = $colorExt[8] = '0';
          }      
-     if($selectMesures[1] && !$selectMesures[0])  
-        {$eraseExt[2] = $eraseExt[3] = 1; 
+     if($selectMesures[1] && !$selectMesures[0])  // no temperature
+        {$eraseExt[2] = $eraseExt[3] = $eraseExt[4] = $eraseExt[5] = 1; 
          $colorExt[0] = $colorExt[1] = '0';
          }   
     } 
@@ -197,14 +197,16 @@ else
             {$eraseInt[$i+2]  = 1;
             $colorInt[$i] = '0';
             }
-        if(!$selectMesures[1])
-            {$eraseExt[1+2]  = 1;
-            $colorExt[1] = '0';
-            }   
-        if($selectMesures[1] && !$selectMesures[0])  
-            {$eraseExt[2]  = 1;
-            $colorExt[0] = '0';
-            }   
+    if(!$selectMesures[1]) // no humidity
+        {$eraseExt[1+3]  = 1;
+        $eraseExt[1+4]  = 1; 
+        $colorExt[1] = '0';
+        }   
+    if($selectMesures[1] && !$selectMesures[0])  
+        {$eraseExt[0+2]  = 1;
+        $eraseExt[0+3]  = 1;
+        $colorExt[0] = '0';
+        }   
     }
 $colorInt = compactArray($colorInt);
 $colorExt = compactArray($colorExt);     
@@ -297,7 +299,7 @@ else
     }
 $timeLoadData = $_SESSION['timeLoad'];
 $dateLoadData = date("H:i:s ",$timeLoadData);
-$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
+//$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = 0;
 
 function tipHTMLext2($idate,$tmax,$hum) //5-30 minutes, 3 hours
@@ -344,6 +346,12 @@ function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise) // 5 minutes, 30 minute
 	}
 /*********************************************************************************************************/
 /*********************************************************************************************************/
+$TempMax = $HumMax -999;
+$dtmax = $dtmin = $cmax = $cmin = 0;
+$dhmax = $dhmax = $dhmin = $chmin = 0;
+$TempMin = $HumMin= 999;
+$Temperature_unit = $_SESSION['Temperature_unit'];
+$cu = $Temperature_unit ? '°':'F';
 
 echo("
 	<script>
@@ -360,7 +368,7 @@ echo("
 			$beg = date("d/m/y", $keys[0]); 
 			$end = date("d/m/y",$keys[$num-1]); 
 			$_SESSION['begdata'] = $keys[0];
-			if($num <= 48)$visupt = 3;	
+			if($num <= 48)$visupt = 3;//3	
 
 if($inter > 3*60*60) //1week, 1day
 	{           
@@ -368,9 +376,13 @@ echo("
 	 		dataExt.addColumn('string', 'Date');
         	dataExt.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
         	dataExt.addColumn('number', 'Tmax'); 
-        	dataExt.addColumn('number', 'Tmin');     	  
-        	dataExt.addColumn('number', 'Hum min');  
-        	dataExt.addColumn('number', 'Hum max');  
+        	dataExt.addColumn({type:'string', role:'annotation'});        	  
+        	dataExt.addColumn('number', 'Tmin');
+        	dataExt.addColumn({type:'string', role:'annotation'}); 
+        	dataExt.addColumn('number', 'Hum min'); 
+        	dataExt.addColumn({type:'string', role:'annotation'}); 
+        	dataExt.addColumn('number', 'Hum max');
+        	dataExt.addColumn({type:'string', role:'annotation'}); 
          	dataExt.addColumn('number', '');   	  
 ");
 			
@@ -386,18 +398,29 @@ echo("
             		//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
             		$tmin = degree2($meas[$key][0]);
             		$tmax = degree2($meas[$key][1]);
+            		if($tmax > $TempMax){$TempMax = $tmax;$dtmax = date('d/m/y H:i',$meas[$key][5]);$cmax = $ii-1;}
+            		if($tmin < $TempMin){$TempMin = $tmin;$dtmin = date('d/m/y H:i',$meas[$key][4]);$cmin = $ii-1;}
              		$min_hum = $meas[$key][2]; 
+             		if($min_hum < $HumMin){$HumMin = $min_hum;$dhmin = $idate;$chmin = $ii-1;}
              		$max_hum = $meas[$key][3]; 
+             		if($max_hum > $HumMax){$HumMax = $max_hum;$dhmax = $idate;$chmax = $ii-1;}
            			$iidate = tr($jour[$day]) . date(" d/m/y ",$key);
 					$tip = tipHTMLext($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
             		}
-                echo("dataExt.addRow([\"$idate\",'$tip',$tmax,$tmin,$min_hum,$max_hum,1]);\n"); 
+                echo("dataExt.addRow([\"$idate\",'$tip',$tmax,'',$tmin,'',$min_hum,'',$max_hum,'',1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
                 }while($break != 1);
-           	echo("dataExt.removeColumn(6);\n");	
-            for($i = 8 ;$i >= 0;--$i)
-                if($eraseExt[$i])echo("dataExt.removeColumn($i);\n");	
+ //          	echo("dataExt.removeColumn(6);\n");	
+            echo("dataExt.setValue($cmax,3,'$TempMax'+'$cu');");
+            echo("dataExt.setValue($cmin,5,'$TempMin'+'$cu');");
+            echo("dataExt.setValue($chmin,7,'$HumMin'+'%');");            
+            echo("dataExt.setValue($chmax,9,'$HumMax'+'%');");            
+           	echo("dataExt.removeColumn(10);\n");	
+           	
+            for($i = 9 ;$i >= 0;--$i)
+                if($eraseExt[$i])echo("dataExt.removeColumn($i);\n");	 
+                
 	}
 else   //5 ou 30 minutes ou 3 heures
 	{
@@ -405,7 +428,10 @@ else   //5 ou 30 minutes ou 3 heures
 	          dataExt.addColumn('string', 'Date');
         	  dataExt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	        	      	  	          
         	  dataExt.addColumn('number', 'Temp.'); 
-        	  dataExt.addColumn('number', 'Hum');  
+        	  dataExt.addColumn({type:'string', role:'annotation'});        	  
+        	  dataExt.addColumn('number', 'Hum'); 
+        	  dataExt.addColumn({type:'string', role:'annotation'});
+        	  //dataExt.addColumn({type:'string', role:'annotationText'});
          	  dataExt.addColumn('number', '');   	  
 	");
 
@@ -419,7 +445,11 @@ else   //5 ou 30 minutes ou 3 heures
             		{if($ii < $num -1)++$ii;
                 	else $break = 1;           			
             		$tmin = degree2($meas[$key][0]);
+            		if($tmin > $TempMax){$TempMax = $tmin;$dtmax = $idate;$cmax = $ii-1;}
+            		if($tmin < $TempMin){$TempMin = $tmin;$dtmin = $idate;$cmin = $ii-1;}
             		$hum = $meas[$key][1];  
+            		if($hum > $HumMax){$HumMax = $hum;$dhmax = $idate;$chmax = $ii-1;}
+            		if($hum < $HumMin){$HumMin = $hum;$dhmin = $idate;$chmin = $ii-1;}
             		$iidate = tr($jour[$day]) . date(" d/m/y H:i",$key);         		           		
 					$tip = tipHTMLext2($iidate,$tmin,$hum);
             		}
@@ -428,19 +458,24 @@ else   //5 ou 30 minutes ou 3 heures
                         $key = $keys[$ii]; 
                     }
             		
-                echo("dataExt.addRow([\"$idate\",'$tip',$tmin,$hum,1]);\n"); 
+                echo("dataExt.addRow([\"$idate\",'$tip',$tmin,'',$hum,'',1]);\n"); 
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
                 }while($break != 1);
-           	echo("dataExt.removeColumn(4);\n");		
-            for($i = 8 ;$i >= 0;--$i)
+            echo("dataExt.setValue($cmax,3,'$TempMax'+'$cu');");
+            echo("dataExt.setValue($cmin,3,'$TempMin'+'$cu');");
+            echo("dataExt.setValue($chmax,5,'$HumMax'+'%');");
+            echo("dataExt.setValue($chmin,5,'$HumMin'+'%');");
+          	echo("dataExt.removeColumn(6);\n");		
+            for($i = 9 ;$i >= 0;--$i)
                 if($eraseExt[$i])echo("dataExt.removeColumn($i);\n");	
-           	
-	}
+  	}
 	$tmesure = tr("mesure").'s';
-	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'. tr($tinter) .' '.$num." $tmesure".')"';       	                    	
-	
-/*********************************************************************************************************/
+//	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'. tr($tinter) .' '.$num." $tmesure".')';       	                    	
+	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'.$num." $tmesure".')';       	                    	
+	$titleExt .= '  '.'Tmax: '.$TempMax."$cu @ ".$dtmax; 
+	$titleExt .= '  '.'Tmin: '.$TempMin."$cu @ ".$dtmin.'"'; 
+ /*********************************************************************************************************/
 $tnoise = tr("Bruit");
  			$keys= array_keys($meas1);
 			$num = count($keys);
@@ -586,43 +621,28 @@ else  // 5 minutes, 30 minutes, 3 heures
 ?>
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
     var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
-/*    
-    options = {focusTarget:"category",tooltip: {isHtml: true},curveType:"function"
-               ,chartArea:{left:"5%",top:25,width:"85%",height:"75%"}
-               ,pointSize:visupt,fontSize:10,titleTextStyle:{fontSize:12,color:"#303080",fontName:"Times"}
-               };
-                             
-    optionsInt = options;
-    optionsInt.title = titleInt;
-    optionsInt.colors = colorInt;  
-    chartInt.draw(dataInt,optionsInt);
-    
-    optionsExt = options;
-    optionsExt.title = titleExt;
-    optionsExt.colors = colorExt;
-    chartExt.draw(dataExt,optionsExt);  
-*/    
+
     param = 'opt={focusTarget:"category",tooltip: {isHtml: true},curveType:"function"'
             +',chartArea:{left:"5%",top:25,width:"85%",height:"75%"}'
-            +',pointSize:visupt,fontSize:10,titleTextStyle:{fontSize:12,color:"#303080",fontName:"Times"}';
+            +',pointSize:visupt,fontSize:10,titleTextStyle:{fontSize:14,color:"#303080",fontName:"Times"}';
 
     paramInt = param+',title:titleInt,colors:colorInt}';
     chartInt.draw(dataInt,eval(paramInt));
     paramExt = param+',title:titleExt,colors:colorExt}';
+    //paramExt = param+',title:titleExt,colors:colorExt'+",annotation:{3: {style: 'line'}"+'}}';
     chartExt.draw(dataExt,eval(paramExt));
-
+/*    
+<?php
+    if($inter > 3*60*60 && !$eraseInt[2])
+        echo "chartExt.setSelection([{row:$cmin,column:3},{row:$cmax, column:2}]);";
+    else if($inter <= 3*60*60 && !$eraseInt[2])
+        echo "chartExt.setSelection([{row:$cmin,column:2},{row:$cmax, column:2}]);";
+?>
+*/
 /* 
     row: time 
     plus petite colonne 1 
     si une seule courbe -> 3 colonnes (t, tooltip, courbe)
-*/
-/*
-	google.visualization.events.addListener(chartInt, 'rightclick', function() 
-       		{top.location.href='graphiques.php?hist=1';
-       		});  
-	google.visualization.events.addListener(chartExt, 'rightclick', function() 
-       		{top.location.href='graphiques.php?hist=-1';
-       		});  
 */
     google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
      function IntClickHandler()
@@ -644,18 +664,21 @@ else  // 5 minutes, 30 minutes, 3 heures
     google.visualization.events.addListener(chartExt, 'select', ExtClickHandler);        
     function ExtClickHandler()
         {var selection = chartExt.getSelection();
-        var num = colorExt.length;  
+        var num = colorExt.length; 
+       
         for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
             if(item.row != null  && dataExt.getNumberOfRows() > 20  && !isMobile())
-                top.location.href='graphiques.php?row='+item.row;
-            if(item.column != null && dataExt.getNumberOfColumns() > 3) // date,tooltip
-                {dataExt.removeColumn(item.column); 
-                for(var col = item.column-2;col < num-1;col++)
-                    colorExt[col] = colorExt[col+1];  
+                top.location.href='graphiques.php?row='+item.row; 
+            if(item.column != null && dataExt.getNumberOfColumns() > 3) // 0-date,1-tooltip
+                {dataExt.removeColumn(item.column);
+                dataExt.removeColumn(item.column);
+                for(var col = item.column/2-1;col < num-1;col++)
+                    colorExt[col] = colorExt[col+1];
                 chartExt.draw(dataExt,eval(paramExt));  
                 return;
                 }
+            
             }
          }
          

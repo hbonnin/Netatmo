@@ -1,4 +1,5 @@
 <?php
+$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 function refreshToken()
     {global $client_id,$client_secret,$timezone;
     if(!isset($_SESSION['refresh_token']))

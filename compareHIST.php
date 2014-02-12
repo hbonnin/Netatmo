@@ -30,7 +30,8 @@ else if(isset($_POST['selectStation']))
 else if(isset($_SESSION['stationId']))
     $stationId = $_SESSION['stationId'];
 $_SESSION['stationId'] = $stationId;
-
+$Temperature_unit = $_SESSION['Temperature_unit'];
+$cu = $Temperature_unit ? '°':' F';
 date_default_timezone_set("UTC");
 
 if(isset($_POST["date0"]))  
@@ -166,9 +167,9 @@ if($hist == 1)
     $delta = $num*24*60*60;
     }
 else if($hist == 6)
-    $delta = 184*24*60*60;
+    $delta = 26*7*24*60*60;
 else
-    $delta = 365*24*60*60;
+    $delta = 52*7*24*60*60;
     
 $date_beg1 = $date_beg -$delta;
 $date_end1 = $date_end -$delta;
@@ -240,31 +241,35 @@ echo("
             echo("data.addColumn('number', \"$txt\");\n");
 	        echo("data.addColumn('number', '');\n"); 
 	        
-	        $ii[0] = $ii[1] = 0; 	          	
+	        $ii[0] = $ii[1] = 0; 
+	        $moy0 = $moy1 = 0;
 	        $itime = $keys[0][0];
 	        $_SESSION['begdata'] = $date_beg;
 			$beg = date("d/m/y", $date_beg); 
 			$end = date("d/m/y",$date_end); 	        	        
-	        $i = 0;	
+	         $i = $i0 = $i1 = 0;
             	do {
             	$idate = date("d/m/y",$itime);
 				echo("data.addRow([\"$idate\""); 
-				$t0 = $t1 = $tip = '';
+				$t0 = $t1 = $tip = $date0 = $date1 = '';
             	for($j = 0; $j < 2;$j++)
             		{$tmin0 = '';   
             		$key = $keys[$j][$ii[$j]]; 
             		$key1 = $key;
             		if($j == 1)$key1 += $delta;
-            		if(abs($key1 - $itime) < 2*$inter) //changement d'horaire
+            		if(abs($key1 - $itime) < $inter)
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
             			$tmin0 = degree2($mesure[$j][$key][0]);
-            			if($j == 0)
+            			if($j == 0 && $i0 < $nmesures[0])
             			    {$t0 = $tmin0;
-            			    $date0 = date('d/m/y',$key);
+            			    $moy0 += $t0; ++$i0;
+            			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
-            			else
+            			else if($j == 1 && $i1 < $nmesures[1])
             			    {$t1 = $tmin0;
-            			    $date1 = date('d/m/y',$key);
+            			    $moy1 += $t1; ++$i1;
+            			    //$date1 = date('d/m/y',$key);
+            			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}        	
             		}          		
@@ -273,12 +278,15 @@ echo("
             	$itime += $inter;
             	++$i;
                 }while($itime < $date_end);
+                $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;
+                $moy1 /= $nmesures[1]; $moy1 = intval($moy1*10 +.5)/10;
 				echo("data.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
+				$diff = $moy0 -$moy1;
 				if($selectMesure == 'h')
-				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
+				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                
                 else
-				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
+				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0."$cu - ".$moy1."  delta: ".$diff.$cu;                
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -290,28 +298,31 @@ echo("
             echo("data1.addColumn('number', \"$txt\");\n");
 	        echo("data1.addColumn('number', '');\n"); 
 	        
-	        $ii[0] = $ii[1] = 0; 	          	
+	        $ii[0] = $ii[1] = 0; 
+	        $moy0 = $moy1 = 0;
 	        $itime = $keys[0][0];	        
-	        $i = 0;	
+	        $i = $i0 = $i1 = 0;
             	do {
             	$idate = date("d/m/y",$itime);
 				echo("data1.addRow([\"$idate\"");  
-				$t0 = $t1 = $tip = '';
+				$t0 = $t1 = $tip = $date0 = $date1 = '';
             	for($j = 0; $j < 2;$j++)
             		{$tmin0 = '';   
             		$key = $keys[$j][$ii[$j]]; 
             		$key1 = $key;
             		if($j == 1)$key1 += $delta;
-            		if(abs($key1 - $itime) < 2*$inter) //changement d'horaire
+            		if(abs($key1 - $itime) < $inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
             			$tmin0 = degree2($mesure[$j][$key][1]);
-            			if($j == 0)
+            			if($j == 0 && $i0 < $nmesures[0])
             			    {$t0 = $tmin0;
-            			    $date0 = date('d/m/y',$key);
+            			    $moy0 += $t0; ++$i0;
+            			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
-            			else
+            			else if($j == 1 && $i1 < $nmesures[1])
             			    {$t1 = $tmin0;
-            			    $date1 = date('d/m/y',$key);
+            			    $moy1 += $t1; ++$i1;
+            			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}
             		}          		
@@ -320,17 +331,20 @@ echo("
                 $itime += $inter;
             	++$i;
                 }while($itime < $date_end);
+                $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;
+                $moy1 /= $nmesures[1]; $moy1 = intval($moy1*10 +.5)/10;
 				echo("data1.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
+				$diff = $moy0-$moy1;
 				if($selectMesure == 'h')				
-				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";  
+				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                    
 				else
-				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).")";                
+				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0."$cu - ".$moy1.$cu."  delta: ".$diff.$cu;                  
 
 
 
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
-$param .= ",fontSize:10,titleTextStyle:{fontSize:12,color:'#303080',fontName:'Times'}";
+$param .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
 $param .= ',tooltip: {isHtml: true},curveType:"function"';
 ?>
 colorMin =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
