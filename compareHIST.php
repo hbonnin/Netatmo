@@ -276,8 +276,8 @@ echo("
             		}          		
             	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
             	echo(",'$tip',$t0,$t1,0]);\n"); 
-            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
+            	if($itime >= $date_end)$break = 1;
             	++$i;
                 }while(!$break);
                 $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;
@@ -331,8 +331,8 @@ echo("
             		}          		
              	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
             	echo(",'$tip',$t0,$t1,0]);\n"); 
-            	if($itime >= $date_end)$break = 1;
                 $itime += $inter;
+                if($itime >= $date_end)$break = 1;
             	++$i;
                 }while(!$break);
                 $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;

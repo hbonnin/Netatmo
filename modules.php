@@ -383,8 +383,8 @@ echo("
             		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 
-            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
+            	if($itime >= $date_end)$break = 1;
             	++$i;
                 }while(!$break);
         	echo("data.removeColumn(1+2*$numview);\n");				 
@@ -435,8 +435,8 @@ if(!$Rain)
             		echo(",$tmin0,'$tip'"); 
             		}          		
             	echo(",0]);\n"); 
-            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
+            	if($itime >= $date_end)$break = 1;
             	++$i;
                 }while(!$break);
 				echo("data1.removeColumn(1+2*$numview);\n");				               
