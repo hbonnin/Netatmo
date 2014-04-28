@@ -47,9 +47,11 @@ $numModules = $device["modules"]["num"];
 $device_id = $device['_id'];
 $nameStations[0] = $device["module_name"]; 
 $modules_id[0] = $device_id;
+$modules_type[0] = 'main';
 for($i = 1;$i < $numStations;$i++) // station et modules
     {$nameStations[$i] = $device["modules"][$i-1]["module_name"];
     $modules_id[$i] = $device['modules'][$i -1]['_id'];
+    $modules_type[$i] = $device['modules'][$i -1]['type'];
     }
 
 if(isset($_POST['selectMsesure']))
@@ -70,7 +72,7 @@ $sel = selectIndex($opt,$interval);
 $inter = $opt[$sel][2];
 $tinter = $opt[$sel][1];
 $len = $opt[$sel][3];
-    
+ 
 if(isset($_POST["date0"]))  
     $date0 = $_POST["date0"]; 
 else
@@ -114,13 +116,7 @@ else if(isset($_GET['hist']) && $_GET['hist'] == -2)// restaure defaut
     $date1 = date("d/m/Y",$date_end); 
     $_SESSION['datebeg'] = $date0;
     $_SESSION['dateend'] = $date1; 
-    }    
-else if(isset($_GET['hist']) && $_GET['hist'] == -2)// restaure defaut
-    {$date0 = $date1 = time();
-    chkDates($date0,$date1,$interval,$inter);	
-    $date_beg = $_SESSION['date_beg'];
-    $date_end = $_SESSION['date_end'];
-    }    
+    }  
 if(isset($_GET['row']))// faire un zoom sur la date
     {$row = $_GET['row'];
     $date_beg = $_SESSION['date_beg'];
@@ -206,10 +202,10 @@ else if($selectMesure == 'C')
         $T1 = 1;
         }
     $CO2 = 1;
-    }    
+    }   
+  
 $_SESSION['selectMesureModule'] = $selectMesure; 
 $viewModules = $_SESSION['viewModules'];
-
 if(isset($_POST['selectedModules']) && $changedSation == false)
     {for($i = 0 ;$i < $numStations; $i++)
 	    $viewModules[$stationNum][$i] = 0;
@@ -220,12 +216,13 @@ if(isset($_POST['selectedModules']) && $changedSation == false)
         if($viewModules[$stationNum][$i])++$numview;
     if($numview == 0)
         $viewModules[$stationNum][0] = $numview = 1; 
+                
     $viewModules[$stationNum]["numView"] = $numview;    
     $_SESSION['viewModules'] = $viewModules;	
 	}  
 $view = $viewModules[$stationNum];    
 $numview = $view["numView"];
-    
+   
 if($CO2)
     {if($view[1])--$numview;
     $view[1] = 0;
@@ -238,19 +235,36 @@ $dateBeg = array($numStations);
 $ii = array($numStations);
 $keys = array($numStations);
 $nmesures = array($numStations);
+$Rain = $RainCumul = 0;
+
 
 $minDateBeg = $date_end;
 $numKeys = 0;
 for($i = 1;$i < $numStations;$i++)
 	{if($view[$i] == 0)continue;
 	$moduleId = $modules_id[$i];
-    $params = array("scale" => $interval
-    , "type" =>  $type
-    , "date_begin" => $date_beg
-    , "date_end" => $date_end
-    , "optimize" => false
-    , "device_id" => $device_id
-    , "module_id" => $moduleId); 
+	if($modules_type[$i] != 'NAModule3')
+        $params = array("scale" => $interval
+        , "type" =>  $type
+        , "date_begin" => $date_beg
+        , "date_end" => $date_end
+        , "optimize" => false
+        , "device_id" => $device_id
+        , "module_id" => $moduleId); 
+    else
+        {if($interval == 'max')$type = 'Rain';
+        else $type = 'sum_rain';
+        $Rain = $i;
+        $HTime = 0;
+        $params = array("scale" => $interval
+        , "type" =>  $type
+        , "date_begin" => $date_beg
+        , "date_end" => $date_end
+        , "optimize" => false
+        , "device_id" => $device_id
+        , "module_id" => $moduleId); 
+        }
+  
     
     try
         {$mesure[$i] = $client->api("getmeasure", "POST", $params);
@@ -261,13 +275,20 @@ for($i = 1;$i < $numStations;$i++)
     	    type:$type scale:$interval device_id:$device_id module_id:$moduleId");
     	$_SESSION['ex'] = $ex;
         echo $ex->getMessage()."\n";
-    	}
+    	}	
     if(count($mesure[$i]) == 0){$view[$i] = 0;--$numview;continue;}    
     $keys[$i] = array_keys($mesure[$i]);
     $numKeys = max($numKeys,count($keys[$i]));
     $dateBeg[$i] = $keys[$i][0];
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
     $nmesures[$i] = count($keys[$i]); 
+    }
+if($Rain)
+    {$view[0] = 0;
+    $numview = 1;
+    $dateBeg[$Rain] = $keys[$Rain][0];
+    $minDateBeg = $dateBeg[$Rain]; 
+    $numKeys = count($keys[$Rain]);
     }
 if($view[0])
     {$params = array("scale" => $interval
@@ -301,12 +322,12 @@ if($numKeys == 0)
     echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
     return;
     } 	
-  
+
 /**************************************************************/
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 function tip($temp,$tempDate)
 	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
-	}    
+	}   
 
 echo("
     <script>
@@ -319,6 +340,7 @@ echo("
 ");
             for($i = 0;$i < $numStations;$i++)
 	          	{if($view[$i] == 0)continue;
+	          	if($Rain && $Rain != $i)continue;
 	          	$ii[$i] = 0; 
 	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data.addColumn('number', \"$name[0]\");\n");
@@ -330,6 +352,7 @@ echo("
 	        $itime = $minDateBeg; 
 			$beg = date("d/m/y",$minDateBeg); 
 			$end = date("d/m/y",$date_end); 
+			$break = 0;
 	        $i = 0;	
             	do {
             	if($inter > 3*60*60)
@@ -339,6 +362,7 @@ echo("
 				echo("data.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
             		{if($view[$j] == 0)continue;
+            		if($Rain && $Rain != $j)continue;
             		$tmin0 = $tip = '';   
             		$key = $keys[$j][$ii[$j]]; 
             		if(abs($key - $itime) < 2*$inter) //changement d'horaire
@@ -349,22 +373,27 @@ echo("
             			        $tmin0 = $mesure[$j][$key][0];
             			    if($HTime)
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
+            			    else if($Rain)
+            			        $tip = intval($tmin0*10 + .5)/10;
             			    else
             			        $tip = $tmin0;//tip($tmin0,$itime);
+            			    if($Rain)$RainCumul += $tmin0;
             			    }
             			}        		
             		echo(",$tmin0,'$tip'"); 
             		}          		
-            	echo(",0]);\n"); 	
+            	echo(",0]);\n"); 
+            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
             	++$i;
-                }while($itime <= $date_end);
-				echo("data.removeColumn(1+2*$numview);\n");				 
-/***********************************************************************************/                         
-echo("
-              var data1 = new google.visualization.DataTable();
-	          data1.addColumn('string', 'Date');
-");
+                }while(!$break);
+        	echo("data.removeColumn(1+2*$numview);\n");				 
+/***********************************************************************************/  
+if(!$Rain)
+    {echo("
+          var data1 = new google.visualization.DataTable();
+          data1.addColumn('string', 'Date');
+    ");
 	        for($i = 0;$i < $numStations;$i++)
 	          	{if($view[$i] == 0)continue;
 	          	$ii[$i] = 0; 
@@ -378,6 +407,7 @@ echo("
 			$beg = date("d/m/y",$minDateBeg); 
 			$end = date("d/m/y",$date_end); 
 			$_SESSION['begdata'] = $minDateBeg;
+			$break = 0;
 	        $i = 0;	
             	do {
             	if($inter > 3*60*60)
@@ -404,11 +434,13 @@ echo("
             			        		
             		echo(",$tmin0,'$tip'"); 
             		}          		
-            	echo(",0]);\n"); 	
+            	echo(",0]);\n"); 
+            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
             	++$i;
-                }while($itime <= $date_end);
+                }while(!$break);
 				echo("data1.removeColumn(1+2*$numview);\n");				               
+    }
 /**********************************************************************************************/
             $mini = ($titre == 'CO2') ? ' minimum': ' minimale';
             $maxi = ($titre1 == 'CO2') ? ' maximum': ' maximale';
@@ -421,6 +453,15 @@ echo("
                 {$title = $nameStation.': '.tr($titre) .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"; 
                 $title1 = $nameStation.': '.tr($titre1).' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
                 }
+                
+            if($Rain)
+                {$RainCumul = intval($RainCumul*10+.5)/10;
+                $title = $nameStation.': '.tr('Pluviométrie') .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"." Total: ".$RainCumul." mm" ; 
+                }
+            $paramR = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
+            $paramR .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
+            $paramR .= ',tooltip: {isHtml: true},bar: {groupWidth: "100%"}';
+                
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $param .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
             $param .= ',tooltip: {isHtml: true},curveType:"function"';
@@ -429,13 +470,18 @@ echo("
             colorMin = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
             colorMax = ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6'];
 <?php   
-			echo("                                   
-             var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
-             chartMin.draw(data ,{title: '$title' $visupt,colors:colorMin ,$param });
-             var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartMax.draw(data1 ,{title: '$title1' $visupt,colors: colorMax,$param });
-			");
-			
+            if(!$Rain)
+                echo("                                   
+                 var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
+                 chartMin.draw(data ,{title: '$title' $visupt,colors:colorMin ,$param });
+                 var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
+                 chartMax.draw(data1 ,{title: '$title1' $visupt,colors: colorMax,$param });
+                ");
+			else
+                echo("
+                 var chartMin = new google.visualization.ColumnChart(document.getElementById('chart0'));
+                 chartMin.draw(data ,{title: '$title' $visupt,colors:['green'] ,$paramR });
+                ");
 
 $menuModules = 'modules.php?stationNum=' .$_SESSION['stationId'];
 echo("var menuModules = \"$menuModules\";\n");  

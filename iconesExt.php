@@ -69,6 +69,37 @@ $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 
 $numStations = $mydevices["num"];
 $devicelist = getDevicelist();
+
+function getRainSum($device_num,$module_num,$inter) //$inter = 1,3,24
+    {$devices = $_SESSION['mydevices'][$device_num]; 
+    $device_id = $devices['_id'];
+    $module_id = $devices['modules'][$module_num]['_id'];
+    $date_end = time();
+    $date_beg = time() - $inter*60*60;
+    if($inter == 1)
+        $scale = '1hour';
+    else if($inter == 3)
+        $scale = '3hours';  
+    else
+         $scale = '1day';  
+    $params = array("scale" => $scale
+                , "type" => 'sum_rain'
+                , "date_begin" => $date_beg
+                , "date_end" => $date_end
+                , "device_id" => $device_id
+                , "module_id" => $module_id);
+    $client = $_SESSION['client'];
+    $meas = $client->api("getmeasure", "POST", $params);
+/*
+    echo("<pre>");
+    print_r($params);
+    print_r($meas);
+    echo("</pre>");
+*/    
+    $rain = $meas[0]['value'][0][0];  
+    return $rain;
+    }
+
 $Temperature_unit = $_SESSION['Temperature_unit'];
 $last_mesures = getLastMeasures($devicelist);
 $slabel = array($numStations);
@@ -218,16 +249,25 @@ for($i = 0;$i < $numStations;$i++)
     // Infos
     $label[$i]  = "<table class='bulle' style='width:260px;'>";
     $label[$i] .=  "<caption > $p </caption>";
-    $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th></tr>";
+    $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th><th>R1h</th><th>R24h</th></tr>";
     $label[$i] .=   "$tabINT  $tabEXT";
         
         $nModule = count($res);
         for($j = 2; $j < $nModule ; $j++)
             {$name = $res[$j]["module_name"];
-            $temp = degree2($res[$j]["Temperature"]);
-            $hum = $res[$j]["Humidity"];
-            $co2 = $res[$j]["CO2"];		
-            $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td></tr>";        
+            if(isset($res[$j]['Rain']))
+                {$temp = $hum = $co2 = ' ';
+                $rain = $res[$j]["Rain"];
+                $rain1 = getRainSum($i,$j-1,1);                
+                $rain24 = getRainSum($i,$j-1,24);
+                }
+            else
+                {$temp = degree2($res[$j]["Temperature"]);
+                $hum = $res[$j]["Humidity"];
+                $co2 = $res[$j]["CO2"];	
+                $rain1 = $rain24 = ' ';
+                }
+            $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td><td $green>$rain1</td><td $green>$rain24</td></tr>";        
             }
     $label[$i] .= '</table>';
     //if(!empty($QA[$i]))$label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";

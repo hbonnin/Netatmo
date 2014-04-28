@@ -142,7 +142,8 @@ function initClient()
                                         'client_id' => $client_id,
                                         'client_secret' => $client_secret,
                                         'code' => $code,
-                                        'redirect_uri' => $my_url               
+                                        'redirect_uri' => $my_url,  
+                                        'scope' => "read_station read_thermostat write_thermostat"
                                         ));
         $opts = array('http' => array(
                                     'method'  => 'POST',

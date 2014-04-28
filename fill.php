@@ -156,18 +156,18 @@ function getRadioImage($radio)
 function getBatteryImage($battery,$batteryType)
     {switch($batteryType)
         {case "NAModule4":
-            {if($battery > 5640) return "icone/battery_full.png";
-            if($battery > 5280) return "icone/battery_high.png";
-            if($battery > 4920) return "icone/battery_medium.png";
-            if($battery > 4560) return "icone/battery_low.png";   
-            else return "icone/battery_verylow.png";
+            {if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_0) return "icone/battery_full.png";
+             if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_1) return "icone/battery_high.png";
+             if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_2) return "icone/battery_medium.png";
+             if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_3) return "icone/battery_low.png";   
+            return "icone/battery_verylow.png";
             }
         default: 
-            {if($battery > 5500) return "icone/battery_full.png";
-            if($battery > 5000) return "icone/battery_high.png";
-            if($battery > 4500) return "icone/battery_medium.png";
-            if($battery > 4000) return "icone/battery_low.png";   
-            else return "battery_verylow.png";
+            {if($battery >= NABatteryLevelModule::BATTERY_LEVEL_0) return "icone/battery_full.png";
+            if($battery >= NABatteryLevelModule::BATTERY_LEVEL_1) return "icone/battery_high.png";
+            if($battery >= NABatteryLevelModule::BATTERY_LEVEL_2) return "icone/battery_medium.png";
+            if($battery >= NABatteryLevelModule::BATTERY_LEVEL_3) return "icone/battery_low.png";   
+            return "battery_verylow.png";
             }
         }
 

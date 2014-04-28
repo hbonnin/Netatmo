@@ -1,6 +1,6 @@
 <?php 
 require_once 'NAApiClient.php';
-require_once 'NAApiClient.php';
+
 session_start(); 
 $_SESSION=array();
 $path = dirname($_SERVER['PHP_SELF']).'/';
@@ -67,8 +67,10 @@ require_once 'Config.php';
         {$my_url = "http://" . $_SERVER['SERVER_NAME'] .$path. "iconesExt.php";
     	$_SESSION['state'] = md5(uniqid(rand(), TRUE));
     	$dialog_url="https://api.netatmo.net/oauth2/authorize?client_id=" 
-    		. $client_id . "&redirect_uri=" . urlencode($my_url) . "&state="
-    		. $_SESSION['state'];
+    		. $client_id 
+    		. "&redirect_uri=" . urlencode($my_url) 
+    		. "&state=". $_SESSION['state']
+    		. "&scope=read_station%20read_thermostat%20write_thermostat";
     	echo("<script> top.location.href='" . $dialog_url . "'</script>");
     	}   	   	
 ?>

@@ -7,7 +7,6 @@ define('INTERNAL_ERROR_TYPE', 2); //error because internal state is not consiste
 define('JSON_ERROR_TYPE',3);
 define('NOT_LOGGED_ERROR_TYPE', 4); //unable to get access token
 
-
 define('BACKEND_BASE_URI', "http://api.netatmo.net/");
 define('BACKEND_SERVICES_URI', "http://api.netatmo.net/api");
 define('BACKEND_ACCESS_TOKEN_URI', "https://api.netatmo.net/oauth2/token");
@@ -241,6 +240,11 @@ class NAApiClient
         {
             $this->setVariable("code", $_GET["code"]);
         }
+
+        if(isset($config["scope"]))
+        {
+            $this->scope = $config['scope'];
+        }
   }
 
     /**
@@ -252,9 +256,10 @@ class NAApiClient
         CURLOPT_HEADER         => TRUE,
         CURLOPT_TIMEOUT        => 60,
         CURLOPT_USERAGENT      => 'netatmoclient',
+        CURLOPT_SSL_VERIFYPEER => TRUE,
         CURLOPT_HTTPHEADER     => array("Accept: application/json"),
     );
-//hubert:  CURLOPT_HTTPHEADER  semble ne servir à rien
+
     /**
     * Makes an HTTP request.
     *
@@ -313,23 +318,26 @@ class NAApiClient
         {
             $opts[CURLOPT_HTTPHEADER] = array('Expect:');
         }
-
         curl_setopt_array($ch, $opts);
-        //hubert
-        //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-
         $result = curl_exec($ch);
+
+
+        $errno = curl_errno($ch);
+        // CURLE_SSL_CACERT || CURLE_SSL_CACERT_BADFILE
+        if ($errno == 60 || $errno == 77)
+        {
+            echo "WARNING ! SSL_VERIFICATION has been disabled since ssl error retrieved. Please check your certificate http://curl.haxx.se/docs/sslcerts.html\n";
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            $result = curl_exec($ch);
+        }
+
         if ($result === FALSE)
         {
-            $e = new NACurlErrorType(curl_errno($ch), curl_error($ch));            
+            $e = new NACurlErrorType(curl_errno($ch), curl_error($ch));
             curl_close($ch);
             throw $e;
         }
         curl_close($ch);
-
-        $result = str_replace('HTTP/1.0','HTTP/1.1',$result);
-        $result = str_replace("HTTP/1.1 200 Connection established\r\n\r\n",'',$result);
 
         // Split the HTTP response into header and body.
         list($headers, $body) = explode("\r\n\r\n", $result);
@@ -404,6 +412,14 @@ class NAApiClient
     public function getAuthorizeUrl($scope = null, $state = null)
     {
         $redirect_uri = $this->getRedirectUri();
+        if($state == null)
+        {
+            $state = rand();
+        }
+        if(is_null($scope))
+        {
+            $scope = $this->getVariable('scope');
+        }
         $params = array("scope" => $scope, "state" => $state, "client_id" => $this->getVariable("client_id"), "client_secret" => $this->getVariable("client_secret"), "response_type" => "code", "redirect_uri" => $redirect_uri);
         return $this->getUri($this->getVariable("authorize_uri"), $params);
     }
@@ -426,6 +442,11 @@ class NAApiClient
     private function getAccessTokenFromAuthorizationCode($code)
     {
         $redirect_uri = $this->getRedirectUri();
+        $scope = $this->getVariable('scope');
+        if($scope == null)
+        {
+            $scope = NAScopes::SCOPE_READ_STATION;
+        }
         if($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL && $redirect_uri != NULL)
         {
             $ret = $this->makeRequest($this->getVariable('access_token_uri'),
@@ -436,6 +457,7 @@ class NAApiClient
                     'client_secret' => $client_secret,
                     'code' => $code,
                     'redirect_uri' => $redirect_uri,
+                    'scope' => $scope,
                 )
             );
             $this->setTokens($ret);
@@ -457,13 +479,18 @@ class NAApiClient
    * @param $password
    *   Password to be check with.
    *
-    * @return
-    *   A valid OAuth2.0 JSON decoded access token in associative array
-    * @thrown
-    *  A NAClientException if unable to retrieve an access_token
+   * @return
+   *   A valid OAuth2.0 JSON decoded access token in associative array
+   * @thrown
+   *  A NAClientException if unable to retrieve an access_token
    */
     private function getAccessTokenFromPassword($username, $password)
     {
+        $scope = $this->getVariable('scope');
+        if(is_null($scope))
+        {
+            $scope = NAScopes::SCOPE_READ_STATION;
+        }
         if ($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL)
         {
             $ret = $this->makeRequest(
@@ -475,6 +502,7 @@ class NAApiClient
                 'client_secret' => $client_secret,
                 'username' => $username,
                 'password' => $password,
+                'scope' => $scope,
                 )
             );
             $this->setTokens($ret);
@@ -505,16 +533,33 @@ class NAApiClient
     {
         if ($this->getVariable('access_token_uri') && ($client_id = $this->getVariable('client_id')) != NULL && ($client_secret = $this->getVariable('client_secret')) != NULL && ($refresh_token = $this->refresh_token) != NULL)
         {
-            $ret = $this->makeRequest(
-                $this->getVariable('access_token_uri'),
-                'POST',
-                array(
-                    'grant_type' => 'refresh_token',
-                    'client_id' => $this->getVariable('client_id'),
-                    'client_secret' => $this->getVariable('client_secret'),
-                    'refresh_token' => $refresh_token,
-                )
-            );
+            if($this->getVariable('scope') != null)
+            {
+                $ret = $this->makeRequest(
+                    $this->getVariable('access_token_uri'),
+                    'POST',
+                    array(
+                        'grant_type' => 'refresh_token',
+                        'client_id' => $this->getVariable('client_id'),
+                        'client_secret' => $this->getVariable('client_secret'),
+                        'refresh_token' => $refresh_token,
+                        'scope' => $this->getVariable('scope'),
+                        )
+                    );
+            }
+            else
+            {
+                $ret = $this->makeRequest(
+                    $this->getVariable('access_token_uri'),
+                    'POST',
+                    array(
+                        'grant_type' => 'refresh_token',
+                        'client_id' => $this->getVariable('client_id'),
+                        'client_secret' => $this->getVariable('client_secret'),
+                        'refresh_token' => $refresh_token,
+                        )
+                    );
+            }
             $this->setTokens($ret);
             return $ret;
         }
@@ -790,7 +835,7 @@ class NAApiClient
  */
 class NAApiHelper
 {
-    public function SimplifyDeviceList($devicelist)
+    public function simplifyDeviceList($devicelist)
     {
         foreach ($devicelist["devices"] as $d=>$device)
         {
@@ -811,41 +856,69 @@ class NAApiHelper
         unset($devicelist["modules"]);
         return($devicelist);
     }
-    public function GetLastMeasure($client, $device, $module=null)
+    public function getLastMeasure($client, $device, $device_type, $module=null, $module_type = null)
     {
-        $params = array("scale" => "max", "type" => "Temperature,CO2,Humidity,Pressure,Noise", "date_end" => "last", "device_id" => $device);
+        $params = array("scale" => "max", "date_end" => "last", "device_id" => $device);
         $result = array();
-        if (!is_null($module))
+        if(!is_null($module))
         {
-            $params["module_id"]=$module;
+            switch($module_type)
+            {
+                case "NAModule1":
+                    $params["type"] = "Temperature,Humidity";
+                break;
+                case "NAModule4":
+                    $params["type"] = "Temperature,CO2,Humidity";
+                break;
+                case "NAModule3":
+                    $params["type"] = "Rain";
+                break;
+            }
+
+            $params["module_id"] = $module;
+        }
+        else
+        {
+            switch($device_type)
+            {
+                case "NAMain":
+                    $params["type"] = "Temperature,CO2,Humidity,Pressure,Noise";
+                break;
+                case "NAPlug":
+                    $params["type"] = "Temperature,Sp_Temperature,BoilerOn,BoilerOff";
+            }
+        }
+        $types = explode(",", $params["type"]);
+        if($types === FALSE)
+        {
+            $types = array($params["type"]);
         }
         $meas = $client->api("getmeasure", "POST", $params);
         if(isset($meas[0]))
         {
             $result['time'] = $meas[0]['beg_time'];
-            if ($meas[0]['value'][0][0]!='') $result['Temperature']=$meas[0]['value'][0][0];
-            if ($meas[0]['value'][0][1]!='') $result['CO2']=        $meas[0]['value'][0][1];
-            if ($meas[0]['value'][0][2]!='') $result['Humidity']=   $meas[0]['value'][0][2];
-            if ($meas[0]['value'][0][3]!='') $result['Pressure']=   $meas[0]['value'][0][3];
-            if ($meas[0]['value'][0][4]!='') $result['Noise']=      $meas[0]['value'][0][4];
+            foreach($meas[0]['value'][0] as $key => $val)
+            {
+                $result[$types[$key]] = $val;
+            }
         }
         return($result);
 
     }
-    public function GetLastMeasures($client,$simplifieddevicelist)
+    public function getLastMeasures($client,$simplifieddevicelist)
     {
-        $results = Array();
+        $results = array();
         foreach ($simplifieddevicelist["devices"] as $device)
         {
-            $result = Array();
+            $result = array();
             if(isset($device["station_name"])) $result["station_name"] = $device["station_name"];
             if(isset($device["modules"][0])) $result["modules"][0]["module_name"] = $device["module_name"];
-            $result["modules"][0] = array_merge($result["modules"][0], $this->GetLastMeasure($client,$device["_id"]));
+            $result["modules"][0] = array_merge($result["modules"][0], $this->getLastMeasure($client,$device["_id"], $device["type"]));
             foreach ($device["modules"] as $module)
             {
-                $addmodule = Array();
+                $addmodule = array();
                 if(isset($module["module_name"])) $addmodule["module_name"] = $module["module_name"];
-                $addmodule = array_merge($addmodule, $this->GetLastMeasure($client,$device["_id"],$module["_id"]));
+                $addmodule = array_merge($addmodule, $this->getLastMeasure($client,$device["_id"],$device["type"], $module["_id"], $module["type"]));
                 $result["modules"][] = $addmodule;
             }
             $results[] = $result;
