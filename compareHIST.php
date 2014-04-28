@@ -242,6 +242,7 @@ echo("
 	        echo("data.addColumn('number', '');\n"); 
 	        
 	        $ii[0] = $ii[1] = 0; 
+	        $break = 0;
 	        $moy0 = $moy1 = 0;
 	        $itime = $keys[0][0];
 	        $_SESSION['begdata'] = $date_beg;
@@ -274,10 +275,11 @@ echo("
             			}        	
             		}          		
             	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
-            	echo(",'$tip',$t0,$t1,0]);\n"); 	
+            	echo(",'$tip',$t0,$t1,0]);\n"); 
+            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
             	++$i;
-                }while($itime < $date_end);
+                }while(!$break);
                 $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;
                 $moy1 /= $nmesures[1]; $moy1 = intval($moy1*10 +.5)/10;
 				echo("data.removeColumn(4);\n");	
@@ -302,6 +304,7 @@ echo("
 	        $moy0 = $moy1 = 0;
 	        $itime = $keys[0][0];	        
 	        $i = $i0 = $i1 = 0;
+	        $break = 0;
             	do {
             	$idate = date("d/m/y",$itime);
 				echo("data1.addRow([\"$idate\"");  
@@ -327,10 +330,11 @@ echo("
             			}
             		}          		
              	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
-            	echo(",'$tip',$t0,$t1,0]);\n"); 	
+            	echo(",'$tip',$t0,$t1,0]);\n"); 
+            	if($itime >= $date_end)$break = 1;
                 $itime += $inter;
             	++$i;
-                }while($itime < $date_end);
+                }while(!$break);
                 $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;
                 $moy1 /= $nmesures[1]; $moy1 = intval($moy1*10 +.5)/10;
 				echo("data1.removeColumn(4);\n");	

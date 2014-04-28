@@ -212,6 +212,7 @@ echo("
 			$beg = date("d/m/y", $minDateBeg); 
 			$end = date("d/m/y",$date_end); 	        	        
 	        $i = 0;	
+	        $break = 0;
             	do {
             	$idate = date("d/m/y",$itime);
 				echo("data.addRow([\"$idate\"");
@@ -229,10 +230,11 @@ echo("
             			}        		
             		echo(",$tmin0,'$tip'"); 
             		}          		
-            	echo(",0]);\n"); 	
+            	echo(",0]);\n"); 
+            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
             	++$i;
-                }while($itime < $date_end);
+                }while(!$break);
 				echo("data.removeColumn(1+2*$numview);\n");	
 				$tmesure = tr("mesure").'s';
 				$title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$maxMesures." $tmesure)";                
@@ -255,7 +257,8 @@ echo("
 			$beg = date("d/m/y", $minDateBeg); 
 			$end = date("d/m/y",$date_end); 	        
 	        
-	        $i = 0;   	
+	        $i = 0; 
+	        $break = 0;
             do	{$idate = date("d/m/y",$itime);
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numStations;$j++)
@@ -272,10 +275,11 @@ echo("
           			}
             		echo(",$tmin0,'$tip'"); 
             		}          		
-            	echo(",0]);\n"); 	
+            	echo(",0]);\n"); 
+            	if($itime >= $date_end)$break = 1;
             	$itime += $inter;
             	++$i;
-                }while($itime < $date_end);
+                }while(!$break);
 				echo("data1.removeColumn(1+2*$numview);\n");				 
 				$tmesure = tr("mesure").'s';
 				$title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$maxMesures." $tmesure)";                
