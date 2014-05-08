@@ -70,33 +70,33 @@ $mydevices = $_SESSION['mydevices'];
 $numStations = $mydevices["num"];
 $devicelist = getDevicelist();
 
-function getRainSum($device_num,$module_num,$inter) //$inter = 1,3,24
+function getRainSum($device_num,$module_num,$inter) //$inter = 1,3,24,0
     {$devices = $_SESSION['mydevices'][$device_num]; 
     $device_id = $devices['_id'];
     $module_id = $devices['modules'][$module_num]['_id'];
     $date_end = time();
     $date_beg = time() - $inter*60*60;
+    $type = 'sum_rain';
     if($inter == 1)
         $scale = '1hour';
     else if($inter == 3)
         $scale = '3hours';  
-    else
+    else if($inter == 24)
          $scale = '1day';  
+    else
+        {$scale = 'max'; 
+        $type = 'Rain';
+        }
     $params = array("scale" => $scale
-                , "type" => 'sum_rain'
+                , "type" => $type
                 , "date_begin" => $date_beg
                 , "date_end" => $date_end
                 , "device_id" => $device_id
                 , "module_id" => $module_id);
     $client = $_SESSION['client'];
     $meas = $client->api("getmeasure", "POST", $params);
-/*
-    echo("<pre>");
-    print_r($params);
-    print_r($meas);
-    echo("</pre>");
-*/    
-    $rain = $meas[0]['value'][0][0];  
+    $rain = $meas[0]['value'][0][0]; 
+    $rain = intval($rain*10+.5)/10;
     return $rain;
     }
 
@@ -258,7 +258,7 @@ for($i = 0;$i < $numStations;$i++)
             if(isset($res[$j]['Rain']))
                 {$temp = $hum = $co2 = ' ';
                 $rain = $res[$j]["Rain"];
-                $rain1 = getRainSum($i,$j-1,1);                
+                $rain1 = getRainSum($i,$j-1,1);    
                 $rain24 = getRainSum($i,$j-1,24);
                 }
             else

@@ -207,7 +207,17 @@ for($i = 0; $i < 2; $i++)
     $dateBeg[$i] = $keys[$i][0];
     $nmesures[$i] = count($keys[$i]);
     }
-
+    
+//$d0 = date("d/m/y",$dateBeg[0]); 
+//$d1 = date("d/m/y",$dateBeg[1]);
+$dateBeg[0] = max($dateBeg[0], $dateBeg[1] + $delta);   
+/*
+echo "$d0 $d1<br>";
+$d0 = date("d/m/y",$dateBeg[0]);
+$d1 = date("d/m/y",$dateBeg[1]);
+$k = date("d/m/y",$keys[0][0]);
+echo "$d0    $d1 $k<br>";
+*/
 $visupt = "";
 if($nmesures[0] <= 48)$visupt = ",pointSize:3";	
 date_default_timezone_set($timezone);
@@ -241,47 +251,47 @@ echo("
             echo("data.addColumn('number', \"$txt\");\n");
 	        echo("data.addColumn('number', '');\n"); 
 	        
-	        $ii[0] = $ii[1] = 0; 
-	        $break = 0;
-	        $moy0 = $moy1 = 0;
-	        $itime = $keys[0][0];
+	        $ii[1] = 0; 
+	        $n = $moy0 = $moy1 = 0;
+	        $itime = $dateBeg[0];
 	        $_SESSION['begdata'] = $date_beg;
-			$beg = date("d/m/y", $date_beg); 
+			$beg = date("d/m/y", $dateBeg[0]); 
 			$end = date("d/m/y",$date_end); 	        	        
-	         $i = $i0 = $i1 = 0;
-            	do {
+	        $iii = $i1 = 0;
+	        while($keys[0][$iii] < $dateBeg[0])++$iii;
+	        $ii[0] = $i0 = $iii; 
+            do {
             	$idate = date("d/m/y",$itime);
-				echo("data.addRow([\"$idate\""); 
 				$t0 = $t1 = $tip = $date0 = $date1 = '';
-            	for($j = 0; $j < 2;$j++)
-            		{$tmin0 = '';   
-            		$key = $keys[$j][$ii[$j]]; 
-            		$key1 = $key;
+            	for($j = 0; $j < 2;$j++) // j = 0 actuelles, j = 1 passées 
+            		{$key1 = $key = $keys[$j][$ii[$j]]; 
             		if($j == 1)$key1 += $delta;
             		if(abs($key1 - $itime) < $inter)
-            			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
+            			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];
             			$tmin0 = degree2($mesure[$j][$key][0]);
             			if($j == 0 && $i0 < $nmesures[0])
-            			    {$t0 = $tmin0;
-            			    $moy0 += $t0; ++$i0;
+            			    {$t0 = $tmin0;++$i0;
             			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			else if($j == 1 && $i1 < $nmesures[1])
-            			    {$t1 = $tmin0;
-            			    $moy1 += $t1; ++$i1;
-            			    //$date1 = date('d/m/y',$key);
+            			    {$t1 = $tmin0; ++$i1;
             			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}        	
             		}          		
-            	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
-            	echo(",'$tip',$t0,$t1,0]);\n"); 
+            	if($t0 != "" && $t1 != "") 
+            	    {++$n;
+            	    $moy0 += $t0; 
+            	    $moy1 += $t1;
+            	    }
+            	if($t0 != "" || $t1 != "") 
+            	    {$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
+            	    echo("data.addRow([\"$idate\",'$tip',$t0,$t1,0]);\n");
+            	    }
             	$itime += $inter;
-            	if($itime >= $date_end)$break = 1;
-            	++$i;
-                }while(!$break);
-                $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;
-                $moy1 /= $nmesures[1]; $moy1 = intval($moy1*10 +.5)/10;
+                }while($itime <= $date_end);
+                $moy0 /= $n; $moy0 = intval($moy0*10 +.5)/10;
+                $moy1 /= $n; $moy1 = intval($moy1*10 +.5)/10;
 				echo("data.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0 -$moy1;
@@ -300,43 +310,44 @@ echo("
             echo("data1.addColumn('number', \"$txt\");\n");
 	        echo("data1.addColumn('number', '');\n"); 
 	        
-	        $ii[0] = $ii[1] = 0; 
-	        $moy0 = $moy1 = 0;
-	        $itime = $keys[0][0];	        
-	        $i = $i0 = $i1 = 0;
-	        $break = 0;
-            	do {
+	        $ii[1] = 0; 
+	        $n = $moy0 = $moy1 = 0;
+	        $itime = $dateBeg[0];	        
+	        $iii = $i1 = 0;
+	        while($keys[0][$iii] < $dateBeg[0])++$iii; 
+	        $ii[0] = $i0 = $iii;
+            do {
             	$idate = date("d/m/y",$itime);
-				echo("data1.addRow([\"$idate\"");  
 				$t0 = $t1 = $tip = $date0 = $date1 = '';
             	for($j = 0; $j < 2;$j++)
-            		{$tmin0 = '';   
-            		$key = $keys[$j][$ii[$j]]; 
-            		$key1 = $key;
+            		{$key1 = $key = $keys[$j][$ii[$j]]; 
             		if($j == 1)$key1 += $delta;
             		if(abs($key1 - $itime) < $inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
             			$tmin0 = degree2($mesure[$j][$key][1]);
             			if($j == 0 && $i0 < $nmesures[0])
-            			    {$t0 = $tmin0;
-            			    $moy0 += $t0; ++$i0;
+            			    {$t0 = $tmin0;++$i0;
             			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			else if($j == 1 && $i1 < $nmesures[1])
-            			    {$t1 = $tmin0;
-            			    $moy1 += $t1; ++$i1;
+            			    {$t1 = $tmin0;++$i1;
             			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}
-            		}          		
-             	$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
-            	echo(",'$tip',$t0,$t1,0]);\n"); 
+            		} 
+            	if($t0 != "" && $t1 != "") 
+            	    {++$n;
+            	    $moy0 += $t0; 
+            	    $moy1 += $t1;
+            	    }
+              	if($t0 != "" || $t1 != "") 
+              	    {$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
+            	    echo("data1.addRow([\"$idate\",'$tip',$t0,$t1,0]);\n"); 
+            	    }
                 $itime += $inter;
-                if($itime >= $date_end)$break = 1;
-            	++$i;
-                }while(!$break);
-                $moy0 /= $nmesures[0]; $moy0 = intval($moy0*10 +.5)/10;
-                $moy1 /= $nmesures[1]; $moy1 = intval($moy1*10 +.5)/10;
+                }while($itime <= $date_end);
+                $moy0 /= $n; $moy0 = intval($moy0*10 +.5)/10;
+                $moy1 /= $n; $moy1 = intval($moy1*10 +.5)/10;
 				echo("data1.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0-$moy1;
@@ -363,9 +374,9 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
 ?> 
 } // draw chart 
 
-
             
 </script>
+
 <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
 </head>
  <body> 

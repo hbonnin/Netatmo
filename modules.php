@@ -47,7 +47,7 @@ $numModules = $device["modules"]["num"];
 $device_id = $device['_id'];
 $nameStations[0] = $device["module_name"]; 
 $modules_id[0] = $device_id;
-$modules_type[0] = 'main';
+$modules_type[0] = 'NAMain';
 for($i = 1;$i < $numStations;$i++) // station et modules
     {$nameStations[$i] = $device["modules"][$i-1]["module_name"];
     $modules_id[$i] = $device['modules'][$i -1]['_id'];
@@ -170,7 +170,7 @@ if($selectMesure == 'T')
     $T = $T1 = 1;
     if($inter >= 24*60*60)
         $type = 'min_temp,max_temp,date_min_temp,date_max_temp';
-    else if($inter == 3*60*60)
+    else if($inter >= 60*60)
         {$type = 'min_temp,max_temp';$HTime = 0;}
     else
         {$type = 'Temperature,Humidity';$HTime = 0;
@@ -202,9 +202,9 @@ else if($selectMesure == 'C')
         $T1 = 1;
         }
     $CO2 = 1;
-    }   
-  
+    }     
 $_SESSION['selectMesureModule'] = $selectMesure; 
+
 $viewModules = $_SESSION['viewModules'];
 if(isset($_POST['selectedModules']) && $changedSation == false)
     {for($i = 0 ;$i < $numStations; $i++)
@@ -240,8 +240,25 @@ $Rain = $RainCumul = 0;
 
 $minDateBeg = $date_end;
 $numKeys = 0;
+
 for($i = 1;$i < $numStations;$i++)
-	{if($view[$i] == 0)continue;
+    {if($modules_type[$i] == 'NAPlug' || $modules_type[$i] == 'NATherm1')
+	    {if($view[$i])
+	        --$numview;
+	    $view[$i] = 0;
+	    }
+	if($view[$i] && $modules_type[$i] == 'NAModule3')
+	    $Rain = $i;
+	}
+if($Rain) 
+    {for($i = 0;$i < $numStations;$i++)
+        if($modules_type[$i] != 'NAModule3')$view[$i] = 0;
+    $numview = 1;
+    }
+
+for($i = 1;$i < $numStations;$i++)
+	{
+	if($view[$i] == 0)continue;
 	$moduleId = $modules_id[$i];
 	if($modules_type[$i] != 'NAModule3')
         $params = array("scale" => $interval
@@ -264,8 +281,6 @@ for($i = 1;$i < $numStations;$i++)
         , "device_id" => $device_id
         , "module_id" => $moduleId); 
         }
-  
-    
     try
         {$mesure[$i] = $client->api("getmeasure", "POST", $params);
         }
@@ -283,10 +298,9 @@ for($i = 1;$i < $numStations;$i++)
     $minDateBeg = min($minDateBeg,$dateBeg[$i]);    
     $nmesures[$i] = count($keys[$i]); 
     }
+ 
 if($Rain)
-    {$view[0] = 0;
-    $numview = 1;
-    $dateBeg[$Rain] = $keys[$Rain][0];
+    {$dateBeg[$Rain] = $keys[$Rain][0];
     $minDateBeg = $dateBeg[$Rain]; 
     $numKeys = count($keys[$Rain]);
     }

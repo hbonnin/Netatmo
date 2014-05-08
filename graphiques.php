@@ -220,18 +220,15 @@ else if($interval=="1day")
 	{$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
 	$req1 = "min_temp,max_temp,min_hum,max_co2,min_pressure,max_noise";		
 	}
-else if($interval=="3hours")
-	{$req =  "Temperature,Humidity";	
-	$req1 = "Temperature,Humidity,max_co2,min_pressure,max_noise";
-	}	
-else if($interval=="30min")
-	{$req = "Temperature,Humidity";
-	$req1 = "Temperature,Humidity,max_co2,min_pressure,max_noise";
-	}	
 else if($interval=="max")
 	{$req = "Temperature,Humidity";
 	$req1 = "Temperature,Humidity,CO2,Pressure,Noise";
 	}
+else //if($interval=="3hours" || $interval=="1hour" || ($interval=="30min")
+	{$req =  "Temperature,Humidity";	
+	$req1 = "Temperature,Humidity,max_co2,min_pressure,max_noise";
+	}	
+	
 
 $mydevices = $_SESSION['mydevices']; 
 $device_id = $mydevices[$stationId]["_id"];

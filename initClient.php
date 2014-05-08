@@ -69,16 +69,17 @@ function init($numStations)
         $_SESSION['datebeg'] = date("d/m/Y",mktime(date("H"), date("i"), 0, date('m') , date('d'),date('y')));
         $_SESSION['path'] = dirname($_SERVER['PHP_SELF']);
         $client = $_SESSION['client'];     
-        $MenuInterval = array ( "G" => 4,
+        $MenuInterval = array ( "G" => 5,
                             "C"  => 1,
-                            "M"  => 4,
+                            "M"  => 5,
                             "H"  => 1,                             
                             "opt" => array (
                                         0 => array ('1week','1 semaine',7*24*60*60,26*7*24*60*60),
                                         1 => array ('1day','1 journée',24*60*60,30*24*60*60),
                                         2 => array ('3hours','3 heures',3*60*60,15*24*60*60),
-                                        3 => array ('30min','30 minutes',30*60,2*24*60*60),
-                                        4 => array ('max','5 minutes',5*60,24*60*60)
+                                        3 => array ('1hour','1 heure',60*60,4*24*60*60),
+                                        4 => array ('30min','30 minutes',30*60,2*24*60*60),
+                                        5 => array ('max','5 minutes',5*60,24*60*60)
                                         )
                                 );
         $_SESSION['MenuInterval'] = $MenuInterval;  

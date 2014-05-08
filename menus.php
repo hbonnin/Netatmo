@@ -53,9 +53,11 @@ function chkDates($date0,$date1,$interval,$inter)
                         break;
          case '3hours': $date_beg = min($date_beg,$date_end - $opt[2][3]);
                         break;
-         case '30min': $date_beg = min($date_beg,$date_end - $opt[3][3]);
+         case '1hour': $date_beg = min($date_beg,$date_end - $opt[3][3]);
                         break;
-         case  'max':  $date_beg = min($date_beg,$date_end - $opt[4][3]);
+         case '30min': $date_beg = min($date_beg,$date_end - $opt[4][3]);
+                        break;
+         case  'max':  $date_beg = min($date_beg,$date_end - $opt[5][3]);
                         break;
         }
         
