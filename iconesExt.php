@@ -69,6 +69,9 @@ $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 
 $numStations = $mydevices["num"];
 $devicelist = getDevicelist();
+$dashboard = $_SESSION['dashboard']; 
+$Temperature_unit = $_SESSION['Temperature_unit'];
+
 
 function getRainSum($device_num,$module_num,$inter) //$inter = 1,3,24,0
     {$devices = $_SESSION['mydevices'][$device_num]; 
@@ -100,8 +103,6 @@ function getRainSum($device_num,$module_num,$inter) //$inter = 1,3,24,0
     return $rain;
     }
 
-$Temperature_unit = $_SESSION['Temperature_unit'];
-$last_mesures = getLastMeasures($devicelist);
 $slabel = array($numStations);
 $label = array($numStations);
 
@@ -188,7 +189,6 @@ for($i = 0;$i < $numStations;$i++)
     $moon = $moonrise . '&nbsp;&nbsp;'. $moonset;
  
     if(($mrise && $ret->moonset < $ret->moonrise) ||!$mset)
-//    if(($mrise && $ret->moonset < $ret->moonrise))
         {$time1 = time() + 24*60*60;
         $day1 = idate('d',$time1);
         $moon1 = new moontime();
@@ -198,16 +198,6 @@ for($i = 0;$i < $numStations;$i++)
         $moon = $moonrise . '&nbsp;&nbsp;'. $moonset.'+';
         }
         
-/*	
-	if(isset($devicelist["devices"][$i]['extra']))
-        {$Q = $devicelist["devices"][$i]['extra']['air_quality']['data'][0]['value'][0];
-        $QA[$i] = $Q[0] . " ".$Q[1] ;
-        if(count($Q) >= 5 && isset($Q[3]))
-            $QA[$i] .= " / ".$Q[3]." ".$Q[4];
-        }
-    else 
-	    $QA[$i] ='';
-*/	    
     $txt = '('.sprintf("%d°%05d",$lat,abs(100000*($lat-intval($lat))+.5)).', '
             .sprintf("%d°%05d",$long,abs(100000*($long-intval($long))+.5)).', '.$altitude.'m)';
     if($place == "BAD")	
@@ -230,20 +220,22 @@ for($i = 0;$i < $numStations;$i++)
     $p .= "<td colspan='2'>&nbsp; $tdiff &nbsp; $tdaylength</td></tr>";
     $p .= "</table></div>";
 
-    $res = $last_mesures[$i]["modules"];
-	$temp = degree2($res[0]['Temperature']);
-	$hum = $res[0]['Humidity'];
-	$co2 = $res[0]['CO2'];
-	$db  = $res[0]['Noise'];
+    // station intérieure
+    $temp = degree2($dashboard[$i][-1]["Temperature"]);
+    $hum = $dashboard[$i][-1]["Humidity"];
+    $co2 = $dashboard[$i][-1]["CO2"];
+    $db = $dashboard[$i][-1]["Noise"];
+	
 	$red = "style='color:#900'";
 	$green = "style='color:#070'";
 	$orange = "style='color: brown'";
 	$violet = "style='color:#007'";
 	
 	$tabINT = "<tr><td class='name'>$int_name</td> <td></td><td $red>$temp</td> <td $green>$hum</td>  <td $orange>$co2</td> <td></td> <td $violet>$db</td></tr>";	
-	$temp = degree2($res[1]['Temperature']);
-	$hum = $res[1]['Humidity'];
-	$pres = intval($res[0]['Pressure'] + .5);
+    // station extérieure
+    $temp = degree2($dashboard[$i][0]["Temperature"]);
+	$hum = $dashboard[$i][0]["Humidity"];
+	$pres = intval($dashboard[$i][-1]["Pressure"] + .5);
 	$tabEXT = "<tr><td class='name'>$ext_name</td> <td></td><td $red>$temp</td> <td $green>$hum</td> <td></td> <td>$pres</td></tr>";	
     $cu = $Temperature_unit ? '°':'F';
     // Infos
@@ -251,30 +243,30 @@ for($i = 0;$i < $numStations;$i++)
     $label[$i] .=  "<caption > $p </caption>";
     $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th><th>R1h</th><th>R24h</th></tr>";
     $label[$i] .=   "$tabINT  $tabEXT";
-        
-        $nModule = count($res);
-        for($j = 2; $j < $nModule ; $j++)
-            {$name = $res[$j]["module_name"];
-            if(isset($res[$j]['Rain']))
+        $nModule = count($dashboard[$i])-1;
+        // mesures des modules
+        for($j = 1; $j < $nModule ; $j++)
+            {$name = $mydevices[$i]["modules"][$j]["module_name"];
+            if($mydevices[$i]["modules"][$j]["type"] == "NAModule3")
                 {$temp = $hum = $co2 = ' ';
-                $rain = $res[$j]["Rain"];
-                $rain1 = getRainSum($i,$j-1,1);    
-                $rain24 = getRainSum($i,$j-1,24);
+                //$rain = $dashboard[$i][$j]["Rain"];
+                $rain1 = $dashboard[$i][$j]["sum_rain_1"];
+                $rain24 = $dashboard[$i][$j]["sum_rain_24"];
                 }
             else
-                {$temp = degree2($res[$j]["Temperature"]);
-                $hum = $res[$j]["Humidity"];
-                $co2 = $res[$j]["CO2"];	
+                {$temp = degree2($dashboard[$i][$j]["Temperature"]);
+                $hum = $dashboard[$i][$j]["Humidity"];
+                $co2 = $dashboard[$i][$j]["CO2"];
                 $rain1 = $rain24 = ' ';
                 }
             $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td><td $green>$rain1</td><td $green>$rain24</td></tr>";        
             }
     $label[$i] .= '</table>';
-    //if(!empty($QA[$i]))$label[$i] = $label[$i] . "<font size=1>Qualité de l'air: ".$QA[$i]."</font>";
+    $temp = degree2($dashboard[$i][0]["Temperature"]);
     if($Temperature_unit)
-        $slabel[$i] = degree2($res[1]['Temperature']) . '°';	  // usilise pour les marker    	  
+        $slabel[$i] = $temp . '°';	  // usilise pour les marker    	  
     else
-        $slabel[$i] = degree2($res[1]['Temperature']) . ' F';	  // usilise pour les marker    	  
+        $slabel[$i] = $temp . ' F';	  // usilise pour les marker    	  
 	}	
 
 ?>
@@ -574,12 +566,21 @@ for($i = 0;$i < $numStations;$i++)
 
 <!-- Tracé des icones -->	
 <?php
+// UTILISER DASHBOARD
+
 // calcul des minimax
 $date_end = time();
 $date_beg = $date_end - (24 * 60 * 60);
 
 $tmins =  array($numStations);
 $tmaxs =  array($numStations);
+for($i = 0;$i < $numStations;$i++)
+    {$tmin[$i] = degree2(degree2($dashboard[$i][0]["min_temp"]));
+    $tmax[$i] = degree2(degree2($dashboard[$i][0]["max_temp"]));
+    $dtmax[$i] = degree2(degree2($dashboard[$i][0]["date_max_temp"]));
+    $dtmin[$i] = degree2(degree2($dashboard[$i][0]["date_min_temp"]));
+    }
+/*
 for($i = 0;$i < $numStations;$i++)
 	{$device_id = $mydevices[$i]["_id"];
 	$module_id = $mydevices[$i]["modules"][0]["_id"];
@@ -602,7 +603,7 @@ for($i = 0;$i < $numStations;$i++)
        $dtmin[$i] = $dtmax[$i] = time(); 
        }
     }
-
+*/
 $arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
 $txt = tr('Phase lunaire');
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
@@ -647,15 +648,15 @@ echo("
 
 
 echo "</td>\n";	
-// Tracé des icones    
+// Tracé des icones  
+//$last_mesures = getLastMeasures($devicelist);
 for($i = 0;$i < $numStations;$i++)
-	{$res = $last_mesures[$i]["modules"];
-	echo("<td>");
+	{echo("<td>");
 	$t0 = $tmin[$i];
 	$t1 = $tmax[$i];
 	$dt0 = $dtmin[$i];
 	$dt1 = $dtmax[$i];
-	fill($i,$devicelist["devices"][$i],$mydevices[$i],$res,$tmin[$i],$tmax[$i],$dtmin[$i],$dtmax[$i]);
+	fill($i,$devicelist["devices"][$i],$mydevices[$i],$dashboard[$i],$tmin[$i],$tmax[$i],$dtmin[$i],$dtmax[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>");	

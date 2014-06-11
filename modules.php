@@ -474,7 +474,7 @@ if(!$Rain)
                 }
             $paramR = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $paramR .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
-            $paramR .= ',tooltip: {isHtml: true},bar: {groupWidth: "100%"}';
+            $paramR .= ',tooltip: {isHtml: true},bar: {groupWidth: "98%"}';
                 
             $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $param .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
@@ -494,7 +494,7 @@ if(!$Rain)
 			else
                 echo("
                  var chartMin = new google.visualization.ColumnChart(document.getElementById('chart0'));
-                 chartMin.draw(data ,{title: '$title' $visupt,colors:['green'] ,$paramR });
+                 chartMin.draw(data ,{title: '$title' $visupt,colors:['#103090'] ,$paramR });
                 ");
 
 $menuModules = 'modules.php?stationNum=' .$_SESSION['stationId'];

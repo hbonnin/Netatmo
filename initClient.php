@@ -225,7 +225,8 @@ function initClient()
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
 	    $numStations = count($devicelist["devices"]);				
 		$mydevices = createDevicelist($devicelist);
-		$_SESSION['mydevices'] = $mydevices;	
+		$_SESSION['mydevices'] = $mydevices;
+//$_SESSION['devicelist'] = $devicelist;
 		init($numStations);	
 		}	 
 	$user = $client->api("getuser", "POST");
@@ -250,6 +251,7 @@ function createDevicelist($devicelist)
     $myDevices['address'] = 0;
     for($stationId = 0; $stationId <  $numStations;$stationId++)
         {$myDevices[$stationId]['station_name'] = $devicelist["devices"][$stationId]["station_name"];
+//$myDevices[$stationId]['dashboard_data'] = $devicelist["devices"][$stationId]["dashboard_data"];
         $myDevices[$stationId]['_id'] = $devicelist["devices"][$stationId]["_id"];
         $myDevices[$stationId]['module_name'] = $devicelist["devices"][$stationId]["module_name"];
         $numModules = count($devicelist["devices"][$stationId]["modules"]);
@@ -258,9 +260,21 @@ function createDevicelist($devicelist)
             {$myDevices[$stationId]['modules'][$module]['_id'] = $devicelist["devices"][$stationId]["modules"][$module]["_id"];
             $myDevices[$stationId]['modules'][$module]['module_name'] = $devicelist["devices"][$stationId]["modules"][$module]["module_name"];
             $myDevices[$stationId]['modules'][$module]['type'] = $devicelist["devices"][$stationId]["modules"][$module]["type"];
+//$myDevices[$stationId]['modules'][$module]['dashboard_data'] = $devicelist["devices"][$stationId]["modules"][$module]["dashboard_data"];
             }
         }	
+    getDashBoard($devicelist);
     return $myDevices;
+    }
+function getDashBoard($devicelist)
+    {$numStations = count($devicelist["devices"]);  
+    for($stationId = 0; $stationId <  $numStations;$stationId++)
+        {$dashboard[$stationId][-1] = $devicelist["devices"][$stationId]["dashboard_data"];
+        $numModules = count($devicelist["devices"][$stationId]["modules"]);
+        for($module = 0; $module < $numModules;$module++)
+            $dashboard[$stationId][$module] = $devicelist["devices"][$stationId]["modules"][$module]["dashboard_data"];           
+        }
+    $_SESSION['dashboard'] =  $dashboard;   
     }
 function getLastMeasures($devicelist)
     {$helper = new NAApiHelper();
