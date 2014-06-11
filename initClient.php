@@ -211,7 +211,8 @@ function initClient()
 		logMsg("client from password");
 	    }
 	    
-	if(!isset($_SESSION['mydevices']))
+//	if(!isset($_SESSION['mydevices']))
+	if(1)
 		{$helper = new NAApiHelper();	
 		try {
 			$devicelist = $client->api("devicelist", "POST");
@@ -223,11 +224,13 @@ function initClient()
 		    logout();	
 			}	
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
-	    $numStations = count($devicelist["devices"]);				
-		$mydevices = createDevicelist($devicelist);
-		$_SESSION['mydevices'] = $mydevices;
-//$_SESSION['devicelist'] = $devicelist;
-		init($numStations);	
+		getDashBoard($devicelist);
+	    $numStations = count($devicelist["devices"]);	
+	    if(!isset($_SESSION['mydevices']))
+    		{$mydevices = createDevicelist($devicelist);
+	    	$_SESSION['mydevices'] = $mydevices;
+	    	init($numStations);	
+	    	}	
 		}	 
 	$user = $client->api("getuser", "POST");
     $Temperature_unit = 1 - $user['administrative']['unit'];
@@ -251,7 +254,6 @@ function createDevicelist($devicelist)
     $myDevices['address'] = 0;
     for($stationId = 0; $stationId <  $numStations;$stationId++)
         {$myDevices[$stationId]['station_name'] = $devicelist["devices"][$stationId]["station_name"];
-//$myDevices[$stationId]['dashboard_data'] = $devicelist["devices"][$stationId]["dashboard_data"];
         $myDevices[$stationId]['_id'] = $devicelist["devices"][$stationId]["_id"];
         $myDevices[$stationId]['module_name'] = $devicelist["devices"][$stationId]["module_name"];
         $numModules = count($devicelist["devices"][$stationId]["modules"]);
@@ -260,10 +262,8 @@ function createDevicelist($devicelist)
             {$myDevices[$stationId]['modules'][$module]['_id'] = $devicelist["devices"][$stationId]["modules"][$module]["_id"];
             $myDevices[$stationId]['modules'][$module]['module_name'] = $devicelist["devices"][$stationId]["modules"][$module]["module_name"];
             $myDevices[$stationId]['modules'][$module]['type'] = $devicelist["devices"][$stationId]["modules"][$module]["type"];
-//$myDevices[$stationId]['modules'][$module]['dashboard_data'] = $devicelist["devices"][$stationId]["modules"][$module]["dashboard_data"];
             }
         }	
-    getDashBoard($devicelist);
     return $myDevices;
     }
 function getDashBoard($devicelist)
@@ -274,7 +274,7 @@ function getDashBoard($devicelist)
         for($module = 0; $module < $numModules;$module++)
             $dashboard[$stationId][$module] = $devicelist["devices"][$stationId]["modules"][$module]["dashboard_data"];           
         }
-    $_SESSION['dashboard'] =  $dashboard;   
+    $_SESSION['dashboard'] =  $dashboard; 
     }
 function getLastMeasures($devicelist)
     {$helper = new NAApiHelper();

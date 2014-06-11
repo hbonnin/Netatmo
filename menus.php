@@ -1,4 +1,6 @@
 <?php
+require_once 'Config.php';
+
 function checkSelect($select,$menu)
     {$interval  = $_SESSION['MenuInterval'];
     $iselect = selectIndex($interval['opt'],$select); 
@@ -139,7 +141,9 @@ function drawLogoutBack()
 	<tr>
 	<td id='timer' style='font-size:12px; text-align=center;'> 
 	<?php 
+	global $refreshInterval;
 	$time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time() -5*60;
+    if(isset($refreshInterval) && $refreshInterval)$time_left = min($time_left,$refreshInterval);
 	$time_left = max($time_left,5);
 	?>
         <script>
@@ -159,7 +163,7 @@ function drawLogoutBack()
             size = 'Document:'+x+' x '+y+' Window:'+xx+' x'+yy;
             var dt = Math.round(refresh - (t1-t0)/1000);
             //if(!isMobile())
-                document.getElementById("timer").innerHTML='Time:'+t+'&nbsp;&nbsp;'+size+'&nbsp;&nbsp;Reload in: '+dt+'s';
+            document.getElementById("timer").innerHTML='Time:'+t+'&nbsp;&nbsp;'+size+'&nbsp;&nbsp;Reload in: '+dt+'s';
             }
         function reload()
             {url = window.location;
