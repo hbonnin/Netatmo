@@ -12,7 +12,7 @@ table.icone {
 	background-color: #cceeff;
 	border: 1px solid #77a;
 	font-family: Helvetica, serif;
-	padding:3px 2px 12px 2px;
+	padding:3px 2px 0px 2px;
 	margin:-1px;
 	width:220px;
 	}
@@ -65,6 +65,16 @@ td.p   {color: #444444;
 	font-size: 12px;
 	text-align:right;
 	}	
+td.rl   {color: #0000aa;
+	font-size: 11px;
+	text-align:left;
+	height:13px; /* MinMax Pression */
+	}
+td.r   {color: #0000aa;
+	font-size: 12px;
+	text-align:right;
+	}	
+	
 td.punit  {color: #444444;
 	width:10px;
 	text-align:left;
@@ -143,26 +153,25 @@ td.modules	{
  text-align:left;
 }
 table.G {
-	height:312px;
+	//height:312px;
 	font-size:14px;
 	background-color:#cceeff;
 	padding:0px;
 	border:solid 1px #55a;	
  }
 td.g	{
-	height:26px;
 	text-align:left;
     padding:0px 2px 0px 2px;	
 }
 
 div.fl {
 	width:65px;
-	height:26px;
+    height:20px;
 	float:left;
 }
 div.fr {
 	width:118px;
-	height:26px;
+	height:20px;
 	float:left;
 }
 td.l {

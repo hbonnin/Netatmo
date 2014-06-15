@@ -250,8 +250,8 @@ for($i = 0;$i < $numStations;$i++)
             if($mydevices[$i]["modules"][$j]["type"] == "NAModule3")
                 {$temp = $hum = $co2 = ' ';
                 //$rain = $dashboard[$i][$j]["Rain"];
-                $rain1 = $dashboard[$i][$j]["sum_rain_1"];
-                $rain24 = $dashboard[$i][$j]["sum_rain_24"];
+                $rain1 = $dashboard[$i][$j]["sum_rain_1"];  $rain1 = intval($rain1*10+.5)/10;
+                $rain24 = $dashboard[$i][$j]["sum_rain_24"];$rain24 = intval($rain24*10+.5)/10;
                 }
             else
                 {$temp = degree2($dashboard[$i][$j]["Temperature"]);
@@ -566,44 +566,6 @@ for($i = 0;$i < $numStations;$i++)
 
 <!-- Tracé des icones -->	
 <?php
-// UTILISER DASHBOARD
-
-// calcul des minimax
-$date_end = time();
-$date_beg = $date_end - (24 * 60 * 60);
-
-$tmins =  array($numStations);
-$tmaxs =  array($numStations);
-for($i = 0;$i < $numStations;$i++)
-    {$tmin[$i] = degree2(degree2($dashboard[$i][0]["min_temp"]));
-    $tmax[$i] = degree2(degree2($dashboard[$i][0]["max_temp"]));
-    $dtmax[$i] = degree2(degree2($dashboard[$i][0]["date_max_temp"]));
-    $dtmin[$i] = degree2(degree2($dashboard[$i][0]["date_min_temp"]));
-    }
-/*
-for($i = 0;$i < $numStations;$i++)
-	{$device_id = $mydevices[$i]["_id"];
-	$module_id = $mydevices[$i]["modules"][0]["_id"];
-	$params = array("scale" => "1day"
-    	, "type" => "min_temp,max_temp,date_min_temp,date_max_temp"
-    	, "date_begin" => $date_beg
-    	, "date_end" => $date_end
-    	, "optimize" => true
-    	, "device_id" => $device_id
-    	, "module_id" => $module_id);
-    $tmesure = $client->api("getmeasure", "POST", $params);	
-    if(count($tmesure))
-    	{$tmin[$i] = degree2($tmesure[0]['value'][0][0]);   
-    	$tmax[$i] = degree2($tmesure[0]['value'][0][1]);
-    	$dtmin[$i] = $tmesure[0]['value'][0][2];
-    	$dtmax[$i] = $tmesure[0]['value'][0][3];
-    	}
-    else
-       {$tmin[$i] = $tmax[$i] = '-'; 
-       $dtmin[$i] = $dtmax[$i] = time(); 
-       }
-    }
-*/
 $arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
 $txt = tr('Phase lunaire');
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
@@ -631,7 +593,8 @@ $date3 = date("d/m/Y H:i",$moonphase->last_quarter());
 $date4 = date("d/m/Y H:i",$moonphase->next_new_moon());
 
 echo("
-	<tr><td class='tooltip' colspan='7'>
+	<tr><td class='hl'> </td>
+	<td class='tooltip' colspan='3'>
 		<a href='#' class='tooltip'>
   		$tinfo:		
         <div >
@@ -649,14 +612,9 @@ echo("
 
 echo "</td>\n";	
 // Tracé des icones  
-//$last_mesures = getLastMeasures($devicelist);
 for($i = 0;$i < $numStations;$i++)
 	{echo("<td>");
-	$t0 = $tmin[$i];
-	$t1 = $tmax[$i];
-	$dt0 = $dtmin[$i];
-	$dt1 = $dtmax[$i];
-	fill($i,$devicelist["devices"][$i],$mydevices[$i],$dashboard[$i],$tmin[$i],$tmax[$i],$dtmin[$i],$dtmax[$i]);
+	fill($i,$devicelist["devices"][$i],$mydevices[$i],$dashboard[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>");	

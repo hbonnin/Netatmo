@@ -16,7 +16,7 @@ require_once 'AppliCommonPublic.php';
     return $txt;
     }   
 */    
-function fill($stationId,$devices,$mydevices,$dashboard,$tmin,$tmax,$dtmin,$dtmax)
+function fill($stationId,$devices,$mydevices,$dashboard)
 	{$Temperature_unit = $_SESSION['Temperature_unit'];
 	$cu = $Temperature_unit ? '°':'F';
 	$station = $devices["station_name"];
@@ -31,11 +31,22 @@ function fill($stationId,$devices,$mydevices,$dashboard,$tmin,$tmax,$dtmin,$dtma
     $tpression = tr('Pression');
     $tint = degree2($dashboard[-1]["Temperature"]);
     $text = degree2($dashboard[0]["Temperature"]);
+    $tmin = degree2(degree2($dashboard[0]["min_temp"]));
+    $tmax = degree2(degree2($dashboard[0]["max_temp"]));
+    $dtmax = degree2(degree2($dashboard[0]["date_max_temp"]));
+    $dtmin = degree2(degree2($dashboard[0]["date_min_temp"]));  
     $humInt = $dashboard[-1]["Humidity"];
     $humExt = $dashboard[0]["Humidity"];
     $co2 = $dashboard[-1]["CO2"];
     $db = $dashboard[-1]["Noise"];
     $pres = intval($dashboard[-1]["Pressure"] + .5);
+    $rain24 = -1;
+    $numModules = count($dashboard)-1;
+    for($i = 0;$i < $numModules;$i++)
+        if($mydevices["modules"][$i]["type"] == "NAModule3")
+            {$rain24 = $dashboard[$i]["sum_rain_24"];
+            $rain24 = intval($rain24*10+.5)/10;
+            }
 	echo("		
 	<table class='icone'>
 	<tr>
@@ -89,8 +100,16 @@ function fill($stationId,$devices,$mydevices,$dashboard,$tmin,$tmax,$dtmin,$dtma
     $nameInt = $mydevices["module_name"];
  
 $tinfo = tr("Autres informations");
-echo("
-	<tr><td class='tooltip' colspan='7'>
+$train = tr("Pluie");
+if($rain24 == -1)
+    echo("
+        <tr><td class='rl'></td><td class='r'></td><td class='cunit'></td><td class='e'></td>
+        ");
+else
+    echo("
+        <tr><td class='rl'>$train</td><td class='r'> $rain24</td><td class='cunit'>mm</td><td class='e'></td>   
+        ");
+echo("  <td class='tooltip' colspan='3'>
 		<a href='#' class='tooltip'>
   		$tinfo:		
         <div >
