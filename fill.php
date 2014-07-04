@@ -46,6 +46,11 @@ function fill($stationId,$devices,$mydevices,$dashboard)
         if($mydevices["modules"][$i]["type"] == "NAModule3")
             {$rain24 = $dashboard[$i]["sum_rain_24"];
             $rain24 = intval($rain24*10+.5)/10;
+            $rain1 = $dashboard[$i]["sum_rain_1"];
+            $rain1 = intval($rain1*10+.5)/10;
+            $rain = $dashboard[$i]["Rain"];
+            $rain = intval($rain*10+.5)/10;
+            $rainTitle = 'r: '.$rain.' 1h:'.$rain1.'mm 24h:'.$rain24.'mm';
             }
 	echo("		
 	<table class='icone'>
@@ -107,7 +112,7 @@ if($rain24 == -1)
         ");
 else
     echo("
-        <tr><td class='rl'>$train</td><td class='r'> $rain24</td><td class='cunit'>mm</td><td class='e'></td>   
+        <tr><td class='rl'>$train</td><td class='r' title=\"$rainTitle\"> $rain24</td><td class='cunit'>mm</td><td class='e'></td>   
         ");
 echo("  <td class='tooltip' colspan='3'>
 		<a href='#' class='tooltip'>

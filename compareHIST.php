@@ -211,6 +211,7 @@ for($i = 0; $i < 2; $i++)
 //$d0 = date("d/m/y",$dateBeg[0]); 
 //$d1 = date("d/m/y",$dateBeg[1]);
 $dateBeg[0] = max($dateBeg[0], $dateBeg[1] + $delta);   
+$dateBeg[1] = max($dateBeg[1], $dateBeg[0] - $delta);   
 /*
 echo "$d0 $d1<br>";
 $d0 = date("d/m/y",$dateBeg[0]);
@@ -251,15 +252,20 @@ echo("
             echo("data.addColumn('number', \"$txt\");\n");
 	        echo("data.addColumn('number', '');\n"); 
 	        
-	        $ii[1] = 0; 
+
 	        $n = $moy0 = $moy1 = 0;
 	        $itime = $dateBeg[0];
 	        $_SESSION['begdata'] = $date_beg;
 			$beg = date("d/m/y", $dateBeg[0]); 
 			$end = date("d/m/y",$date_end); 	        	        
-	        $iii = $i1 = 0;
+	        $iii = 0;
 	        while($keys[0][$iii] < $dateBeg[0])++$iii;
-	        $ii[0] = $i0 = $iii; 
+	        $ii[0] = $i0 = $iii;         
+	        $iii = 0;
+	        while($keys[1][$iii] < $dateBeg[1])++$iii;
+	        $ii[1] = $i1 = $iii; 
+	        
+	        
             do {
             	$idate = date("d/m/y",$itime);
 				$t0 = $t1 = $tip = $date0 = $date1 = '';
@@ -288,6 +294,8 @@ echo("
             	    {$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
             	    echo("data.addRow([\"$idate\",'$tip',$t0,$t1,0]);\n");
             	    }
+           	else
+            	    echo("data.addRow([\"$idate\",' ','','',0]);\n");
             	$itime += $inter;
                 }while($itime <= $date_end);
                 $moy0 /= $n; $moy0 = intval($moy0*10 +.5)/10;
@@ -295,10 +303,11 @@ echo("
 				echo("data.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0 -$moy1;
+				$tmesure = tr("mesure").'s';
 				if($selectMesure == 'h')
-				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                
+				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure ) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                
                 else
-				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0."$cu - ".$moy1."  delta: ".$diff.$cu;                
+				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1."  delta: ".$diff.$cu;                
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -310,12 +319,18 @@ echo("
             echo("data1.addColumn('number', \"$txt\");\n");
 	        echo("data1.addColumn('number', '');\n"); 
 	        
-	        $ii[1] = 0; 
+	        
 	        $n = $moy0 = $moy1 = 0;
 	        $itime = $dateBeg[0];	        
-	        $iii = $i1 = 0;
-	        while($keys[0][$iii] < $dateBeg[0])++$iii; 
-	        $ii[0] = $i0 = $iii;
+	        
+	        $iii = 0;
+	        while($keys[0][$iii] < $dateBeg[0])++$iii;
+	        $ii[0] = $i0 = $iii;         
+	        $iii = 0;
+	        while($keys[1][$iii] < $dateBeg[1])++$iii;
+	        $ii[1] = $i1 = $iii; 
+	        
+	        
             do {
             	$idate = date("d/m/y",$itime);
 				$t0 = $t1 = $tip = $date0 = $date1 = '';
@@ -344,6 +359,9 @@ echo("
               	    {$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
             	    echo("data1.addRow([\"$idate\",'$tip',$t0,$t1,0]);\n"); 
             	    }
+           	    else
+            	    echo("data.addRow([\"$idate\",' ','','',0]);\n");
+            	    
                 $itime += $inter;
                 }while($itime <= $date_end);
                 $moy0 /= $n; $moy0 = intval($moy0*10 +.5)/10;
@@ -351,10 +369,11 @@ echo("
 				echo("data1.removeColumn(4);\n");	
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0-$moy1;
+				$tmesure = tr("mesure").'s';
 				if($selectMesure == 'h')				
-				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                    
+				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                    
 				else
-				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).") $selectMesure: ".$moy0."$cu - ".$moy1.$cu."  delta: ".$diff.$cu;                  
+				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1.$cu."  delta: ".$diff.$cu;                  
 
 
 

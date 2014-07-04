@@ -103,6 +103,12 @@ function getRainSum($device_num,$module_num,$inter) //$inter = 1,3,24,0
     return $rain;
     }
 
+function printLat($lat)
+    {$latm = ($lat-intval($lat))*60;
+    $lats = ($latm - intval($latm))*60;
+    $lats = intval(1000*$lats)/1000;
+    return intval($lat).'° '.intval($latm)."' ".$lats."''";
+    }
 $slabel = array($numStations);
 $label = array($numStations);
 
@@ -197,13 +203,14 @@ for($i = 0;$i < $numStations;$i++)
         if(!$ret1->mset) $moonset = '-';
         $moon = $moonrise . '&nbsp;&nbsp;'. $moonset.'+';
         }
-        
-    $txt = '('.sprintf("%d°%05d",$lat,abs(100000*($lat-intval($lat))+.5)).', '
-            .sprintf("%d°%05d",$long,abs(100000*($long-intval($long))+.5)).', '.$altitude.'m)';
+    $txt = '('.printlat($lat).', '.printlat($long).', '.$altitude.'m)';
+//    $txt = '('.$latT.', '.$longT.', '.$altitude.'m)';
+//    $txt = '('.sprintf("%d°%05d",$lat,abs(100000*($lat-intval($lat))+.5)).', '
+//            .sprintf("%d°%05d",$long,abs(100000*($long-intval($long))+.5)).', '.$altitude.'m)';
     if($place == "BAD")	
-    	$p = "<b>".$mydevices[$i]['station_name']."</b><span style='font-size=14px;'><br>$txt</span>";   
+    	$p = "<b>".$mydevices[$i]['station_name']."</b><span style='font-size:12px;'><br>$txt</span>";   
 	else
-    	$p = "<b>$place[1]</b><span style='font-size=14px;'><br>$place[0]<br>$txt</span>"; 
+    	$p = "<b>$place[1]</b><span style='font-size:12px;'><br>$place[0]<br>$txt</span>"; 
  
  
  
