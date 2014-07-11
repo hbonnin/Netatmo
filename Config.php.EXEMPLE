@@ -3,9 +3,9 @@ $client_id = "CLIENT_ID";
 $client_secret = "CLIENT_SECRET";
 $test_username= ""; // Netatmo username
 $test_password= ""; // Netatmo password 
-$google_key = "GOOGLE_KEY";
+$google_key = "GOOGLE_KEY";// google key
 $use_google_key = 0;  //1 to use the google key
 $gecode = 0; // 1 to decode the address
-$timezone = "Europe/Paris"; // change to your timeznone
+$timezone = "";
 $refreshInterval = 10*60; // refresh interval in seconds (0 no refresh) 
 ?>

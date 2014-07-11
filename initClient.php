@@ -112,7 +112,7 @@ function init($numStations)
 
 function initClient()
 	{global $client_id,$client_secret,$test_username,$test_password,$timezone;
-	date_default_timezone_set($timezone);
+	//date_default_timezone_set($timezone);
 	if(isset($_SESSION['expires_in']))  
 	    checkToken(); // seule action effectuer chaque fois
 	    
@@ -224,6 +224,7 @@ function initClient()
 		    logout();	
 			}	
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
+		//$_SESSION['devicelist'] = $devicelist;
 		getDashBoard($devicelist);
 	    $numStations = count($devicelist["devices"]);	
 	    if(!isset($_SESSION['mydevices']))
@@ -236,6 +237,8 @@ function initClient()
     $Temperature_unit = 1 - $user['administrative']['unit'];
     $_SESSION['Temperature_unit'] = $Temperature_unit;	
     $_SESSION['lang'] = $user['administrative']['lang'];
+    $timezone = $_SESSION['mydevices'][0]['timezone']; 
+    date_default_timezone_set($timezone);
 	}
 function createViewmodules()
     {$mydevices = $_SESSION['mydevices']; 
@@ -256,6 +259,7 @@ function createDevicelist($devicelist)
         {$myDevices[$stationId]['station_name'] = $devicelist["devices"][$stationId]["station_name"];
         $myDevices[$stationId]['_id'] = $devicelist["devices"][$stationId]["_id"];
         $myDevices[$stationId]['module_name'] = $devicelist["devices"][$stationId]["module_name"];
+        $myDevices[$stationId]['timezone'] = $devicelist["devices"][$stationId]["place"]["timezone"];
         $numModules = count($devicelist["devices"][$stationId]["modules"]);
         $myDevices[$stationId]['modules']['num'] = $numModules;
         for($module = 0; $module < $numModules;$module++)
