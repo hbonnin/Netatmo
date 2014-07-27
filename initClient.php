@@ -322,8 +322,7 @@ function alert($txt)
     }
 function degree2($temperature)
 // conver celsius to fahrenheit if necessary
-    {//global $Temperature_unit;
-    $Temperature_unit = $_SESSION['Temperature_unit'];
+    {$Temperature_unit = $_SESSION['Temperature_unit'];
     if($Temperature_unit)
         $t = $temperature;
     else
