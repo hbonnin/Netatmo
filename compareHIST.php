@@ -20,8 +20,6 @@ date_default_timezone_set($timezone);
 initClient();
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices'];
-$Temperature_unit = $_SESSION['Temperature_unit'];
-$cu = $Temperature_unit ? '°':' F';
 
 if(isset($_POST['station'])) 
     $stationId = $_POST['station'];
@@ -264,7 +262,7 @@ echo("
 	        $iii = 0;
 	        while($keys[1][$iii] < $dateBeg[1])++$iii;
 	        $ii[1] = $i1 = $iii; 
-	        
+	        $tminimum0 = $tminimum1 = 10000;
 	        
             do {
             	$idate = date("d/m/y",$itime);
@@ -274,13 +272,18 @@ echo("
             		if($j == 1)$key1 += $delta;
             		if(abs($key1 - $itime) < $inter)
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];
-            			$tmin0 = degree2($mesure[$j][$key][0]);
+            			if($selectMesure == 'T')
+            			    $tmin0 = degree2($mesure[$j][$key][0]);
+            			else
+            			    $tmin0 = $mesure[$j][$key][0];
             			if($j == 0 && $i0 < $nmesures[0])
             			    {$t0 = $tmin0;++$i0;
+            			    $tminimum0 = min($tminimum0,$t0);
             			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			else if($j == 1 && $i1 < $nmesures[1])
             			    {$t1 = $tmin0; ++$i1;
+            			    $tminimum1 = min($tminimum1,$t1);
             			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}        	
@@ -304,10 +307,10 @@ echo("
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0 -$moy1;
 				$tmesure = tr("mesure").'s';
-				if($selectMesure == 'h')
+				if($selectMesure == 'h') // humidité intérieure
 				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure ) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                
                 else
-				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1."  delta: ".$diff.$cu;                
+				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1."$cu  delta: ".$diff.$cu." $selectMesure min: $tminimum0$cu - $tminimum1$cu";                
 
 echo("
               var data1 = new google.visualization.DataTable();
@@ -329,7 +332,7 @@ echo("
 	        $iii = 0;
 	        while($keys[1][$iii] < $dateBeg[1])++$iii;
 	        $ii[1] = $i1 = $iii; 
-	        
+	        $tmax0 = $tmax1 = -10000;
 	        
             do {
             	$idate = date("d/m/y",$itime);
@@ -339,13 +342,18 @@ echo("
             		if($j == 1)$key1 += $delta;
             		if(abs($key1 - $itime) < $inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
-            			$tmin0 = degree2($mesure[$j][$key][1]);
+            			if($selectMesure == 'T')
+            			    $tmin0 = degree2($mesure[$j][$key][1]);
+            			else
+            			    $tmin0 = $mesure[$j][$key][1];
             			if($j == 0 && $i0 < $nmesures[0])
             			    {$t0 = $tmin0;++$i0;
+            			    $tmax0 = max($tmax0,$t0);
             			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			else if($j == 1 && $i1 < $nmesures[1])
             			    {$t1 = $tmin0;++$i1;
+            			    $tmax1 = max($tmax1,$t1);
             			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}
@@ -370,10 +378,10 @@ echo("
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0-$moy1;
 				$tmesure = tr("mesure").'s';
-				if($selectMesure == 'h')				
+				if($selectMesure == 'h') // humidité intérieure				
 				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                    
 				else
-				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1.$cu."  delta: ".$diff.$cu;                  
+				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1.$cu."  delta: ".$diff.$cu." $selectMesure max: $tmax0$cu - $tmax1$cu";                  
 
 
 
