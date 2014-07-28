@@ -1,5 +1,6 @@
 <?php
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
+
 function refreshToken()
     {global $client_id,$client_secret,$timezone;
     if(!isset($_SESSION['refresh_token']))
@@ -225,13 +226,13 @@ function initClient()
 			}	
 		$devicelist = $helper->SimplifyDeviceList($devicelist);
 		//$_SESSION['devicelist'] = $devicelist;
-		getDashBoard($devicelist);
 	    $numStations = count($devicelist["devices"]);	
 	    if(!isset($_SESSION['mydevices']))
     		{$mydevices = createDevicelist($devicelist);
 	    	$_SESSION['mydevices'] = $mydevices;
 	    	init($numStations);	
-	    	}	
+	    	}
+	    getDashBoard($devicelist);
 		}	 
 	$user = $client->api("getuser", "POST");
     $Temperature_unit = 1 - $user['administrative']['unit'];
@@ -262,12 +263,29 @@ function createDevicelist($devicelist)
         $myDevices[$stationId]['timezone'] = $devicelist["devices"][$stationId]["place"]["timezone"];
         $numModules = count($devicelist["devices"][$stationId]["modules"]);
         $myDevices[$stationId]['modules']['num'] = $numModules;
+        $iswap = 0;
         for($module = 0; $module < $numModules;$module++)
             {$myDevices[$stationId]['modules'][$module]['_id'] = $devicelist["devices"][$stationId]["modules"][$module]["_id"];
             $myDevices[$stationId]['modules'][$module]['module_name'] = $devicelist["devices"][$stationId]["modules"][$module]["module_name"];
             $myDevices[$stationId]['modules'][$module]['type'] = $devicelist["devices"][$stationId]["modules"][$module]["type"];
+            if($myDevices[$stationId]['modules'][$module]['type'] == 'NAModule1')$iswap = $module;
             }
-        }	
+        $myDevices[$stationId]['swap'] = $iswap;
+        if($iswap != 0)
+            {$tmp = $myDevices[$stationId]['modules'][0]['_id'];
+            $myDevices[$stationId]['modules'][0]['_id'] = $myDevices[$stationId]['modules'][$iswap]['_id'];
+            $myDevices[$stationId]['modules'][$iswap]['_id'] = $tmp;
+            
+            $tmp = $myDevices[$stationId]['modules'][0]['module_name'];
+            $myDevices[$stationId]['modules'][0]['module_name'] = $myDevices[$stationId]['modules'][$iswap]['module_name'];
+            $myDevices[$stationId]['modules'][$iswap]['module_name'] = $tmp;
+            
+            $tmp = $myDevices[$stationId]['modules'][0]['type'];
+            $myDevices[$stationId]['modules'][0]['type'] = $myDevices[$stationId]['modules'][$iswap]['type'];
+            $myDevices[$stationId]['modules'][$iswap]['type'] = $tmp;
+            }
+        }
+    
     return $myDevices;
     }
 function getDashBoard($devicelist)
@@ -275,11 +293,18 @@ function getDashBoard($devicelist)
     for($stationId = 0; $stationId <  $numStations;$stationId++)
         {$dashboard[$stationId][-1] = $devicelist["devices"][$stationId]["dashboard_data"];
         $numModules = count($devicelist["devices"][$stationId]["modules"]);
-        for($module = 0; $module < $numModules;$module++)
-            $dashboard[$stationId][$module] = $devicelist["devices"][$stationId]["modules"][$module]["dashboard_data"];           
+        $iswap = $_SESSION['mydevices'][$stationId]['swap'];
+        $dashboard[$stationId][0] = $devicelist["devices"][$stationId]["modules"][$iswap]["dashboard_data"];     
+        for($module = 1; $module < $numModules;$module++)
+            {if($module == $iswap)
+                $dashboard[$stationId][$module] = $devicelist["devices"][$stationId]["modules"][0]["dashboard_data"];
+            else
+                $dashboard[$stationId][$module] = $devicelist["devices"][$stationId]["modules"][$module]["dashboard_data"]; 
+            }
         }
     $_SESSION['dashboard'] =  $dashboard; 
     }
+
 function getLastMeasures($devicelist)
     {$helper = new NAApiHelper();
 	$client =  $_SESSION['client'];       
