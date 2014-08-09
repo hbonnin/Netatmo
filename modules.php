@@ -20,12 +20,11 @@ initClient();
 $client = $_SESSION['client'];
 $Temperature_unit = $_SESSION['Temperature_unit'];
 // $stationNum station utilise
-if(isset($_GET['stationNum']))
-    $stationNum = $_GET['stationNum']; 
-else if(isset($_GET['hist']))
-    $stationNum = $_SESSION['stationId'];
-
 $changedSation = false;
+$stationNum = $_SESSION['stationId'];
+//if(isset($_GET['stationNum']))
+//    $stationNum = $_GET['stationNum']; 
+    
 if(isset($_POST['selectStation']))
     {$changedSation = ($_POST['selectStation'] != $stationNum); 
     $stationNum = $_POST['selectStation'];
@@ -35,20 +34,21 @@ $_SESSION['stationId'] = $stationNum;
 
 $mydevices = $_SESSION['mydevices']; 
 $device = $mydevices[$stationNum];
-$numStations = $device["modules"]["num"] + 1; 
+$numModules = $device["modules"]["num"];
+$numCapteurs = $numModules + 1; 
 $nameStation = $device['station_name'];
 
 // device: tous les modules mais pas la station principale
-// $numStations = $numModules + 1
+// $numCapteurs = $numModules + 1
 // 0 station
 // 1 module exterieur
 // extra modules
-$numModules = $device["modules"]["num"];
+
 $device_id = $device['_id'];
 $nameStations[0] = $device["module_name"]; 
 $modules_id[0] = $device_id;
 $modules_type[0] = 'NAMain';
-for($i = 1;$i < $numStations;$i++) // station et modules
+for($i = 1;$i < $numCapteurs;$i++) // station et modules
     {$nameStations[$i] = $device["modules"][$i-1]["module_name"];
     $modules_id[$i] = $device['modules'][$i -1]['_id'];
     $modules_type[$i] = $device['modules'][$i -1]['type'];
@@ -207,12 +207,12 @@ $_SESSION['selectMesureModule'] = $selectMesure;
 
 $viewModules = $_SESSION['viewModules'];
 if(isset($_POST['selectedModules']) && $changedSation == false)
-    {for($i = 0 ;$i < $numStations; $i++)
+    {for($i = 0 ;$i < $numCapteurs; $i++)
 	    $viewModules[$stationNum][$i] = 0;
     foreach($_POST['selectedModules'] as $chkbx)
 	    $viewModules[$stationNum][$chkbx] = 1;
     $numview = 0;  // Nombre de stations cochées
-    for($i = 0 ;$i < $numStations; $i++)
+    for($i = 0 ;$i < $numCapteurs; $i++)
         if($viewModules[$stationNum][$i])++$numview;
     if($numview == 0)
         $viewModules[$stationNum][0] = $numview = 1; 
@@ -230,18 +230,18 @@ if($CO2)
         $view[0] = $numview = 1;     
     }
 	
-$mesure = array($numStations);
-$dateBeg = array($numStations);
-$ii = array($numStations);
-$keys = array($numStations);
-$nmesures = array($numStations);
+$mesure = array($numCapteurs);
+$dateBeg = array($numCapteurs);
+$ii = array($numCapteurs);
+$keys = array($numCapteurs);
+$nmesures = array($numCapteurs);
 $Rain = $RainCumul = 0;
 
 
 $minDateBeg = $date_end;
 $numKeys = 0;
 
-for($i = 1;$i < $numStations;$i++)
+for($i = 1;$i < $numCapteurs;$i++)
     {if($modules_type[$i] == 'NAPlug' || $modules_type[$i] == 'NATherm1')
 	    {if($view[$i])
 	        --$numview;
@@ -251,12 +251,17 @@ for($i = 1;$i < $numStations;$i++)
 	    $Rain = $i;
 	}
 if($Rain) 
-    {for($i = 0;$i < $numStations;$i++)
-        if($modules_type[$i] != 'NAModule3')$view[$i] = 0;
+    {for($i = 0;$i < $numCapteurs;$i++)
+        $view[$i] = ($modules_type[$i] != 'NAModule3') ? 0:1;
     $numview = 1;
     }
+// to memorize ?
+$view["numView"] = $numview;
+$viewModules[$stationNum] = $view;
+$_SESSION['viewModules'] = $viewModules;
+    
 
-for($i = 1;$i < $numStations;$i++)
+for($i = 1;$i < $numCapteurs;$i++)
 	{
 	if($view[$i] == 0)continue;
 	$moduleId = $modules_id[$i];
@@ -352,7 +357,7 @@ echo("
               var data = new google.visualization.DataTable();              
 	          data.addColumn('string', 'Date');
 ");
-            for($i = 0;$i < $numStations;$i++)
+            for($i = 0;$i < $numCapteurs;$i++)
 	          	{if($view[$i] == 0)continue;
 	          	if($Rain && $Rain != $i)continue;
 	          	$ii[$i] = 0; 
@@ -366,6 +371,7 @@ echo("
 	        $itime = $minDateBeg; 
 			$beg = date("d/m/y",$minDateBeg); 
 			$end = date("d/m/y",$date_end); 
+			$ndr = 0;
 			$break = 0;
 	        $i = 0;	
             	do {
@@ -374,7 +380,7 @@ echo("
             	else
             	    $idate = date("d/m H:i",$itime);
 				echo("data.addRow([\"$idate\"");
-            	for($j = 0; $j < $numStations;$j++)
+            	for($j = 0; $j < $numCapteurs;$j++)
             		{if($view[$j] == 0)continue;
             		if($Rain && $Rain != $j)continue;
             		$tmin0 = $tip = '';   
@@ -391,7 +397,7 @@ echo("
             			        $tip = intval($tmin0*10 + .5)/10;
             			    else
             			        $tip = $tmin0;//tip($tmin0,$itime);
-            			    if($Rain)$RainCumul += $tmin0;
+            			    if($Rain && $tmin0){$RainCumul += $tmin0;++$ndr;}
             			    }
             			}        		
             		echo(",$tmin0,'$tip'"); 
@@ -408,7 +414,7 @@ if(!$Rain)
           var data1 = new google.visualization.DataTable();
           data1.addColumn('string', 'Date');
     ");
-	        for($i = 0;$i < $numStations;$i++)
+	        for($i = 0;$i < $numCapteurs;$i++)
 	          	{if($view[$i] == 0)continue;
 	          	$ii[$i] = 0; 
 	          	$name = explode(" ",$nameStations[$i]);
@@ -429,7 +435,7 @@ if(!$Rain)
             	else
             	    $idate = date("d/m H:i",$itime);
 				echo("data1.addRow([\"$idate\"");
-            	for($j = 0; $j < $numStations;$j++)
+            	for($j = 0; $j < $numCapteurs;$j++)
             		{if($view[$j] == 0)continue;
             		$tmin0 = $tip = '';   
             		$key = $keys[$j][$ii[$j]];  
@@ -470,7 +476,7 @@ if(!$Rain)
                 
             if($Rain)
                 {$RainCumul = intval($RainCumul*10+.5)/10;
-                $title = $nameStation.': '.tr('Pluviométrie') .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"." Total: ".$RainCumul." mm" ; 
+                $title = $nameStation.': '.tr('Pluviométrie') .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"." Total: ".$RainCumul."mm n: $ndr" ; 
                 }
             $paramR = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $paramR .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
@@ -494,7 +500,7 @@ if(!$Rain)
 			else
                 echo("
                  var chartMin = new google.visualization.ColumnChart(document.getElementById('chart0'));
-                 chartMin.draw(data ,{title: '$title' $visupt,colors:['#103090'] ,$paramR });
+                 chartMin.draw(data ,{title: '$title' $visupt,colors:['#50A0E0'] ,$paramR });
                 ");
 
 $menuModules = 'modules.php?stationNum=' .$_SESSION['stationId'];

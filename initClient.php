@@ -72,7 +72,7 @@ function init($numStations)
         $client = $_SESSION['client'];     
         $MenuInterval = array ( "G" => 5,
                             "C"  => 1,
-                            "M"  => 5,
+                            "M"  => 4,
                             "H"  => 1,                             
                             "opt" => array (
                                         0 => array ('1week','1 semaine',7*24*60*60,26*7*24*60*60),
@@ -246,9 +246,15 @@ function createViewmodules()
     $numStations = $mydevices ["num"];
     for($i = 0;$i < $numStations;$i++)
         {$numModules = $mydevices[$i]["modules"]["num"];
-        $viewModules[$i]["numView"] = $numModules + 1;
+        $pluvio = $mydevices[$i]["pluviometre"];
+
         for($j = 0; $j <= $numModules;$j++)
-            $viewModules[$i][$j] = 1;
+            $viewModules[$i][$j] = ($j == $pluvio + 1) ? 0:1;
+        $viewModules[$i][1] = 0;
+        $numview = 0;
+        for($j = 0; $j <= $numModules;$j++)
+            if($viewModules[$i][$j])++$numview;
+        $viewModules[$i]["numView"] = $numview;
         }
     $_SESSION['viewModules'] = $viewModules;
     }
@@ -264,13 +270,17 @@ function createDevicelist($devicelist)
         $numModules = count($devicelist["devices"][$stationId]["modules"]);
         $myDevices[$stationId]['modules']['num'] = $numModules;
         $iswap = 0;
+        $pluvio = -2;
         for($module = 0; $module < $numModules;$module++)
             {$myDevices[$stationId]['modules'][$module]['_id'] = $devicelist["devices"][$stationId]["modules"][$module]["_id"];
             $myDevices[$stationId]['modules'][$module]['module_name'] = $devicelist["devices"][$stationId]["modules"][$module]["module_name"];
             $myDevices[$stationId]['modules'][$module]['type'] = $devicelist["devices"][$stationId]["modules"][$module]["type"];
             if($myDevices[$stationId]['modules'][$module]['type'] == 'NAModule1')$iswap = $module;
+            if($myDevices[$stationId]['modules'][$module]['type'] == 'NAModule3')$pluvio = $module;
             }
+        if($pluvio == 0)$pluvio = $iswap;
         $myDevices[$stationId]['swap'] = $iswap;
+        $myDevices[$stationId]['pluviometre'] = $pluvio;
         if($iswap != 0)
             {$tmp = $myDevices[$stationId]['modules'][0]['_id'];
             $myDevices[$stationId]['modules'][0]['_id'] = $myDevices[$stationId]['modules'][$iswap]['_id'];

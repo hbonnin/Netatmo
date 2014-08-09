@@ -131,6 +131,9 @@ function drawLogoutBack()
 	<input type='submit' class='submit' value='Show Log' style='color:#080;' onClick='MakeRequestLog();' />    
 	</td>	
 	<td>
+	<input type='submit' class='submit' value='Readme' style='color:#000;' onClick='window.open("README.html","_blank","scrollbars=yes,status=0,width=800");' />    
+	</td>	
+	<td>
 	<form action='logout.php' method='post'>
 	<input type='submit' class='submit' value='<?php echo tr("Quitter");?>' style='color:#900; ' />	
 	</form>	
@@ -651,9 +654,10 @@ function drawMenuModules($h ='',$charts = 0)
     $selectMesure = $_SESSION['selectMesureModule'];
     $viewModules = $_SESSION['viewModules'];
     $view = $viewModules[$stationNum];
+/*<form method='post' action="modules.php?stationNum=<?php echo $stationNum; ?>">*/
 ?>	
 
-    <form method='post' action="modules.php?stationNum=<?php echo $stationNum; ?>">
+    <form method='post' action="modules.php">
 
 <?php
 

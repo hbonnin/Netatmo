@@ -23,8 +23,10 @@ function fill($stationId,$devices,$mydevices,$dashboard)
 	$int_name = $devices["module_name"];
 	$ext_name = $devices["modules"][0]["module_name"];
 	$titre = "({$mydevices['latlng']['latitude']}°,{$mydevices['latlng']['longitude']}°,{$mydevices['latlng']['altitude']}m)";
-	$dateInt = date('d/m/Y H:i',$dashboard[-1]["time_utc"]);
+    $drecent = $dashboard[-1]["time_utc"];
+	$dateInt = date('d/m/Y H:i',$drecent);
 	$dateExt = date('d/m/Y H:i',$dashboard[0]["time_utc"]);	
+    $recentData = (time() - $drecent) > 24*60*60 ? 0:1;
     $thum = tr('Humidité');
     $tson = tr('Bruit');
     $tpression = tr('Pression');
@@ -40,15 +42,18 @@ function fill($stationId,$devices,$mydevices,$dashboard)
     $co2 = $dashboard[-1]["CO2"];
     $db = $dashboard[-1]["Noise"];
     $pres = intval($dashboard[-1]["Pressure"] + .5);
-    $rain24 = -1;
+    if(!$recentData)$tint = $text ='OLD';
+    //$rain24 = -1;
     $numModules = count($dashboard)-1;
-    for($i = 0;$i < $numModules;$i++)
-        if($mydevices["modules"][$i]["type"] == "NAModule3")
-            {$rain24 = $dashboard[$i]["sum_rain_24"];
+    $pluvio = $mydevices["pluviometre"];
+    //for($i = 0;$i < $numModules;$i++)
+       // if($mydevices["modules"][$i]["type"] == "NAModule3")
+    if($pluvio)
+            {$rain24 = $dashboard[$pluvio]["sum_rain_24"];
             $rain24 = intval($rain24*10+.5)/10;
-            $rain1 = $dashboard[$i]["sum_rain_1"];
+            $rain1 = $dashboard[$pluvio]["sum_rain_1"];
             $rain1 = intval($rain1*10+.5)/10;
-            $rain = $dashboard[$i]["Rain"];
+            $rain = $dashboard[$pluvio]["Rain"];
             $rain = intval($rain*10+.5)/10;
             $rainTitle = 'r: '.$rain.' 1h:'.$rain1.'mm 24h:'.$rain24.'mm';
             }
@@ -106,7 +111,7 @@ function fill($stationId,$devices,$mydevices,$dashboard)
  
 $tinfo = tr("Autres informations");
 $train = tr("Pluie");
-if($rain24 == -1)
+if($pluvio == -2)
     echo("
         <tr><td class='rl'></td><td class='r'></td><td class='cunit'></td><td class='e'></td>
         ");

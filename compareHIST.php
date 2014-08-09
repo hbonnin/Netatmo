@@ -308,7 +308,7 @@ echo("
 				$diff = $moy0 -$moy1;
 				$tmesure = tr("mesure").'s';
 				if($selectMesure == 'h') // humidité intérieure
-				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure ) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                
+				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure ) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu." $selectMesure min: $tmin0$cu - $tmin1$cu";                
                 else
 				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1."$cu  delta: ".$diff.$cu." $selectMesure min: $tmin0$cu - $tmin1$cu";                
 
@@ -379,7 +379,7 @@ echo("
 				$diff = $moy0-$moy1;
 				$tmesure = tr("mesure").'s';
 				if($selectMesure == 'h') // humidité intérieure				
-				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu;                    
+				    $title1 = tr($titre . 'maximale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu." $selectMesure max: $tmax0$cu - $tmax1$cu";                    
 				else
 				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1.$cu."  delta: ".$diff.$cu." $selectMesure max: $tmax0$cu - $tmax1$cu";                  
 
