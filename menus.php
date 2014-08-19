@@ -696,7 +696,7 @@ function drawMenuModules($h ='',$charts = 0)
 	<td class='g'>
 	<div class='fl'><span>Station</span></div>	
 	<div class='fr'>
-		<select id="el00" name='selectStation'>            
+		<select id="el00" name='selectStation' >            
  		<?php
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
@@ -711,6 +711,13 @@ function drawMenuModules($h ='',$charts = 0)
             </select>
 	</div></td></tr>
 	
+<script type="text/javascript">
+var selectmenu=document.getElementById("el00")
+selectmenu.onchange=function()
+    {top.location.href='modules.php?stationNum='+this.options[this.selectedIndex].value;
+    }
+</script>
+		
 	<!--<tr><td class='g'><div class='f'></div></td></tr>-->
 	
 	<tr>

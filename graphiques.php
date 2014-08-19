@@ -343,10 +343,10 @@ function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise) // 5 minutes, 30 minute
 	}
 /*********************************************************************************************************/
 /*********************************************************************************************************/
-$TempMax = $HumMax -999;
+$TempMax = $HumMax = -999;
+$TempMin = $HumMin = 999;
 $dtmax = $dtmin = $cmax = $cmin = 0;
 $dhmax = $dhmax = $dhmin = $chmin = 0;
-$TempMin = $HumMin= 999;
 $Temperature_unit = $_SESSION['Temperature_unit'];
 $cu = $Temperature_unit ? '°':'F';
 
@@ -383,24 +383,25 @@ echo("
          	dataExt.addColumn('number', '');   	  
 ");
 			
-	        $ii = $break = 0;	
+	        $i = $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
            		$idate = date("d/m/y",$itime); 
             	$tmin = $tmax = $min_hum = $max_hum = $tip = $d = '';
-            	$key = $keys[$ii];         	
+            	$key = $keys[$ii];
+            	++$i;
             	if(abs($key - $itime) < 2*$inter) //changement d'horaire
             		{if($ii < $num -1)++$ii; 
                 	else $break = 1;
             		//$req =  "min_temp,max_temp,min_hum,max_hum,date_min_temp,date_max_temp,date_min_hum,date_max_hum";
             		$tmin = degree2($meas[$key][0]);
             		$tmax = degree2($meas[$key][1]);
-            		if($tmax > $TempMax){$TempMax = $tmax;$dtmax = date('d/m/y H:i',$meas[$key][5]);$cmax = $ii-1;}
-            		if($tmin < $TempMin){$TempMin = $tmin;$dtmin = date('d/m/y H:i',$meas[$key][4]);$cmin = $ii-1;}
+            		if($tmax > $TempMax){$TempMax = $tmax;$dtmax = date('d/m/y H:i',$meas[$key][5]);$cmax = $i-1;}
+            		if($tmin < $TempMin){$TempMin = $tmin;$dtmin = date('d/m/y H:i',$meas[$key][4]);$cmin = $i-1;}
              		$min_hum = $meas[$key][2]; 
-             		if($min_hum < $HumMin){$HumMin = $min_hum;$dhmin = $idate;$chmin = $ii-1;}
+             		if($min_hum < $HumMin){$HumMin = $min_hum;$dhmin = $idate;$chmin = $i-1;}
              		$max_hum = $meas[$key][3]; 
-             		if($max_hum > $HumMax){$HumMax = $max_hum;$dhmax = $idate;$chmax = $ii-1;}
+             		if($max_hum > $HumMax){$HumMax = $max_hum;$dhmax = $idate;$chmax = $i-1;}
            			$iidate = tr($jour[$day]) . date(" d/m/y ",$key);
 					$tip = tipHTMLext($iidate,$meas[$key][4],$meas[$key][5],$tmax,$tmin,$min_hum,$max_hum,$meas[$key][6],$meas[$key][7]);          		
             		}
@@ -432,24 +433,27 @@ else   //5 ou 30 minutes ou 3 heures
          	  dataExt.addColumn('number', '');   	  
 	");
 
-	        $ii = $break = 0;	
+	        $i = $ii = $break = 0;	
             do
             	{$day = idate('w',$itime);
             	$idate = date("d/m H:i",$itime); 
             	$tmin =  $hum = $tip = '';
-            	$key = $keys[$ii];            	
-            	if(abs($key - $itime) < $inter*3) // mesures décalées
+            	$key = $keys[$ii];   
+            	++$i;
+ //           	if(abs($key - $itime) < $inter*3) // mesures décalées
+            	if(abs($key - $itime) < $inter)
             		{if($ii < $num -1)++$ii;
                 	else $break = 1;           			
             		$tmin = degree2($meas[$key][0]);
-            		if($tmin > $TempMax){$TempMax = $tmin;$dtmax = $idate;$cmax = $ii-1;}
-            		if($tmin < $TempMin){$TempMin = $tmin;$dtmin = $idate;$cmin = $ii-1;}
+            		if($tmin > $TempMax){$TempMax = $tmin;$dtmax = $idate;$cmax = $i-1;}
+            		if($tmin < $TempMin){$TempMin = $tmin;$dtmin = $idate;$cmin = $i-1;}
             		$hum = $meas[$key][1];  
-            		if($hum > $HumMax){$HumMax = $hum;$dhmax = $idate;$chmax = $ii-1;}
-            		if($hum < $HumMin){$HumMin = $hum;$dhmin = $idate;$chmin = $ii-1;}
+            		if($hum > $HumMax){$HumMax = $hum;$dhmax = $idate;$chmax = $i-1;}
+            		if($hum < $HumMin){$HumMin = $hum;$dhmin = $idate;$chmin = $i-1;}
             		$iidate = tr($jour[$day]) . date(" d/m/y H:i",$key);         		           		
 					$tip = tipHTMLext2($iidate,$tmin,$hum);
             		}
+            		
                 else if(($key - $itime) < 0)
                     {while($ii < $num -1 &&  ($keys[++$ii] - $itime) < 0)
                         $key = $keys[$ii]; 
@@ -459,6 +463,7 @@ else   //5 ou 30 minutes ou 3 heures
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
                 }while($break != 1);
+                
             echo("dataExt.setValue($cmax,3,'$TempMax'+'$cu');");
             echo("dataExt.setValue($cmin,3,'$TempMin'+'$cu');");
             echo("dataExt.setValue($chmax,5,'$HumMax'+'%');");

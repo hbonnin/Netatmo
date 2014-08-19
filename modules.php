@@ -22,10 +22,12 @@ $Temperature_unit = $_SESSION['Temperature_unit'];
 // $stationNum station utilise
 $changedSation = false;
 $stationNum = $_SESSION['stationId'];
-//if(isset($_GET['stationNum']))
-//    $stationNum = $_GET['stationNum']; 
-    
-if(isset($_POST['selectStation']))
+if(isset($_GET['stationNum']))
+    {$stationNum = $_GET['stationNum'];  
+    $changedSation = 1;
+    $_SESSION['stationId'] = $stationNum;
+    }
+else if(isset($_POST['selectStation']))
     {$changedSation = ($_POST['selectStation'] != $stationNum); 
     $stationNum = $_POST['selectStation'];
     }
