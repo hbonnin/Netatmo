@@ -246,8 +246,10 @@ echo("
 			  data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });  
 ");
             echo("data.addColumn('number', \"$stat_name\");\n");
+            echo ("data.addColumn({type:'string', role:'annotation'});\n"); 
             $txt = $stat_name.' -'.$hist.' '.tr('mois');
             echo("data.addColumn('number', \"$txt\");\n");
+            echo ("data.addColumn({type:'string', role:'annotation'});\n"); 
 	        echo("data.addColumn('number', '');\n"); 
 	        
 
@@ -256,7 +258,7 @@ echo("
 	        $_SESSION['begdata'] = $date_beg;
 			$beg = date("d/m/y", $dateBeg[0]); 
 			$end = date("d/m/y",$date_end); 	        	        
-	        $iii = 0;
+	        $i = $iii = 0;
 	        while($keys[0][$iii] < $dateBeg[0])++$iii;
 	        $ii[0] = $i0 = $iii;         
 	        $iii = 0;
@@ -278,12 +280,18 @@ echo("
             			    $tt = $mesure[$j][$key][0];
             			if($j == 0 && $i0 < $nmesures[0])
             			    {$t0 = $tt;++$i0;
-            			    $tmin0 = min($tmin0,$t0);
+            			    if($t0 < $tmin0)
+            			        {$tmin0 = $t0;
+            			        $imin0 = $i;
+            			        }
             			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			else if($j == 1 && $i1 < $nmesures[1])
             			    {$t1 = $tt; ++$i1;
-            			    $tmin1 = min($tmin1,$t1);
+            			    if($t1 < $tmin1)
+            			        {$tmin1 = $t1;
+            			        $imin1 = $i;
+            			        }            			    
             			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}        	
@@ -295,15 +303,18 @@ echo("
             	    }
             	if($t0 != "" || $t1 != "") 
             	    {$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
-            	    echo("data.addRow([\"$idate\",'$tip',$t0,$t1,0]);\n");
+            	    echo("data.addRow([\"$idate\",'$tip',$t0,'',$t1,'',0]);\n");
             	    }
            	else
-            	    echo("data.addRow([\"$idate\",' ','','',0]);\n");
+            	    echo("data.addRow([\"$idate\",' ','','','','',0]);\n");
             	$itime += $inter;
+            	$i++;
                 }while($itime <= $date_end);
                 $moy0 /= $n; $moy0 = intval($moy0*10 +.5)/10;
                 $moy1 /= $n; $moy1 = intval($moy1*10 +.5)/10;
-				echo("data.removeColumn(4);\n");	
+                echo("data.setValue($imin0,3,'$tmin0'+ '$cu');\n");
+                echo("data.setValue($imin1,5,'$tmin1'+ '$cu');\n");
+				echo("data.removeColumn(6);\n");	
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0 -$moy1;
 				$tmesure = tr("mesure").'s';
@@ -318,15 +329,17 @@ echo("
 			  data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });  
 ");
             echo("data1.addColumn('number', \"$stat_name\");\n");
+            echo ("data1.addColumn({type:'string', role:'annotation'});\n"); 
             $txt = $stat_name.' -'.$hist.' '.tr('mois');
             echo("data1.addColumn('number', \"$txt\");\n");
+            echo ("data1.addColumn({type:'string', role:'annotation'});\n"); 
 	        echo("data1.addColumn('number', '');\n"); 
 	        
 	        
 	        $n = $moy0 = $moy1 = 0;
 	        $itime = $dateBeg[0];	        
 	        
-	        $iii = 0;
+	        $i = $iii = 0;
 	        while($keys[0][$iii] < $dateBeg[0])++$iii;
 	        $ii[0] = $i0 = $iii;         
 	        $iii = 0;
@@ -348,12 +361,18 @@ echo("
             			    $tt = $mesure[$j][$key][1];
             			if($j == 0 && $i0 < $nmesures[0])
             			    {$t0 = $tt;++$i0;
-            			    $tmax0 = max($tmax0,$t0);
+            			    if($t0 > $tmax0)
+            			        {$tmax0 = $t0;
+            			        $imax0 = $i;
+            			        }            			    
             			    $date0 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			else if($j == 1 && $i1 < $nmesures[1])
             			    {$t1 = $tt;++$i1;
-            			    $tmax1 = max($tmax1,$t1);
+            			    if($t1 > $tmax1)
+            			        {$tmax1 = $t1;
+            			        $imax1 = $i;
+            			        }
             			    $date1 = tr($jour[idate('w',$key)]) . date(' d/m/y',$key);
             			    }
             			}
@@ -365,16 +384,19 @@ echo("
             	    }
               	if($t0 != "" || $t1 != "") 
               	    {$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
-            	    echo("data1.addRow([\"$idate\",'$tip',$t0,$t1,0]);\n"); 
+            	    echo("data1.addRow([\"$idate\",'$tip',$t0,'',$t1,'',0]);\n"); 
             	    }
            	    else
-            	    echo("data.addRow([\"$idate\",' ','','',0]);\n");
+            	    echo("data1.addRow([\"$idate\",' ','','','','',0]);\n");
             	    
                 $itime += $inter;
+                $i++;
                 }while($itime <= $date_end);
                 $moy0 /= $n; $moy0 = intval($moy0*10 +.5)/10;
                 $moy1 /= $n; $moy1 = intval($moy1*10 +.5)/10;
-				echo("data1.removeColumn(4);\n");	
+                echo("data1.setValue($imax0,3,'$tmax0'+ '$cu');\n");
+                echo("data1.setValue($imax1,5,'$tmax1'+ '$cu');\n");
+				echo("data1.removeColumn(6);\n");	
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0-$moy1;
 				$tmesure = tr("mesure").'s';
