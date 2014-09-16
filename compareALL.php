@@ -122,10 +122,12 @@ if($selectMesure == 'T')
 else if($selectMesure == 'H')
     {$type = 'min_hum,max_hum,date_min_hum,date_max_hum';
     $titre = 'Humidité ';
+    $cu = '%';
     }   
 else if($selectMesure == 'P')
     {$type = 'min_pressure,max_pressure,date_min_pressure,date_max_pressure';
     $titre = 'Pression ';
+    $cu = 'mb';
     }   
 
  
@@ -186,7 +188,8 @@ $visupt = "";
 if($maxMesures <= 48)$visupt = ",pointSize:3";	   
 date_default_timezone_set($timezone);
 function tip($temp,$tempDate)
-	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
+	{global $cu;
+	return sprintf('%4.1f %s (%s)',$temp,$cu,date("H:i",$tempDate)); 
 	}    
 
 echo("
@@ -201,9 +204,11 @@ echo("
 	        for($i = 0;$i < $numStations;$i++)
 	          	{if($view[$i] == 0)continue;
 	          	$ii[$i] = 0; 
+	          	$tmin[$i] = 10000;
 	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data.addColumn('number', \"$name[0]\");\n");
 				echo("data.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
+                echo ("data.addColumn({type:'string', role:'annotation'});\n"); 
 	          	}
 	          	
 	        echo("data.addColumn('number', '');\n"); 
@@ -226,16 +231,27 @@ echo("
             			    $tmin0 = degree2($mesure[$j][$key][0]);
                         else
             			    $tmin0 = $mesure[$j][$key][0];
+            			if($tmin[$j] > $tmin0)
+            			    {$tmin[$j] = $tmin0; 
+            			    $itmin[$j] = $i;
+            			    }
             			$tip = tip($tmin0,$mesure[$j][$key][2]);
             			}        		
-            		echo(",$tmin0,'$tip'"); 
+            		echo(",$tmin0,'$tip',''"); 
             		}          		
             	echo(",0]);\n"); 
             	$itime += $inter;
             	if($itime >= $date_end)$break = 1;
             	++$i;
                 }while(!$break);
-				echo("data.removeColumn(1+2*$numview);\n");	
+                $im = -1;
+                for($j = 0; $j < $numStations;$j++)
+            		{if($view[$j] == 0)continue;
+            		++$im;
+            		$t = $tmin[$j];
+            		echo("data.setValue($itmin[$j],3*($im+1),'$t'+ ' $cu');\n");
+            		}
+				echo("data.removeColumn(1+3*$numview);\n");	
 				$tmesure = tr("mesure").'s';
 				$title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$maxMesures." $tmesure)";                
 
@@ -247,9 +263,11 @@ echo("
 	        for($i = 0;$i < $numStations;$i++)
 	          	{if($view[$i] == 0)continue;
 	          	$ii[$i] = 0; 
+	          	$tmin[$i] = -1000;
 	          	$name = explode(" ",$nameStations[$i]);
 	          	echo("data1.addColumn('number', \"$name[0]\");\n");
-				echo("data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");        	       	  
+				echo("data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });\n");  
+				echo ("data1.addColumn({type:'string', role:'annotation'});\n"); 
 	          	}
 	          	
 	        echo("data1.addColumn('number', '');\n"); 
@@ -271,16 +289,29 @@ echo("
             			    $tmin0 = degree2($mesure[$j][$key][1]);
                         else
             			    $tmin0 = $mesure[$j][$key][1];
+            			if($tmin[$j] < $tmin0)
+            			    {$tmin[$j] = $tmin0; 
+            			    $itmin[$j] = $i;
+            			    }
+            			    
               			$tip = tip($tmin0,$mesure[$j][$key][3]);
           			}
-            		echo(",$tmin0,'$tip'"); 
+            		echo(",$tmin0,'$tip',''"); 
             		}          		
             	echo(",0]);\n"); 
             	$itime += $inter;
             	if($itime >= $date_end)$break = 1;
             	++$i;
-                }while(!$break);
-				echo("data1.removeColumn(1+2*$numview);\n");				 
+                }while(!$break); 
+                $im = -1;
+                for($j = 0; $j < $numStations;$j++)
+            		{if($view[$j] == 0)continue;
+            		++$im;
+            		$t = $tmin[$j];
+            		echo("data1.setValue($itmin[$j],3*($im+1),'$t'+ ' $cu');\n");
+            		}
+              
+				echo("data1.removeColumn(1+3*$numview);\n");				 
 				$tmesure = tr("mesure").'s';
 				$title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$maxMesures." $tmesure)";                
 
@@ -293,8 +324,8 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
 <?php
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
-             var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
-             chartMax.draw(data1,{title: '$title1'$visupt,colors: colorMax,$param });
+             var chartmin = new google.visualization.LineChart(document.getElementById('chart1'));
+             chartmin.draw(data1,{title: '$title1'$visupt,colors: colorMax,$param });
              chartMin.draw(data ,{title:'$title'$visupt,colors:colorMin,$param });
 			");
 
@@ -318,9 +349,9 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
                 }
             }
         }
-    google.visualization.events.addListener(chartMax, 'select', MaxClickHandler);        
+    google.visualization.events.addListener(chartmin, 'select', MaxClickHandler);        
      function MaxClickHandler()
-          {var selection = chartMax.getSelection();
+          {var selection = chartmin.getSelection();
           var num = colorMax.length;
           for (var i = 0; i < selection.length; i++) 
             {var item = selection[i];
@@ -332,7 +363,7 @@ colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
                 for(var col = col0;col < num-1;col++)
                     colorMax[col] = colorMax[col+1]; 
                 data1.removeColumn(item.column); 
-                <?php echo("chartMax.draw(data1,{title: '$title1' ,pointSize:3,colors: colorMax,$param });"); ?>
+                <?php echo("chartmin.draw(data1,{title: '$title1' ,pointSize:3,colors: colorMax,$param });"); ?>
                 }
             }
          }
