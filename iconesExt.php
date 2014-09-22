@@ -294,7 +294,7 @@ for($i = 0;$i < $numStations;$i++)
     var showTraffic = 0;
     var showMarker = 1;
     var controlText;
-    var zoomInit = 5;
+    var zoomInit = 4;
     
 	function createMarker(pos,label,slabel,map) 
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
@@ -312,7 +312,7 @@ for($i = 0;$i < $numStations;$i++)
        		{position = marker.getPosition();
        		pos= new google.maps.LatLng(position.lat() ,position.lng());//.03
        		map.setCenter(pos);
-  			map.setZoom(10);
+       		map.setZoom(map.getZoom()+4);
        		}); 
     	return marker;  
 		}

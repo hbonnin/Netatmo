@@ -20,7 +20,6 @@ echo("-------------------------------\n");
 print_r($_SESSION['LogMsg']);
 if(isset($_SESSION['ex']))
      print_r($_SESSION['ex']);
-
 if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatmo')
     {foreach ($_SESSION  as $key => $value)
         {switch ($key)

@@ -15,7 +15,13 @@ require_once 'AppliCommonPublic.php';
     $txt .="</div></div>\n";
     return $txt;
     }   
-*/    
+*/   
+function dewpoint($t,$h) // input in celsius
+    {$dew = $t - (14.55 + 0.114 * $t) * (1 - (0.01 * $h)) - pow((2.5 + 0.007 * $t) * (1 - (0.01 * $h)), 3) - (15.9 + 0.117 * $t) * pow(1 - (0.01 * $h), 14);
+    $dew = degree2($dew);
+    //return number_format($dew,1);
+    return round($dew,1);
+    }
 function fill($stationId,$devices,$mydevices,$dashboard)
 	{$Temperature_unit = $_SESSION['Temperature_unit'];
 	$cu = $Temperature_unit ? '°':'F';
@@ -31,7 +37,8 @@ function fill($stationId,$devices,$mydevices,$dashboard)
     $tson = tr('Bruit');
     $tpression = tr('Pression');
     $tint = degree2($dashboard[-1]["Temperature"]);
-    $text = degree2($dashboard[0]["Temperature"]);
+    $textcelsius = $dashboard[0]["Temperature"];
+    $text = degree2($textcelsius);
     $tmin = degree2($dashboard[0]["min_temp"]);
     $tmax = degree2($dashboard[0]["max_temp"]);
     $dtmax = $dashboard[0]["date_max_temp"];
@@ -43,12 +50,10 @@ function fill($stationId,$devices,$mydevices,$dashboard)
     $particule = $dashboard[-1]["Particle"];
     $db = $dashboard[-1]["Noise"];
     $pres = intval($dashboard[-1]["Pressure"] + .5);
+    $dew = dewpoint($textcelsius,$humExt);
     if(!$recentData)$tint = $text ='OLD';
-    //$rain24 = -1;
     $numModules = count($dashboard)-1;
     $pluvio = $mydevices["pluviometre"];
-    //for($i = 0;$i < $numModules;$i++)
-       // if($mydevices["modules"][$i]["type"] == "NAModule3")
     if($pluvio)
             {$rain24 = $dashboard[$pluvio]["sum_rain_24"];
             $rain24 = intval($rain24*10+.5)/10;
@@ -65,7 +70,7 @@ function fill($stationId,$devices,$mydevices,$dashboard)
 	</tr>
 	<tr>
 	<td style='height=40px;'><img src='icone/sun.png' ALT='outside' height='40'/></td> 
-	<td  class='c1' colspan='2' title=\"$dateExt\">$text $cu</td>
+	<td  class='c1' colspan='2' title=\"$dateExt dewpoint: $dew $cu\">$text$cu <span style='color:#aa0000; font-size: 12px;'>($dew$cu)</span></td>
 	<td></td>
 	<td><img src='icone/maison.png' ALT='insideside' height='40'/></td> 
 	<td class='c1' colspan='2' title=\"$dateInt\">$tint $cu</td>
