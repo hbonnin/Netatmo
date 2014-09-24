@@ -22,6 +22,20 @@ function dewpoint($t,$h) // input in celsius
     //return number_format($dew,1);
     return round($dew,1);
     }
+function heatIndex($t,$h) // input in celsius
+    {if($t < 25)return '-';
+    $F = (1.8*$t)+32;
+    $F2 = $F*$F;
+    $h2 = $h*$h;
+    $heati = -42.379 + 2.04901523*$F + 10.14333127*$h - 0.22475541*$F*$h - .0068378*$F2 - .05481717*$h2 + .00122874*$F2*$h + .00085282*$F*$h2 - .00000199*$F2*$h2;
+    $heati = degree2($heati);
+    return round(5/9 * ($heati -32),0);
+    }
+function humidex($t,$dew) // input in celsius
+    {$dew += 273.15;
+    $hu = $t+0.5555*(6.11*exp(5417.7530*(1/273.16-1/($dew)))-10);
+    return round(degree2($hu),0);
+    }
 function fill($stationId,$devices,$mydevices,$dashboard)
 	{$Temperature_unit = $_SESSION['Temperature_unit'];
 	$cu = $Temperature_unit ? '°':'F';
@@ -51,6 +65,8 @@ function fill($stationId,$devices,$mydevices,$dashboard)
     $db = $dashboard[-1]["Noise"];
     $pres = intval($dashboard[-1]["Pressure"] + .5);
     $dew = dewpoint($textcelsius,$humExt);
+    $heati = heatIndex($textcelsius,$humExt);
+    $hu = humidex($textcelsius,$dew);
     if(!$recentData)$tint = $text ='OLD';
     $numModules = count($dashboard)-1;
     $pluvio = $mydevices["pluviometre"];
@@ -70,7 +86,7 @@ function fill($stationId,$devices,$mydevices,$dashboard)
 	</tr>
 	<tr>
 	<td style='height=40px;'><img src='icone/sun.png' ALT='outside' height='40'/></td> 
-	<td  class='c1' colspan='2' title=\"$dateExt dewpoint: $dew $cu\">$text$cu <span style='color:#aa0000; font-size: 12px;'>($dew$cu)</span></td>
+	<td  class='c1' colspan='2' title=\"$dateExt  Heat Index: $heati$cu Humidex: $hu$cu\">$text$cu <span style='color:#aa0000; font-size: 12px;'>($dew$cu)</span></td>
 	<td></td>
 	<td><img src='icone/maison.png' ALT='insideside' height='40'/></td> 
 	<td class='c1' colspan='2' title=\"$dateInt\">$tint $cu</td>
