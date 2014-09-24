@@ -19,7 +19,6 @@ require_once 'AppliCommonPublic.php';
 function dewpoint($t,$h) // input in celsius
     {$dew = $t - (14.55 + 0.114 * $t) * (1 - (0.01 * $h)) - pow((2.5 + 0.007 * $t) * (1 - (0.01 * $h)), 3) - (15.9 + 0.117 * $t) * pow(1 - (0.01 * $h), 14);
     $dew = degree2($dew);
-    //return number_format($dew,1);
     return round($dew,1);
     }
 function heatIndex($t,$h) // input in celsius
