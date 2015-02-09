@@ -97,6 +97,7 @@ function init($numStations)
         $_SESSION['viewCompare'] = $viewCompare; 
         createViewmodules();
         $_SESSION['selectMesureCompare'] = 'T';
+        $_SESSION['selectMesureHist'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
         $_SESSION['hist'] = 12;
         } 
@@ -135,7 +136,6 @@ function initClient()
 		    {logMsg("The state does not match");
 		    logout();
 		    }
-		    
 		$code = $_GET["code"];
 		$my_url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] ;
         $token_url = "https://api.netatmo.net/oauth2/token";
@@ -176,7 +176,6 @@ function initClient()
         $_SESSION['client'] = $client;	
         logMsg('client from token');			
 		}	
-
     if(!isset($_SESSION['client']) &&  empty($test_username) || empty($test_password))
         {if(isset($_SESSION['username']) && isset($_SESSION['password'] ))
             {$test_username = $_SESSION['username'];  //login with indexLogin.php
@@ -191,7 +190,8 @@ function initClient()
 	if(isset($_SESSION['client']))
 		$client = $_SESSION['client'];
 	else  // si identifiant et mot de passe
-		{$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password));
+		{
+		$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password,"scope" => NAScopes::SCOPE_READ_STATION));
 		try {
 			$tokens = $client->getAccessToken();       
 			} catch(NAClientException $ex) 
@@ -211,12 +211,12 @@ function initClient()
 		$_SESSION['client'] = $client;	
 		logMsg("client from password");
 	    }
-	    
 //	if(!isset($_SESSION['mydevices']))
 	if(1)
-		{$helper = new NAApiHelper();	
+		{$helper = new NAApiHelper($client);	
 		try {
-			$devicelist = $client->api("devicelist", "POST");
+			//$devicelist = $client->api("devicelist", "POST");
+			 $devicelist = $helper->simplifyDeviceList();
 			}
 		catch(NAClientException $ex) {
 			$_SESSION['ex'] = $ex;
@@ -224,7 +224,7 @@ function initClient()
 		    alert("NAClientException:devicelist");
 		    logout();	
 			}	
-		$devicelist = $helper->SimplifyDeviceList($devicelist);
+		//$devicelist = $helper->SimplifyDeviceList($devicelist);		
 		//$_SESSION['devicelist'] = $devicelist;
 	    $numStations = count($devicelist["devices"]);	
 	    if(!isset($_SESSION['mydevices']))
@@ -259,7 +259,8 @@ function createViewmodules()
     $_SESSION['viewModules'] = $viewModules;
     }
 function createDevicelist($devicelist)
-    {$numStations = count($devicelist["devices"]);
+    {
+    $numStations = count($devicelist["devices"]);
     $myDevices['num'] = $numStations;
     $myDevices['address'] = 0;
     for($stationId = 0; $stationId <  $numStations;$stationId++)
@@ -295,7 +296,6 @@ function createDevicelist($devicelist)
             $myDevices[$stationId]['modules'][$iswap]['type'] = $tmp;
             }
         }
-    
     return $myDevices;
     }
 function getDashBoard($devicelist)
@@ -316,22 +316,25 @@ function getDashBoard($devicelist)
     }
 
 function getLastMeasures($devicelist)
-    {$helper = new NAApiHelper();
-	$client =  $_SESSION['client'];       
+    {
+	$client =  $_SESSION['client'];  
+	$helper = new NAApiHelper();
 	return $helper->GetLastMeasures($client,$devicelist);
     }
 function getDevicelist() 
-    {$helper = new NAApiHelper();
+    {
 	$client =  $_SESSION['client'];
+	$helper = new NAApiHelper($client);
 	try {
-		$devicelist = $client->api("devicelist", "POST");
+		//$devicelist = $client->api("devicelist", "POST");
+		$devicelist = $helper->simplifyDeviceList();
 		}
 	catch(NAClientException $ex) {
 		$_SESSION['ex'] = $ex;
 		logMsg("NAClientException:devicelist");
 		logout();	
 		}	
-	$devicelist = $helper->SimplifyDeviceList($devicelist);
+	//$devicelist = $helper->SimplifyDeviceList($devicelist);
     return $devicelist;
     }
 function emptyLog()

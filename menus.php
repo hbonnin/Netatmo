@@ -187,9 +187,10 @@ function drawMenuHist($h = '',$charts = 0)
 	$dateend = $_SESSION['dateend'];
 	$stationId = $_SESSION['stationId'];
 	$mydevices = $_SESSION['mydevices']; 
+	$pluviometre = $mydevices[$stationId]['pluviometre'];  //>=0 -> pluviometre
     $num = $mydevices['num'];
     //$selectMesures = $_SESSION['selectMesures'];
-    $selectMesure = $_SESSION['selectMesureCompare'];
+    $selectMesure = $_SESSION['selectMesureHist'];
     $hist = $_SESSION['hist']; 
 ?>	
      <form method='post' action='compareHIST.php'>
@@ -231,11 +232,11 @@ function drawMenuHist($h = '',$charts = 0)
 	<div class='fr'>
 		           
  		<?php
- 		echo "<select id=\"el00\" name='selectStation'> ";
+ 		echo "<select id=\"el00h\" name='selectStation'> ";
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = substr($arr[0],0,11);
+			$stat = substr($arr[0],0,15);
 			if($i == $_SESSION['stationId'])
 			    echo("<option value='$i' selected='selected'>$stat</option>");
             else
@@ -245,6 +246,14 @@ function drawMenuHist($h = '',$charts = 0)
     	?>
             
 	</div></td></tr>
+
+<script type="text/javascript">
+var selectmenu=document.getElementById("el00h")
+selectmenu.onchange=function()
+    {
+    top.location.href='compareHIST.php?stationNum='+this.options[this.selectedIndex].value;
+    }
+</script>
 	
 	<tr>
 	<td class='g'>
@@ -281,18 +290,45 @@ function drawMenuHist($h = '',$charts = 0)
 <?php
         $cu = $Temperature_unit ? '°':' F';
         $txt = "<select name='selectMsesure'>";
-        if($selectMesure == 'T')
-            $txt .="<option value='T' selected='selected'> T$cu </option>
-    		    <option value='H'> H % </option>
-    		    <option value='h'> H int % </option>";
-        else if($selectMesure == 'H')
-            $txt .="<option value='T'> T$cu </option>
-    		    <option value='H' selected='selected'> H % </option>
-    		    <option value='h'> H int % </option>";
-        else if($selectMesure == 'h')
-            $txt .="<option value='T'> T$cu </option>
-    		    <option value='H'> H % </option>
-    		    <option value='h'  selected='selected'> H int % </option>";
+        if($pluviometre < 0)
+            { if($selectMesure == 'R')$selectMesure = 'T';
+            if($selectMesure == 'T')
+                $txt .="<option value='T' selected='selected'> T$cu </option>
+                    <option value='H'> H % </option>
+                    <option value='h'> H int % </option>";
+            else if($selectMesure == 'H')
+                $txt .="<option value='T'> T$cu </option>
+                    <option value='H' selected='selected'> H % </option>
+                    <option value='h'> H int % </option>";
+            else if($selectMesure == 'h')
+                $txt .="<option value='T'> T$cu </option>
+                    <option value='H'> H % </option>
+    		         <option value='h'  selected='selected'> H int % </option>";
+    	    }
+    	else
+    	    {
+             if($selectMesure == 'T')
+                $txt .="<option value='T' selected='selected'> T$cu </option>
+                    <option value='H'> H % </option>
+                    <option value='h'> H int % </option>
+                    <option value='R'> Pl mm </option>";
+            else if($selectMesure == 'H')
+                $txt .="<option value='T'> T$cu </option>
+                    <option value='H' selected='selected'> H % </option>
+                    <option value='h'> H int % </option>
+                    <option value='R'> Pl mm </option>";
+            else if($selectMesure == 'h')
+                $txt .="<option value='T'> T$cu </option>
+                    <option value='H'> H % </option>
+    		        <option value='h'  selected='selected'> H int % </option>
+    		        <option value='R'> Pl mm </option>";
+            else if($selectMesure == 'R')
+                $txt .="<option value='T'> T$cu </option>
+                    <option value='H'> H % </option>
+    		        <option value='h'> H int % </option>
+    		        <option value='R'  selected='selected'> Pl mm </option>"; 		        
+    	    }
+    	
     	echo $txt;
 ?>
  	</select>		
@@ -386,12 +422,12 @@ function drawMenuStation($h = '',$charts = 0)
 	<td class='g'>
 	<div class='fl'><span>Station</span></div>	
 	<div class='fr'>
-		<select id="el00" name='selectStation'>            
+		<select id="el00s" name='selectStation'>            
  		<?php
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = substr($arr[0],0,11);
+			$stat = substr($arr[0],0,15);
 			if($i == $_SESSION['stationId'])
 			    echo("<option value='$i' selected='selected'>$stat</option>");
             else
@@ -534,15 +570,15 @@ function drawMenuCompare($h ='',$charts = 0)
         $txt = "<select name='selectMsesure'>";
         if($selectMesure == 'T')
             $txt .="<option value='T' selected='selected'> T$cu </option>
-    		    <option value='H'> H % </option>;
+    		    <option value='H'> H % </option>
     		    <option value='P'> P mb </option>";
         else if($selectMesure == 'H')
             $txt .="<option value='T'> T$cu </option>
-    		    <option value='H' selected='selected'> H % </option>;
+    		    <option value='H' selected='selected'> H % </option>
     		    <option value='P'> P mb </option>";
         else
             $txt .="<option value='T'> T$cu </option>
-    		    <option value='H'> H % </option>;
+    		    <option value='H'> H % </option>
     		    <option value='P' selected='selected'> P mb </option>";
     	$txt .= "</select>";
 ?>
@@ -558,7 +594,7 @@ function drawMenuCompare($h ='',$charts = 0)
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = substr($arr[0],0,12);
+			$stat = substr($arr[0],0,15);
 			if($view[$i])
 				echo("<tr><td><input  type='checkbox' name='stats[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else
@@ -701,7 +737,7 @@ function drawMenuModules($h ='',$charts = 0)
 		for($i = 0;$i < $num;$i++)
 			{$stat = $mydevices[$i]['station_name'];
 			$arr = explode(" ",$stat);
-			$stat = substr($arr[0],0,11);
+			$stat = substr($arr[0],0,15);
 			if($i == $_SESSION['stationId'])
 			    echo("<option value='$i' selected='selected'>$stat</option>");
             else
@@ -767,7 +803,7 @@ selectmenu.onchange=function()
                 
 ?>
 				
-	</div></td></tr>
+	</td></tr>
 		
 	<tr><td>
 	    <table style='height:100%; width:100%;'>
@@ -780,7 +816,7 @@ selectmenu.onchange=function()
 		for($i = 0;$i < $numStations;$i++)
 			{$stat = $nameStations[$i];
 			$arr = explode(" ",$stat);
-			$stat = substr($arr[0],0,11);
+			$stat = substr($arr[0],0,15);
 			if($view[$i])
 				echo("<tr><td><input type='checkbox' name='selectedModules[]' value='$i' checked='checked'> $stat </td></tr>\n");
 			else

@@ -21,6 +21,14 @@ initClient();
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices'];
 
+if(isset($_GET['stationNum']))
+    {$stationNum = $_GET['stationNum'];  
+    $_SESSION['stationId'] = $stationNum;
+    if($mydevices[$stationNum]['pluviometre'] < 0)
+        $_SESSION['selectMesureHist'] = 'T';
+    }
+
+
 if(isset($_POST['station'])) 
     $stationId = $_POST['station'];
 else if(isset($_POST['selectStation']))
@@ -62,12 +70,12 @@ else
     
 if(isset($_POST['selectMsesure']))
     {$selectMesure = $_POST['selectMsesure'];
-    $_SESSION['selectMesureCompare'] = $selectMesure; 
+    $_SESSION['selectMesureHist'] = $selectMesure; 
     }
 else 
-    $selectMesure = $_SESSION['selectMesureCompare'];
-   
-if($selectMesure == 'P')$selectMesure == 'T';   
+    $selectMesure = $_SESSION['selectMesureHist'];
+ 
+ 
 if($selectMesure == 'T')
     {$type = 'min_temp,max_temp';
     $titre = 'Température ';
@@ -76,7 +84,10 @@ else if($selectMesure == 'H' || $selectMesure == 'h')
     {$type = 'min_hum,max_hum';
     $titre = 'Humidité ';
     }   
-    
+else  if($selectMesure == 'R')  
+    {$type = 'sum_rain';
+    $titre = 'Pluie';
+    }   
 
 $inter = $opt[$sel][2];
 $tinter = $opt[$sel][1];    
@@ -130,7 +141,16 @@ $device_id = $mydevices[$stationId]["_id"];
 $module_id = $mydevices[$stationId]["modules"][0]["_id"];
 $ext_name  = $mydevices[$stationId]["modules"][0]["module_name"];
 $stat_name = $mydevices[$stationId]["station_name"];
+$pluviometre = $mydevices[$stationId]['pluviometre'];  //>=0 -> pluviometre
 
+
+if($pluviometre >= 0 && $selectMesure == 'R')
+    {$module_id = $mydevices[$stationId]["modules"][$pluviometre]["_id"];
+    $Rain = 1;
+    }
+else
+    $Rain = 0;
+    
 $mesure = array(2);
 $dateBeg = array(2);
 $ii = array(2);
@@ -154,7 +174,7 @@ else
                     , "module_id" => $module_id);  
 
 $mesure[0] = $client->api("getmeasure", "POST", $params);
-
+//echo "<pre>";print_r($mesure[0]);
 if($hist == 1)
     {$month = idate('m');
 
@@ -187,6 +207,7 @@ else
                     , "device_id" => $device_id
                     , "module_id" => $module_id);  
 $mesure[1] = $client->api("getmeasure", "POST", $params);
+//$n0 = count($mesure[0]);$n1 = count($mesure[1]);echo " count: $n0  $n1";
 if(count($mesure[1]) == 0)
     {echo("</script>
         <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
@@ -206,8 +227,6 @@ for($i = 0; $i < 2; $i++)
     $nmesures[$i] = count($keys[$i]);
     }
     
-//$d0 = date("d/m/y",$dateBeg[0]); 
-//$d1 = date("d/m/y",$dateBeg[1]);
 $dateBeg[0] = max($dateBeg[0], $dateBeg[1] + $delta);   
 $dateBeg[1] = max($dateBeg[1], $dateBeg[0] - $delta);   
 /*
@@ -222,8 +241,9 @@ if($nmesures[0] <= 48)$visupt = ",pointSize:3";
 date_default_timezone_set($timezone);
 
 function tipHTML($stat_name,$t0,$t1,$date0,$date1)
-	{global $cu,$type;
+	{global $cu,$type,$Rain;
 	if($type != 'min_temp,max_temp')$cu = '%';
+	if($Rain) $cu = 'mm';
 	$tt0 = $tt1 = $tt = '';
 	if(!empty($t0)) $tt0 = sprintf('  %4.1f%s',$t0,$cu);
 	if(!empty($t1)) $tt1 = sprintf('  %4.1f%s',$t1,$cu);
@@ -253,7 +273,7 @@ echo("
 	        echo("data.addColumn('number', '');\n"); 
 	        
 
-	        $n = $moy0 = $moy1 = 0;
+	        $n = $moy0 = $moy1 = $n0 = $n1 = 0;
 	        $itime = $dateBeg[0];
 	        $_SESSION['begdata'] = $date_beg;
 			$beg = date("d/m/y", $dateBeg[0]); 
@@ -280,7 +300,7 @@ echo("
             			    $tt = $mesure[$j][$key][0];
             			if($j == 0 && $i0 < $nmesures[0])
             			    {$t0 = $tt;++$i0;
-            			    if($t0 < $tmin0)
+            			    if(!$Rain && $t0 < $tmin0)
             			        {$tmin0 = $t0;
             			        $imin0 = $i;
             			        }
@@ -288,7 +308,7 @@ echo("
             			    }
             			else if($j == 1 && $i1 < $nmesures[1])
             			    {$t1 = $tt; ++$i1;
-            			    if($t1 < $tmin1)
+            			    if(!$Rain && $t1 < $tmin1)
             			        {$tmin1 = $t1;
             			        $imin1 = $i;
             			        }            			    
@@ -296,38 +316,60 @@ echo("
             			    }
             			}        	
             		}          		
-            	if($t0 != "" && $t1 != "") 
+            	if(!$Rain && $t0 != "" && $t1 != "")
             	    {++$n;
             	    $moy0 += $t0; 
-            	    $moy1 += $t1;
+                    $moy1 += $t1;
             	    }
+            	else if($Rain)
+                    {$moy0 += $t0; 
+                    $moy1 += $t1;
+                    }
+                if($t0)++$n0;
+                if($t1)++$n1;            	    
+            	$tt0 = $t0 ? $t0 : '';
+            	$tt1 = $t1 ? $t1 : '';
             	if($t0 != "" || $t1 != "") 
             	    {$tip = tipHTML($stat_name,$t0,$t1,$date0,$date1);
-            	    echo("data.addRow([\"$idate\",'$tip',$t0,'',$t1,'',0]);\n");
+            	    if($Rain)
+            	        echo("data.addRow([\"$idate\",'$tip',$t0,'$tt0',$t1,'$tt1',0]);\n");
+            	    else
+            	        echo("data.addRow([\"$idate\",'$tip',$t0,'',$t1,'',0]);\n");
             	    }
-           	else
+           	    else if($Rain)
+            	    echo("data.addRow([\"$idate\",' ',$t0,'',$t1,'',0]);\n");
+            	else
             	    echo("data.addRow([\"$idate\",' ','','','','',0]);\n");
             	$itime += $inter;
             	$i++;
                 }while($itime <= $date_end);
-                $moy0 /= $n; $moy0 = intval($moy0*10 +.5)/10;
-                $moy1 /= $n; $moy1 = intval($moy1*10 +.5)/10;
-                echo("data.setValue($imin0,3,'$tmin0'+ '$cu');\n");
-                echo("data.setValue($imin1,5,'$tmin1'+ '$cu');\n");
+                if(!$Rain)
+                    {$moy0 /= $n; 
+                    $moy1 /= $n; 
+                    }
+                $moy0 = intval($moy0*10 +.5)/10;
+                $moy1 = intval($moy1*10 +.5)/10;
+                if(!$Rain)
+                    {echo("data.setValue($imin0,3,'$tmin0'+ '$cu');\n");
+                    echo("data.setValue($imin1,5,'$tmin1'+ '$cu');\n");
+                    }
 				echo("data.removeColumn(6);\n");	
 				$tmesure = tr("mesure").'s';
 				$diff = $moy0 -$moy1;
 				$tmesure = tr("mesure").'s';
 				if($selectMesure == 'h') // humidité intérieure
 				    $title = tr($titre . 'minimale intérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure ) $selectMesure: ".$moy0.'% - '.$moy1.'%'."  delta: ".$diff.$cu." $selectMesure min: $tmin0$cu - $tmin1$cu";                
+                else if($selectMesure == 'R') 
+				    $title = tr($titre) . '  ('.$beg.' - '.$end.' @'. tr($tinter).')'.' Total: '.$moy0.' '.$cu. ' Total -'.$hist.' '.tr('mois').': '.$moy1.' '.$cu.'  (n:'.$n0.'/'.$n1.')';                
                 else
 				    $title = tr($titre . 'minimale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1."$cu  delta: ".$diff.$cu." $selectMesure min: $tmin0$cu - $tmin1$cu";                
 
-echo("
+if(!$Rain){
+            echo("
               var data1 = new google.visualization.DataTable();
 	          data1.addColumn('string', 'Date');
 			  data1.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true} });  
-");
+            ");
             echo("data1.addColumn('number', \"$stat_name\");\n");
             echo ("data1.addColumn({type:'string', role:'annotation'});\n"); 
             $txt = $stat_name.' -'.$hist.' '.tr('mois');
@@ -405,21 +447,32 @@ echo("
 				else
 				    $title1 = tr($titre . 'maximale extérieure') . '  ('.$beg.' - '.$end.' @'. tr($tinter).' '.$n." $tmesure) $selectMesure: ".$moy0."$cu - ".$moy1.$cu."  delta: ".$diff.$cu." $selectMesure max: $tmax0$cu - $tmax1$cu";                  
 
-
+}
 
 $param = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
 $param .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
 $param .= ',tooltip: {isHtml: true},curveType:"function"';
+$paramR = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
+$paramR .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
+$paramR .= ',tooltip: {isHtml: true},bar: {groupWidth: "98%"}';
+
 ?>
 colorMin =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
 colorMax =  ['red','blue', 'green', 'orange', '#aa00aa', '#f6c7b6','#aaaaaa'];
 <?php
+if(!$Rain)
 			echo("                                   
              var chartMin = new google.visualization.LineChart(document.getElementById('chart0'));
              chartMin.draw(data ,{title:'$title'$visupt,colors:colorMin,$param });
              var chartMax = new google.visualization.LineChart(document.getElementById('chart1'));
              chartMax.draw(data1,{title: '$title1'$visupt,colors: colorMax,$param });             
 			");
+else
+			echo("                                   
+             var chartMin = new google.visualization.ColumnChart(document.getElementById('chart0'));
+             chartMin.draw(data ,{title:'$title'$visupt,colors:colorMin,$paramR });
+			");
+
 ?> 
 } // draw chart 
 

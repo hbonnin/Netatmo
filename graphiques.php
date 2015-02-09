@@ -409,7 +409,6 @@ echo("
                 if($itime >= $date_end)$break = 1;
                 $itime += $inter;
                 }while($break != 1);
- //          	echo("dataExt.removeColumn(6);\n");	
             echo("dataExt.setValue($cmax,3,'$TempMax'+'$cu');");
             echo("dataExt.setValue($cmin,5,'$TempMin'+'$cu');");
             echo("dataExt.setValue($chmin,7,'$HumMin'+'%');");            
@@ -486,7 +485,7 @@ $tnoise = tr("Bruit");
 			$end = date("d/m/y",$keys[$num-1]); 
 			if($num <= 48)$visupt = 3;	
 
-if($inter > 3*60*60)	//1week,1day	
+if($inter > 3*60*60)	//1week,1day	tooltip -> annotationText
 	{echo("
 	          dataInt.addColumn('string', 'Date');
         	  dataInt.addColumn({type: 'string', role: 'tooltip','p': {'html': true} });        	  
@@ -624,11 +623,11 @@ else  // 5 minutes, 30 minutes, 3 heures
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
     var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
 
-    param = 'opt={focusTarget:"category",tooltip: {isHtml: true},curveType:"function"'
+    param = 'opt={focusTarget:"category",tooltip: {isHtml: true,trigger: "focus"},curveType:"function"'
             +',chartArea:{left:"5%",top:25,width:"85%",height:"75%"}'
             +',pointSize:visupt,fontSize:10,titleTextStyle:{fontSize:14,color:"#303080",fontName:"Times"}';
 
-    paramInt = param+',title:titleInt,colors:colorInt}';
+    paramInt = param+',title:titleInt,colors:colorInt}';    
     chartInt.draw(dataInt,eval(paramInt));
     paramExt = param+',title:titleExt,colors:colorExt}';
     //paramExt = param+',title:titleExt,colors:colorExt'+",annotation:{3: {style: 'line'}"+'}}';
@@ -646,7 +645,17 @@ else  // 5 minutes, 30 minutes, 3 heures
     plus petite colonne 1 
     si une seule courbe -> 3 colonnes (t, tooltip, courbe)
 */
-    google.visualization.events.addListener(chartInt, 'select', IntClickHandler);        
+    google.visualization.events.addListener(chartInt, 'select', IntClickHandler); 
+
+ /*
+  chartInt.setAction(
+    {id: 'sample',
+    text: 'See sample book',
+    action:function()
+        {alert("a");
+        }
+    });
+  */  
      function IntClickHandler()
         {var selection = chartInt.getSelection();
         var num = colorInt.length;

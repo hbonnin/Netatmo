@@ -20,10 +20,8 @@ else if(isset($_GET["username"]))
     {$username = $_GET["username"]; 
     $password = $_GET["password"]; 
     }
-
 $client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret
-                            , "username" => $username, "password" => $password));
-
+                            , "username" => $username, "password" => $password,"scope" => NAScopes::SCOPE_READ_STATION));
 try {
     $tokens = $client->getAccessToken();        
 	} catch(NAClientException $ex) {

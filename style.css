@@ -6,7 +6,7 @@ body {
  margin:0;
  margin-right:2px;
  padding:0;
- background-color:#ddd;
+ background-color:#dddddd;
  }
 table.icone {
 	background-color: #cceeff;
@@ -122,7 +122,7 @@ div.chart	{
 	border:solid 1px black;
 }
 .submitG input{
-	background-color:#ddd;
+	background-color:#dddddd;
 	height:22px;
 	color:#00a;
 	font-size:12px;
@@ -134,7 +134,7 @@ td.submitG {
 	padding:0px;
 }
 .submit {
-	background-color:#ddd;
+	background-color:#dddddd;
 	color:#00a;
 	font-size:12px;
 }
@@ -153,7 +153,7 @@ td.modules	{
  text-align:left;
 }
 table.G {
-	//height:312px;
+	height:312px;
 	font-size:14px;
 	background-color:#cceeff;
 	padding:0px;
@@ -170,7 +170,7 @@ div.fl {
 	float:left;
 }
 div.fr {
-	width:118px;
+	width:125px;/*118*/
 	height:20px;
 	float:left;
 }
@@ -178,7 +178,7 @@ td.l {
 	width:75px;
 }
 div.f {
-	width:183px;
+	width:190px;/*183*/
 	height:20px;
 }
 td.title {
@@ -200,7 +200,7 @@ table.chk{
 input.g {
 	color:#00a;
 	vertical-align:bottom;
-	background-color:#ddd;
+	background-color:#dddddd;
 	height:19px;
 	font-size:12px;
 	margin-left:-4px;
@@ -209,6 +209,7 @@ input.g {
 #el00 option {
 	color:#009;
 	max-width:110px;
+	width:70px;
 	overflow-x:hidden; 
 }
 
@@ -226,10 +227,10 @@ table.bulle {
 	width:220px;
 	padding:2px;
 	border:0;
-	background-color:#fff;
+	background-color:#ffffff;
 	}
 .bulle caption {
-	background-color:#fff;
+	background-color:#ffffff;
 }
 .bulle th {
 	font-size:11px;
@@ -248,7 +249,7 @@ td.name {
 .bulle td {
 	font-size:12px;
 	text-align:left;
-	//font-weight:bold;
+	/*font-weight:bold;*/
 	height:13px;
 	margin:0;
 	padding:0;	

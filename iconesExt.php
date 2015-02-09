@@ -11,21 +11,25 @@ session_start();
 <meta name="keywords" content="Netatmo, Meteo, Google api">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="viewport" content="width=device-width, initial-scale=.9, minimum-scale=.9,  user-scalable=yes">
-<!--<meta name="viewport" content="width=1000, initial-scale=.9, minimum-scale=.9,  user-scalable=yes">-->
+<meta name="viewport" content="width=devive-width, initial-scale=.5, minimum-scale=.2,  user-scalable=yes">
+
 <script src='js/size.js'></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="js/jcookies.js"></script>
 <script src="js/login.js"></script>
 <link rel='icon' href='favicon.ico'>
-<link rel="apple-touch-icon" href="icone/meteo.png" >
-<!-- iPhone 5 Retina -->
-<link  href="image/startup-image-640x1096.png" rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
-<link href="image/startup-image-320x460.png" media="(device-width: 320px)" rel="apple-touch-startup-image">
-<!-- iPad (non-Retina) (Portrait) -->
-<link href="image/startup-image-768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" rel="apple-touch-startup-image" />
-<!-- iPad (non-Retina) (Landscape) -->
-<link href="image/startup-image-1024x748.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" rel="apple-touch-startup-image" />
+<link rel="apple-touch-icon" href="apple/meteo.png" >
+
+<!-- iPhone -->
+<link href="apple/320x480.png" media="screen and (device-width: 320px)" rel="apple-touch-startup-image">
+<!-- iPhone 5 ou apple-touch-startup-image-640x1096 640x1136.png-->
+<link  href="apple/apple-touch-startup-image-640x1096.png" rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+<!-- iPad (non-Retina) -->
+<link href="apple/768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" rel="apple-touch-startup-image">
+<link href="apple/1024x748.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" rel="apple-touch-startup-image">
+<!-- iPhone 6+ -->
+<link href="apple/Default-414w-736h@3.png" media="screen and (device-width: 414px) and (orientation: portrait)" rel="apple-touch-startup-image">
+<link href="apple/Default-414w-736h-landscape@3x.png" media="screen and (device-width: 414px) and (orientation: landscape)" rel="apple-touch-startup-image">
 
 <!--
 For third-generation iPad with high-resolution Retina display:
@@ -46,8 +50,15 @@ iPad (Retina) (Portrait)
 iPad (Retina) (Landscape)
 <link href="apple-touch-startup-image-2048x1496.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) and (-webkit-min-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
 
-
+iPhone 6
+<link href="750x1294.png" media="(device-width: 375px) and (device-height: 667px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+iPhone 6+ Portrait
+<link href="1242x2148.png" media="(device-width: 414px) and (device-height: 736px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image">
+iPhone 6+ Landscape
+<link href="1182x2208r.png" media="(device-width: 414px) and (device-height: 736px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image">
 -->
+
+
 <!--<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Clearface">-->
 <link type='text/css' rel='stylesheet'  href='style.css'>
 <link rel='stylesheet' media='screen' type='text/css' href='calendrierBleu.css'>
@@ -111,7 +122,6 @@ function printLat($lat)
     }
 $slabel = array($numStations);
 $label = array($numStations);
-
 // to speed reloading we compute only once the locations
 if($mydevices['address'] == 0)
 	{$mydevices['address'] = 1;
@@ -280,12 +290,12 @@ for($i = 0;$i < $numStations;$i++)
 <script
 <?php   
 	if($use_google_key == 1)
-		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key&amp;sensor=false'>");
+//		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key'>");
+		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key&sensor=false'>");
 	else
-		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places&amp;sensor=false'>");
+		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places'>");
 ?>
 </script>
-
 <script>
     var cloudLayer;
     var trafficlayer;
@@ -601,7 +611,7 @@ $date4 = date("d/m/Y H:i",$moonphase->next_new_moon());
 
 echo("
 	<tr><td class='hl'> </td>
-	<td class='tooltip' colspan='3'>
+	    <td class='tooltip' >
 		<a href='#' class='tooltip'>
   		$tinfo:		
         <div >
@@ -611,8 +621,8 @@ echo("
         <tr><td style='width:90px;'>$txt2</td><td style='text-align:center;'>$date2</td></tr>
         <tr><td style='width:90px;'>$txt3</td><td style='text-align:center;'>$date3</td></tr>
         <tr><td style='width:90px;'>$txt0</td><td style='text-align:center;'>$date4</td></tr>
-</table>
-</div></a>
+        </table>
+        </div></a>
 </td></tr></table>
 "); 
 
@@ -640,29 +650,29 @@ echo("</tr></table>");
     </td>
 <!-- GOOGLE MAP -->
 
-    <script>    
+    <script>  
     var x = $(document).width();
     var y = $(document).height();
     var xx = $(window).width();
+    if(xx <  $(window).height())y = Math.min(y,xx); // portrait
     var ico = document.getElementById("icones");
     var hico = ico.offsetHeight;
     //hico = Math.max(hico,144);
-    var lico = ico.offsetWidth;
-    //var lico = $("#icones").width();
+    var lico = ico.offsetWidth;  
     var gr = document.getElementById("modules");
-    //var larg = 2*$("#modules").outerWidth() + 12;
     var larg = 2*gr.offsetWidth + 12;
-    if(!isMobile())y -= (hico + 45);
-    else y -= (hico + 25);
+   y -= (hico + 45);
     var larMin = lico - larg;
     var larMax = x - larg;
     var lar = Math.max(680,larMin);
     lar = Math.min(lar,larMax); 
-    var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-left:auto; margin-top:-2px; width:"+lar+"px; height:"
+    var t = "<td><div id='map_canvas'  class='map_canvas' style='margin-left:auto; margin-right:auto; margin-top:-2px; width:"+lar+"px; height:"
     t += y+"px; border:solid 2px gray;'> </div></td>";
+    //t = "<td><div id='map_canvas'  style='width:400px; height:400px;' > </div></td>";
     document.write(t);
+    //alert(t);
  </script>
-    
+    <!--<td><div id='map_canvas'  style='width:400px; height:400px;' > </div></td>-->
     <td class='container'>
         <?php
         drawMenuCompare('292px');//304

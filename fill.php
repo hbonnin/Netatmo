@@ -60,7 +60,6 @@ function fill($stationId,$devices,$mydevices,$dashboard)
     $humInt = $dashboard[-1]["Humidity"];
     $humExt = $dashboard[0]["Humidity"];
     $co2 = $dashboard[-1]["CO2"];
-    $particule = $dashboard[-1]["Particle"];
     $db = $dashboard[-1]["Noise"];
     $pres = intval($dashboard[-1]["Pressure"] + .5);
     $dew = dewpoint($textcelsius,$humExt);
@@ -95,7 +94,7 @@ function fill($stationId,$devices,$mydevices,$dashboard)
 	        ${tmin}$cu&nbsp;<span style='color:#bb0000;'>${tmax}$cu</span></td>
 	<td class='e'></td>
 	<td class='cl'>CO2</td>
-	<td class='c' title=\"particules:$particule $dateInt\">$co2 </td><td class='cunit'>ppm</td>
+	<td class='c' title=\"$dateInt\">$co2 </td><td class='cunit'>ppm</td>
 	</tr><tr>
 
 	<td class='hl'>$thum</td>
