@@ -43,9 +43,11 @@ function fill($stationId,$devices,$mydevices,$dashboard)
 	$ext_name = $devices["modules"][0]["module_name"];
 	$titre = "({$mydevices['latlng']['latitude']}°,{$mydevices['latlng']['longitude']}°,{$mydevices['latlng']['altitude']}m)";
     $drecent = $dashboard[-1]["time_utc"];
+    $drecent_ext = $dashboard[0]["time_utc"];
 	$dateInt = date('d/m/Y H:i',$drecent);
 	$dateExt = date('d/m/Y H:i',$dashboard[0]["time_utc"]);	
     $recentData = (time() - $drecent) > 24*60*60 ? 0:1;
+    $recentData_ext = (time() - $drecent_ext) > 24*60*60 ? 0:1;
     $thum = tr('Humidité');
     $tson = tr('Bruit');
     $tpression = tr('Pression');
@@ -65,7 +67,8 @@ function fill($stationId,$devices,$mydevices,$dashboard)
     $dew = dewpoint($textcelsius,$humExt);
     $heati = heatIndex($textcelsius,$humExt);
     $hu = humidex($textcelsius,$dew);
-    if(!$recentData)$tint = $text ='OLD';
+    if(!$recentData)$tint = $text ='--';
+    if(!$recentData_ext)$text ='--';
     $numModules = count($dashboard)-1;
     $pluvio = $mydevices["pluviometre"];
     if($pluvio)
@@ -205,7 +208,7 @@ function getBatteryImage($battery,$batteryType)
             if($battery >= NABatteryLevelModule::BATTERY_LEVEL_1) return "icone/battery_high.png";
             if($battery >= NABatteryLevelModule::BATTERY_LEVEL_2) return "icone/battery_medium.png";
             if($battery >= NABatteryLevelModule::BATTERY_LEVEL_3) return "icone/battery_low.png";   
-            return "battery_verylow.png";
+            return "icone/battery_verylow.png";
             }
         }
 

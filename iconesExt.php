@@ -28,7 +28,12 @@ session_start();
 <link href="apple/768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" rel="apple-touch-startup-image">
 <link href="apple/1024x748.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" rel="apple-touch-startup-image">
 <!-- iPhone 6+ -->
-<link href="apple/Default-414w-736h@3.png" media="screen and (device-width: 414px) and (orientation: portrait)" rel="apple-touch-startup-image">
+<link href="apple/1242x2208.png"
+    media="(device-width: 414px) and (device-height: 736px)
+    and (-webkit-device-pixel-ratio: 3)
+    and (orientation: portrait)"
+    rel="apple-touch-startup-image"> 
+
 <link href="apple/Default-414w-736h-landscape@3x.png" media="screen and (device-width: 414px) and (orientation: landscape)" rel="apple-touch-startup-image">
 
 <!--
