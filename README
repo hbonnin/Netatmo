@@ -13,7 +13,11 @@ Main windows:
  	- Graphics of the measures of one station. 
 	- Graphics of of selected stations.
 	- Graphics of the modules of one station.
+<<<<<<< HEAD
 	- Year comparison of temperature, humidity and rainfall.
+=======
+	- Year comparison of temperature, humidity or rainfall.
+>>>>>>> aeb42b81eb8a447bd57c4fdc81a9ffd8f004e202
 
 Install:
 	- Unzip the archive,
