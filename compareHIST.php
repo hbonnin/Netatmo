@@ -208,7 +208,7 @@ else
                     , "module_id" => $module_id);  
 $mesure[1] = $client->api("getmeasure", "POST", $params);
 //$n0 = count($mesure[0]);$n1 = count($mesure[1]);echo " count: $n0  $n1";
-if(count($mesure[1]) == 0)
+if(count($mesure[0]) == 0 || count($mesure[1]) == 0)
     {echo("</script>
         <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
         </head>

@@ -256,18 +256,7 @@ if($reloadData)
         echo $ex->getMessage()."\n";
         }
 
-    if(count($meas) == 0)
-        {echo("</script>
-            <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
-            </head>
-            <body> 
-            ");
-        drawCharts('G');
-        echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
-        echo("</body></html>");
-        return;
-        } 
-    
+    $nMesuresExterieur = count($meas);
      // interieur    
     $params = array("scale" => $interval
                 , "type" => $req1
@@ -298,6 +287,36 @@ $timeLoadData = $_SESSION['timeLoad'];
 $dateLoadData = date("H:i:s ",$timeLoadData);
 //$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = 0;
+$Temperature_unit = $_SESSION['Temperature_unit'];
+$cu = $Temperature_unit ? '°':'F';
+$titleExt = "'no measures'";
+echo("
+	<script>
+      google.load('visualization', '1', {packages:['corechart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+              var dataExt = new google.visualization.DataTable();
+              var dataInt = new google.visualization.DataTable();
+	");              
+
+
+if($nMesuresExterieur == 0)
+    {
+    /*
+    echo("</script>
+        <link rel='stylesheet' media='screen' type='text/css'  href='calendrierBleu.css'>   
+        </head>
+        <body> 
+        ");
+    drawCharts('G');
+    echo("<script>document.getElementById('chart0').innerHTML = 'NO MEASURES';</script>");
+    echo("</body></html>");
+    */
+    $reloadData = 0; 
+    //return;
+    goto traceInterieur;
+    } 
+
 
 function tipHTMLext2($idate,$tmax,$hum) //5-30 minutes, 3 hours
 	{global $cu;
@@ -347,17 +366,6 @@ $TempMax = $HumMax = -999;
 $TempMin = $HumMin = 999;
 $dtmax = $dtmin = $cmax = $cmin = 0;
 $dhmax = $dhmax = $dhmin = $chmin = 0;
-$Temperature_unit = $_SESSION['Temperature_unit'];
-$cu = $Temperature_unit ? '°':'F';
-
-echo("
-	<script>
-      google.load('visualization', '1', {packages:['corechart']});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-              var dataExt = new google.visualization.DataTable();
-              var dataInt = new google.visualization.DataTable();
-	");              
 
  			$keys= array_keys($meas);
 			$num = count($keys);
@@ -369,7 +377,7 @@ echo("
 
 if($inter > 3*60*60) //1week, 1day
 	{           
-echo("	 
+echo("
 	 		dataExt.addColumn('string', 'Date');
         	dataExt.addColumn({type: \"string\", role: \"tooltip\",p: {html: true} });        	        	      	  
         	dataExt.addColumn('number', 'Tmax'); 
@@ -476,14 +484,17 @@ else   //5 ou 30 minutes ou 3 heures
 	$titleExt = '"' .$stat_name. '-' .$ext_name. '   (' .$beg. ' - '.$end.' @'.$num." $tmesure".')';       	                    	
 	$titleExt .= '  '.'Tmax: '.$TempMax."$cu @ ".$dtmax; 
 	$titleExt .= '  '.'Tmin: '.$TempMin."$cu @ ".$dtmin.'"'; 
+
+
  /*********************************************************************************************************/
+traceInterieur:
 $tnoise = tr("Bruit");
- 			$keys= array_keys($meas1);
-			$num = count($keys);
-			$itime = $keys[0];  
-			$beg = date("d/m/y", $keys[0]); 
-			$end = date("d/m/y",$keys[$num-1]); 
-			if($num <= 48)$visupt = 3;	
+$keys= array_keys($meas1);
+$num = count($keys);
+$itime = $keys[0];  
+$beg = date("d/m/y", $keys[0]); 
+$end = date("d/m/y",$keys[$num-1]); 
+if($num <= 48)$visupt = 3;	
 
 if($inter > 3*60*60)	//1week,1day	tooltip -> annotationText
 	{echo("
@@ -619,6 +630,8 @@ else  // 5 minutes, 30 minutes, 3 heures
     echo("titleExt = $titleExt;\n");  
     echo 'var colorInt ='.json_encode($colorInt,true).";\n";
     echo 'var colorExt ='.json_encode($colorExt,true).";\n";
+    echo 'var nExt ='.json_encode($nMesuresExterieur,true).";\n";
+    
 ?>
 	var chartExt = new google.visualization.LineChart(document.getElementById('chart1'));
     var chartInt = new google.visualization.LineChart(document.getElementById('chart0'));
@@ -631,7 +644,7 @@ else  // 5 minutes, 30 minutes, 3 heures
     chartInt.draw(dataInt,eval(paramInt));
     paramExt = param+',title:titleExt,colors:colorExt}';
     //paramExt = param+',title:titleExt,colors:colorExt'+",annotation:{3: {style: 'line'}"+'}}';
-    chartExt.draw(dataExt,eval(paramExt));
+    if(nExt != null)chartExt.draw(dataExt,eval(paramExt));
 /*    
 <?php
     if($inter > 3*60*60 && !$eraseInt[2])
@@ -646,17 +659,7 @@ else  // 5 minutes, 30 minutes, 3 heures
     si une seule courbe -> 3 colonnes (t, tooltip, courbe)
 */
     google.visualization.events.addListener(chartInt, 'select', IntClickHandler); 
-
- /*
-  chartInt.setAction(
-    {id: 'sample',
-    text: 'See sample book',
-    action:function()
-        {alert("a");
-        }
-    });
-  */  
-     function IntClickHandler()
+    function IntClickHandler()
         {var selection = chartInt.getSelection();
         var num = colorInt.length;
         for (var i = 0; i < selection.length; i++) 
@@ -672,7 +675,7 @@ else  // 5 minutes, 30 minutes, 3 heures
                 }
             }
         }
-    google.visualization.events.addListener(chartExt, 'select', ExtClickHandler);        
+    if(nExt != null)google.visualization.events.addListener(chartExt, 'select', ExtClickHandler);        
     function ExtClickHandler()
         {var selection = chartExt.getSelection();
         var num = colorExt.length; 
