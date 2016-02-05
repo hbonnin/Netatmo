@@ -389,11 +389,12 @@ for($i = 0;$i < $numStations;$i++)
 	cloudLayer.setMap(map);
 
 	// add cloud control
+/*	
 	var cloudControlDiv = document.createElement('div');
   	var cloudControl = new CloudControl(cloudControlDiv, map);
   	cloudControlDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_LEFT].push(cloudControlDiv);
-  	
+*/  	
     // add traffic layer
     trafficLayer = new google.maps.TrafficLayer();
     trafficLayer.setMap(null);
@@ -453,13 +454,14 @@ for($i = 0;$i < $numStations;$i++)
   		map.setZoom(zoomInit);
   		});
 	  } 
+/*	  
 	function CloudControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
  	 // Setting padding to 5 px will offset the control
 	  // from the edge of the map.
 	  controlDiv.style.padding = '5px 0px 0px 0px'; //5 1 0 0
 
-	  // Set CSS for the control border.
+	  // Set CSS for the control border.  
 	  var controlUI = document.createElement('div');
 	  controlUI.style.backgroundColor = 'white';
 	  controlUI.style.borderStyle = 'solid';
@@ -469,7 +471,6 @@ for($i = 0;$i < $numStations;$i++)
  	  controlUI.style.textAlign = 'center';
 	  controlUI.title = 'Click hide/display the clouds';
 	  controlDiv.appendChild(controlUI);
-
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Courier,sans-serif';
@@ -490,6 +491,7 @@ for($i = 0;$i < $numStations;$i++)
 			}	
 		});
 		}
+*/		
 	function TrafficControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
  	 // Setting padding to 5 px will offset the control

@@ -343,19 +343,44 @@ selectmenu.onchange=function()
     $t1 = '1 '.tr('mois');
     $t6 = '6 '.tr('mois');
     $t12 = '12 '.tr('mois');
+    $t24 = '24 '.tr('mois');
+    $t36 = '36 '.tr('mois');
     
     if($hist == 1)
         echo("<option value='1' selected='selected' >$t1</option>
         <option value='6' '>$t6</option>
-        <option value='12' >$t12</option>");
+        <option value='12' >$t12</option>
+        <option value='24' >$t24</option>
+        <option value='36' >$t36</option>
+        ");
     else if($hist == 6)
         echo("<option value='1'>$t1</option>
         <option value='6' selected='selected'>$t6</option>
-        <option value='12' >$t12</option>");
+        <option value='12' >$t12</option>
+        <option value='24' >$t24</option>
+        <option value='36' >$t36</option>
+         ");
+    else if($hist == 12)
+        echo("<option value='1'>$t1</option>
+        <option value='6' >$t6</option>
+        <option value='12'selected='selected' >$t12</option>
+        <option value='24' >$t24</option>
+        <option value='36' >$t36</option>        
+        ");
+    else if($hist == 24)
+        echo("<option value='1'>$t1</option>
+        <option value='6' >$t6</option>
+        <option value='12' >$t12</option>
+        <option value='24' selected='selected' >$t24</option>
+        <option value='36' >$t36</option>        
+        ");
     else
         echo("<option value='1'>$t1</option>
         <option value='6'>$t6</option>
-        <option value='12' selected='selected'>$t12</option>");
+        <option value='12' >$t12</option>
+        <option value='24' >$t24</option>
+        <option value='36' selected='selected'>$t36</option>        
+        ");
     
 ?>
 	</select>		

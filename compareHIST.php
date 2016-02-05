@@ -186,8 +186,12 @@ if($hist == 1)
     }
 else if($hist == 6)
     $delta = 26*7*24*60*60;
-else
+else if($hist == 12)
     $delta = 52*7*24*60*60;
+else if($hist == 24)
+    $delta = 2*52*7*24*60*60;
+else 
+    $delta = 3*52*7*24*60*60;
     
 $date_beg1 = $date_beg -$delta;
 $date_end1 = $date_end -$delta;

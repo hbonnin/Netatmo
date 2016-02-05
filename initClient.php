@@ -179,7 +179,8 @@ function initClient()
     if(!isset($_SESSION['client']) &&  empty($test_username) || empty($test_password))
         {if(isset($_SESSION['username']) && isset($_SESSION['password'] ))
             {$test_username = $_SESSION['username'];  //login with indexLogin.php
-            $test_password = $_SESSION['password']; 
+            $test_password = $_SESSION['password'];
+            logMsg("login with indexLogin.php");
             }
          else if(!isset($_SESSION['client'])) 
             {//alert("no password");
