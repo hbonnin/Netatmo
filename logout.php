@@ -44,7 +44,7 @@ if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatm
             case viewCompare: 
             case viewModules:
             case LogMsg:
-            //case client:
+            case client:
             case username:
             case password:            
                     break;

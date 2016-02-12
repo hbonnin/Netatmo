@@ -14,9 +14,11 @@ require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 require_once 'translate.php';
+
 session_start();
-date_default_timezone_set($timezone);
 initClient();
+$timezone = $_SESSION['timezone'];
+date_default_timezone_set($timezone);
 $client = $_SESSION['client'];
 $Temperature_unit = $_SESSION['Temperature_unit'];
 // $stationNum station utilise

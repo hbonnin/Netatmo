@@ -4,6 +4,7 @@ require_once 'AppliCommonPublic.php';
 require_once 'NAApiClient.php';
 require_once 'initClient.php';
 session_start();
+$timezone = $_SESSION['timezone'];
 date_default_timezone_set($timezone);
 echo "<pre>";
 $date = date('d/m/Y H:i s',time());
@@ -17,10 +18,10 @@ $t = $_SESSION['timeToken'] + $_SESSION['expires_in'];
 $dt = $t - time();
 echo "Token valide &#8594; ".date('d/m/Y H:i s',$t)."(".$dt."s);\n";
 echo("-------------------------------\n");
-print_r($_SESSION['LogMsg']);
+//print_r($_SESSION['LogMsg']);
 if(isset($_SESSION['ex']))
      print_r($_SESSION['ex']);
-if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatmo')
+//if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatmo')
     {foreach ($_SESSION  as $key => $value)
         {switch ($key)
             {case GraphiqueMesureInt:           
@@ -29,10 +30,17 @@ if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatm
             case selectMesures:
             case viewCompare: 
             case viewModules:
-            case LogMsg:
+            //case LogMsg:
             case client:
-            case username:
-            case password:
+            case mydevices:
+            case dashboard:
+            case state:
+            case date_beg:
+            case date_end:
+            case datebeg:
+            case dateend:
+            case init:
+            case timezone:
                     break;
             default:echo "<br>$key: "; 
                     print_r($_SESSION[$key]);

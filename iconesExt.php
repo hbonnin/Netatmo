@@ -78,9 +78,10 @@ require_once 'moontime.php';
 require_once 'MoonPhase.php';
 require_once 'translate.php';
 
-date_default_timezone_set($timezone);
 
 initClient();
+$timezone = $_SESSION['timezone'];
+date_default_timezone_set($timezone);
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 
 $numStations = $mydevices["num"];

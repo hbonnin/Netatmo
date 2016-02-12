@@ -15,10 +15,13 @@ require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 require_once 'translate.php';
-session_start(); date_default_timezone_set($timezone);
 
+session_start(); 
 if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
 initClient();
+$timezone = $_SESSION['timezone'];
+date_default_timezone_set($timezone);
+
 $client = $_SESSION['client'];
 $Temperature_unit = $_SESSION['Temperature_unit'];
 $cu = $Temperature_unit ? '°':' F';
@@ -128,11 +131,12 @@ else if(!isset($_GET['hist']))
     $date_beg = $_SESSION['date_beg'];
     $date_end = $_SESSION['date_end'];
     }
-  
+/*  
 if(abs($date_beg - $_SESSION['date_begP']) < $inter  &&  abs($date_end - $_SESSION['date_endP']) < $inter
     && $interval == $_SESSION['selectedInterP']  &&  $stationId == $_SESSION['stationIdP'] &&  !isset($_GET['hist']))
     $reloadData = 0; 
 else
+*/
     {$reloadData = 1; 
     $_SESSION['date_begP'] = $date_beg;
     $_SESSION['date_endP'] = $date_end;
@@ -274,17 +278,20 @@ if($reloadData)
         echo $ex->getMessage()."\n";
         }
     date_default_timezone_set($timezone);
-    $_SESSION['GraphiqueMesureInt'] = gzcompress(json_encode($meas1),2);
-    $_SESSION['GraphiqueMesureExt'] = gzcompress(json_encode($meas),2);
+    //$_SESSION['GraphiqueMesureInt'] = gzcompress(json_encode($meas1),2);
+    //$_SESSION['GraphiqueMesureExt'] = gzcompress(json_encode($meas),2);
     $_SESSION['timeLoad'] = time();
     }
-else
+/*    
+else // no more
     {$meas1 = json_decode(gzuncompress($_SESSION['GraphiqueMesureInt']),true);
     $meas =  json_decode(gzuncompress($_SESSION['GraphiqueMesureExt']),true);
     date_default_timezone_set($timezone);  
     }
+*/    
 $timeLoadData = $_SESSION['timeLoad'];
 $dateLoadData = date("H:i:s ",$timeLoadData);
+
 //$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = 0;
 $Temperature_unit = $_SESSION['Temperature_unit'];

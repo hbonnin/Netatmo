@@ -1,4 +1,5 @@
 <?php
+
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 
 function refreshToken()
@@ -34,27 +35,21 @@ function refreshToken()
 	$client = new NAApiClient(array("access_token" => $access_token,"refresh_token" => $refresh_token)); 
 	$client->setVariable("client_id", $client_id);
 	$client->setVariable("client_secret", $client_secret);
-	if(isset($_SESSION['code']))$client->setVariable("code", $_SESSION['code']);
-    try {
-        $tokens = $client->getAccessToken();       
-        } catch(NAClientException $ex) 
-            {$_SESSION['ex'] = $ex;
-        	logMsg('NAClientException:refreshtoken');
-			logout();				
-            } 
-	logMsg("Refresh token success");	
+	//if(isset($_SESSION['code']))$client->setVariable("code", $_SESSION['code']);
+	logMsg("Refresh token success:$refresh_token ");
+	saveTokenCookie($refresh_token);
 	$_SESSION['client'] = $client;
 	return 1;
 	}
 function checkToken()
     {if(isset($_SESSION['timeToken']))
 		{$time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time();
-		$ret = 0;
+		//logMsg("timeLeft:$time_left");
 		if($time_left < 5*60) 
-			$ret = refreshToken();
+			refreshToken();
 		return $time_left;
 		}
-	else retun -1;
+	else return -1;
     }	
 function init($numStations)
     {if(!isset($_SESSION['init']))
@@ -100,30 +95,22 @@ function init($numStations)
         $_SESSION['selectMesureHist'] = 'T';
         $_SESSION['selectMesureModule'] = 'T';
         $_SESSION['hist'] = 12;
-        } 
-    if(isset($_SESSION['saveCookie']))
-        {$username = $_SESSION['username']; 
-        $password = $_SESSION['password'];
-        echo "<script>";
-        echo("var username = \"$username\";\n");
-        echo("var password = \"$password\";\n");
-        echo("$.jCookies({name:'Netatmo Login',value:{Username:username,Password:password},days:10});");
-        echo "</script>";
-        }
+        }      
     }
-
+function saveTokenCookie($refresh_token)
+    {global $save_token;
+    if($save_token  == 0)return;  
+    logMsg("saveTokenCookie:$refresh_token");
+    echo "<script>";
+    echo("var refresh_token = \"$refresh_token\";\n");
+    echo("$.jCookies({name:'netatmotoken',value:{Refresh_token:refresh_token},days:30});");
+    echo "</script>";
+    }
 function initClient()
-	{global $client_id,$client_secret,$test_username,$test_password,$timezone;
-	//date_default_timezone_set($timezone);
+	{global $client_id,$client_secret;
 	if(isset($_SESSION['expires_in']))  
 	    checkToken(); // seule action effectuer chaque fois
-	    
-	if(!isset($_SESSION['LogMsg']))
-	    {$date = date("d/m H:i:s",time());
-	    $server = $_SERVER['SERVER_NAME'];
-	    $_SESSION['LogMsg'] = "Log start :$date<br>Serveur:$server<br>";
-	    }
-
+    // authentification through Netatmo
 	if(isset($_GET["code"]) && !isset($_SESSION['client'])) 
 		{if(isset($_GET["error"]))
 		    {if($_GET["error"] == "access_denied")
@@ -173,50 +160,16 @@ function initClient()
         		alert("NAClientException:client from token");
 			    logout();				
 			    }       
-        $_SESSION['client'] = $client;	
-        logMsg('client from token');			
-		}	
-    if(!isset($_SESSION['client']) &&  empty($test_username) || empty($test_password))
-        {if(isset($_SESSION['username']) && isset($_SESSION['password'] ))
-            {$test_username = $_SESSION['username'];  //login with indexLogin.php
-            $test_password = $_SESSION['password'];
-            logMsg("login with indexLogin.php");
-            }
-         else if(!isset($_SESSION['client'])) 
-            {//alert("no password");
-            logMsg("No password in Config.php");
-            echo " <script>top.location.href='indexLogin.php' </script> ";
-            }
-        }     
+        $_SESSION['client'] = $client;
+        saveTokenCookie($refresh_token);
+		}
 	if(isset($_SESSION['client']))
-		$client = $_SESSION['client'];
-	else  // si identifiant et mot de passe
-		{
-		$client = new NAApiClient(array("client_id" => $client_id, "client_secret" => $client_secret, "username" => $test_username, "password" => $test_password,"scope" => NAScopes::SCOPE_READ_STATION));
-		try {
-			$tokens = $client->getAccessToken();       
-			} catch(NAClientException $ex) 
-			    {if(!isset($_SESSION['state']))
-					logMsg("User:$test_username
-					<br>ou mot de passe:$test_password
-					<br> ou id:$client_id
-					<br> ou secret:$client_secret incorrect");
-				$_SESSION['ex'] = $ex;
-        		logMsg('NAClientException:client from password');
-        		alert("wrong password");
-			    logout();				
-			    }   
-	    $_SESSION['timeToken'] = time();	
-	    $_SESSION['refresh_token'] = $tokens['refresh_token'];
-	    $_SESSION['expires_in'] = $tokens['expires_in'];
-		$_SESSION['client'] = $client;	
-		logMsg("client from password");
-	    }
-//	if(!isset($_SESSION['mydevices']))
+		{$client = $_SESSION['client'];
+		$tokens = $client->getAccessToken();       
+        }
 	if(1)
 		{$helper = new NAApiHelper($client);	
 		try {
-			//$devicelist = $client->api("devicelist", "POST");
 			 $devicelist = $helper->simplifyDeviceList();
 			}
 		catch(NAClientException $ex) {
@@ -225,8 +178,6 @@ function initClient()
 		    alert("NAClientException:devicelist");
 		    logout();	
 			}	
-		//$devicelist = $helper->SimplifyDeviceList($devicelist);		
-		//$_SESSION['devicelist'] = $devicelist;
 	    $numStations = count($devicelist["devices"]);	
 	    if(!isset($_SESSION['mydevices']))
     		{$mydevices = createDevicelist($devicelist);
@@ -240,6 +191,7 @@ function initClient()
     $_SESSION['Temperature_unit'] = $Temperature_unit;	
     $_SESSION['lang'] = $user['administrative']['lang'];
     $timezone = $_SESSION['mydevices'][0]['timezone']; 
+    $_SESSION['timezone'] = $timezone;
     date_default_timezone_set($timezone);
 	}
 function createViewmodules()

@@ -14,10 +14,11 @@ require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 require_once 'translate.php';
-session_start();
-date_default_timezone_set($timezone);
 
+session_start();
 initClient();
+$timezone = $_SESSION['timezone'];
+date_default_timezone_set($timezone);
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices'];
 

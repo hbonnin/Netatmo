@@ -128,7 +128,8 @@ function drawLogoutBack()
     	</form>
 	</td>
 	<td>
-	<input type='submit' class='submit' value='Show Log' style='color:#080;' onClick='MakeRequestLog();' />    
+	<!-- <input type='submit' class='submit' value='Show Log' style='color:#080;' onClick='MakeRequestLog();' />    -->
+	<input type='submit' class='submit' value='log' style='color:#080;' onClick='window.open("logsession.php","_blank","scrollbars=yes,status=0,width=800");' />    
 	</td>	
 	<td>
 	<input type='submit' class='submit' value='Readme' style='color:#000;' onClick='window.open("README.html","_blank","scrollbars=yes,status=0,width=800");' />    
