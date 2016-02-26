@@ -1,5 +1,6 @@
 <?php
-require_once 'NAApiClient.php';
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
 session_start(); 
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
@@ -78,70 +79,50 @@ require_once 'moontime.php';
 require_once 'MoonPhase.php';
 require_once 'translate.php';
 
-
 initClient();
 $timezone = $_SESSION['timezone'];
 date_default_timezone_set($timezone);
-$client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices']; 
 $numStations = $mydevices["num"];
-$devicelist = getDevicelist();
-$dashboard = $_SESSION['dashboard']; 
-$Temperature_unit = $_SESSION['Temperature_unit'];
+//$Temperature_unit = $_SESSION['Temperature_unit'];
+if(!isset($_SESSION['adr']))getAdr($mydevices);
+$adr = $_SESSION['adr'];
 
-
-function getRainSum($device_num,$module_num,$inter) //$inter = 1,3,24,0
-    {$devices = $_SESSION['mydevices'][$device_num]; 
-    $device_id = $devices['_id'];
-    $module_id = $devices['modules'][$module_num]['_id'];
-    $date_end = time();
-    $date_beg = time() - $inter*60*60;
-    $type = 'sum_rain';
-    if($inter == 1)
-        $scale = '1hour';
-    else if($inter == 3)
-        $scale = '3hours';  
-    else if($inter == 24)
-         $scale = '1day';  
-    else
-        {$scale = 'max'; 
-        $type = 'Rain';
+function getAdr($myDevices)
+    {global $geocode;
+    $numStations = $myDevices['num'];
+    for($i = 0;$i < $numStations;$i++)
+        {if(isset($geocode) && $geocode)
+            {$lat =  $myDevices[$i]["place"]["location"][1];
+            $long = $myDevices[$i]["place"]["location"][0];     
+            $adr[$i] = geolocalize($lat,$long);
+            } 
+        else
+            $adr[$i] = 'BAD';
         }
-    $params = array("scale" => $scale
-                , "type" => $type
-                , "date_begin" => $date_beg
-                , "date_end" => $date_end
-                , "device_id" => $device_id
-                , "module_id" => $module_id);
-    $client = $_SESSION['client'];
-    $meas = $client->api("getmeasure", "POST", $params);
-    $rain = $meas[0]['value'][0][0]; 
-    $rain = intval($rain*10+.5)/10;
-    return $rain;
+    $_SESSION['adr'] = $adr;
     }
-
 function printLat($lat)
     {$latm = ($lat-intval($lat))*60;
     $lats = ($latm - intval($latm))*60;
     $lats = intval(1000*$lats)/1000;
     return intval($lat).'° '.intval($latm)."' ".$lats."''";
     }
+function getTimeOffset($localZone)
+    {
+    $dateTimeZoneLocal = new DateTimeZone("$localZone");
+    $dateTimeZoneGmt = new DateTimeZone("UTC");//UTC
+    $dateTimeLocal = new DateTime('now', $dateTimeZoneLocal);
+    $dateTimeGmt = new DateTime('now', $dateTimeZoneGmt);
+    $offset = ($dateTimeZoneLocal->getOffset($dateTimeGmt))/3600;
+    return $offset; 
+    }      
+    
 $slabel = array($numStations);
 $label = array($numStations);
-// to speed reloading we compute only once the locations
-if($mydevices['address'] == 0)
-	{$mydevices['address'] = 1;
-	for($i = 0;$i < $numStations;$i++)
-		{$mydevices[$i]['latlng']['latitude'] = $devicelist["devices"][$i]["place"]["location"][1];
-		$mydevices[$i]['latlng']['longitude'] = $devicelist["devices"][$i]["place"]["location"][0];
-		$mydevices[$i]['latlng']['altitude'] = $devicelist["devices"][$i]["place"]["altitude"];
-		if(isset($geocode) && $geocode)
-		    $mydevices[$i]['address'] = geolocalize($mydevices[$i]['latlng']['latitude'],$mydevices[$i]['latlng']['longitude']);
-        else
-            $mydevices[$i]['address'] = 'BAD';
-		}
-	$_SESSION['mydevices'] = $mydevices;	
-	}
+
+
+	
 //Creation des InfoWindow
 // moon phase
 $moonphase = new MoonPhase();
@@ -171,16 +152,19 @@ function daylength($lat,$long)
 	$dayM = intval($day/60); 
 	$dayS = $day - 60*$dayM;   
 	return sprintf("%d:%02d:%02d",$dayH,$dayM,$dayS);
-    }    
+    } 
 for($i = 0;$i < $numStations;$i++)
-	{$altitude = $mydevices[$i]['latlng']['altitude'];
-    $place = $mydevices[$i]['address'];
+	{$altitude = $mydevices[$i]['place']['altitude'];
+    $place = $adr[$i];
     $int_name = $mydevices[$i]["module_name"];
 	$ext_name = $mydevices[$i]["modules"][0]["module_name"];
 	// Lever/Coucher du soleil
 	$Zenith = 90 + (50/60);
-	$lat = $mydevices[$i]['latlng']['latitude'];
-	$long = $mydevices[$i]['latlng']['longitude'];	
+	//$lat = $mydevices[$i]['place']['latitude'];
+	//$long = $mydevices[$i]['place']['longitude'];
+	$lat = $mydevices[$i]['place']['location'][1];
+	$long = $mydevices[$i]['place']['location'][0];
+	
 	$diff = daydiff($lat,$long);
 	$arrow = ($diff > 0) ? '&#10138;':'&#10136;'; 
 	if(abs($diff) < 1)$arrow = '&#8596;';
@@ -220,14 +204,11 @@ for($i = 0;$i < $numStations;$i++)
         $moon = $moonrise . '&nbsp;&nbsp;'. $moonset.'+';
         }
     $txt = '('.printlat($lat).', '.printlat($long).', '.$altitude.'m)';
-//    $txt = '('.$latT.', '.$longT.', '.$altitude.'m)';
-//    $txt = '('.sprintf("%d°%05d",$lat,abs(100000*($lat-intval($lat))+.5)).', '
-//            .sprintf("%d°%05d",$long,abs(100000*($long-intval($long))+.5)).', '.$altitude.'m)';
-    if($place == "BAD")	
+    
+    if($adr[$i] == "BAD")	
     	$p = "<b>".$mydevices[$i]['station_name']."</b><span style='font-size:12px;'><br>$txt</span>";   
 	else
     	$p = "<b>$place[1]</b><span style='font-size:12px;'><br>$place[0]<br>$txt</span>"; 
- 
  
  
  
@@ -242,12 +223,14 @@ for($i = 0;$i < $numStations;$i++)
     $p .= "<tr><td style='font-size:20px; text-align:center; '>$arrow</td>";
     $p .= "<td colspan='2'>&nbsp; $tdiff &nbsp; $tdaylength</td></tr>";
     $p .= "</table></div>";
-
+//*************************************
+    $dataInt = $mydevices[$i]['dashboard_data'];
+    $dataExt = $mydevices[$i]['modules'][0]['dashboard_data'];
     // station intérieure
-    $temp = degree2($dashboard[$i][-1]["Temperature"]);
-    $hum = $dashboard[$i][-1]["Humidity"];
-    $co2 = $dashboard[$i][-1]["CO2"];
-    $db = $dashboard[$i][-1]["Noise"];
+    $temp = degree2($dataInt["Temperature"]);
+    $hum = $dataInt["Humidity"];
+    $co2 = $dataInt["CO2"];
+    $db = $dataInt["Noise"];
 	
 	$red = "style='color:#900'";
 	$green = "style='color:#070'";
@@ -256,54 +239,54 @@ for($i = 0;$i < $numStations;$i++)
 	
 	$tabINT = "<tr><td class='name'>$int_name</td> <td></td><td $red>$temp</td> <td $green>$hum</td>  <td $orange>$co2</td> <td></td> <td $violet>$db</td></tr>";	
     // station extérieure
-    $temp = degree2($dashboard[$i][0]["Temperature"]);
-	$hum = $dashboard[$i][0]["Humidity"];
-	$pres = intval($dashboard[$i][-1]["Pressure"] + .5);
+    $temp = degree2($dataExt["Temperature"]);
+	$hum = $dataExt["Humidity"];
+	$pres = intval($dataInt["Pressure"] + .5);
 	$tabEXT = "<tr><td class='name'>$ext_name</td> <td></td><td $red>$temp</td> <td $green>$hum</td> <td></td> <td>$pres</td></tr>";	
-    $cu = $Temperature_unit ? '°':'F';
+    $cu = tu();
     // Infos
     $label[$i]  = "<table class='bulle' style='width:260px;'>";
     $label[$i] .=  "<caption > $p </caption>";
-    $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>T$cu</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th><th>R1h</th><th>R24h</th></tr>";
+    $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>Ttu()</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th><th>R1h</th><th>R24h</th></tr>";
     $label[$i] .=   "$tabINT  $tabEXT";
-        $nModule = count($dashboard[$i])-1;
-        // mesures des modules
-        for($j = 1; $j < $nModule ; $j++)
-            {$name = $mydevices[$i]["modules"][$j]["module_name"];
-            if($mydevices[$i]["modules"][$j]["type"] == "NAModule3")
-                {$temp = $hum = $co2 = ' ';
-                //$rain = $dashboard[$i][$j]["Rain"];
-                $rain1 = $dashboard[$i][$j]["sum_rain_1"];  $rain1 = intval($rain1*10+.5)/10;
-                $rain24 = $dashboard[$i][$j]["sum_rain_24"];$rain24 = intval($rain24*10+.5)/10;
-                }
-            else
-                {$temp = degree2($dashboard[$i][$j]["Temperature"]);
-                $hum = $dashboard[$i][$j]["Humidity"];
-                $co2 = $dashboard[$i][$j]["CO2"];
-                $rain1 = $rain24 = ' ';
-                }
-            $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td><td $green>$rain1</td><td $green>$rain24</td></tr>";        
+
+    // mesures des modules de la sation $i
+    $device = $mydevices[$i]; 
+    for($j = 1; $j <= 10 ; $j++)
+        {if(!isset($device["modules"][$j]))continue;
+        $data = $device['modules'][$j]['dashboard_data'];            
+        $name = $device["modules"][$j]["module_name"];
+        if($j == 10)
+            {$temp = $hum = $co2 = ' ';
+            $rain1 = $data["sum_rain_1"];  $rain1 = intval($rain1*10+.5)/10;
+            $rain24 = $data["sum_rain_24"];$rain24 = intval($rain24*10+.5)/10;
             }
+        else
+            {$temp = degree2($data["Temperature"]);
+            $hum = $data["Humidity"];
+            $co2 = $data["CO2"];
+            $rain1 = $rain24 = ' ';
+            }
+        $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td><td $green>$rain1</td><td $green>$rain24</td></tr>";        
+        }
     $label[$i] .= '</table>';
-    $temp = degree2($dashboard[$i][0]["Temperature"]);
-    if($Temperature_unit)
-        $slabel[$i] = $temp . '°';	  // usilise pour les marker    	  
-    else
-        $slabel[$i] = $temp . ' F';	  // usilise pour les marker    	  
+    
+    $temp = degree2($dataExt["Temperature"]);
+    $slabel[$i] = $temp . ' '.$cu;	  // utilise pour les marker    	  
 	}	
 
 ?>
 <script
 <?php   
-	if($use_google_key == 1)
+//	if($use_google_key == 1)
 //		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key'>");
-		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key&sensor=false'>");
-	else
-		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places'>");
+//		echo("src='https://maps.googleapis.com/maps/api/js?libraries=places?key=$google_key&sensor=false'>");
+//	else
+		echo("src='https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false'>");
 ?>
 </script>
 <script>
-    var cloudLayer;
+    //var cloudLayer;
     var trafficlayer;
     var map;
     var show = 1;
@@ -343,11 +326,12 @@ for($i = 0;$i < $numStations;$i++)
 <?php
 	echo("var num = $numStations;\n");
   	for($i = 0;$i < $numStations;$i++)
-  		{echo("lat[$i] = {$mydevices[$i]['latlng']['latitude']};\n");
-  		echo("lng[$i] = {$mydevices[$i]['latlng']['longitude']};\n");
+  		{echo("lat[$i] = {$mydevices[$i]['place']['location']['1']};\n");
+  		echo("lng[$i] = {$mydevices[$i]['place']['location']['0']};\n");
   		echo("label[$i] = \"$label[$i]\";\n");
   		echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   		}
+
 ?> 				
 	for(i = 0;i < num;i++)
   		LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
@@ -386,16 +370,10 @@ for($i = 0;$i < $numStations;$i++)
   	map.controls[google.maps.ControlPosition.TOP_LEFT].push(homeControlDiv);
 
 	// add cloud layer
-	cloudLayer = new google.maps.weather.CloudLayer();
-	cloudLayer.setMap(map);
+	//Layer = new google.maps.weather.CloudLayer();
+	//cloudLayer.setMap(map);
 
 	// add cloud control
-/*	
-	var cloudControlDiv = document.createElement('div');
-  	var cloudControl = new CloudControl(cloudControlDiv, map);
-  	cloudControlDiv.index = 1;
-  	map.controls[google.maps.ControlPosition.TOP_LEFT].push(cloudControlDiv);
-*/  	
     // add traffic layer
     trafficLayer = new google.maps.TrafficLayer();
     trafficLayer.setMap(null);
@@ -415,6 +393,7 @@ for($i = 0;$i < $numStations;$i++)
 
   	// add weather layer
 <?php
+/*
     if($Temperature_unit)
         echo("var weatherLayer = new google.maps.weather.WeatherLayer({
          temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS
@@ -422,9 +401,10 @@ for($i = 0;$i < $numStations;$i++)
 	else
         echo("var weatherLayer = new google.maps.weather.WeatherLayer({
          temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
-        });");	
+        });");
+*/        
 ?>	
-	weatherLayer.setMap(map);	  			
+	//weatherLayer.setMap(map);	  			
 
 	function HomeControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
@@ -455,44 +435,6 @@ for($i = 0;$i < $numStations;$i++)
   		map.setZoom(zoomInit);
   		});
 	  } 
-/*	  
-	function CloudControl(controlDiv, map) {
-	  // Set CSS styles for the DIV containing the control
- 	 // Setting padding to 5 px will offset the control
-	  // from the edge of the map.
-	  controlDiv.style.padding = '5px 0px 0px 0px'; //5 1 0 0
-
-	  // Set CSS for the control border.  
-	  var controlUI = document.createElement('div');
-	  controlUI.style.backgroundColor = 'white';
-	  controlUI.style.borderStyle = 'solid';
-	  controlUI.style.borderColor = 'gray';	  
-	  controlUI.style.borderWidth = '1px';
-	  controlUI.style.cursor = 'pointer';
- 	  controlUI.style.textAlign = 'center';
-	  controlUI.title = 'Click hide/display the clouds';
-	  controlDiv.appendChild(controlUI);
-	  // Set CSS for the control interior.
-	  var controlText = document.createElement('div');
-	  controlText.style.fontFamily = 'Courier,sans-serif';
-	  controlText.style.fontSize = '12px';
-	  controlText.style.paddingLeft = '4px';
-	  controlText.style.paddingRight = '4px';
-	  controlText.innerHTML = 'Hide Clouds';
-	  controlUI.appendChild(controlText);	
-  	  // Setup the click event listeners
-  	  google.maps.event.addDomListener(controlUI, 'click', function() 
-  	  	{if(show)
-			{cloudLayer.setMap(null);show = 0;
-			controlText.innerHTML = 'Show Clouds';		
-			}
-		else
-			{cloudLayer.setMap(map);show = 1;
-  			controlText.innerHTML = 'Hide Clouds';			
-			}	
-		});
-		}
-*/		
 	function TrafficControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
  	 // Setting padding to 5 px will offset the control
@@ -578,7 +520,8 @@ for($i = 0;$i < $numStations;$i++)
 
 </head>
   <!--<body  onload='initialize()' style='transform: scale(.8,.85);'>-->
-  <body  onload='initialize()'>  
+  <body  onload='initialize()'>
+  
   <!--<div style='transform: scale(.8;.9);  -moz-transform-origin: top left;'>-->
   <div>
 <!-- Invisible table for calendar --> 
@@ -591,6 +534,7 @@ for($i = 0;$i < $numStations;$i++)
 
 <!-- Tracé des icones -->	
 <?php
+
 $arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
 $txt = tr('Phase lunaire');
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
@@ -634,12 +578,11 @@ echo("
 </td></tr></table>
 "); 
 
-
 echo "</td>\n";	
 // Tracé des icones  
 for($i = 0;$i < $numStations;$i++)
 	{echo("<td>");
-	fill($i,$devicelist["devices"][$i],$mydevices[$i],$dashboard[$i]);
+	fill($mydevices[$i]);
 	echo("</td>");
 	}
 echo("</tr></table>");	
@@ -669,7 +612,7 @@ echo("</tr></table>");
     var lico = ico.offsetWidth;  
     var gr = document.getElementById("modules");
     var larg = 2*gr.offsetWidth + 12;
-   y -= (hico + 45);
+     y -= (hico + 45);
     var larMin = lico - larg;
     var larMax = x - larg;
     var lar = Math.max(680,larMin);

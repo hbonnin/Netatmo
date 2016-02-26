@@ -74,14 +74,19 @@ var ds_daynames = [
 */
 <?php
     switch($_SESSION['lang'])
-        {case 'fr-FR': echo("var ds_daynames = ['Dim', 'Lun', 'Mar', 'Me', 'Jeu', 'Ven', 'Sam']; ");
-                        echo("var ds_monthnames = ['Janvier', 'F&eacutevrier', 'Mars', 'Avril', 'Mai', 'Juin','Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre'];");
-                        break;
-        case 'en-US':  echo("var ds_daynames = ['Sun', 'Mon', 'Tue', 'Wer', 'Thu', 'Fry', 'Sat']; ");
-                        echo("var ds_monthnames = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];");
-                        break;
-        default:        return $txt;
-                        break;
+        {case 'fr-FR': 
+                    echo("var ds_daynames = ['Dim', 'Lun', 'Mar', 'Me', 'Jeu', 'Ven', 'Sam']; ");
+                    echo("var ds_monthnames = ['Janvier', 'F&eacutevrier', 'Mars', 'Avril', 'Mai', 'Juin','Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre'];");
+                    break;
+        case 'en-GB':                 
+        case 'en-US':
+                    echo("var ds_daynames = ['Sun', 'Mon', 'Tue', 'Wer', 'Thu', 'Fry', 'Sat']; ");
+                    echo("var ds_monthnames = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December'];");
+                    break;
+         default:     
+                    echo("var ds_daynames = ['Dim', 'Lun', 'Mar', 'Me', 'Jeu', 'Ven', 'Sam']; ");
+                    echo("var ds_monthnames = ['Janvier', 'F&eacutevrier', 'Mars', 'Avril', 'Mai', 'Juin','Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'D&eacute;cembre'];");
+                    break;                  
         }    
 ?>
 

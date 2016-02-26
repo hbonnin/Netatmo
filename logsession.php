@@ -1,52 +1,50 @@
 <?php 
-require_once 'Config.php';
-require_once 'AppliCommonPublic.php';
-require_once 'NAApiClient.php';
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
 require_once 'initClient.php';
 session_start();
+?>
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+<head>
+<meta charset='utf-8'>
+</head>
+<body>
+<?php 
+echo "<pre>";
+$cu = tu(); $vu = wu(); $pu = pru();
 $timezone = $_SESSION['timezone'];
 date_default_timezone_set($timezone);
-echo "<pre>";
 $date = date('d/m/Y H:i s',time());
 echo("Timezone = $timezone  date:$date<br>");
-echo("Temperature_unit (Netatmo) = {$_SESSION['Temperature_unit']} <br>");
-echo("Language (Netatmo) = {$_SESSION['lang']} <br>");
+echo("Units: Temperature ($cu) Wind ($vu)  Pressure ($pu)<br>");
+echo("Language = {$_SESSION['lang']} <br>");
 echo("Path = {$_SESSION['path']} <br>");
 echo ("Agent = {$_SERVER['HTTP_USER_AGENT']} <br>"); 
 echo ("Client = {$_SERVER['REMOTE_ADDR']} <br>"); 
 $t = $_SESSION['timeToken'] + $_SESSION['expires_in'];
 $dt = $t - time();
-echo "Token valide &#8594; ".date('d/m/Y H:i s',$t)."(".$dt."s);\n";
+echo "Token valide &#8594; ".date('d/m/Y H:i.s',$t)." (".$dt."s left);\n";
 echo("-------------------------------\n");
-//print_r($_SESSION['LogMsg']);
 if(isset($_SESSION['ex']))
      print_r($_SESSION['ex']);
-//if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatmo')
     {foreach ($_SESSION  as $key => $value)
         {switch ($key)
-            {case GraphiqueMesureInt:           
-            case GraphiqueMesureExt:
-            case MenuInterval:
-            case selectMesures:
-            case viewCompare: 
-            case viewModules:
-            //case LogMsg:
-            case client:
-            case mydevices:
-            case dashboard:
-            case state:
-            case date_beg:
-            case date_end:
-            case datebeg:
-            case dateend:
-            case init:
-            case timezone:
-                    break;
-            default:echo "<br>$key: "; 
-                    print_r($_SESSION[$key]);
+            {
+            case LogMsg:
+            //case viewModules:
+            //case selectMesureHist:
+            //case hist:
+            //case client:
+            //case lang:
+            //case mydevices:
+                echo "<br>$key: "; 
+                print_r($_SESSION[$key]);
+                break;
+            default:
                     break;  
             }
         }
     }
-
 ?>
+</body>
+</html>

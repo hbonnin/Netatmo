@@ -1,11 +1,7 @@
-<?php 
-require_once 'Config.php';
-require_once 'AppliCommonPublic.php';
-require_once 'NAApiClient.php';
-require_once 'initClient.php';
+<?php
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
 session_start();
-date_default_timezone_set($timezone);
-$date = date("d:m:Y H:i",time());
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
@@ -22,44 +18,26 @@ if(isMobile())
     exit();
     }
 </script>
-<h2> You are logged off </h2>
-<?php echo "$date; <br>"?>
-<?php 
-echo("path={$_SESSION['path']} <br>"); 
-echo("Temperature_unit (Netatmo) = {$_SESSION['Temperature_unit']} <br>");
-echo("Language (Netatmo) = {$_SESSION['lang']} <br>");
-echo "<pre>";
-print_r($_SESSION['LogMsg']);
-if(isset($_SESSION['ex']))
-     print_r($_SESSION['ex']);
+<h2> You are logged out </h2
+>
+<?php
+echo "<pre><br>";
 
-
-if($_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']) != 'fraysseix.fr/Netatmo')
-    {foreach ($_SESSION  as $key => $value)
-        {switch ($key)
-            {case GraphiqueMesureInt:           
-            case GraphiqueMesureExt:
-            case MenuInterval:
-            case selectMesures:
-            case viewCompare: 
-            case viewModules:
-            case LogMsg:
-            case client:
-            case username:
-            case password:            
-                    break;
-            default:echo "<br>$key: "; 
-                    print_r($_SESSION[$key]);
-                    break;  
-            }
+foreach ($_SESSION  as $key => $value)
+    {switch ($key)
+        {
+        case LogMsg:
+        //case mydevices:
+             echo "<br>$key: "; 
+            print_r($_SESSION[$key]);
+            break;
+        default:
+                break;  
         }
     }
-
-
-
 echo "</pre>";
 echo("</body></html>");
 $_SESSION=array();
 session_destroy();
-exit();
+exit();    
 ?>

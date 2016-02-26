@@ -9,14 +9,16 @@
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
-require_once 'NAApiClient.php';
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
+
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 require_once 'translate.php';
 
 session_start();
-initClient();
+checkToken();
 $timezone = $_SESSION['timezone'];
 date_default_timezone_set($timezone);
 $client = $_SESSION['client'];
@@ -25,7 +27,8 @@ $mydevices = $_SESSION['mydevices'];
 if(isset($_GET['stationNum']))
     {$stationNum = $_GET['stationNum'];  
     $_SESSION['stationId'] = $stationNum;
-    if($mydevices[$stationNum]['pluviometre'] < 0)
+    //if($mydevices[$stationNum]['pluviometre'] < 0)
+    if(!isset($mydevices[$stationNum]['modules'][10]))
         $_SESSION['selectMesureHist'] = 'T';
     }
 
@@ -37,8 +40,7 @@ else if(isset($_POST['selectStation']))
 else if(isset($_SESSION['stationId']))
     $stationId = $_SESSION['stationId'];
 $_SESSION['stationId'] = $stationId;
-$Temperature_unit = $_SESSION['Temperature_unit'];
-$cu = $Temperature_unit ? '°':' F';
+$cu = tu();
 date_default_timezone_set("UTC");
 
 if(isset($_POST["date0"]))  
@@ -142,11 +144,9 @@ $device_id = $mydevices[$stationId]["_id"];
 $module_id = $mydevices[$stationId]["modules"][0]["_id"];
 $ext_name  = $mydevices[$stationId]["modules"][0]["module_name"];
 $stat_name = $mydevices[$stationId]["station_name"];
-$pluviometre = $mydevices[$stationId]['pluviometre'];  //>=0 -> pluviometre
 
-
-if($pluviometre >= 0 && $selectMesure == 'R')
-    {$module_id = $mydevices[$stationId]["modules"][$pluviometre]["_id"];
+if(isset($mydevices[$stationId]['modules'][10]) && $selectMesure == 'R')
+    {$module_id = $mydevices[$stationId]["modules"][10]["_id"];
     $Rain = 1;
     }
 else

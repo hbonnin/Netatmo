@@ -9,18 +9,19 @@
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
-require_once 'NAApiClient.php';
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
+
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 require_once 'translate.php';
 
 session_start();
-initClient();
+checkToken();
 $timezone = $_SESSION['timezone'];
 date_default_timezone_set($timezone);
 $client = $_SESSION['client'];
-$Temperature_unit = $_SESSION['Temperature_unit'];
 // $stationNum station utilise
 $changedSation = false;
 $stationNum = $_SESSION['stationId'];
@@ -39,7 +40,6 @@ $_SESSION['stationId'] = $stationNum;
 $mydevices = $_SESSION['mydevices']; 
 $device = $mydevices[$stationNum];
 $numModules = $device["modules"]["num"];
-$numCapteurs = $numModules + 1; 
 $nameStation = $device['station_name'];
 
 // device: tous les modules mais pas la station principale
@@ -52,11 +52,15 @@ $device_id = $device['_id'];
 $nameStations[0] = $device["module_name"]; 
 $modules_id[0] = $device_id;
 $modules_type[0] = 'NAMain';
-for($i = 1;$i < $numCapteurs;$i++) // station et modules
-    {$nameStations[$i] = $device["modules"][$i-1]["module_name"];
-    $modules_id[$i] = $device['modules'][$i -1]['_id'];
-    $modules_type[$i] = $device['modules'][$i -1]['type'];
+$j = 1;
+for($i = 1;$i <= 12;$i++) // station et modules
+    {if(!isset($device["modules"][$i-1]))continue;
+    $nameStations[$j] = $device["modules"][$i-1]["module_name"];
+    $modules_id[$j] = $device['modules'][$i -1]['_id'];
+    $modules_type[$j] = $device['modules'][$i -1]['type'];
+    ++$j;
     }
+$numCapteurs = $j + 1;    
 
 if(isset($_POST['selectMsesure']))
     $selectMesure = $_POST['selectMsesure'];
@@ -166,12 +170,15 @@ else  if(!isset($_GET['hist']))
 
 
 $CO2 = 0;	
-$HTime = 1;
+$HTime = 1;  //if date event
 $T =$T1 = 0;
+$cu = 'a';
+$cu1 = 'b';
 if($selectMesure == 'T')
     {$titre = 'Température';
     $titre1 = 'Température';
     $T = $T1 = 1;
+    $cu1 = $cu = tu();
     if($inter >= 24*60*60)
         $type = 'min_temp,max_temp,date_min_temp,date_max_temp';
     else if($inter >= 60*60)
@@ -179,11 +186,13 @@ if($selectMesure == 'T')
     else
         {$type = 'Temperature,Humidity';$HTime = 0;
         $titre1 = 'Humidité'; 
-        }
+        $cu1 = '%';
+        }       
     }
 else if($selectMesure == 'H')
     {$titre = 'Humidité';
-    $titre1 = 'Humidité';    
+    $titre1 = 'Humidité'; 
+    $cu1 = $cu = '%';
     if($inter >= 24*60*60)
          $type = 'min_hum,max_hum,date_min_hum,date_max_hum';
     else if($inter == 3*60*60)
@@ -191,11 +200,13 @@ else if($selectMesure == 'H')
     else 
         {$type = 'Humidity,CO2';$HTime = 0;
         $titre1 = 'CO2';$CO2 = 1;
+        $cu1 = 'ppm';
         }
     }    
 else if($selectMesure == 'C') 
     {$titre = 'CO2';
-    $titre1 = 'CO2';    
+    $titre1 = 'CO2';   
+    $cu1 = $cu = 'ppm';
     if($inter >= 24*60*60)
         $type = 'min_co2,max_co2,date_min_co2,date_max_co2';  
     else if($inter == 3*60*60)
@@ -204,6 +215,7 @@ else if($selectMesure == 'C')
         {$type = 'CO2,Temperature';$HTime = 0;
         $titre1 = 'Température';
         $T1 = 1;
+        $cu1 = tu();
         }
     $CO2 = 1;
     }     
@@ -239,23 +251,19 @@ $dateBeg = array($numCapteurs);
 $ii = array($numCapteurs);
 $keys = array($numCapteurs);
 $nmesures = array($numCapteurs);
-$Rain = $RainCumul = 0;
-
 
 $minDateBeg = $date_end;
 $numKeys = 0;
-
+$Rain = $RainCumul = 0;
+$Anemo = -1;
 for($i = 1;$i < $numCapteurs;$i++)
-    {if($modules_type[$i] == 'NAPlug' || $modules_type[$i] == 'NATherm1')
-	    {if($view[$i]){--$numview;$view[$i] = 0;}
-	    }
-	if($view[$i] && $modules_type[$i] == 'NAModule3')$Rain = $i;
-	if($modules_type[$i] == 'NAModule1')$ext = $i;
+    {if($view[$i] && $modules_type[$i] == 'NAModule3')$Rain = $i;
+	if($view[$i] && $modules_type[$i] == 'NAModule2')$Anemo = $i;
 	}
-	
-
+//pour qq fenêtre 2
 if($Rain && $numview == 1)
-    {$view[$ext] = 1;$numview = 2;}    
+    {$view[1] = 1;$numview = 2;}  
+    
 $view["numView"] = $numview;
 $viewModules[$stationNum] = $view;
 $_SESSION['viewModules'] = $viewModules;
@@ -290,7 +298,9 @@ if($view[0])
 for($i = 1;$i < $numCapteurs;$i++)
 	{if($view[$i] == 0)continue;
 	$moduleId = $modules_id[$i];
-	if($modules_type[$i] != 'NAModule3')
+    if($modules_type[$i] == 'NAModule2')   
+        {$type = 'GustStrength,GustAngle';
+        $HTime = 0;
         $params = array("scale" => $interval
         , "type" =>  $type
         , "date_begin" => $date_beg
@@ -298,10 +308,10 @@ for($i = 1;$i < $numCapteurs;$i++)
         , "optimize" => false
         , "device_id" => $device_id
         , "module_id" => $moduleId); 
-    else
+        }   
+    else if($modules_type[$i] == 'NAModule3')   
         {if($interval == 'max')$type = 'Rain';
         else $type = 'sum_rain';
-        $Rain = $i;
         $HTime = 0;
         $params = array("scale" => $interval
         , "type" =>  $type
@@ -311,6 +321,14 @@ for($i = 1;$i < $numCapteurs;$i++)
         , "device_id" => $device_id
         , "module_id" => $moduleId); 
         }
+	else
+        $params = array("scale" => $interval
+        , "type" =>  $type
+        , "date_begin" => $date_beg
+        , "date_end" => $date_end
+        , "optimize" => false
+        , "device_id" => $device_id
+        , "module_id" => $moduleId);        
     try
         {$mesure[$i] = $client->api("getmeasure", "POST", $params);
         }
@@ -338,9 +356,38 @@ if($numKeys == 0)
 /**************************************************************/
 $jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 function tip($temp,$tempDate)
-	{return sprintf('%4.1f (%s)',$temp,date("H:i",$tempDate)); 
+	{global $cu;
+	return sprintf("%4.1f%s (%s)",$temp,$cu,date("H:i",$tempDate)); 
+	}  
+function tipw($speed,$angle)
+	{$cu = tr(wu());
+	return sprintf('%d%s    %s',$speed,$cu,angleDir($angle)); 
 	}   
-
+function tipt($val)
+    {global $cu;
+    return sprintf('%d%s',$val,$cu); 
+    }
+	
+function angleDir($angle)
+    {if($angle > 22 && $angle <= 67)return '<span style="font-size:20px;" >&#8601;</span>';
+    else if($angle > 67 && $angle <= 112)return '<span style="font-size:20px;" >&larr;</span>';
+    else if($angle > 112 && $angle <= 157)return '<span style="font-size:20px;" >&#8598;</span>';
+    else if($angle > 157 && $angle <= 202)return '<span style="font-size:20px;" >&uarr;</span>';
+    else if($angle > 202 && $angle <= 247)return '<span style="font-size:20px;" >&#8601;</span>';
+    else if($angle > 247 && $angle <= 292)return '<span style="font-size:20px;" >&rarr;</span>';
+    else if($angle > 292 && $angle <= 337)return '<span style="font-size:20px;" >&#8600;</span>';
+    else return '<span style="font-size:20px;" >&darr;</span>';   
+/*    
+    if($angle > 22 && $angle <= 67)return 'NE <b>&#8601;</b>';
+    else if($angle > 67 && $angle <= 112)return 'E <b>&larr;</b>';
+    else if($angle > 112 && $angle <= 157)return 'SE <b>&#8598;</b>';
+    else if($angle > 157 && $angle <= 202)return 'S <b>&uarr;</b>';
+    else if($angle > 202 && $angle <= 247)return 'SO <b>&#8601;</b>';
+    else if($angle > 247 && $angle <= 292)return 'O <b>&rarr;</b>';
+    else if($angle > 292 && $angle <= 337)return 'NO <b>&#8600;</b>';
+    else return 'N <b>&darr;</b>';
+*/    
+    }
 echo("
     <script>
       google.load('visualization', '1', {packages:['corechart']});
@@ -381,16 +428,23 @@ echo("
             		$key = $keys[$j][$ii[$j]]; 
             		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j];           			
-            			    {if($T)
+            			    {if($j == $Anemo)
+                			    {$tmin0 = speed2($mesure[$j][$key][0]);
+                			    $tmin1 = $mesure[$j][$key][1];
+                			    }
+            			    else if($T)
             			        $tmin0 = degree2($mesure[$j][$key][0]);
                             else
             			        $tmin0 = $mesure[$j][$key][0];
+            			        
             			    if($HTime)
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
             			    else if($Rain)
             			        $tip = round($tmin0,1);
+            			    else if($j == $Anemo)
+            			        $tip = tipw($tmin0,$tmin1);            			        
             			    else
-            			        $tip = $tmin0;//tip($tmin0,$itime);
+            			        $tip = tipt($tmin0);
             			    if($Rain && $tmin0){$RainCumul += $tmin0;++$ndr;}
             			    }
             			}        		
@@ -412,10 +466,10 @@ if($Rain)
     --$numview;
     }
 if($numview == 0)
-    {$view[$ext] = 1;
+    {$view[1] = 1;
     $numview = 2;   
     }    
-
+$cu = $cu1;
     echo("
           var data1 = new google.visualization.DataTable();
           data1.addColumn('string', 'Date');
@@ -443,18 +497,24 @@ if($numview == 0)
 				echo("data1.addRow([\"$idate\"");
             	for($j = 0; $j < $numCapteurs;$j++)
             		{if($view[$j] == 0)continue;
-            		$tmin0 = $tip = '';   
+            		$tmin1 = $tmin0 = $tip = '';   
             		$key = $keys[$j][$ii[$j]];  
             		if(abs($key - $itime) < 2*$inter) //changement d'horaire
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
-            			    {if($T1)
-                			    $tmin0 = degree2($mesure[$j][$key][1]);
+            			    {if($j == $Anemo)
+                			    {$tmin0 = speed2($mesure[$j][$key][0]);
+                			    $tmin1 = $mesure[$j][$key][1];
+                			    }
+            			    else if($T1)
+                			    $tmin0 = degree2($mesure[$j][$key][1]);         			
                 			else
                 			    $tmin0 = $mesure[$j][$key][1];
               			    if($HTime)          			    
             			        $tip = tip($tmin0,$mesure[$j][$key][3]);
+            			    else if($j == $Anemo)
+            			        $tip = tipw($tmin0,$tmin1);
             			    else
-            			        $tip = $tmin0;//tip($tmin0,$itime);
+            			        $tip = tipt($tmin0);
             			    }            			    
             			}
             			        		
@@ -485,6 +545,9 @@ if($numview == 0)
                 {$RainCumul = intval($RainCumul*10+.5)/10;
                 $title = $nameStation.': '.tr('Pluviométrie') .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"." Total: ".$RainCumul." mm n: $ndr" ; 
                 }
+            if($Anemo > 0)
+                $title1 = $nameStation.': '.tr('Vent').'-'.tr($titre1).' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
+
             $paramR = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $paramR .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
             $paramR .= ',tooltip: {isHtml: true},bar: {groupWidth: "98%"}';

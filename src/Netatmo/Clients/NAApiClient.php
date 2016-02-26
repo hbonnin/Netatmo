@@ -1,91 +1,21 @@
 <?php
-require_once 'AppliCommonPublic.php';
 
-define('CURL_ERROR_TYPE', 0);
-define('API_ERROR_TYPE',1);//error return from api
-define('INTERNAL_ERROR_TYPE', 2); //error because internal state is not consistent
-define('JSON_ERROR_TYPE',3);
-define('NOT_LOGGED_ERROR_TYPE', 4); //unable to get access token
+namespace Netatmo\Clients;
 
-define('BACKEND_BASE_URI', "https://api.netatmo.net/");
-define('BACKEND_SERVICES_URI', "https://api.netatmo.net/api");
-define('BACKEND_ACCESS_TOKEN_URI', "https://api.netatmo.net/oauth2/token");
-define('BACKEND_AUTHORIZE_URI', "https://api.netatmo.net/oauth2/authorize");
+use Netatmo\Exceptions\NASDKException;
+use Netatmo\Exceptions\NAClientException;
+use Netatmo\Exceptions\NAApiErrorType;
+use Netatmo\Exceptions\NACurlErrorType;
+use Netatmo\Exceptions\NAJsonErrorType;
+use Netatmo\Exceptions\NAInternalErrorType;
+use Netatmo\Exceptions\NANotLoggedErrorType;
+use Netatmo\Common\NARestErrorCode;
 
-/**
- * OAuth2.0 Netatmo exception handling
- *
- * @author Originally written by Thomas Rosenblatt <thomas.rosenblatt@netatmo.com>.
- */
-class NAClientException extends Exception
-{
-    public $error_type;
-    /**
-    * Make a new API Exception with the given result.
-    *
-    * @param $result
-    *   The result from the API server.
-    */
-    public function __construct($code, $message, $error_type)
-    {
-        $this->error_type = $error_type;
-        parent::__construct($message, $code);
-    }
-}
+define('BACKEND_BASE_URI', "https://api.netatmo.com/");
+define('BACKEND_SERVICES_URI', "https://api.netatmo.com/api");
+define('BACKEND_ACCESS_TOKEN_URI', "https://api.netatmo.com/oauth2/token");
+define('BACKEND_AUTHORIZE_URI', "https://api.netatmo.com/oauth2/authorize");
 
-
-class NAApiErrorType extends NAClientException
-{
-    public $http_code;
-    public $http_message;
-    public $result;
-    function __construct($code, $message, $result)
-    {
-        $this->http_code = $code;
-        $this->http_message = $message;
-        $this->result = $result;
-        if(isset($result["error"]) && is_array($result["error"]) && isset($result["error"]["code"]))
-        {
-            parent::__construct($result["error"]["code"], $result["error"]["message"], API_ERROR_TYPE);
-        }
-        else
-        {
-            parent::__construct($code, $message, API_ERROR_TYPE);
-        }
-    }
-}
-
-class NACurlErrorType extends NAClientException
-{
-    function __construct($code, $message)
-    {
-        parent::__construct($code, $message, CURL_ERROR_TYPE);
-    }
-}
-
-class NAJsonErrorType extends NAClientException
-{
-    function __construct($code, $message)
-    {
-        parent::__construct($code, $message, JSON_ERROR_TYPE);
-    }
-}
-
-class NAInternalErrorType extends NAClientException
-{
-    function __construct($message)
-    {
-        parent::__construct(0, $message, INTERNAL_ERROR_TYPE);
-    }
-}
-
-class NANotLoggedErrorType extends NAClientException
-{
-    function __construct($code, $message)
-    {
-        parent::__construct($code, $message, NOT_LOGGED_ERROR_TYPE);
-    }
-}
 
 /**
  * OAuth2.0 Netatmo client-side implementation.
@@ -230,6 +160,18 @@ class NAApiClient
             }
         }
 
+        if(isset($config['scope']) && is_array($config['scope']))
+        {
+            foreach($config['scope'] as $scope)
+            {
+                trim($scope);
+            }
+
+            $scope = implode(' ', $config['scope']);
+            $this->setVariable('scope', $scope);
+            unset($config['scope']);
+        }
+
         // Other else configurations.
         foreach ($config as $name => $value)
         {
@@ -255,6 +197,7 @@ class NAApiClient
         CURLOPT_HTTPHEADER     => array("Accept: application/json"),
     );
 
+
     /**
     * Makes an HTTP request.
     *
@@ -279,6 +222,12 @@ class NAApiClient
         $opts = self::$CURL_OPTS;
         if ($params)
         {
+            if(isset($params['access_token']))
+            {
+                $opts[CURLOPT_HTTPHEADER][] = 'Authorization: Bearer ' . $params['access_token'];
+                unset($params['access_token']);
+            }
+
             switch ($method)
             {
                 case 'GET':
@@ -811,6 +760,32 @@ class NAApiClient
 
         return $url;
     }
+
+    public function getPartnerDevices()
+    {
+        return $this->api("partnerdevices", "POST");
+    }
+
+    /**
+    * @param string url : webhook url
+    * @param string app_type : type of webhook
+    * @brief register a webhook notification sent to your app for the current user
+    */
+    protected function addWebhook($url, $app_type)
+    {
+        $params = array('url' => $url, 'app_type' => $app_type);
+        $this->api('addwebhook', $params);
+    }
+
+    /**
+    * @param string $app_type: type of webhook
+    * @brief drop webhook notification for the current user
+    */
+    protected function dropWebhook($app_type)
+    {
+        $params = array('app_type' => $app_type);
+        $this->api('dropwebhook', $params);
+    }
 }
 /**
  * API Helpers
@@ -940,8 +915,10 @@ class NAApiHelper
             }
             $results[] = $result;
         }
-        return($results);    
+        return($results);
     }
 }
+
+
 
 ?>

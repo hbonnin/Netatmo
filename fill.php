@@ -1,21 +1,7 @@
 <?php
-require_once 'AppliCommonPublic.php';
-/*
- function drawGauge($width,$val,$zh = '1')
-    // image 490x32
-    {$h = intval($zh*32*$width/490+.5);
-    $pos = intval($width * ($val/100));
-    $txt = "<div style='height:"."$h"."px;'>";
-    $txt .= "<div><img src='icone/gauge_full.png' alt='full' width=\"$width\" height=\"$h\" style=\"position:absolute;\"/>\n";
-    $txt .= "</div>\n"; 
-    $sty = " position:relative; background-size:${width}px ${h}px ;";
-    $sty .= " background-image:url(icone/gauge_empty.png); background-repeat:no-repeat;";
-    $sty .= " background-position: ${pos}px 0px; width:${width}px; height:${h}px;";
-    $txt .="<div style='"."$sty"."'>\n";
-    $txt .="</div></div>\n";
-    return $txt;
-    }   
-*/   
+require_once 'initClient.php';
+require_once 'translate.php';
+
 function dewpoint($t,$h) // input in celsius
     {$dew = $t - (14.55 + 0.114 * $t) * (1 - (0.01 * $h)) - pow((2.5 + 0.007 * $t) * (1 - (0.01 * $h)), 3) - (15.9 + 0.117 * $t) * pow(1 - (0.01 * $h), 14);
     $dew = degree2($dew);
@@ -35,13 +21,48 @@ function humidex($t,$dew) // input in celsius
     $hu = $t+0.5555*(6.11*exp(5417.7530*(1/273.16-1/($dew)))-10);
     return round(degree2($hu),0);
     }
-function fill($stationId,$devices,$mydevices,$dashboard)
-	{$Temperature_unit = $_SESSION['Temperature_unit'];
-	$cu = $Temperature_unit ? '°':'F';
-	$station = $devices["station_name"];
-	$int_name = $devices["module_name"];
-	$ext_name = $devices["modules"][0]["module_name"];
-	$titre = "({$mydevices['latlng']['latitude']}°,{$mydevices['latlng']['longitude']}°,{$mydevices['latlng']['altitude']}m)";
+function drawGauge($width,$val,$zh = '1')
+    // image 490x32
+    {$h = intval($zh*32*$width/490+.5);
+    $pos = intval($width * ($val/100));
+    $txt = "<div style='height:"."$h"."px;'>";
+    $txt .= "<div><img src='icone/gauge_full.png' alt='full' width=\"$width\" height=\"$h\" style=\"position:absolute;\"/>\n";
+    $txt .= "</div>\n"; 
+    $sty = " position:relative; background-size:${width}px ${h}px ;";
+    $sty .= " background-image:url(icone/gauge_empty.png); background-repeat:no-repeat;";
+    $sty .= " background-position: ${pos}px 0px; width:${width}px; height:${h}px;";
+    $txt .="<div style='"."$sty"."'>\n";
+    $txt .="</div></div>\n";
+    return $txt;
+    }      
+function fill($device)
+	{
+	// 0-Ext -1-Int
+	$dashboard[0] = $device['modules'][0]['dashboard_data'];
+	$dashboard[-1] = $device['dashboard_data'];
+	
+	$pluvio = 0;
+	if(isset($device['modules'][10]))
+	    {$pluvio = 1;
+	    $dashboard[1] = $device['modules'][10]['dashboard_data'];
+	    }
+	$anemo = 0;
+	if(isset($device['modules'][11]))
+	    {$anemo = 2;
+	    $dashboard[2] = $device['modules'][11]['dashboard_data'];
+	    }
+	$numModules = $device['modules']['num']; //nombre total de modules
+	$numModules4 = $device['modules']['numMod4']; //nombre de modules inetrieurs supplementaire
+	
+	$Temperature_unit = $_SESSION['Temperature_unit'];
+	$cu = tu(); $pu = pru();
+	$station = $device["station_name"];
+	$int_name = $device["module_name"];
+	$ext_name = $device["modules"][0]["module_name"];
+	$latitude = $device['place']['location'][1];
+	$longitude = $device['place']['location'][0]; 
+	$atitude = $device['place']['altitude'];
+	$titre = "($latitude °,$longitude °,$altitude m)";
     $drecent = $dashboard[-1]["time_utc"];
     $drecent_ext = $dashboard[0]["time_utc"];
 	$dateInt = date('d/m/Y H:i',$drecent);
@@ -63,23 +84,24 @@ function fill($stationId,$devices,$mydevices,$dashboard)
     $humExt = $dashboard[0]["Humidity"];
     $co2 = $dashboard[-1]["CO2"];
     $db = $dashboard[-1]["Noise"];
-    $pres = intval($dashboard[-1]["Pressure"] + .5);
+    $pres = intval(pressure2($dashboard[-1]["Pressure"]) + .5);
     $dew = dewpoint($textcelsius,$humExt);
     $heati = heatIndex($textcelsius,$humExt);
     $hu = humidex($textcelsius,$dew);
+   
     if(!$recentData)$tint = $text ='--';
     if(!$recentData_ext)$text ='--';
-    $numModules = count($dashboard)-1;
-    $pluvio = $mydevices["pluviometre"];
+    
     if($pluvio)
-            {$rain24 = $dashboard[$pluvio]["sum_rain_24"];
-            $rain24 = intval($rain24*10+.5)/10;
-            $rain1 = $dashboard[$pluvio]["sum_rain_1"];
-            $rain1 = intval($rain1*10+.5)/10;
-            $rain = $dashboard[$pluvio]["Rain"];
-            $rain = intval($rain*10+.5)/10;
-            $rainTitle = 'r: '.$rain.' 1h:'.$rain1.'mm 24h:'.$rain24.'mm';
-            }
+        {$rain24 = $dashboard[$pluvio]["sum_rain_24"];
+        $rain24 = intval($rain24*10+.5)/10;
+        $rain1 = $dashboard[$pluvio]["sum_rain_1"];
+        $rain1 = intval($rain1*10+.5)/10;
+        $rain = $dashboard[$pluvio]["Rain"];
+        $rain = intval($rain*10+.5)/10;
+        $rainTitle = 'r: '.$rain.' 1h:'.$rain1.'mm 24h:'.$rain24.'mm';
+        }
+            
 	echo("		
 	<table class='icone'>
 	<tr>
@@ -108,7 +130,7 @@ function fill($stationId,$devices,$mydevices,$dashboard)
 	</tr><tr>
 	
 	<td class='pl'>$tpression</td>
-	<td class='p' title=\"$dateInt\">{$pres} </td><td class='punit'>mb</td>
+	<td class='p' title=\"$dateInt\">{$pres} </td><td class='punit'>$pu</td>
 	<td class='e'></td>
 	<td class='nl'>$tson</td>
 	<td class='n' title=\"$dateInt\">$db</td><td class='nunit'> db</td>
@@ -116,54 +138,51 @@ function fill($stationId,$devices,$mydevices,$dashboard)
 	");
 
     // WiFi
-	$wifi = $devices["wifi_status"];
-	$wifiTime = $devices["last_status_store"];
-	$wifiT = $wifi. '  '.date("d/m/y H:i",$devices["last_status_store"]);
-	if( $wifiTime < time() - 60*60)$wifi = 100;
+	$wifi = $device["wifi_status"];
+	//$wifiTime = $device["last_status_store"];
+	//$wifiT = $wifi. '  '.date("d/m/y H:i",$device["last_status_store"]);
+	//if( $wifiTime < time() - 60*60)$wifi = 100;
 	$wifiImage = getWiFiImage($wifi);
-	$firmware = $devices["firmware"];	
-	if(isset($devices['last_upgrade']))
-        $firmwareDate = date("d/m/Y",$devices['last_upgrade']); 
+	$firmware = $device["firmware"];	
+	if(isset($device['last_upgrade']))
+        $firmwareDate = date("d/m/Y",$device['last_upgrade']); 
     else 
         $firmwareDate = 'unknown';
-	// RADIO
-    $numStations = count($dashboard)-1;
-    for($j = 0;$j < $numStations;$j++)
-        $nameStations[$j] = $mydevices["modules"][$j]["module_name"];
-    $nameInt = $mydevices["module_name"];
- 
-$tinfo = tr("Autres informations");
-$train = tr("Pluie");
-if($pluvio == -2)
-    echo("
-        <tr><td class='rl'></td><td class='r'></td><td class='cunit'></td><td class='e'></td>
-        ");
-else
-    echo("
-        <tr><td class='rl'>$train</td><td class='r' title=\"$rainTitle\"> $rain24</td><td class='cunit'>mm</td><td class='e'></td>   
-        ");
-echo("  <td class='tooltip' colspan='3'>
-		<a href='#' class='tooltip'>
-  		$tinfo:		
-        <div >
-        <table class='info'>
-        <tr><td style='width:90px;'>$nameInt</td>
-        <td colspan='2' style='text-align:center;'><img title='$wifiT' src=$wifiImage ALT='wifi' height='13' /></td>
-        <td title=\"$firmwareDate\">$firmware</td>
-        </tr>
-"); 
-
-    for($i = 0;$i < $numStations;$i++)
-        {$name = $nameStations[$i];
-        $last_message = date("d/m/y H:i",$devices['modules'][$i]['last_message']);
-        $radio = $devices['modules'][$i]['rf_status'];
+        
+	// RADIO 
+    $tinfo = tr("Autres informations");
+    $train = tr("Pluie");
+    if($pluvio == 0)
+        echo("
+            <tr><td class='rl'></td><td class='r'></td><td class='cunit'></td><td class='e'></td>
+            ");
+    else
+        echo("
+            <tr><td class='rl'>$train</td><td class='r' title=\"$rainTitle\"> $rain24</td><td class='cunit'>mm</td><td class='e'></td>   
+            ");
+    $nameInt = $device["module_name"];
+    echo("  <td class='tooltip' colspan='3'>
+            <a href='#' class='tooltip'>
+            $tinfo:		
+            <div >
+            <table class='info'>
+            <tr><td style='width:90px;'>$nameInt</td>
+            <td colspan='2' style='text-align:center;'><img  src=$wifiImage ALT='wifi' height='13' /></td>
+            <td title=\"$firmwareDate\">$firmware</td>
+            </tr>
+    "); 
+    for($i = 0;$i <= 11;$i++)
+        {$isset = isset($device["modules"][$i]);
+        if(!isset($device["modules"][$i]))continue;
+        $name = $device["modules"][$i]["module_name"];
+        $last_message = date("d/m/y H:i",$device['modules'][$i]['last_message']);
+        $radio = $device['modules'][$i]['rf_status'];
         $radioImage = getRadioImage($radio);
-        $battery = $devices['modules'][$i]['battery_vp']; 
-        $batteryType = $devices['modules'][$i]['type']; 
-        $batteryImage = getBatteryImage($battery,$batteryType);
-        $firmware = $devices['modules'][$i]['firmware']; 
+        $battery = $device['modules'][$i]['battery_percent']; 
+        $batteryImage = getBatteryImage($battery);
+        $firmware = $device['modules'][$i]['firmware']; 
         $radioT   = $radio. ' '. $last_message;
-        $batteryT = $battery. ' '. $last_message;
+        $batteryT = $battery.'%  '. $last_message;
         echo("<tr>
         <td>$name</td>
         <td style='text-align:center;'><img title='$radioT' src=$radioImage ALT='signal' height='13' /></td>
@@ -178,39 +197,28 @@ echo("
 	</a> </td>  	
 	</tr></table>
 ");	
+
 }
 
 function getWiFiImage($wifi)
     {if($wifi >= 100)return 'icone/wifi_unknown.png';
-    if($wifi >= NAWifiRssiThreshold::RSSI_THRESHOLD_0) return 'icone/wifi_low.png';    //86
-    if($wifi >= NAWifiRssiThreshold::RSSI_THRESHOLD_1) return 'icone/wifi_medium.png'; //71
-    if($wifi >= NAWifiRssiThreshold::RSSI_THRESHOLD_2) return 'icone/wifi_high.png';   //56 
+    if($wifi >= Netatmo\Common\NAWifiRssiThreshold::RSSI_THRESHOLD_0) return 'icone/wifi_low.png';    //86
+    if($wifi >= Netatmo\Common\NAWifiRssiThreshold::RSSI_THRESHOLD_1) return 'icone/wifi_medium.png'; //71
+    if($wifi >= Netatmo\Common\NAWifiRssiThreshold::RSSI_THRESHOLD_2) return 'icone/wifi_high.png';   //56 
     return 'icone/wifi_full.png';
     } 
 function getRadioImage($radio)
-    {if($radio >= NARadioRssiTreshold::RADIO_THRESHOLD_0) return 'icone/signal_verylow.png';//90
-    if($radio >= NARadioRssiTreshold::RADIO_THRESHOLD_1) return 'icone/signal_low.png';//80
-    if($radio >= NARadioRssiTreshold::RADIO_THRESHOLD_2) return 'icone/signal_medium.png';//70
-    if($radio >= NARadioRssiTreshold::RADIO_THRESHOLD_3) return 'icone/signal_high.png';//60
+    {if($radio >= Netatmo\Common\NARadioRssiTreshold::RADIO_THRESHOLD_0) return 'icone/signal_verylow.png';//90
+    if($radio >= Netatmo\Common\NARadioRssiTreshold::RADIO_THRESHOLD_1) return 'icone/signal_low.png';//80
+    if($radio >= Netatmo\Common\NARadioRssiTreshold::RADIO_THRESHOLD_2) return 'icone/signal_medium.png';//70
+    if($radio >= Netatmo\Common\NARadioRssiTreshold::RADIO_THRESHOLD_3) return 'icone/signal_high.png';//60
     return 'icone/signal_full.png';
-    }  
-function getBatteryImage($battery,$batteryType)
-    {switch($batteryType)
-        {case "NAModule4":
-            {if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_0) return "icone/battery_full.png";
-             if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_1) return "icone/battery_high.png";
-             if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_2) return "icone/battery_medium.png";
-             if($battery >= NABatteryLevelIndoorModule::INDOOR_BATTERY_LEVEL_3) return "icone/battery_low.png";   
-            return "icone/battery_verylow.png";
-            }
-        default: 
-            {if($battery >= NABatteryLevelModule::BATTERY_LEVEL_0) return "icone/battery_full.png";
-            if($battery >= NABatteryLevelModule::BATTERY_LEVEL_1) return "icone/battery_high.png";
-            if($battery >= NABatteryLevelModule::BATTERY_LEVEL_2) return "icone/battery_medium.png";
-            if($battery >= NABatteryLevelModule::BATTERY_LEVEL_3) return "icone/battery_low.png";   
-            return "icone/battery_verylow.png";
-            }
-        }
-
+    }     
+function getBatteryImage($battery)
+    {if($battery >= 80) return "icone/battery_full.png";
+    if($battery >= 60) return "icone/battery_high.png";
+    if($battery >= 40) return "icone/battery_medium.png";
+    if($battery >= 5) return "icone/battery_low.png";   
+    return "icone/battery_verylow.png";
     }
-?>
+

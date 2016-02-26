@@ -9,20 +9,21 @@
 	<link type='text/css' rel='stylesheet'  href='style.css'>
 
 <?php
-require_once 'NAApiClient.php';
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
+
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 require_once 'translate.php';
 
 session_start();
-initClient();
+checkToken();
 $timezone = $_SESSION['timezone'];
 date_default_timezone_set($timezone);
 $client = $_SESSION['client'];
 $mydevices = $_SESSION['mydevices'];
-$Temperature_unit = $_SESSION['Temperature_unit'];
-$cu = $Temperature_unit ? '°':' F';
+$cu = tu(); $pu = pru();
 date_default_timezone_set("UTC");
 
 if(isset($_POST["date0"]))  
@@ -128,7 +129,7 @@ else if($selectMesure == 'H')
 else if($selectMesure == 'P')
     {$type = 'min_pressure,max_pressure,date_min_pressure,date_max_pressure';
     $titre = 'Pression ';
-    $cu = 'mb';
+    $cu = $pu;
     }   
 
  
@@ -230,10 +231,12 @@ echo("
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
             			if($selectMesure == 'T')
             			    $tmin0 = degree2($mesure[$j][$key][0]);
+            			else if($selectMesure == 'P')
+            			    $tmin0 = pressure2($mesure[$j][$key][0]);           			    
                         else
             			    $tmin0 = $mesure[$j][$key][0];
             			if($tmin[$j] > $tmin0)
-            			    {$tmin[$j] = $tmin0; 
+            			    {$tmin[$j] = intval($tmin0*10 +.5)/10;
             			    $itmin[$j] = $i;
             			    }
             			$tip = tip($tmin0,$mesure[$j][$key][2]);
@@ -288,10 +291,12 @@ echo("
             			{if( $ii[$j] < $nmesures[$j] -1)++$ii[$j]; 
             			if($selectMesure == 'T')
             			    $tmin0 = degree2($mesure[$j][$key][1]);
+            			else if($selectMesure == 'P')
+            			    $tmin0 = pressure2($mesure[$j][$key][1]);           			                			    
                         else
             			    $tmin0 = $mesure[$j][$key][1];
             			if($tmin[$j] < $tmin0)
-            			    {$tmin[$j] = $tmin0; 
+            			    {$tmin[$j] = intval($tmin0*10 +.5)/10;
             			    $itmin[$j] = $i;
             			    }
             			    

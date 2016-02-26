@@ -10,7 +10,9 @@
     <link rel='stylesheet' type='text/css'  href='calendrierBleu.css' >
 
 <?php
-require_once 'NAApiClient.php';
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
+
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
@@ -18,13 +20,13 @@ require_once 'translate.php';
 
 session_start(); 
 if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
-initClient();
+checkToken();
 $timezone = $_SESSION['timezone'];
 date_default_timezone_set($timezone);
 
 $client = $_SESSION['client'];
-$Temperature_unit = $_SESSION['Temperature_unit'];
-$cu = $Temperature_unit ? '°':' F';
+
+$cu = tu();$pu = pru();
 if(isset($_POST['station'])) 
     $stationId = $_POST['station'];
 else if(isset($_POST['selectStation']))
@@ -268,6 +270,7 @@ if($reloadData)
                 , "date_end" => $date_end
                 , "optimize" => false
                 , "device_id" => $device_id); 
+ 
     try
         {$meas1 = $client->api("getmeasure", "POST", $params); 
         }
@@ -294,8 +297,7 @@ $dateLoadData = date("H:i:s ",$timeLoadData);
 
 //$jour = array("Dim","Lun","Mar","Mer","Jeu","Ven","Sam"); 
 $visupt = 0;
-$Temperature_unit = $_SESSION['Temperature_unit'];
-$cu = $Temperature_unit ? '°':'F';
+$cu = tu();
 $titleExt = "'no measures'";
 echo("
 	<script>
@@ -347,23 +349,23 @@ function tipHTMLext($idate,$datemin,$datemax,$tmax,$tmin,$min_hum,$max_hum,$date
 	. '</table>';
 	}
 function tipHTMLint6($idate,$tmax,$tmin,$hum,$co,$pres,$noise) // 1day/1week
-	{global $cu;
+	{global $cu,$pu;
 	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>T max</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>T min</i></td><td style=\" color: blue;\"><b>' . sprintf('%4.1f',$tmin) . "$cu</b></td></tr>"
 	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
-	. '<tr><td><i>'.tr("Pression").'</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
+	. '<tr><td><i>'.tr("Pression").'</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . " $pu</b></td></tr>"
 	. '<tr><td><i>'.tr("Bruit").' max</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
 	. '</table>';
 	}
 function tipHTMLint5($idate,$tmax,$hum,$co,$pres,$noise) // 5 minutes, 30 minutes, 3 heures
-	{global $cu;
+	{global $cu,$pu;
 	return '<table style="padding:4px;"><caption><b>' . $idate . '</b></caption>'
 	. '<tr><td><i>'.tr("Température").'</i></td><td style=\" color: red;\"><b>' . sprintf('%4.1f',$tmax) . "$cu</b></td></tr>"
 	. '<tr><td><i>'.tr("Humidité").'</i></td><td style=\" color: green;\"><b>' . sprintf('%d',$hum) . '%</b></td></tr>'
 	. '<tr><td><i>CO2</i></td><td style=\" color: orange;\"><b>' . sprintf('%d',$co) . ' ppm</b></td></tr>'
-	. '<tr><td><i>'.tr("Pression").'</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . ' mb</b></td></tr>'
+	. '<tr><td><i>'.tr("Pression").'</i></td><td style=\" color: black;\"><b>' . sprintf('%d',$pres) . " $pu</b></td></tr>"
 	. '<tr><td><i>'.tr("Bruit").'</i></td><td style=\" color: magenta;\"><b>' . sprintf('%d',$noise) . ' db</b></td></tr>'
 	. '</table>';
 	}
@@ -519,7 +521,7 @@ if($inter > 3*60*60)	//1week,1day	tooltip -> annotationText
 			$MaxPression = 0;
 			$MinPression = 2000;
 			for($i=0; $i < $num;++$i)
-				{$pres = $meas1[$keys[$i]][4];
+				{$pres = pressure2($meas1[$keys[$i]][4]);
 				$MaxPression = max($MaxPression,$pres);
 				$MinPression = min($MinPression,$pres);
 				}	
@@ -539,7 +541,7 @@ if($inter > 3*60*60)	//1week,1day	tooltip -> annotationText
             		$tmax = degree2($meas1[$key][1]);
                 	$hum = $meas1[$key][2];
                 	$co = $meas1[$key][3];
-                	$pres = intval($meas1[$key][4]+.5);
+                	$pres = pressure2($meas1[$key][4]);
                 	$noise = $meas1[$key][5];                	
  //$req1 = "min_temp,max_temp,Humidity,CO2,min_pressure,max_noise";		
  //            		$iidate = tr($jour[$day]) . date(" d/m/y",$key) . '&nbsp &nbsp &nbsp &nbsp' . date("H:i",$key);            		
