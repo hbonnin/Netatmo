@@ -62,6 +62,17 @@ function speed2($speed)
         default: return -1;        
         }
     }
+ function angleDir($angle)
+    {if($angle > 22 && $angle <= 67)return '&#8601;';
+    else if($angle > 67 && $angle <= 112)return '&#8598;';
+    else if($angle > 112 && $angle <= 157)return '&#8598;';
+    else if($angle > 157 && $angle <= 202)return '&uarr;';
+    else if($angle > 202 && $angle <= 247)return '&#8601;';
+    else if($angle > 247 && $angle <= 292)return '&rarr;';
+    else if($angle > 292 && $angle <= 337)return '&#8600;';
+    else return '&darr;';  
+    }
+    
 $pressureUnit = array(' mbar',' inHg',' mmHg');   
 function pru()
     {global $pressureUnit;
@@ -231,6 +242,9 @@ function loadData($client)
     }
 function initClient()
     {checkToken();
+    if(isset($_SESSION['tinitClient']) &&  time() - $_SESSION['tinitClient'] < 5*60 )return;
+    $_SESSION['tinitClient'] = time();
+    logMsg("initClient");
     $data = loadData($_SESSION['client']);  
     $numStations = createMyDevices($data);  
     createViewmodules($numStations);  
@@ -253,7 +267,8 @@ function login($client,$cook)
         $_SESSION['timeToken'] = time();
         saveTokenCookie($_SESSION['refresh_token']); 
         }
-    $_SESSION['client'] = $client;   
+    $_SESSION['client'] = $client;  
+    initClient();
     echo "<script>";
     echo "top.location.href = 'iconesExt.php';";
     echo "</script>"; 
@@ -311,7 +326,7 @@ function refreshToken($firstTime = 1)
  function checkToken()
     {if(isset($_SESSION['timeToken']))
 		{$time_left = $_SESSION['timeToken'] + $_SESSION['expires_in'] - time();
-		logMsg("timeLeft:$time_left");
+		//logMsg("timeLeft:$time_left");
 		if($time_left < 5*60) 
 			refreshToken(0);
 		return $time_left;
