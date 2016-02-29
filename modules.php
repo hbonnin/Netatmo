@@ -361,33 +361,14 @@ function tip($temp,$tempDate)
 	}  
 function tipw($speed,$angle)
 	{$cu = tr(wu());
-	return sprintf('%d%s    %s',$speed,$cu,angleDir($angle)); 
+	$ad = '<span style="font-size:20px;" >'.angleDir($angle).'</span>';
+	return sprintf('%d%s    %s',$speed,$cu,$ad); 
 	}   
 function tipt($val)
     {global $cu;
     return sprintf('%d%s',$val,$cu); 
     }
-	
-function angleDir($angle)
-    {if($angle > 22 && $angle <= 67)return '<span style="font-size:20px;" >&#8601;</span>';
-    else if($angle > 67 && $angle <= 112)return '<span style="font-size:20px;" >&larr;</span>';
-    else if($angle > 112 && $angle <= 157)return '<span style="font-size:20px;" >&#8598;</span>';
-    else if($angle > 157 && $angle <= 202)return '<span style="font-size:20px;" >&uarr;</span>';
-    else if($angle > 202 && $angle <= 247)return '<span style="font-size:20px;" >&#8601;</span>';
-    else if($angle > 247 && $angle <= 292)return '<span style="font-size:20px;" >&rarr;</span>';
-    else if($angle > 292 && $angle <= 337)return '<span style="font-size:20px;" >&#8600;</span>';
-    else return '<span style="font-size:20px;" >&darr;</span>';   
-/*    
-    if($angle > 22 && $angle <= 67)return 'NE <b>&#8601;</b>';
-    else if($angle > 67 && $angle <= 112)return 'E <b>&larr;</b>';
-    else if($angle > 112 && $angle <= 157)return 'SE <b>&#8598;</b>';
-    else if($angle > 157 && $angle <= 202)return 'S <b>&uarr;</b>';
-    else if($angle > 202 && $angle <= 247)return 'SO <b>&#8601;</b>';
-    else if($angle > 247 && $angle <= 292)return 'O <b>&rarr;</b>';
-    else if($angle > 292 && $angle <= 337)return 'NO <b>&#8600;</b>';
-    else return 'N <b>&darr;</b>';
-*/    
-    }
+
 echo("
     <script>
       google.load('visualization', '1', {packages:['corechart']});
