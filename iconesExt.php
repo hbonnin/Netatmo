@@ -117,7 +117,6 @@ function getTimeOffset($localZone)
     $offset = ($dateTimeZoneLocal->getOffset($dateTimeGmt))/3600;
     return $offset; 
     }      
-    
 $slabel = array($numStations);
 $label = array($numStations);
 
@@ -241,13 +240,13 @@ for($i = 0;$i < $numStations;$i++)
     // station extérieure
     $temp = degree2($dataExt["Temperature"]);
 	$hum = $dataExt["Humidity"];
-	$pres = intval($dataInt["Pressure"] + .5);
+	$pres = intval(pressure2($dataInt["Pressure"]) + .5);
 	$tabEXT = "<tr><td class='name'>$ext_name</td> <td></td><td $red>$temp</td> <td $green>$hum</td> <td></td> <td>$pres</td></tr>";	
-    $cu = tu();
+    $cu = tu(); $pu = pru(); $vu = wu();
     // Infos
     $label[$i]  = "<table class='bulle' style='width:260px;'>";
     $label[$i] .=  "<caption > $p </caption>";
-    $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>Ttu()</th> <th>H%</th> <th>Co2</th> <th>Pmb</th> <th>Db</th><th>R1h</th><th>R24h</th></tr>";
+    $label[$i] .=  "<tr><th style='width:60px;''></th><th></th> <th>T</th> <th>H</th> <th>Co2</th> <th>P</th> <th>Db</th><th>R1h</th><th>R24h</th></tr>";
     $label[$i] .=   "$tabINT  $tabEXT";
 
     // mesures des modules de la sation $i
@@ -268,6 +267,16 @@ for($i = 0;$i < $numStations;$i++)
             $rain1 = $rain24 = ' ';
             }
         $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td> <td $red>$temp</td> <td $green>$hum</td> <td $orange>$co2</td> <td></td> <td></td><td $green>$rain1</td><td $green>$rain24</td></tr>";        
+        }
+        
+    if(isset($device["modules"][11])) 
+        {$data = $device['modules'][11]['dashboard_data'];            
+        $name = $device["modules"][11]["module_name"];
+        $arr = explode(" ",$name);
+		$name = substr($arr[0],0,15);
+        $windspeed = speed2($data["GustStrength"]); 
+        $windangle = angleDir($data["GustAngle"]);   
+        $label[$i] .= "<tr><td class='name'>$name</td><td>&nbsp;</td><td colspan='2 '> $windspeed $vu</td><td> $windangle </td><td> </td></tr>";
         }
     $label[$i] .= '</table>';
     
