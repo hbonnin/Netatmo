@@ -51,5 +51,4 @@ $trans = array ('Phase lunaire'  => array ('Moon phase'),
                 "Quitter" => array ('Logout'),
                 "Go" => array ('Go')
                 );
-
-?>                
+?>               

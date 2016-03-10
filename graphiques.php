@@ -1,3 +1,8 @@
+<?php
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
+session_start(); 
+?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
   <head>
   	<title>Stations Netatmo</title>
@@ -10,15 +15,12 @@
     <link rel='stylesheet' type='text/css'  href='calendrierBleu.css' >
 
 <?php
-define('__ROOT__', dirname(__FILE__));
-require_once (__ROOT__.'/src/Netatmo/autoload.php');
-
 require_once 'Config.php';
 require_once 'initClient.php';
 require_once 'menus.php';
 require_once 'translate.php';
 
-session_start(); 
+
 if(!isset($_POST) && !isset($_GET)){echo " No POST or GET";return;}
 checkToken();
 $timezone = $_SESSION['timezone'];

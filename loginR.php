@@ -2,9 +2,10 @@
 define('__ROOT__', dirname(__FILE__));
 require_once (__ROOT__.'/src/Netatmo/autoload.php');
 require_once 'Config.php';
+session_start(); 
 require_once 'initClient.php';
 
-session_start(); 
+
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>

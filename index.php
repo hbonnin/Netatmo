@@ -46,6 +46,7 @@ $_SESSION['client'] = $client;
 </head>
 
 <body>
+
 <h3>Please wait</h3>
 <form name="xxx" method="post" action="loginR.php">
 <input type="hidden" name="refresh_token" value="aaa" >

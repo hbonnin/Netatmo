@@ -285,15 +285,25 @@ for($i = 0;$i < $numStations;$i++)
 	}	
 
 ?>
-<script
-<?php   
+
+
+<?php
+//echo "https://maps.googleapis.com/maps/api/js?v=3.exp&amp;key=$google_key&amp;libraries=places&amp;sensor=false";
+//echo "https://maps.googleapis.com/maps/api/js?v=3.exp&amp;libraries=places&amp;sensor=false";
+?>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;libraries=places&amp;sensor=false"></script>
+
+<!--
+//  AIzaSyAFMnkdAEF8o9eB5vpimtjGBMbvsCFLres 
+//<?php   
 //	if($use_google_key == 1)
 //		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key'>");
 //		echo("src='https://maps.googleapis.com/maps/api/js?libraries=places?key=$google_key&sensor=false'>");
 //	else
-		echo("src='https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false'>");
-?>
-</script>
+		//echo("src='https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false'>");
+//		echo("src='https://maps.googleapis.com/maps/api/js?v=3.exp&amp;signed_in=true&amp;libraries=places'>");
+//?>
+-->
 <script>
     //var cloudLayer;
     var trafficlayer;
@@ -341,7 +351,8 @@ for($i = 0;$i < $numStations;$i++)
   		echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   		}
 
-?> 				
+?> 		
+
 	for(i = 0;i < num;i++)
   		LatLng[i] = new google.maps.LatLng(lat[i],lng[i]);
   		

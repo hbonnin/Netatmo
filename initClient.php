@@ -111,6 +111,7 @@ function saveTokenCookie($refresh_token)
 function init($numStations)
     {if(!isset($_SESSION['init']))
         {$_SESSION['init'] = 1;
+        date_default_timezone_set($_SESSION['timezone']);
         $_SESSION['timeLoad'] = time();
         $_SESSION['stationId'] = 0;
         $_SESSION['stationIdP'] = -1;
@@ -246,6 +247,7 @@ function initClient()
     $_SESSION['tinitClient'] = time();
     logMsg("initClient");
     $data = loadData($_SESSION['client']);  
+    //$_SESSION['data'] = $data;  
     $numStations = createMyDevices($data);  
     createViewmodules($numStations);  
     init($numStations); 
@@ -333,5 +335,4 @@ function refreshToken($firstTime = 1)
 		}
 	else logout();
     }	
-   
 ?>

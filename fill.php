@@ -217,7 +217,7 @@ function getRadioImage($radio)
 function getBatteryImage($battery)
     {if($battery >= 80) return "icone/battery_full.png";
     if($battery >= 60) return "icone/battery_high.png";
-    if($battery >= 40) return "icone/battery_medium.png";
+    if($battery >= 20) return "icone/battery_medium.png";
     if($battery >= 5) return "icone/battery_low.png";   
     return "icone/battery_verylow.png";
     }

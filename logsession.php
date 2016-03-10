@@ -1,8 +1,8 @@
 <?php 
 define('__ROOT__', dirname(__FILE__));
 require_once (__ROOT__.'/src/Netatmo/autoload.php');
-require_once 'initClient.php';
 session_start();
+require_once 'initClient.php';
 ?>
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
@@ -36,7 +36,8 @@ if(isset($_SESSION['ex']))
             //case hist:
             //case client:
             //case lang:
-            //case mydevices:
+            //case data:
+            case mydevices:
                 echo "<br>$key: "; 
                 print_r($_SESSION[$key]);
                 break;
