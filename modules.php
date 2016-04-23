@@ -363,7 +363,7 @@ function tip($temp,$tempDate)
 function tipw($speed,$angle)
 	{$cu = tr(wu());
 	$ad = '<span style="font-size:20px;" >'.angleDir($angle).'</span>';
-	return sprintf('%d%s    %s',$speed,$cu,$ad); 
+	return sprintf('%d%s    %s (%d)',$speed,$cu,$ad,$angle); 
 	}   
 function tipt($val)
     {global $cu;

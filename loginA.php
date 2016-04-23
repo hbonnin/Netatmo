@@ -16,12 +16,14 @@
 </html>
 
 <?php
+
 define('__ROOT__', dirname(__FILE__));
 require_once (__ROOT__.'/src/Netatmo/autoload.php');
 require_once 'Config.php';
+session_start(); 
+
 require_once 'initClient.php';
  
-session_start(); 
 $config = array("client_id" => $client_id,
                 "client_secret" => $client_secret,
                 "scope" => Netatmo\Common\NAScopes::SCOPE_READ_STATION);
@@ -38,8 +40,12 @@ else if(isset($_GET['start']))
     {
     //Ok redirect to Netatmo Authorize URL
     $redirect_url = $client->getAuthorizeUrl();
-    header("HTTP/1.1 ". 302);
-    header("Location: " . $redirect_url);
+    //header("HTTP/1.1 ". 302);
+    //header("Location: " . $redirect_url);
+    echo "<script>";
+    echo("path = \"$redirect_url\";\n");
+    echo "top.location.href=path;";
+    echo "</script>";    
     logout();
     }
 ?>

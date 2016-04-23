@@ -63,14 +63,26 @@ function speed2($speed)
         }
     }
  function angleDir($angle)
-    {if($angle > 22 && $angle <= 67)return '&#8601;';
-    else if($angle > 67 && $angle <= 112)return '&#8598;';
-    else if($angle > 112 && $angle <= 157)return '&#8598;';
+    {
+    
+    if($angle > 22 && $angle <= 67)return '&swarr;';
+    else if($angle > 67 && $angle <= 112)return '&larr;';
+    else if($angle > 112 && $angle <= 157)return '&nwarr;';
     else if($angle > 157 && $angle <= 202)return '&uarr;';
-    else if($angle > 202 && $angle <= 247)return '&#8601;';
+    else if($angle > 202 && $angle <= 247)return '&nearr;';
     else if($angle > 247 && $angle <= 292)return '&rarr;';
-    else if($angle > 292 && $angle <= 337)return '&#8600;';
+    else if($angle > 292 && $angle <= 337)return '&searr;';
     else return '&darr;';  
+/*    
+    if($angle > 22 && $angle <= 67)return '&nearr;';
+    else if($angle > 67 && $angle <= 112)return '&rarr;';
+    else if($angle > 112 && $angle <= 157)return '&searrow;';
+    else if($angle > 157 && $angle <= 202)return '&darr;';
+    else if($angle > 202 && $angle <= 247)return '&swarr;';
+    else if($angle > 247 && $angle <= 292)return '&larr;';
+    else if($angle > 292 && $angle <= 337)return '&nwarr;';
+    else return '&uarr;';  
+*/    
     }
     
 $pressureUnit = array(' mbar',' inHg',' mmHg');   
