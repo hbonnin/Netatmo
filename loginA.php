@@ -1,3 +1,10 @@
+<?php
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__.'/src/Netatmo/autoload.php');
+require_once 'Config.php';
+session_start(); 
+?>
+
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <meta charset='utf-8'>
@@ -6,7 +13,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="js/jcookies.js"></script>
 </head>
-
 <body>
 <h3>Please wait</h3>
 <form name="xxx" method="post" action="Nlogin.php">
@@ -15,13 +21,8 @@
 </body>
 </html>
 
+
 <?php
-
-define('__ROOT__', dirname(__FILE__));
-require_once (__ROOT__.'/src/Netatmo/autoload.php');
-require_once 'Config.php';
-session_start(); 
-
 require_once 'initClient.php';
  
 $config = array("client_id" => $client_id,
