@@ -117,7 +117,7 @@ function saveTokenCookie($refresh_token)
     //logMsg("saveTokenCookie:$refresh_token");
     echo "<script>";
     echo("var refresh_token = \"$refresh_token\";\n");
-    echo("$.jCookies({name:'nntoken',value:{Refresh_token:refresh_token},days:3});");
+    echo("$.jCookies({name:'nntoken',value:{Refresh_token:refresh_token},days:30});");
     echo "</script>";
     }
 function init($numStations)
