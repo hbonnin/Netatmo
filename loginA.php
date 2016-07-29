@@ -15,12 +15,8 @@ session_start();
 </head>
 <body>
 <h3>Please wait</h3>
-<form name="xxx" method="post" action="Nlogin.php">
-<input type="hidden" name="refresh_token" value="aaa" >
-</form> 
 </body>
 </html>
-
 
 <?php
 require_once 'initClient.php';
@@ -41,8 +37,6 @@ else if(isset($_GET['start']))
     {
     //Ok redirect to Netatmo Authorize URL
     $redirect_url = $client->getAuthorizeUrl();
-    //header("HTTP/1.1 ". 302);
-    //header("Location: " . $redirect_url);
     echo "<script>";
     echo("path = \"$redirect_url\";\n");
     echo "top.location.href=path;";
