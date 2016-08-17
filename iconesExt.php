@@ -305,14 +305,22 @@ for($i = 0;$i < $numStations;$i++)
 //?>
 -->
 <script>
-    //var cloudLayer;
+    var mapType;
+    rutabaga = $.jCookies({get:'map'});
+    if(rutabaga)
+        {showTraffic = rutabaga.showTraffic;
+        mapType = rutabaga.mapType;
+        }
+    else
+        {showTraffic = 0;
+        mapType = google.maps.MapTypeId.HYBRID;
+        }
     var trafficlayer;
     var map;
     var show = 1;
-    var showTraffic = 0;
     var showMarker = 1;
     var controlText;
-    var zoomInit = 4;
+    var zoomInit = 6;
     
 	function createMarker(pos,label,slabel,map) 
 	    {var marker = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:'00ff00',text:slabel}),position:pos,map:map});
@@ -350,7 +358,6 @@ for($i = 0;$i < $numStations;$i++)
   		echo("label[$i] = \"$label[$i]\";\n");
   		echo("slabel[$i] = \"$slabel[$i]\";\n");  			
   		}
-
 ?> 		
 
 	for(i = 0;i < num;i++)
@@ -364,7 +371,8 @@ for($i = 0;$i < $numStations;$i++)
         zoom: zoomInit,
         center: center.getCenter(),
         disableDefaultUI: false,
-        mapTypeId: google.maps.MapTypeId.HYBRID,
+        //mapTypeId: google.maps.MapTypeId.HYBRID,
+        mapTypeId: mapType,
         mapTypeControl: true,
         mapTypeControlOptions: {
                 mapTypeIds: [google.maps.MapTypeId.HYBRID,google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]                                },
@@ -379,7 +387,7 @@ for($i = 0;$i < $numStations;$i++)
         };
         
     map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);		  		
-    	 	
+     	 	
 	for(i=0 ; i < num;i++)
 		markers[i] = createMarker(LatLng[i],label[i],slabel[i],map);
 
@@ -389,14 +397,12 @@ for($i = 0;$i < $numStations;$i++)
   	homeControlDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_LEFT].push(homeControlDiv);
 
-	// add cloud layer
-	//Layer = new google.maps.weather.CloudLayer();
-	//cloudLayer.setMap(map);
-
-	// add cloud control
     // add traffic layer
     trafficLayer = new google.maps.TrafficLayer();
-    trafficLayer.setMap(null);
+    if(showTraffic)
+      trafficLayer.setMap(map);
+    else
+      trafficLayer.setMap(null);
 
 	// add traffic control
 	var trafficControlDiv = document.createElement('div');
@@ -404,27 +410,31 @@ for($i = 0;$i < $numStations;$i++)
   	trafficControlDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_LEFT].push(trafficControlDiv);
   	
-
 	// add marker control
 	markerControlDiv = document.createElement('div');
   	var markerControl = new MarkerControl(markerControlDiv, map);
   	markerControlDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_LEFT].push(markerControlDiv);
 
-  	// add weather layer
-<?php
-/*
-    if($Temperature_unit)
-        echo("var weatherLayer = new google.maps.weather.WeatherLayer({
-         temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS
-        });");
-	else
-        echo("var weatherLayer = new google.maps.weather.WeatherLayer({
-         temperatureUnits: google.maps.weather.TemperatureUnit.FAHRENHEIT
-        });");
-*/        
-?>	
-	//weatherLayer.setMap(map);	  			
+	google.maps.event.addListener( map, 'maptypeid_changed', function() 
+	    {$.jCookies({name:'map',value:{showTraffic:showTraffic,mapType:map.getMapTypeId()},days:30});  
+        });
+    google.maps.event.addListener(map, "center_changed", function()
+        {var centre = map.getCenter(); 
+        var zoom =  map.getZoom();
+        $.jCookies({name:'coord',value:{zoom:zoom,lat:centre.lat(),lng:centre.lng()} });  
+	  }); 
+    google.maps.event.addDomListener(map,'zoom_changed', function()
+        {var centre = map.getCenter(); 
+        var zoom =  map.getZoom();
+        $.jCookies({name:'coord',value:{zoom:zoom,lat:centre.lat(),lng:centre.lng()} });  
+        })
+        
+    coord = $.jCookies({get:'coord'});
+    if(coord)
+        {map.setCenter(new google.maps.LatLng(coord.lat,coord.lng));
+        map.setZoom(coord.zoom); 
+        }
 
 	function HomeControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
@@ -444,7 +454,7 @@ for($i = 0;$i < $numStations;$i++)
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Courier,sans-serif';
-	  controlText.style.fontSize = '12px';
+	  controlText.style.fontSize = '15px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
 	  controlText.innerHTML = 'Home';
@@ -454,7 +464,7 @@ for($i = 0;$i < $numStations;$i++)
   		{map.setCenter(center.getCenter());
   		map.setZoom(zoomInit);
   		});
-	  } 
+	}
 	function TrafficControl(controlDiv, map) {
 	  // Set CSS styles for the DIV containing the control
  	 // Setting padding to 5 px will offset the control
@@ -475,10 +485,14 @@ for($i = 0;$i < $numStations;$i++)
 	  // Set CSS for the control interior.
 	  var controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Courier,sans-serif';
-	  controlText.style.fontSize = '12px';
+	  controlText.style.fontSize = '15px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
-	  controlText.innerHTML = 'Show Traffic';
+	  if(showTraffic)
+	    controlText.innerHTML = 'Hide Traffic';
+	   else
+	    controlText.innerHTML = 'Show Traffic';
+	
 	  controlUI.appendChild(controlText);	
   	  // Setup the click event listeners
   	  google.maps.event.addDomListener(controlUI, 'click', function() 
@@ -489,7 +503,8 @@ for($i = 0;$i < $numStations;$i++)
 		else
 			{trafficLayer.setMap(map);showTraffic = 1;
   			controlText.innerHTML = 'Hide Traffic';  			
-			}	
+			}
+		$.jCookies({name:'map',value:{showTraffic:showTraffic,mapType:map.getMapTypeId()},days:30});
 		});
 		}		
 	function MarkerControl(controlDiv, map) {
@@ -512,7 +527,7 @@ for($i = 0;$i < $numStations;$i++)
 	  // Set CSS for the control interior.
 	  controlText = document.createElement('div');
 	  controlText.style.fontFamily = 'Courier,sans-serif';
-	  controlText.style.fontSize = '12px';
+	  controlText.style.fontSize = '15px';
 	  controlText.style.paddingLeft = '4px';
 	  controlText.style.paddingRight = '4px';
 	  controlText.innerHTML = 'Hide Markers';
