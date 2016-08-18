@@ -41,6 +41,7 @@ $_SESSION['client'] = $client;
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icone/meteo.png" >
+<link rel="stylesheet" type="text/css" href="js/jquery.cookiebar.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="js/jcookies.js"></script>
 </head>
@@ -58,11 +59,10 @@ $_SESSION['client'] = $client;
 
 
 <script>
-    <?php echo("save_token = $save_token;\n"); ?>
     rutabaga = $.jCookies({get:'nntoken'}); 
-    if(rutabaga && save_token)
+    if(rutabaga)
         {refresh_token  = rutabaga.Refresh_token;
-        $('[name=refresh_token]').val(refresh_token);
+        $('[name=refresh_token]').val(refresh_token); // Set the value of the form input.
         document.xxx.submit();
         }
     else

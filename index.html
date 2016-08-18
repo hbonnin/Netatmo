@@ -1,0 +1,36 @@
+<!DOCTYPE html SYSTEM 'about:legacy-compat'>
+<head>
+<meta charset='utf-8'>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="js/jcookies.js"></script>
+<script>
+	function accepta()
+		{$.jCookies({name:'acceptcookie',value:'OK',days:365});
+		top.location.href='login.php';
+		}	    
+</script>
+</head>
+
+<body>
+<script>
+if($.jCookies({get:'acceptcookie'}))top.location.href = 'login.php';
+</script>
+
+<table>
+<td style='color:black;font-size: 25px;'>
+Ce site utilise des cookies pour sauvegarder des préférences
+</td>
+<td style='width: 25px;' ></td>
+<td>
+<form name="xxx" >
+<input type="submit" style='color:green;font-size: 25px;' value="Accepter" onClick="accepta();"/>
+</form> 
+</td>
+<td>
+<form name="x" action='logout.php' >
+<input type="submit" style='color:red;font-size: 25px;' value="Refuser" />
+</form> 
+</td>
+</table>
+</body>
+</html>
