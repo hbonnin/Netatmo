@@ -4,9 +4,8 @@ require_once (__ROOT__.'/src/Netatmo/autoload.php');
 require_once 'Config.php';
 session_start(); 
 require_once 'initClient.php';
-
-
 ?>
+
 <!DOCTYPE html SYSTEM 'about:legacy-compat'>
 <head>
 <meta charset='utf-8'>

@@ -363,7 +363,7 @@ function tip($temp,$tempDate)
 function tipw($speed,$angle)
 	{$cu = tr(wu());
 	$ad = '<span style="font-size:20px;" >'.angleDir($angle).'</span>';
-	return sprintf('%d%s    %s (%d)',$speed,$cu,$ad,$angle); 
+	return sprintf('%d%s    %s (%d°)',$speed,$cu,$ad,$angle); 
 	}   
 function tipt($val)
     {global $cu;
@@ -528,7 +528,8 @@ $cu = $cu1;
                 $title = $nameStation.': '.tr('Pluviométrie') .  ' ('.$beg. ' - ' .$end.' @'. tr($tinter) . ' '.$numKeys." $tmesure)"." Total: ".$RainCumul." mm n: $ndr" ; 
                 }
             if($Anemo > 0)
-                $title1 = $nameStation.': '.tr('Vent').'-'.tr($titre1).' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                $title1 = $nameStation.': '.tr('Vent').'-'.' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
+                //$title1 = $nameStation.': '.tr('Vent').'-'.tr($titre1).' ('.$beg.' -'.$end. ' @' . tr($tinter) . ' '.$numKeys." $tmesure)"; 
 
             $paramR = "focusTarget:'category',backgroundColor:'#f0f0f0',chartArea:{left:\"5%\",top:25,width:\"85%\",height:\"75%\"}";
             $paramR .= ",fontSize:10,titleTextStyle:{fontSize:14,color:'#303080',fontName:'Times'}";
