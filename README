@@ -22,5 +22,5 @@ Main windows:
 Install:
 	- Unzip the archive,
 	- Put your personal information in Config.php.EXEMPLE and rename it Config.php,
- 	- open index.php in your web browser.
+ 	- open index.html in your web browser.
     
