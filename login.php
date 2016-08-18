@@ -41,7 +41,6 @@ $_SESSION['client'] = $client;
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icone/meteo.png" >
-<link rel="stylesheet" type="text/css" href="js/jquery.cookiebar.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="js/jcookies.js"></script>
 </head>
