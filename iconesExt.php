@@ -283,27 +283,14 @@ for($i = 0;$i < $numStations;$i++)
     $temp = degree2($dataExt["Temperature"]);
     $slabel[$i] = $temp . ' '.$cu;	  // utilise pour les marker    	  
 	}	
-
 ?>
-
 
 <?php
-//echo "https://maps.googleapis.com/maps/api/js?v=3.exp&amp;key=$google_key&amp;libraries=places&amp;sensor=false";
-//echo "https://maps.googleapis.com/maps/api/js?v=3.exp&amp;libraries=places&amp;sensor=false";
+    if(isset($google_key))
+        echo "<script src=\"https://maps.googleapis.com/maps/api/js?key=$google_key\"></script>";
+    else    
+        echo "<script src=\"https://maps.googleapis.com/maps/api/js\"></script>";
 ?>
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;libraries=places&amp;sensor=false"></script>
-
-<!--
-//  AIzaSyAFMnkdAEF8o9eB5vpimtjGBMbvsCFLres 
-//<?php   
-//	if($use_google_key == 1)
-//		echo("src='https://maps.googleapis.com/maps/api/js?libraries=weather,places?key=$google_key'>");
-//		echo("src='https://maps.googleapis.com/maps/api/js?libraries=places?key=$google_key&sensor=false'>");
-//	else
-		//echo("src='https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false'>");
-//		echo("src='https://maps.googleapis.com/maps/api/js?v=3.exp&amp;signed_in=true&amp;libraries=places'>");
-//?>
--->
 <script>
     var mapType;
     rutabaga = $.jCookies({get:'map'});

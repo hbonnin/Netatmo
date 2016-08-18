@@ -2,5 +2,6 @@
 $client_id = "CLIENT_ID";
 $client_secret = "CLIENT_SECRET";
 $gecode = 0; // 0-1 to retrieve the address from position
+$google_key = "YOUR GOOGLE API KEY";
 $refreshInterval = 10*60; // refresh interval in seconds (0 no refresh) 
 ?>
