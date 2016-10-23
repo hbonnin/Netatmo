@@ -112,10 +112,7 @@ function tr($txt)
         }    
     }  
 function saveTokenCookie($refresh_token)
-    {global $save_token;
-    if($save_token  == 0)return;  
-    //logMsg("saveTokenCookie:$refresh_token");
-    echo "<script>";
+    {echo "<script>";
     echo("var refresh_token = \"$refresh_token\";\n");
     echo("$.jCookies({name:'nntoken',value:{Refresh_token:refresh_token},days:30});");
     echo "</script>";
