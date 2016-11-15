@@ -129,7 +129,25 @@ $phase = intval($moonphase->phase()*28 +.5)%28;
 $imgnum = sprintf('%1$02d',$phase);
 $moonimg = "'".'icone/Moon/MoonDay'.$imgnum.'.png'."'";
 $moonpercent = intval($moonphase->phase()*1000)/10;
+$arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
 $lumen = intval($moonphase->illumination()*1000)/10;
+$txt0 = tr('Nouvelle lune');
+$txt1 = tr('Premier quartier');
+$txt2 = tr('Pleine lune');
+$txt3 = tr('Dernier quartier');
+$txt0 = tr('Nouvelle lune');
+$date0 = date("d/m/Y H:i",$moonphase->new_moon());
+$date1 = date("d/m/Y H:i",$moonphase->first_quarter());
+$date2 = date("d/m/Y H:i",$moonphase->full_moon());
+$date3 = date("d/m/Y H:i",$moonphase->last_quarter());
+$date4 = date("d/m/Y H:i",$moonphase->next_new_moon());
+//$timeP  = mktime(21,00,0,11,15,2016);
+//$moonphaseP = new MoonPhase($timeP);
+// distance moyenne: 384405   rayon terre: 6378 rayon lune: 1737
+// Distance au périgée : 356 400 à 370 400 km
+// Distance à l'apogée : 404 000 à 406 700 km
+$dist = intval($moonphase->distance()); 
+
 $day = idate('d');
 $month = idate('m');
 $year = idate('Y');
@@ -543,7 +561,6 @@ for($i = 0;$i < $numStations;$i++)
 </head>
   <!--<body  onload='initialize()' style='transform: scale(.8,.85);'>-->
   <body  onload='initialize()'>
-  
   <!--<div style='transform: scale(.8;.9);  -moz-transform-origin: top left;'>-->
   <div>
 <!-- Invisible table for calendar --> 
@@ -557,8 +574,11 @@ for($i = 0;$i < $numStations;$i++)
 <!-- Tracé des icones -->	
 <?php
 
-$arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
+//$arrow = ($moonpercent >= 0 && $moonpercent < 50) ? '&#10138;':'&#10136;'; 
 $txt = tr('Phase lunaire');
+//$moonphase = new MoonPhase();
+
+
 echo("<table id= 'icones' style='margin-left:auto; margin-right:auto;  margin-top:-2px; margin-bottom:0px; padding:0px '>
 		<tr>\n");
 echo "<td>\n";	
@@ -567,21 +587,13 @@ echo "<table class='icone'>\n";
 echo "<tr><td colspan='2' class='th'>$txt</td>\n";
 echo("</tr><tr><td ><img src=$moonimg ALT='moon' style='height:100px;vertical-align:bottom;'/></td>\n");
 echo "<td style='font-size:13px;'>phase:$moonpercent% &nbsp; <span style='font-size:18px;'> $arrow </span><br>lumen:$lumen%</td>\n";
+echo("</tr><tr><td></td><td ><span style='font-size:13px;'>$dist km</spam></td>");
 echo "</tr>\n"; 
 
 /* Moon info */
 $tinfo = tr("Autres informations");
-$moonphase = new MoonPhase();
-$txt0 = tr('Nouvelle lune');
-$txt1 = tr('Premier quartier');
-$txt2 = tr('Pleine lune');
-$txt3 = tr('Dernier quartier');
-$txt0 = tr('Nouvelle lune');
-$date0 = date("d/m/Y H:i",$moonphase->new_moon());
-$date1 = date("d/m/Y H:i",$moonphase->first_quarter());
-$date2 = date("d/m/Y H:i",$moonphase->full_moon());
-$date3 = date("d/m/Y H:i",$moonphase->last_quarter());
-$date4 = date("d/m/Y H:i",$moonphase->next_new_moon());
+//$moonphase = new MoonPhase();
+
 
 echo("
 	<tr><td class='hl'> </td>
